@@ -27,7 +27,7 @@ npm run dev
 ```sh
 npm run build
 ``` -->
-
+<!-- 
 專案vue主架構
 MountainPeak/
 │
@@ -108,4 +108,4 @@ src/
 │       ├── vendors/          # 第三方套件覆蓋
 │       │   └── _bootstrap.scss
 │       │
-│       └── main.scss         # 入口樣式檔，統一引入所有上面檔案
+│       └── main.scss         # 入口樣式檔，統一引入所有上面檔案 -->
