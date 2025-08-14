@@ -60,18 +60,18 @@ import { ref } from 'vue'
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        padding: 20px 0;
         background-color: rgba(20, 20, 20, 0.2);
         overflow-y: auto;
+        padding: 60px 0;
     
         .mychallenge-modal{
             position: relative;
             max-width: 800px;
             width: 100%;
-            margin: auto;
+            // max-height: 600px;
             padding: 60px;
             background-color: $ivory-gray-100;
-            overflow: auto;
+            overflow: visible;
             z-index: 20;
         
             .close-btn{

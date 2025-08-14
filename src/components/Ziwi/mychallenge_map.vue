@@ -1,5 +1,5 @@
 <template>
-    <section class="map"></section>
+    <section class="map" id="map"></section>
 </template>
 
 <style scoped lang="scss">

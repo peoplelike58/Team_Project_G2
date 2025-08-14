@@ -12,6 +12,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vue-leaflet/vue-leaflet": "^0.10.1",
+    "leaflet": "^1.9.4",
     "mitt": "^3.0.1",
     "pinia": "^3.0.3",
     "sass": "^1.90.0",

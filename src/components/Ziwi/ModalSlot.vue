@@ -1,28 +1,35 @@
 <template>
-    <!-- <div class="modal-overlay" >
+    <div class="modal-overlay" >
         <section class="goalset-modal">
             <button class="close-btn" @click="closeModal">x</button>
             <div class="goalset">
-                <h2>大百岳 目標設定</h2>
-                <input type="text" class="goal" id="bidgoal" :placeholder="`請輸入今年目標`" min="1" max="30">
+                <!-- <h2>大百岳 目標設定</h2> -->
+                <h2>{{ title }}</h2>
+                <!-- <input type="text" class="goal" id="bidgoal" :placeholder="`請輸入今年目標`" min="1" max="30"> -->
+                <slot name="content"></slot>
                 <div class="buttun-wrapper">
-                    <button>提交</button>
+                    <button @click="$emit('btnClick')">{{ submitText }}</button>
                 </div>
             </div>
         </section>
-    </div> -->
-    <ModalSlot title="大百岳1 目標設定" @btnlCick="handleOnClick">
-        <template #content>
-                <input type="text" class="goal" id="bidgoal" :placeholder="`請輸入今年目標`" min="1" max="30">
-        </template>
-    </ModalSlot>
+    </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import ModalSlot  from './ModalSlot.vue'
 
-const emit = defineEmits(['modalClose'])
+defineProps({
+    submitText:{
+        type: String,
+        default: '確定1'
+    },
+    title:{
+        type: String,
+        required: true
+    }
+})
+
+const emit = defineEmits(['modalClose','btnClick'])
 
     const handalSave = () => {
 
@@ -33,19 +40,10 @@ const emit = defineEmits(['modalClose'])
 
 
 
-const handleOnClick = () =>{
-    console.log('click')
-}
 </script>
 
 <style scoped lang="scss">
     @import '@/assets/styles/main.scss';
-    .goal{
-    font-size: $pcFont-H2;
-    text-align: center;
-    margin: 24px 0 ;
-    border-radius: 16px;
-}
     .modal-overlay{
         position: fixed;
         inset: 0;

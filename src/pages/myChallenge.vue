@@ -20,7 +20,7 @@
                 <mychallenge_ranking />
             </div>
             <div class="modal">
-                <mychallenge_modal />
+                <!-- <mychallenge_modal /> -->
                 <!-- <mychallenge_setgoal v-if="modalOpen" @closeModel="modalClose"/> -->
             </div>
         </main>
