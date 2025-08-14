@@ -19,16 +19,17 @@ $black-14: #141414;
 //Google Font: Inter
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
+//設定全域樣式
 body {
     font-family: 'Inter', sans-serif;
     color: $black-14;
-    font-size: 16px; // 根字級
+    font-size: 16px; //根字級
 }
 
 
 // ------------------ 字級 ------------------
 
-// ------ PC 字級
+// ------------ PC 字級
 
 //裝飾性標題
 $pcFont-bigTitle-l: 6rem; //96px
@@ -49,7 +50,7 @@ $pcFont-p-s: 1rem; //16px
 $pcFont-label: 1rem; //16px
 
 
-// ------ Mobile 字級 (待定)
+// ------------ Mobile 字級 (待定)
 $mbFont-label: 14px;
 
 
