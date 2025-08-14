@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "gsap": "^3.13.0",
     "mitt": "^3.0.1",
     "pinia": "^3.0.3",
     "sass": "^1.90.0",
