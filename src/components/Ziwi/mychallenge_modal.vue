@@ -1,13 +1,13 @@
 <template>
-    <div class="modal-overlay" v-show="isVisible">
-        <section class="mychallenge-modal">
-            <button class="close-btn">x</button>
+    <div class="modalOverlay" v-show="isVisible">
+        <section class="mychallengeModal">
+            <button class="closeBtn">x</button>
             <article class="gpx">
-                <div class="mountain-info">
+                <div class="mountainInfo">
                     <h2>{{ mountain.name }}</h2>
                     <h4>[{{ mountain.kind }}]</h4>
                 </div>
-                <div class="upload-area">
+                <div class="uploadArea">
                     <div class="add">+</div>
                     <input type="file" id="theFile">
                 </div>
@@ -29,9 +29,9 @@
             <article class="think">
                 <p>想法記錄</p>
                 <textarea id=""></textarea>
-                <p class="text-count">{{}} / 200</p>
+                <p class="textCount">{{}} / 200</p>
             </article>
-            <div class="buttun-wrapper">
+            <div class="buttunWrapper">
                 <button>提交</button>
             </div>
         </section>
@@ -54,7 +54,7 @@ import { ref } from 'vue'
 
 <style scoped lang="scss">
     @import '@/assets/styles/main.scss';
-    .modal-overlay{
+    .modalOverlay{
         position: fixed;
         inset: 0;
         display: flex;
@@ -64,7 +64,7 @@ import { ref } from 'vue'
         overflow-y: auto;
         padding: 60px 0;
     
-        .mychallenge-modal{
+        .mychallengeModal{
             position: relative;
             max-width: 800px;
             width: 100%;
@@ -74,7 +74,7 @@ import { ref } from 'vue'
             overflow: visible;
             z-index: 20;
         
-            .close-btn{
+            .closeBtn{
                 position: absolute;
                 top: -12px;
                 right: -12px;
@@ -88,7 +88,7 @@ import { ref } from 'vue'
                 cursor: pointer;
             }
             
-            .mountain-info{
+            .mountainInfo{
                 display: flex;
                 align-items: end;
                 margin-bottom: 24px;
@@ -105,7 +105,7 @@ import { ref } from 'vue'
                 }
             }
         
-            .upload-area{
+            .uploadArea{
                 position: relative;
                 width: 100%;
                 height: 300px;
@@ -179,7 +179,7 @@ import { ref } from 'vue'
                     resize: none;
                 }
 
-                .text-count{
+                .textCount{
                     position: absolute;
                     bottom: 0;
                     right: 0;
@@ -188,7 +188,7 @@ import { ref } from 'vue'
                 }
             }
             
-            .buttun-wrapper{
+            .buttunWrapper{
                 display: flex;
                 justify-content: center;
             

@@ -1,46 +1,86 @@
 <template>
-    <!-- <div class="modal-overlay" >
+    <div class="modal-overlay" @click.self="closeModel">
         <section class="goalset-modal">
-            <button class="close-btn" @click="closeModal">x</button>
+            <button class="close-btn" @click="closeModel">x</button>
             <div class="goalset">
-                <h2>大百岳 目標設定</h2>
-                <input type="text" class="goal" id="bidgoal" :placeholder="`請輸入今年目標`" min="1" max="30">
+                <h2>{{ props.item.kind }} 目標設定</h2>
+                <input type="number" class="goal" id="bidGoal" :placeholder="`輸入今年目標`" v-model="currentGoal" @input="updateGoal" min="1" max="30">
                 <div class="buttun-wrapper">
-                    <button>提交</button>
+                    <button @click="submitGoal">提交</button>
                 </div>
             </div>
         </section>
-    </div> -->
-    <ModalSlot title="大百岳1 目標設定" @btnlCick="handleOnClick">
+    </div>
+    <!-- <ModalSlot title="大百岳1 目標設定" @btnlCick="handleOnClick">
         <template #content>
                 <input type="text" class="goal" id="bidgoal" :placeholder="`請輸入今年目標`" min="1" max="30">
         </template>
-    </ModalSlot>
+    </ModalSlot> -->
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import ModalSlot  from './ModalSlot.vue'
 
-const emit = defineEmits(['modalClose'])
-
-    const handalSave = () => {
-
-        //todo 儲存
-
-        emit('modalClose')
+//接收 <mychallenge_progress /> 傳來的 props
+const props = defineProps({
+    isVisible: {
+        type: Boolean,
+        default: false
+    },
+    item: {
+        type: Object,
+        default: () => ({})
     }
+})
 
+const emit = defineEmits(['close', 'updateGoal'])
 
-
-const handleOnClick = () =>{
-    console.log('click')
+const closeModel = () => {
+    emit('close')
 }
+
+
+// 當前輸入的目標值
+const currentGoal = ref('')
+
+// 監聽 props.item 的變化，設定初始值
+watch(() => props.item, (newItem) => {
+    if (newItem && newItem.goal) {
+        currentGoal.value = newItem.goal
+    }
+}, { immediate: true })
+
+// 即時更新目標值到父組件
+const updateGoal = () => {
+    const goalValue = parseInt(currentGoal.value)
+    if (goalValue >= 1 && goalValue <= 30) {
+        // 發送即時更新事件給父組件
+        emit('updateGoal', goalValue)
+    }
+}
+
+// 提交目標設定
+const submitGoal = () => {
+    const goalValue = parseInt(currentGoal.value)
+    
+    if (!goalValue || goalValue < 1 || goalValue > 30) {
+        alert('請輸入 1-30 之間的數字')
+        return
+    }
+    
+    console.log('提交的目標:', goalValue)
+    
+    // 將新的目標值傳給父組件
+    emit('close', { goal: goalValue })
+}
+
 </script>
 
 <style scoped lang="scss">
     @import '@/assets/styles/main.scss';
     .goal{
+    width: 100%;
     font-size: $pcFont-H2;
     text-align: center;
     margin: 24px 0 ;

@@ -1,24 +1,24 @@
 <template>
-    <section class="mychallenge-histroy" v-show="isVisible">
+    <section class="mychallengeHistroy" v-show="isVisible">
         <div class="back">
             <img src="../../assets/images/mychallenge/left.png" alt="">
             <h4>返回</h4>
         </div>
         <h2>[ 歷史足跡 ]</h2>
         <div class="myhistory">
-            <div class="myhistory-title">
-                <h3 class="mountain-name">山名</h3>
+            <div class="myhistoryTitle">
+                <h3 class="mountainName">山名</h3>
                 <h3>上傳日期</h3>
             </div>
-            <article class="myhistory-mountain" v-for="history in histories">
-                <div class="mountain-title">
-                    <div class="mountain-title-left">
+            <article class="myhistoryMountain" v-for="history in histories">
+                <div class="mountainTitle">
+                    <div class="mountainTitleLeft">
                         <h4 class="mountain">{{ history.name }}</h4>
                         <h4>{{ history.date }}</h4>
                     </div>
                     <img src="../../assets/images/mychallenge/down.png" alt="">
                 </div>
-                <div class="total-score">
+                <div class="totalScore">
                     <div class="total">
                         <p>[累積高度]</p>
                         <p><span>{{ history.height }}</span> m</p>
@@ -54,7 +54,7 @@ import { ref, reactive } from 'vue'
 
 <style scoped lang="scss">
     @import '../../assets/styles/main.scss';
-    .mychallenge-histroy{
+    .mychallengeHistroy{
         height: 100%;
         overflow: auto;
 
@@ -74,13 +74,13 @@ import { ref, reactive } from 'vue'
             margin: 40px 0;
         }
 
-        .myhistory-title{
+        .myhistoryTitle{
             position: relative;
             display: flex;
             padding-bottom: 20px;
             border-bottom: 1px solid $black-14;
             
-            .mountain-name{
+            .mountainName{
                 width: 100px;
                 margin-right: 40px;
                 
@@ -102,16 +102,16 @@ import { ref, reactive } from 'vue'
             }
         }
 
-        .myhistory-mountain{
+        .myhistoryMountain{
             border-bottom: 1px dashed ;
             
-            .mountain-title{
+            .mountainTitle{
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin: 20px 0;
                 
-                .mountain-title-left{
+                .mountainTitleLeft{
                     display: flex;
                     position: relative;
                     
@@ -142,7 +142,7 @@ import { ref, reactive } from 'vue'
                 }
             }
 
-            .total-score{
+            .totalScore{
                 display: flex;
                 margin: 16px 0 24px;
                 

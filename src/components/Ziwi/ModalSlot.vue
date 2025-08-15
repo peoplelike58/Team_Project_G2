@@ -1,13 +1,13 @@
 <template>
-    <div class="modal-overlay" >
-        <section class="goalset-modal">
-            <button class="close-btn" @click="closeModal">x</button>
+    <div class="modalOverlay" >
+        <section class="goalsetModal">
+            <button class="closeBtn" @click="closeModal">x</button>
             <div class="goalset">
                 <!-- <h2>大百岳 目標設定</h2> -->
                 <h2>{{ title }}</h2>
                 <!-- <input type="text" class="goal" id="bidgoal" :placeholder="`請輸入今年目標`" min="1" max="30"> -->
                 <slot name="content"></slot>
-                <div class="buttun-wrapper">
+                <div class="buttunWrapper">
                     <button @click="$emit('btnClick')">{{ submitText }}</button>
                 </div>
             </div>
@@ -44,7 +44,7 @@ const emit = defineEmits(['modalClose','btnClick'])
 
 <style scoped lang="scss">
     @import '@/assets/styles/main.scss';
-    .modal-overlay{
+    .modalOverlay{
         position: fixed;
         inset: 0;
         display: flex;
@@ -52,7 +52,7 @@ const emit = defineEmits(['modalClose','btnClick'])
         align-items: center;
         background-color: rgba(20, 20, 20, 0.2);
         
-        .goalset-modal{
+        .goalsetModal{
             position: relative;
             max-width: 800px;
             width: 100%;
@@ -62,7 +62,7 @@ const emit = defineEmits(['modalClose','btnClick'])
             overflow:visible;
             z-index: 20;
         
-            .close-btn{
+            .closeBtn{
                 position: absolute;
                 top: -12px;
                 right: -12px;
@@ -95,7 +95,7 @@ const emit = defineEmits(['modalClose','btnClick'])
                     border-radius: 16px;
                 }
 
-                .buttun-wrapper{
+                .buttunWrapper{
                     display: flex;
                     justify-content: center;
                     margin-top: 24px;

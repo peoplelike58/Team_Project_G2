@@ -1,43 +1,63 @@
 <template>
-    <section class="challenge-progress" v-for="item in items">
+    <section class="challengeProgress" v-for="(item, index) in items">
         <div class="title">
             <h3>
                 [{{ item.kind }}]
             </h3>
-            <img src="../../assets/images/mychallenge/goalSet.png" alt="目標設定">
+            <img src="../../assets/images/mychallenge/goalSet.png" alt="目標設定" @click="openSetgoal(index)">
+            <mychallenge_setgoal
+            v-if="item.openSetgoal"
+            :isVisible="item.openSetgoal"
+            :item="item"
+            @close="closeSetgoal(index)"
+            @updateGoal="updateGoalRealtime(index, $event)"
+            style="z-index: 20;
+            "/>
         </div>
         <p>今年目標已完成  <span>{{ item.done }}</span>  /  {{ item.goal }}  座</p>
-        <div class="flag-area">
+        <div class="flagArea">
             <div class="line">
             </div>
-            <img src="../../assets/images/mychallenge/flag.png" alt="" @click="openEmit('openModal')">  <!--點擊按鈕向父組件傳遞事件-->
+            <img src="../../assets/images/mychallenge/flag.png" alt="旗子">
         </div>
     </section>
 </template>
 
 <script setup>
 import { ref,computed } from 'vue'
-
+import mychallenge_setgoal from './mychallenge_setgoal.vue'
+    
     const items = ref([
-        {kind:'大百岳', done: 1, goal: 10 },
-        {kind:'小百岳', done: 2, goal: 20 }
+        {kind:'大百岳', done: 1, goal: 10, openSetgoal: false},
+        {kind:'小百岳', done: 2, goal: 10, openSetgoal: false }
     ])
 
-    const openEmit = defineEmits(['openModal'])
 
-    const caculatePosition = () => {
-
-
-
-
-
+    // 開啟 <mychallenge_setgoal />
+    const openSetgoal = (index) => {
+        items.value[index].openSetgoal = true
     }
+
+    // 即時更新目標值（不關閉彈窗）
+    const updateGoalRealtime = (index, newGoal) => {
+        items.value[index].goal = newGoal
+    }
+
+    // 關閉 <mychallenge_setgoal />
+    const closeSetgoal = (index, data) => {
+    if (data && data.goal) {
+        // 確保最終提交的值也被更新
+        items.value[index].goal = data.goal
+    }
+    items.value[index].openSetgoal = false
+}
+
 </script>
 
 <style scoped lang="scss">
     @import '@/assets/styles/main.scss';
 
-    .challenge-progress{
+    .challengeProgress{
         margin-top: 60px;
         
         .title{
@@ -70,7 +90,7 @@ import { ref,computed } from 'vue'
             }
         }
 
-        .flag-area{
+        .flagArea{
             position: relative;
             margin-top: 20px;
             

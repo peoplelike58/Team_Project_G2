@@ -1,7 +1,7 @@
 <template>
     <section v-for="rank in ranks" :key="rank.rank" class="nomb">
-        <div class="person-info" @click="op">
-            <div class="person-info-title">
+        <div class="personInfo" @click="op">
+            <div class="personInfoTitle">
                 <img :src="`/images/myChallenge/${rank.image}`" alt="" class="head">
                 <h4 class="place">{{ rank.rank }}<br />{{ rank.icon }}</h4>
                 <h4>{{ rank.name }}</h4>
@@ -10,8 +10,8 @@
                 <img src="../../assets/images/mychallenge/down.png" alt="">
             </div>
         </div>
-        <div class="total-score">
-            <div class="nomb-score">
+        <div class="totaScore">
+            <div class="nombScore">
                 <article>
                     <p>總累積高度</p>
                     <p><span>{{ rank.height }}</span> m</p>
@@ -25,7 +25,7 @@
                     <p><span>{{ rank.time }}</span> hr</p>
                 </article>
             </div>
-            <div class="mount-score">
+            <div class="mountScore">
                 <article>
                     <p>百岳</p>
                     <p><span>{{ rank.big }}</span> 座</p>
@@ -61,13 +61,13 @@ import { ref, reactive } from 'vue'
     .nomb{
         border-bottom: 1px dotted $black-14;
 
-        .person-info{
+        .personInfo{
             display: flex;
             justify-content: space-between;
             margin-top: 24px;
             align-items: center;
         
-            .person-info-title{
+            .personInfoTitle{
                 display: flex;
                 align-items: center;
             
@@ -120,10 +120,10 @@ import { ref, reactive } from 'vue'
             }
         }
     
-        .total-score{
+        .totaScore{
             padding: 40px 0 48px 32px;
 
-            .nomb-score{
+            .nombScore{
                 display: flex;
             
                 article:nth-child(1n+2){
@@ -132,7 +132,7 @@ import { ref, reactive } from 'vue'
             }
         }
 
-        .mount-score{
+        .mountScore{
             display: flex;
             margin-top: 32px;
         

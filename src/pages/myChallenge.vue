@@ -96,40 +96,15 @@
 
     }
 
-    //     .wrapper{
-    //     width: 1200px;
-    //     margin: 0 auto;
-    // }
-    // .bread-crumb{
-    //     margin-top: 49px;
-    //     margin-bottom: 111px;
-    // }
-    // .mychallenge-info{
-    //     display: flex;
-    //     height: 713px;
-    // }
-    // .mychallenge-acheve{
-    //     width: 50%;
-    //     // height: 514px;
-    //     margin: 20px 0 20px 80px;
-    // }
-    // .mychallenge-acheve h2{
-    //     font-size: $pcFont-H2;
-    //     font-weight: $semiBold;
-    //     line-height: $linHeight-p-150;
-    //     margin-bottom: 60px;
-    // }
-    // .mychallenge-rank{
-    //     max-width: 1067px;
-    //     width: 100%;
-    //     margin: 152px 0;
-    //     padding: 64px;
-    //     background-color: $ivory-gray-100;
-    // }
-    // .mychallenge-rank h2{
-    //     font-size: $pcFont-H2;
-    //     font-weight: $semiBold;
-    //     line-height: $linHeight-p-150;
-    //     text-align: center;
-    // }
 </style>
+
+<!-- 
+MyChallenge.vue ←（父元件，整個頁面） 
+│ ├── MyChallengeBreadcrumb.vue ←（純顯示用，待處裡處裡） 
+├── MyChallengeMap.vue ←（套用leaflet） 
+│ └── MyChallengeModal.vue ←（點擊leaflet裡不同位置的icon來上傳不同山的gpx資料） 
+├── MyChallengeInfo.vue ←（裡面有一個按鈕，點擊即顯示MyChallengeHistory.vue 彈窗） 
+│ └── MyChallengeHistory.vue ←（一個與MyChallengeInfo.vue+MyChallengeProgress.vue在同一個位置的窗格，平常被隱藏，直到點擊了MyChallengeInfo.vue的按鈕） 
+├── MyChallengeProgress.vue ←（一個區塊裡的小組件，裡面有按鈕，點擊即顯示MyChallengeSetGoal.vue 彈窗) 
+└── MyChallengeSetGoal.vue ←（彈窗，，平常被隱藏，直到點擊了MyChallengeProgress.vue的按鈕，設定目標 Modal，接收 props、emit 提交） └──MyChallengeRank.vue ←（排行榜） 
+-->

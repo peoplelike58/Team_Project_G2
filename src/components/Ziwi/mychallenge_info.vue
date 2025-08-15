@@ -1,6 +1,6 @@
 <template>
-    <section class="mychallenge-infomation">
-        <article class="total-info">
+    <section class="mychallengeInfomation">
+        <article class="totalInfo">
             <div class="total">
                 <p>[總累積高度]</p>
                 <p><span>{{ heightTotal }}</span> m</p>
@@ -11,12 +11,18 @@
             </div>
             <div>
                 <button>您的歷史紀錄</button>
+                <mychallenge_modal 
+                v-show="false"
+                style="z-index: 20;"
+                />
             </div>
         </article>
     </section>
 </template>
 
 <script setup>
+import mychallenge_modal from './mychallenge_modal.vue'
+
     let heightTotal = 1
     let kiloTotal = 2
     let timeTotal = 3
@@ -25,10 +31,10 @@
 <style scoped lang="scss">
     @import '@/assets/styles/main.scss';
 
-    .mychallenge-infomation{
+    .mychallengeInfomation{
         margin: 12.5px 0;
     
-        .total-info{
+        .totalInfo{
             display: flex;
             justify-content: space-between;
         
@@ -58,7 +64,7 @@
         }
     }
 
-    // .mychallenge-infomation{
+    // .mychallengeInfomation{
     //     margin: 12.5px 0;
     
     // }
