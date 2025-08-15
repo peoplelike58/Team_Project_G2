@@ -1,0 +1,29 @@
+//手機 < 430px
+$m: 430px;   // 手機（<= 430px）
+@mixin m(){ 
+    @media screen and (max-width: $m){ 
+    @content; } 
+}
+
+//平板
+$t: 1024px;  // 平板（<= 1024px）
+@mixin t(){ 
+    @media screen and (max-width: $t){
+     @content; } 
+}
+
+
+@mixin container ($max: 1200px, $pad-x: 24px){
+    max-width: $max;
+    margin-inline: auto;
+    padding-inline: $pad-x;
+      
+}
+
+@mixin peakguide-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    border-radius: 16px;
+}
