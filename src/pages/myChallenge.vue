@@ -1,27 +1,20 @@
 <template>
     <div class="wrapper">
         <main>
-            <div class="bread-crumb">
+            <div class="breadCrumb">
                 <mychallenge_breadcrumb />
             </div>
-            <div class="mychallenge-info">
+            <div class="mychallengeInfo">
                 <mychallenge_map />   
-                <div class="mychallenge-acheve">
+                <div class="mychallengeAcheve">
                     <h2>[您的成就]</h2>
                     <mychallenge_info />
-                    <mychallenge_progress @openModal="openEmit"/>
+                    <mychallenge_progress />
                 </div>
-                <!-- <div class="mychallenge-history">
-                    <mychallenge_history/>
-                </div> -->
             </div>
-            <div class="mychallenge-rank">
+            <div class="mychallengeRank">
                 <h2>🏆 百岳勇士排行榜 🏆</h2>
                 <mychallenge_ranking />
-            </div>
-            <div class="modal">
-                <!-- <mychallenge_modal /> -->
-                <!-- <mychallenge_setgoal v-if="modalOpen" @closeModel="modalClose"/> -->
             </div>
         </main>
     </div>
@@ -37,18 +30,6 @@
     import mychallenge_history from '@/components/Ziwi/mychallenge_history.vue';
     import mychallenge_setgoal from '@/components/Ziwi/mychallenge_setgoal.vue';
 
-    import { ref } from 'vue'
-
-    const isOpen = ref(false)
-
-    const modalOpen = () => {
-        isOpen.value = true
-    }
-
-    const modalClose = () => {
-        isOpen.value = false
-    }
-
 </script>
 
 <style scoped lang="scss">
@@ -57,21 +38,21 @@
         width: 1200px;
         margin: 0 auto;
 
-        .bread-crumb{
+        .breadCrumb{
             margin-top: 49px;
             margin-bottom: 111px;
         }
         
-        .mychallenge-info{
+        .mychallengeInfo{
             display: flex;
             height: 713px;
         
-            .mychallenge-acheve, .mychallenge-history{
+            .mychallengeAcheve, .mychallenge-history{
                 width: 50%;
                 // height: 514px;
                 margin: 20px 0 20px 80px;
             }
-            .mychallenge-acheve h2{
+            .mychallengeAcheve h2{
                 font-size: $pcFont-H2;
                 font-weight: $semiBold;
                 line-height: $linHeight-p-150;
@@ -79,7 +60,7 @@
             }
         }
         
-        .mychallenge-rank{
+        .mychallengeRank{
             max-width: 1067px;
             width: 100%;
             margin: 152px 0;

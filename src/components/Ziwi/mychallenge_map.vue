@@ -1,6 +1,29 @@
 <template>
-    <section class="map" id="map"></section>
+    <section class="map" id="map">
+        <l-map :zoom="zoom" :center="center">
+            <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors">
+            </l-tile-layer>
+            <l-marker :lat-lng="markerLatLng">
+            </l-marker>
+        </l-map>
+
+    </section>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+
+import 'leaflet/dist/leaflet.css'
+import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
+
+const latitude = 23.973786
+const longitude = 120.9817558
+
+const zoom = ref(8)
+const center = ref([latitude, longitude])
+const markerLatLng = ref([latitude, longitude])
+
+</script>
 
 <style scoped lang="scss">
     @import '../../assets/styles/main.scss';

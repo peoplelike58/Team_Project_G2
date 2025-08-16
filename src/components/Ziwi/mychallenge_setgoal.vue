@@ -1,11 +1,11 @@
 <template>
-    <div class="modal-overlay" @click.self="closeModel">
-        <section class="goalset-modal">
-            <button class="close-btn" @click="closeModel">x</button>
+    <div class="modalOverlay" @click.self="closeModel">
+        <section class="goalsetModal">
+            <button class="closeBtn" @click="closeModel">x</button>
             <div class="goalset">
                 <h2>{{ props.item.kind }} 目標設定</h2>
                 <input type="number" class="goal" id="bidGoal" :placeholder="`輸入今年目標`" v-model="currentGoal" @input="updateGoal" min="1" max="30">
-                <div class="buttun-wrapper">
+                <div class="buttunWrapper">
                     <button @click="submitGoal">提交</button>
                 </div>
             </div>
@@ -86,7 +86,7 @@ const submitGoal = () => {
     margin: 24px 0 ;
     border-radius: 16px;
 }
-    .modal-overlay{
+    .modalOverlay{
         position: fixed;
         inset: 0;
         display: flex;
@@ -94,7 +94,7 @@ const submitGoal = () => {
         align-items: center;
         background-color: rgba(20, 20, 20, 0.2);
         
-        .goalset-modal{
+        .goalsetModal{
             position: relative;
             max-width: 800px;
             width: 100%;
@@ -104,7 +104,7 @@ const submitGoal = () => {
             overflow:visible;
             z-index: 20;
         
-            .close-btn{
+            .closeBtn{
                 position: absolute;
                 top: -12px;
                 right: -12px;
@@ -137,7 +137,7 @@ const submitGoal = () => {
                     border-radius: 16px;
                 }
 
-                .buttun-wrapper{
+                .buttunWrapper{
                     display: flex;
                     justify-content: center;
                     margin-top: 24px;
