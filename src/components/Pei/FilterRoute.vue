@@ -1,47 +1,75 @@
-<script setup> // 使用 <script setup> 簡化撰寫元件
-import { ref, computed } from 'vue' // 匯入 ref 與 computed
+<script setup>
+
+import { ref, computed } from 'vue'
 import trailsData from '@/assets/json/trails.json'
-console.log('trailsData =', trailsData)
 
-const loading = ref(false) // 資料讀取中狀態
+const loading = ref(false) // 資料讀取狀態
 const error = ref('') // 錯誤訊息
-const trails = ref(trailsData)
+const trails = ref(trailsData) // 原始資料
 
-//--------- 篩選條件 -------------
-// 建立篩選按鈕
-const regionBtns = ['全部','北部','中部','南部','東部']
-const trafficBtns = ['全部','可乘大眾運輸','須開車前往']
-const timeBtns = ['全部','3小時內','3-6小時','6-12小時','12小時-2天','2天以上']
-const typeBtns = ['全部','百岳','小百岳','其他山岳','必訪步道']
+// --------- 篩選條件按鈕資料與目前狀態 ---------
+const regionBtns = ['全部','北部','中部','南部','東部'] // 區域選項
+const trafficBtns = ['全部','可乘大眾運輸','須開車前往'] // 交通選項
+const timeBtns = ['全部','3小時內','3-6小時','6-12小時','12小時-2天','2天以上'] // 時間選項
+const typeBtns = ['全部','百岳','小百岳','其他山岳','必訪步道'] // 類型選項
 
-// 目前選到哪一個篩選 btn 
-const regionNow = ref(regionBtns[0])
-const trafficNow = ref(trafficBtns[0])
-const timeNow = ref(timeBtns[0])
-const typeNow = ref(typeBtns[0])
-
+//預設一開始篩選吧都為「全部」
+const regionNow = ref(regionBtns[0]) // 當前選取區域
+const trafficNow = ref(trafficBtns[0]) // 當前選取交通
+const timeNow = ref(timeBtns[0]) // 當前選取時間
+const typeNow = ref(typeBtns[0]) // 當前選取類型
 
 
 
+// 1 條件過濾
+const filteredTrails = computed(() => {
+  return trails.value.filter((trail) => {
+    const matchRegion = regionNow.value === '全部' || trail.filter.includes(regionNow.value)
+    const matchTraffic = trafficNow.value === '全部' || trail.filter.includes(trafficNow.value)
+    const matchTime = timeNow.value === '全部' || trail.filter.includes(timeNow.value)
+    const matchType = typeNow.value === '全部' || trail.type === typeNow.value
+
+    return matchRegion && matchTraffic && matchTime && matchType
+  })
+})
+
+// 2 關鍵字過濾（在已經篩選過的資料上做）
+const searchText = ref('') // 使用者輸入的字
+const finalResults = computed(() => {
+  const keyword = searchText.value.trim() // 去頭尾空白
+  if (!keyword) return filteredTrails.value // 如果沒有輸入關鍵字,直接跑條件過濾結果
+
+  return filteredTrails.value.filter((trail) => {
+    return (
+      trail.name.includes(keyword) || 
+      trail.region.includes(keyword) ||
+      trail.type.includes(keyword)||
+      trail.filter.some(tag => tag.includes(keyword))
+      
+    )
+  })
+})
+
+// 3 分頁處理（從最終結果中取出某一頁）
+const page = ref(1)
+const perPage = 8
+
+const totalPages = computed(() => {
+  return Math.max(1, Math.ceil(finalResults.value.length / perPage))
+})
+
+const pagedTrails = computed(() => {
+  const start = (page.value - 1) * perPage
+  const end = start + perPage
+  return finalResults.value.slice(start, end)
+})
+
+function goPage(p) {
+  if (p < 1 || p > totalPages.value) return
+  page.value = p
+}
 
 
-//--------- 頁碼 -------------
-const page = ref(1) // 目前頁碼（從1開始）
-const perPage = 8 // 每頁顯示8張卡片
-
-const totalPages = computed(() => Math.max(1, Math.ceil(trails.value.length / perPage))) // 總頁數（依資料動態計算，至少1）
-
-const pagedTrails = computed(() => { // 計算當前頁要顯示的資料切片
-  const start = (page.value - 1) * perPage // 這一頁的起始索引
-  const end = start + perPage // 這一頁的結束索引（不含 end）
-  return trails.value.slice(start, end) // 回傳該頁的最多8筆資料
-}) // 結束 pagedTrails
-
-
-function goPage(p) { // 切換到第 p 頁
-  if (p < 1 || p > totalPages.value) return // 超出範圍則不處理
-  page.value = p // 設定新頁碼
-} // 結束 goPage
 </script>
 
 
@@ -107,7 +135,11 @@ function goPage(p) { // 切換到第 p 頁
     <div class="keywords"> <!-- 關鍵字搜尋區 -->
       <span>關鍵字搜尋</span> <!-- 區塊標題 -->
       <div class="searchWrap"> <!-- 搜尋輸入容器 -->
-        <input type="text" placeholder="想去哪一座山..." /> <!-- 輸入框（自閉合；之後可綁 v-model） -->
+        <input 
+        v-model="searchText"
+        type="text" 
+        placeholder="想去哪一座山..." 
+        />
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"> <!-- 放大鏡圖示（SVG 容器） -->
           <path
             fill="currentColor"
@@ -131,12 +163,13 @@ function goPage(p) { // 切換到第 p 頁
 
   <div class="result"> <!-- 搜尋結果區塊 -->
     <h2>搜尋結果</h2> <!-- 標題 -->
+    <p>有 {{ finalResults.length }} 路線資料</p>
     <div class="headLine"></div> <!-- 分隔線 -->
 
     <p v-if="loading">資料載入中…</p> <!-- 載入中顯示 -->
     <p v-else-if="error">{{ error }}</p> <!-- 發生錯誤顯示 -->
     <div v-else> <!-- 正常顯示區 -->
-      <span v-if="trails.length === 0" class="empty">查無符合的路線，換個條件試試</span> <!-- 無資料提示 -->
+      <p v-if="finalResults.length === 0" class="noResult">查無符合的路線，<br>換個條件試試吧QQ</p> <!-- 無資料提示 -->
 
       <ul class="totalCard" v-else> <!-- 有資料才顯示卡片清單 -->
         <li class="card" v-for="trail in pagedTrails" :key="trail.id"> <!-- 只渲染當前頁的8張卡片 -->
@@ -146,13 +179,13 @@ function goPage(p) { // 切換到第 p 頁
             <span>{{ trail.region }}</span> <!-- 所在區域 -->
           </div> <!-- meta 結束 -->
           <div class="tags"> <!-- 標籤列 -->
-            <span v-for="tag in trail.tags" :key="tag">{{ tag }}</span> <!-- 類型標籤 -->
+            <span >{{ trail.type }}</span> <!-- 類型標籤 -->
             <span>{{ trail.difficulty }}</span> <!-- 難度標籤 -->
           </div> <!-- tags 結束 -->
         </li> <!-- 單一卡片結束 -->
       </ul> <!-- 卡片清單結束 -->
 
-      <div class="pager" v-if="totalPages > 1"> <!-- 分頁器（多頁時才出現） -->
+      <div class="pager" v-if="finalResults.length > 0"> <!-- 分頁器（有符合的結果就會出現） -->
         <button :disabled="page === 1" @click="goPage(page - 1)">上一頁</button> <!-- 上一頁 -->
         <button
           v-for="p in totalPages"
@@ -173,7 +206,7 @@ body { // 全頁背景色
 </style>
 
 <style scoped lang="scss"> /* 元件私有樣式 */
-@import '../assets/styles/main.scss';
+@import '../../assets/styles/main.scss';
 
 .filterBar{ // 篩選列容器
   width: 100%; // 滿版寬
@@ -267,29 +300,47 @@ button{ // 通用按鈕樣式
 
 }
 
-h2{ //搜尋結果標題
-  font-size: $pcFont-H3;
-  font-weight: $medium;
-}
 
 
 
-.headLine{ // 分隔線
-  height: 0.5px; // 高度
-  width: 90%; // 寬度
-  background-color: #333; // 顏色
-  margin:20px 0; // 上下間距
-  float: right; // 右浮動
-  overflow: hidden; // 隱藏溢出
-}
+
+
 
 .result{ // 搜尋結果外框
   width: 100%;
   max-width: 1200px;
   margin: auto;
-  margin-top: 32px; // 與上方間距
+  margin-top: 60px; // 與上方間距
 
   // border:2px solid #ff0404;
+
+  h2{ //搜尋結果標題
+    font-size: $pcFont-H3;
+    font-weight: $medium;
+    }
+
+  h2+p{
+    margin-top: 10px;
+    color: #666;
+    font-size: 14px;
+  }
+  .noResult{ // 沒有任何符合條件的山
+    // border: 2px solid red;
+    margin-top: 100px;
+    text-align: center;
+    font-weight: $medium;
+    font-size: $pcFont-p-m;
+    line-height: $linHeight-p-150;
+  }
+
+  .headLine{ // 分隔線
+    height: 0.5px; // 高度
+    width: 90%; // 寬度
+    background-color: #333; // 顏色
+    margin:20px 0; // 上下間距
+    float: right; // 右浮動
+    overflow: hidden; // 隱藏溢出
+  }
 }
 
 .totalCard{ /* 卡片清單（ul） */
@@ -300,7 +351,7 @@ h2{ //搜尋結果標題
   max-width: 1200px;
   margin: auto;
   min-height: 600px; // 最小高度避免跳動
-  margin-top: 32px; // 與標題間距
+  margin-top: 52px; // 與標題間距
   // border:2px solid #1115e7; 
 
   display: flex; // 彈性排列
@@ -328,6 +379,7 @@ h2{ //搜尋結果標題
     display: block; // 移除底部空隙
     width: 100%; // 滿寬
     height: 60%; // 固定高度
+    max-height: 168px;
     object-fit: cover; // 充滿容器並裁切
   }
   .meta{ // 文字區
@@ -362,7 +414,8 @@ h2{ //搜尋結果標題
     gap: 8px; // 間距
     span{ // 單一標籤
       font-weight: $semiBold;
-      border: 1px solid #666; // 邊框
+      color: $tag;
+      border: 1.5px solid $tag; // 邊框
       padding: 2px 8px; // 內距
       border-radius: 4px; // 圓角
       white-space: nowrap; // 避免換行
@@ -371,7 +424,7 @@ h2{ //搜尋結果標題
 }
 
 .pager{ // 分頁器外框
-  margin-top: 16px; // 與卡片清單距離
+  margin-top: 32px; // 與卡片清單距離
   // border: 1px solid yellow;
   text-align: center;
 }
