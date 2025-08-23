@@ -30,7 +30,6 @@
                 <ul class="menu-list">
                     <li v-for="(item, index) in menuItems" :key="index" class="menu-item">
                         <div class="menu-link" type="button" @click="go(item);routerTo(item)">{{ item.label }}</div>
-                        <!--  -->
                     </li>
                 </ul>
                 <div class="copyright">© 2025 MountainPeak.</div>
@@ -41,14 +40,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'//
+import { useRouter } from 'vue-router'
 import gsap from 'gsap'
-const router = useRouter() //
+const router = useRouter() 
 
 const isOpen = ref(false)
 const panelRef = ref(null)
 const overlayRef = ref(null)
-function routerTo(item){  //
+function routerTo(item){ 
   router.push(`/${item.path}`);
 }
 

@@ -64,7 +64,7 @@ const props = defineProps({
 
 const emit = defineEmits(['cta-click'])
 
-const dateText = computed(() => props.item?.date ?? '')
+const dateText = computed(() => props.item?.date)
 
 function handleCtaClick() {
   emit('cta-click', props.item)
