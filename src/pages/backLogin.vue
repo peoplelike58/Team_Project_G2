@@ -38,7 +38,7 @@
     function handleLogin() {
         if (form.username === 'admin' && form.password === 'admin') {
             localStorage.setItem('auth', 'true')
-            router.push('/home')
+            router.push('/admin/home')
         } else {
             ElMessage.error('帳號或密碼錯誤')
         }

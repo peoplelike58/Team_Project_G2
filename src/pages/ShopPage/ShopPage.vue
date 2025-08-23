@@ -91,10 +91,12 @@ const handlePageChange = (page) => {
 @import '@/assets/styles/othermixins.scss';
 
 main{
+    background-color: #fff;
     section{
     padding-bottom: 40px;
     width: 1200px;
     margin: auto;
+    
     }
 }
 

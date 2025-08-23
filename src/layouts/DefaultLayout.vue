@@ -10,7 +10,7 @@
         text-color="#e6f3ea"
         active-text-color="#ffd04b"
       >
-        <el-menu-item index="/home">首頁</el-menu-item>
+        <el-menu-item index="/admin/home">首頁</el-menu-item>
         <el-menu-item index="/admin/members">會員管理</el-menu-item>
         <el-menu-item index="/admin/orders">訂單管理</el-menu-item>
         <el-menu-item index="/admin/products">商品管理</el-menu-item>

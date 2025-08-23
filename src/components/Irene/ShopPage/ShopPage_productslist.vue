@@ -163,28 +163,28 @@ const pagedProducts = computed(() => {
 
 /* 標題 + 排序 */
 .products_view{
-    flex: 1;
-    @include flexcenter(40px,column);
+  flex: 1;
+  @include flexcenter(40px,column);
 }
 .products_title{
-    @include flexcenter(auto,row);
-    width: 100%;
-    justify-content: space-between;
-    h2{
-        font-size: $pcFont-H2;
-        font-weight: $semiBold;
-        line-height: $lineHeight-p-200;
-    }
-    label{
-        font-size: $pcFont-H4;
-    }
-    select{
-        width: 200px;
-        padding: 5px 10px;
-        margin-left: 5px;
-        border-radius: 4px;
-        @include border(#ccc);
-    }
+  @include flexcenter(auto,row);
+  width: 100%;
+  justify-content: space-between;
+  h2{
+      font-size: $pcFont-H2;
+      font-weight: $semiBold;
+      line-height: $lineHeight-p-200;
+  }
+  label{
+      font-size: $pcFont-H4;
+  }
+  select{
+      width: 200px;
+      padding: 5px 10px;
+      margin-left: 5px;
+      border-radius: 4px;
+      @include border(#ccc);
+  }
 }
 
 

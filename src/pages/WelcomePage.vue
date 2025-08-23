@@ -3,9 +3,8 @@
 </script>
 
 <template>
-    <RouterLink to="/home">前台</RouterLink>
-    <RouterLink to="/">後台</RouterLink>
-
+    <RouterLink to="/homepage">前台</RouterLink>
+    <RouterLink to="/login">後台</RouterLink>
 </template>
 
 
