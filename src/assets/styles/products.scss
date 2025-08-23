@@ -1,0 +1,37 @@
+//Irene
+
+/*   flex 置中+間距*/
+@mixin flexcenter($gap,$direction){
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: ($gap);
+    flex-direction: ($direction);
+}
+/* btn 樣式歸零*/
+@mixin btn($radius){
+    background-color: #fff;
+    border: none;
+    border-radius: $radius;
+    cursor: pointer;
+}
+/* img初始化、配合外層div樣式調整 */
+@mixin img{
+    display: block;
+    width: 100%;
+}
+/* 卡片圖片樣式 */
+@mixin product_card_img($width,$height,$radius){
+    height: $height;
+    width: $width;
+    border-radius: $radius;
+    overflow: hidden;
+}
+
+@mixin border{
+    border: 1px solid #ccc;
+}
+
+@mixin grid{
+    
+}

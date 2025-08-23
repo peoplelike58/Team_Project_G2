@@ -1,21 +1,7 @@
-
-<template>
-  <MyChallenge />
-</template>
-
 <script setup>
 import MyChallenge from '@/pages/myChallenge.vue'
-// import { RouterLink, RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
+
 </script>
-
-
-<!-- 
-<template>
-    <RouterLink />
-    <RouterView />
-    <homePage />
-</template>
 
 
 <style scoped>

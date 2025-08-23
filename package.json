@@ -12,9 +12,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "leaflet": "^1.9.4",
     "gsap": "^3.13.0",
+>>>>>>> dev
     "element-plus": "^2.10.7",
     "mitt": "^3.0.1",
     "pinia": "^3.0.3",
