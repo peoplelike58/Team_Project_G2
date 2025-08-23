@@ -1,6 +1,6 @@
 <template>
     <section v-for="rank in ranks" :key="rank.rank" class="nomb">
-        <div class="personInfo" @click="op">
+        <div class="personInfo" @click="toggle(rank.rank)">
             <div class="personInfoTitle">
                 <img :src="`/images/myChallenge/${rank.image}`" alt="" class="head">
                 <h4 class="place">{{ rank.rank }}<br />{{ rank.icon }}</h4>
@@ -10,7 +10,8 @@
                 <img src="../../assets/images/mychallenge/down.png" alt="">
             </div>
         </div>
-        <div class="totaScore">
+        <transition name="dropdown">
+        <div class="totaScore" v-show="openItem == rank.rank">
             <div class="nombScore">
                 <article>
                     <p>總累積高度</p>
@@ -36,6 +37,7 @@
                 </article>
             </div>
         </div>
+        </transition>
     </section>
 </template>
 
@@ -50,8 +52,17 @@ import { ref, reactive } from 'vue'
         {image:'head5.png', rank:'第五名', icon:'', name: 'Pei', height:5013, kilo:4128, time:413, big:23, small:18 },
     ])
     
-    // const openSet = ref(new set())
-    
+
+    // 控制手風琴開關
+    const openItem = ref(null)
+
+    const toggle = (index) => {
+        if(openItem.value == index){
+            openItem.value = null
+        }else{
+            openItem.value = index
+        }
+    }
     
 </script>
 
@@ -60,13 +71,15 @@ import { ref, reactive } from 'vue'
     
     .nomb{
         border-bottom: 1px dotted $black-14;
-
+        
         .personInfo{
             display: flex;
             justify-content: space-between;
             margin-top: 24px;
+            margin-bottom: 12px;
             align-items: center;
-        
+            cursor: pointer;
+            
             .personInfoTitle{
                 display: flex;
                 align-items: center;
@@ -108,15 +121,12 @@ import { ref, reactive } from 'vue'
                 h4{
                     font-size: $pcFont-H4;
                     font-weight: $semiBold;
-                    line-height: $linHeight-p-150;
+                    line-height: $lineHeight-p-150;
                 }
             }
 
             .allow{
 
-                img{
-                    cursor: pointer;
-                }
             }
         }
     
@@ -144,7 +154,7 @@ import { ref, reactive } from 'vue'
         p{
             font-size: $pcFont-p-s;
             font-weight: $bold;
-            line-height: $linHeight-p-150;
+            line-height: $lineHeight-p-150;
 
             span{
                 font-size: $pcFont-H1-m;
@@ -152,6 +162,15 @@ import { ref, reactive } from 'vue'
                 line-height: $lineHeight-title-120;
             }
         }
+    }
+
+    .dropdown-enter-active{
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-enter-from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
 
 </style>

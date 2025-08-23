@@ -1,6 +1,6 @@
 <template>
-    <section class="mychallengeHistroy" v-show="isVisible">
-        <div class="back">
+    <section class="mychallengeHistroy">
+        <div class="back" @click="closeHistory">
             <img src="../../assets/images/mychallenge/left.png" alt="">
             <h4>返回</h4>
         </div>
@@ -12,26 +12,28 @@
             </div>
             <article class="myhistoryMountain" v-for="history in histories">
                 <div class="mountainTitle">
-                    <div class="mountainTitleLeft">
+                    <div class="mountainTitleLeft" @click="toggle(history.name)">
                         <h4 class="mountain">{{ history.name }}</h4>
                         <h4>{{ history.date }}</h4>
                     </div>
                     <img src="../../assets/images/mychallenge/down.png" alt="">
                 </div>
-                <div class="totalScore">
-                    <div class="total">
-                        <p>[累積高度]</p>
-                        <p><span>{{ history.height }}</span> m</p>
+                <transition name="dropdown">
+                    <div class="totalScore"  v-show="openItem == history.name">
+                        <div class="total">
+                            <p>[累積高度]</p>
+                            <p><span>{{ history.height }}</span> m</p>
+                        </div>
+                        <div class="total">
+                            <p>[累積里程]</p>
+                            <p><span>{{ history.kilo }}</span> km</p>
+                        </div>
+                        <div class="total">
+                            <p>[累積時間]</p>
+                            <p><span>{{ history.time }}</span> hr</p>
+                        </div>
                     </div>
-                    <div class="total">
-                        <p>[累積里程]</p>
-                        <p><span>{{ history.kilo }}</span> km</p>
-                    </div>
-                    <div class="total">
-                        <p>[累積時間]</p>
-                        <p><span>{{ history.time }}</span> hr</p>
-                    </div>
-                </div>
+                </transition>
             </article>
         </div>
     </section>
@@ -48,7 +50,24 @@ import { ref, reactive } from 'vue'
         {name: '大霸尖山', date:'2025.03.23', height: 317, kilo: 45, time: 8},
     ])
 
-    const isVisible = ref(true)
+    // 控制手風琴開關
+    const openItem = ref(null)
+
+
+
+    const toggle = (index) => {
+        if(openItem.value == index){
+            openItem.value = null
+        }else{
+            openItem.value = index
+        }
+    }
+
+    const emit = defineEmits(['closeHistoryComp'])
+
+    const closeHistory = () => {
+        emit('closeHistoryComp')  // 告訴父組件要關閉 history
+    }
 
 </script>
 
@@ -60,7 +79,8 @@ import { ref, reactive } from 'vue'
 
         .back{
             display: flex;
-            align-items: center;    
+            align-items: center; 
+            cursor: pointer;   
             
             img{
                 margin-right: 24px;
@@ -98,7 +118,7 @@ import { ref, reactive } from 'vue'
             h3{
                 font-size: $pcFont-H3;
                 font-weight: $bold;
-                line-height: $linHeight-p-150;
+                line-height: $lineHeight-p-150;
             }
         }
 
@@ -110,6 +130,7 @@ import { ref, reactive } from 'vue'
                 justify-content: space-between;
                 align-items: center;
                 margin: 20px 0;
+                cursor: pointer;
                 
                 .mountainTitleLeft{
                     display: flex;
@@ -170,6 +191,16 @@ import { ref, reactive } from 'vue'
                 }
             }
         }
+    
+    .dropdown-enter-active{
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-enter-from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    
     }
 
 </style>

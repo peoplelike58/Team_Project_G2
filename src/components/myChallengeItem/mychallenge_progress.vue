@@ -1,16 +1,19 @@
 <template>
-    <section class="challengeProgress" v-for="(item, index) in items">
+    <section class="challengeProgress" v-for="(item, index) in goals">
         <div class="title">
             <h3>
                 [{{ item.kind }}]
             </h3>
-            <img src="../../assets/images/mychallenge/goalSet.png" alt="目標設定" @click="openSetgoal(index)">
+            <img src="../../assets/images/mychallenge/goalSet.png"
+            alt="目標設定" 
+            @click="openSetgoal(item)"
+            >
             <mychallenge_setgoal
             v-if="item.openSetgoal"
             :isVisible="item.openSetgoal"
             :item="item"
-            @close="closeSetgoal(index)"
-            @updateGoal="updateGoalRealtime(index, $event)"
+            @close="closeSetgoal(item, $event)"
+            @updateGoal="updateGoal(item, $event)"
             style="z-index: 20;
             "/>
         </div>
@@ -18,39 +21,52 @@
         <div class="flagArea">
             <div class="line">
             </div>
-            <img src="../../assets/images/mychallenge/flag.png" alt="旗子">
+            <img src="../../assets/images/mychallenge/flag.png" alt="旗子" 
+                :style="{ transform: imgPosition(item) }">
         </div>
     </section>
 </template>
 
 <script setup>
-import { ref,computed } from 'vue'
-import mychallenge_setgoal from './mychallenge_setgoal.vue'
-    
-    const items = ref([
-        {kind:'大百岳', done: 1, goal: 10, openSetgoal: false},
-        {kind:'小百岳', done: 2, goal: 10, openSetgoal: false }
-    ])
+import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useGoalStore } from '@/stores/goalStore'
 
+import mychallenge_setgoal from './mychallenge_setgoal.vue'
+
+const goalStore = useGoalStore()
+goalStore.initDefault()
+
+// 把 goals 轉成 reactive 引用
+const { goals } = storeToRefs(goalStore)
 
     // 開啟 <mychallenge_setgoal />
-    const openSetgoal = (index) => {
-        items.value[index].openSetgoal = true
+    const openSetgoal = (item) => {
+        item.openSetgoal = true
     }
 
     // 即時更新目標值（不關閉彈窗）
-    const updateGoalRealtime = (index, newGoal) => {
-        items.value[index].goal = newGoal
+    const updateGoal = (item, newGoal) => {
+        goalStore.updateGoal(item.kind, newGoal)
     }
 
     // 關閉 <mychallenge_setgoal />
-    const closeSetgoal = (index, data) => {
-    if (data && data.goal) {
-        // 確保最終提交的值也被更新
-        items.value[index].goal = data.goal
+    const closeSetgoal = (item, data) => {
+        if (data && data.goal) {
+            goalStore.updateGoal(item.kind, data.goal)
+        }
+        item.openSetgoal = false
     }
-    items.value[index].openSetgoal = false
-}
+
+    // 計算圖片應該前進的長度（依照每個 item 自己的 done/goal）
+    const imgPosition = (item) => {
+        if (!item.goal || item.goal <= 0) return "translateX(0px)"
+        const ratio = Math.min(item.done / item.goal, 1)
+        const lineLength = 553
+        const flagWidth = 41
+        const maxDistance = lineLength - flagWidth
+        return `translateX(${ratio * maxDistance}px)`
+    }
 
 </script>
 
@@ -68,7 +84,7 @@ import mychallenge_setgoal from './mychallenge_setgoal.vue'
             h3{
                 font-size: $pcFont-H3;
                 font-weight: $semiBold;
-                line-height: $linHeight-p-150;
+                line-height: $lineHeight-p-150;
             }
             
             img{
@@ -81,12 +97,12 @@ import mychallenge_setgoal from './mychallenge_setgoal.vue'
         p{
             font-size: $pcFont-p-s;
             font-weight: $bold;
-            line-height: $linHeight-p-150;
+            line-height: $lineHeight-p-150;
             
             span{
                 font-size: $pcFont-H1-m;
                 font-weight: $semiBold;
-                line-height: $linHeight-p-150;
+                line-height: $lineHeight-p-150;
             }
         }
 
