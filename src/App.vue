@@ -2,6 +2,8 @@
 <template>
   <!-- <MyChallenge /> -->
   <routesPage />
+  <!-- <trailDetail /> -->
+ 
 
 
 
@@ -11,6 +13,7 @@
 <script setup>
   // import MyChallenge from './pages/myChallenge.vue';
   import routesPage from './pages/routesPage.vue';
+  // import trailDetail from './pages/trailDetail.vue';
 
 </script>
 

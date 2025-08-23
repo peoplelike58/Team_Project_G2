@@ -10,7 +10,7 @@ let map // 宣告在外面，讓後面可以存取
 
 onMounted(() => {
   // 初始化地圖
-  map = L.map(mapBox.value).setView([24.457743, 121.258031], 15)
+  map = L.map(mapBox.value).setView([24.457743, 121.258031], 15) // 要串接trail.longitude 和 trail.latitude
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap"
   }).addTo(map)
@@ -58,7 +58,7 @@ watch(goPage, (newPage) => {
             <ul class="detail">
                 <li>
                     <span>地區</span>
-                    <p>新竹縣尖石鄉／苗栗縣泰安鄉</p>
+                    <p>新竹縣尖石鄉／苗栗縣泰安鄉</p> <!-- 要串接 trail.region -->
                 </li>
 
                 <li>
@@ -73,20 +73,20 @@ watch(goPage, (newPage) => {
                         />
                         
                     </span>
-                    <p>難</p>
+                    <p>難</p> <!-- 要串接 trail.level -->
                 </li>
 
                 <li>
                     <span>交通</span>
-                    <p>需開車前往</p>
+                    <p>需開車前往</p> <!-- 要串接 trail.traffic -->
                 </li>
                 <li>
                     <span>里程</span>
-                    <p>單程13公里</p>
+                    <p>單程13公里</p> <!-- 要串接 trail.long -->
                 </li>
                 <li>
                     <span>建議時間</span>
-                    <p>3天2夜</p>
+                    <p>3天2夜</p> <!-- 要串接 trail.time -->
                 </li>
             </ul>
 
