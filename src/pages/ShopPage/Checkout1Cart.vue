@@ -57,14 +57,14 @@ function goNext(){ router.push('/Shop/info') }
 
             <el-table-column label="" width="140">
                 <template #default="{ row }">
-                <el-image :src="row.image" fit="cover" style="width:120px;height:80px;border-radius:6px;" />
+                <el-image :src="row.image" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
                 </template>
             </el-table-column>
 
             <el-table-column prop="name" label="商品" min-width="220">
                 <template #default="{ row }">
                 <div class="name">{{ row.name }}</div>
-                <div class="sku">尺寸：{{ row.size }}　顏色：{{ row.color }}</div>
+                <div class="sku">尺寸：{{ row.size }} 顏色：{{ row.color }}</div>
                 </template>
             </el-table-column>
 
@@ -125,18 +125,15 @@ main{
         }
     }
 }
-
 .toolbar{
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    :deep(.el-checkbox__label,.el-button>span){
-        font-size: 20px;
-
-
-
+    :deep(.el-checkbox__label){
+        font-size: $black-14;
     }
-
+    :deep(.el-button>span){
+        font-size: $black-14;
+    }
 }
-
 </style>
