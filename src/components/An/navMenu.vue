@@ -49,6 +49,7 @@ const overlayRef = ref(null)
 const menuItems = [
     { label: '百岳之書', path: '/peaks' },
     { label: '揪上山', path: '/groups' },
+    { label: '揪安心', path: '/safe' },
     { label: '路線規劃', path: '/planner' },
     { label: '山腳雜貨店', path: '/store' },
     { label: '會員登入', path: '/login' },
