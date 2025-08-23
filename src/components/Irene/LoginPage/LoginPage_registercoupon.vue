@@ -60,7 +60,9 @@ defineExpose({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/assets/styles/othermixins.scss';
+
 /* 彈窗遮罩 */
 .modal-overlay {
   position: fixed;

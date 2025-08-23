@@ -330,7 +330,7 @@ button{ // 通用按鈕樣式
     text-align: center;
     font-weight: $medium;
     font-size: $pcFont-p-m;
-    line-height: $linHeight-p-150;
+    line-height: $lineHeight-p-150;
   }
 
   .headLine{ // 分隔線

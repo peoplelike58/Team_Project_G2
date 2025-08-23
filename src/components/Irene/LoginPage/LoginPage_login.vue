@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 登入模態視窗 -->
+    <!-- 登入視窗 -->
     <div v-if="isOpen" class="modal-overlay" @click="closeModal">
       <div class="modal-container" @click.stop>
         <!-- 關閉按鈕 -->
@@ -131,7 +131,8 @@ const handleSocialLogin = (provider) => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/assets/styles/othermixins.scss';
 /* Demo 容器 */
 .demo-container {
   display: flex;
