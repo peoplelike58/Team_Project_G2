@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 
 
-const pics = [
+const pics = [ // 需要串接 trail.detailUrl
   '/img/trails/1.jpg',
   '/img/trails/2.jpg',
   '/img/trails/3.jpg'
@@ -70,8 +70,8 @@ onBeforeUnmount(stopAutoPlay)
 
 <template>
   <div class="routeContent">
-    <h3>大霸尖山</h3>
-    <span>新竹縣尖石鄉 苗栗縣泰安鄉</span>
+    <h3>大霸尖山</h3> <!-- 需串接 trail.name -->
+    <span>新竹縣尖石鄉 苗栗縣泰安鄉</span> <!-- 需串接 trail.region -->
 
     <div class="mainContent">
       <div
@@ -104,7 +104,7 @@ onBeforeUnmount(stopAutoPlay)
         </div>
       </div>
 
-      <p>
+      <p> <!-- 需串接 trail.introduce -->
         　　大霸尖山因其宏偉的岩柱外型，被譽為「帝王之山」，為台灣最具代表性的百岳之一。<br><br>
         　　登頂過程需要穿越林道、溪谷與稜線，是體力與毅力的挑戰。沿途風景原始壯麗，常與小霸尖山、伊澤山、加利山連走，是北部經典縱走路線之一。
       </p>
