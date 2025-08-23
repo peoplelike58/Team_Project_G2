@@ -148,7 +148,7 @@ import { ref } from 'vue'
                 p{
                     font-size: $pcFont-p-s;
                     font-weight: $bold;
-                    line-height: $linHeight-p-150;
+                    line-height: $lineHeight-p-150;
                     display: block;
                     
                     span{

@@ -48,7 +48,7 @@ import { ref,computed } from 'vue'
             h3{
                 font-size: $pcFont-H3;
                 font-weight: $semiBold;
-                line-height: $linHeight-p-150;
+                line-height: $lineHeight-p-150;
             }
             
             img{
@@ -61,12 +61,12 @@ import { ref,computed } from 'vue'
         p{
             font-size: $pcFont-p-s;
             font-weight: $bold;
-            line-height: $linHeight-p-150;
+            line-height: $lineHeight-p-150;
             
             span{
                 font-size: $pcFont-H1-m;
                 font-weight: $semiBold;
-                line-height: $linHeight-p-150;
+                line-height: $lineHeight-p-150;
             }
         }
 

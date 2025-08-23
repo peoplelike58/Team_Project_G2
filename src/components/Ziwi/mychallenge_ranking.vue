@@ -108,7 +108,7 @@ import { ref, reactive } from 'vue'
                 h4{
                     font-size: $pcFont-H4;
                     font-weight: $semiBold;
-                    line-height: $linHeight-p-150;
+                    line-height: $lineHeight-p-150;
                 }
             }
 
@@ -144,7 +144,7 @@ import { ref, reactive } from 'vue'
         p{
             font-size: $pcFont-p-s;
             font-weight: $bold;
-            line-height: $linHeight-p-150;
+            line-height: $lineHeight-p-150;
 
             span{
                 font-size: $pcFont-H1-m;

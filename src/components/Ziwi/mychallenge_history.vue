@@ -98,7 +98,7 @@ import { ref, reactive } from 'vue'
             h3{
                 font-size: $pcFont-H3;
                 font-weight: $bold;
-                line-height: $linHeight-p-150;
+                line-height: $lineHeight-p-150;
             }
         }
 

@@ -74,7 +74,7 @@
             .mychallenge-acheve h2{
                 font-size: $pcFont-H2;
                 font-weight: $semiBold;
-                line-height: $linHeight-p-150;
+                line-height: $lineHeight-p-150;
                 margin-bottom: 60px;
             }
         }
@@ -89,7 +89,7 @@
             h2{
                 font-size: $pcFont-H2;
                 font-weight: $semiBold;
-                line-height: $linHeight-p-150;
+                line-height: $lineHeight-p-150;
                 text-align: center;
             }
         }
