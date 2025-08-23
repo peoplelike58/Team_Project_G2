@@ -4,13 +4,22 @@
       <!-- <img class="logo" src="/images/logo.svg" alt="logo" /> -->
       <span>MountainPeak 後台</span>
     </div>
-    <!-- <div class="actions">
-      <el-button size="small" type="primary" @click="$router.push('/admin/events')">活動</el-button>
-    </div> -->
+    <div class="actions">
+      <el-button type="danger" @click="logout">登出</el-button>
+    </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+// 登出按鈕動作
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+function logout() {
+  localStorage.removeItem('auth')
+  router.push('/login')
+}
+</script>
 
 <style scoped lang="scss">
 .header {

@@ -1,9 +1,17 @@
 <template>
-  <RouterView />
+    <!-- <TogetherPage/> -->
+    <!-- <EventCardInfo/> -->
+    <!-- <DefaultLayout/> -->
+     <!-- <BackLogin/> -->
+      <router-view/>
 </template>
 
-
 <script setup>
-import { RouterView } from 'vue-router';
+// import BackLogin from './pages/backLogin.vue';
+// import DefaultLayout from './layouts/DefaultLayout.vue';
+// import EventCardInfo from './components/togetherItem/eventCardInfo.vue';
+// import TogetherPage from './pages/togetherPage.vue';
+
+
 
 </script>
