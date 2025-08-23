@@ -1,7 +1,8 @@
+<!-- src/layouts/DefaultLayout.vue -->
 <template>
   <div class="layout">
     <aside class="sidebar">
-      <AppHeader />
+      <BackHeader />
       <el-menu
         :router="true"
         :default-active="$route.path"
@@ -9,7 +10,7 @@
         text-color="#e6f3ea"
         active-text-color="#ffd04b"
       >
-      <el-menu-item index="/home">🏔 首頁</el-menu-item>
+        <el-menu-item index="/admin/home">首頁</el-menu-item>
         <el-menu-item index="/admin/members">會員管理</el-menu-item>
         <el-menu-item index="/admin/orders">訂單管理</el-menu-item>
         <el-menu-item index="/admin/products">商品管理</el-menu-item>
@@ -22,14 +23,14 @@
     </aside>
     <main class="main">
       <router-view />
-      <AppFooter />
+      <BackFooter />
     </main>
   </div>
 </template>
 
 <script setup>
-import AppHeader from '@/components/layout/backHeader.vue'
-import AppFooter from '@/components/layout/backFooter.vue'
+import BackHeader from '@/components/layout/backHeader.vue'
+import BackFooter from '@/components/layout/backFooter.vue'
 </script>
 
 <style lang="scss" scoped>
@@ -43,7 +44,7 @@ import AppFooter from '@/components/layout/backFooter.vue'
 .sidebar {
   background: #24452f;
   color: #fff;
-  border-right: 1px solid rgba(255,255,255,0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
 }

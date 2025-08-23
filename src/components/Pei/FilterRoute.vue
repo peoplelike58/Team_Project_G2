@@ -3,6 +3,7 @@
 import { ref, computed } from 'vue'
 import trailsData from '@/assets/json/trails.json'
 
+
 const loading = ref(false) // 資料讀取狀態
 const error = ref('') // 錯誤訊息
 const trails = ref(trailsData) // 原始資料
@@ -163,7 +164,7 @@ function goPage(p) {
 
   <div class="result"> <!-- 搜尋結果區塊 -->
     <h2>搜尋結果</h2> <!-- 標題 -->
-    <p>有 {{ finalResults.length }} 路線資料</p>
+    <p>有 {{ finalResults.length }} 筆路線資料</p>
     <div class="headLine"></div> <!-- 分隔線 -->
 
     <p v-if="loading">資料載入中…</p> <!-- 載入中顯示 -->
@@ -197,6 +198,8 @@ function goPage(p) {
       </div> <!-- 分頁器結束 -->
     </div> <!-- 正常顯示區結束 -->
   </div> <!-- 搜尋結果區塊結束 -->
+
+
 </template>
 
 <style lang="scss"> /* 全域樣式（非 scoped） */
@@ -330,7 +333,7 @@ button{ // 通用按鈕樣式
     text-align: center;
     font-weight: $medium;
     font-size: $pcFont-p-m;
-    line-height: $linHeight-p-150;
+    line-height: $lineHeight-p-150;
   }
 
   .headLine{ // 分隔線

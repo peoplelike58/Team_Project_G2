@@ -1,0 +1,362 @@
+[
+  {
+    "id": 1,
+    "name": "三人帳篷輕量版",
+    "price": 3200,
+    "image": "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "輕量化設計，適合登山健行使用，搭建快速。",
+    "category": "帳篷"
+  },
+  {
+    "id": 2,
+    "name": "雙人睡袋加厚保暖",
+    "price": 1800,
+    "image": "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "保暖加厚設計，冬季露營也能舒適入睡。",
+    "category": "睡袋"
+  },
+  {
+    "id": 3,
+    "name": "登山健行背包 45L",
+    "price": 2500,
+    "image": "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "容量適中，透氣背負系統，長途健行必備。",
+    "category": "登山杖"
+  },
+  {
+    "id": 4,
+    "name": "鋁合金登山杖",
+    "price": 750,
+    "image": "https://images.unsplash.com/photo-1596477602103-9c78235a9c5e?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "輕巧堅固設計，減少膝蓋壓力，適合各種路段。",
+    "category": "登山杖"
+  },
+  {
+    "id": 5,
+    "name": "不鏽鋼保溫水瓶 800ml",
+    "price": 600,
+    "image": "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "保溫長達 12 小時，冷熱飲皆適用。",
+    "category": "水瓶"
+  },
+  {
+    "id": 6,
+    "name": "快乾登山褲",
+    "price": 1200,
+    "image": "https://images.unsplash.com/photo-1528701800489-20be9c6b3a48?w=600&h=600&fit=crop&auto=format",
+    "gender": "male",
+    "description": "速乾耐磨布料，透氣舒適，戶外活動佳選。",
+    "category": "登山杖"
+  },
+  {
+    "id": 7,
+    "name": "防風防水外套",
+    "price": 2800,
+    "image": "https://images.unsplash.com/photo-1542060748-10c28b62716f?w=600&h=600&fit=crop&auto=format",
+    "gender": "female",
+    "description": "三層防護設計，輕便保暖，風雨無懼。",
+    "category": "登山杖"
+  },
+  {
+    "id": 8,
+    "name": "登山頭燈可充電",
+    "price": 950,
+    "image": "https://images.unsplash.com/photo-1508780709619-79562169bc64?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "高亮度 LED 照明，USB 可重複充電。",
+    "category": "登山杖"
+  },
+  {
+    "id": 9,
+    "name": "戶外折疊椅",
+    "price": 1100,
+    "image": "https://images.unsplash.com/photo-1593032465171-8be0baf6aeb1?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "輕巧可摺疊，露營野餐皆適合攜帶。",
+    "category": "登山杖"
+  },
+  {
+    "id": 10,
+    "name": "行動電源 20000mAh",
+    "price": 1600,
+    "image": "https://images.unsplash.com/photo-1622547748225-abcfc77d1c65?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "大容量電力，支援快充，戶外長時間使用必備。",
+    "category": "登山杖"
+  },
+  {
+    "id": 11,
+    "name": "野營卡式爐",
+    "price": 1300,
+    "image": "https://images.unsplash.com/photo-1617196039280-2dc16e114acf?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "輕便火力強，戶外烹煮最佳選擇。",
+    "category": "登山杖"
+  },
+  {
+    "id": 12,
+    "name": "登山護膝支撐帶",
+    "price": 500,
+    "image": "https://images.unsplash.com/photo-1607400201785-1be3f9fc4ecf?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "舒適貼合，減少運動傷害，有效支撐關節。",
+    "category": "登山杖"
+  },
+  {
+    "id": 13,
+    "name": "防水登山鞋",
+    "price": 3200,
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop&auto=format",
+    "gender": "male",
+    "description": "鞋底防滑抓地力強，雨天路況也能穩健。",
+    "category": "登山鞋"
+  },
+  {
+    "id": 14,
+    "name": "女款透氣登山鞋",
+    "price": 3000,
+    "image": "https://images.unsplash.com/photo-1600185365483-26d7bfa2b02c?w=600&h=600&fit=crop&auto=format",
+    "gender": "female",
+    "description": "輕量透氣設計，長時間行走舒適不悶熱。",
+    "category": "登山鞋"
+  },
+  {
+    "id": 15,
+    "name": "便攜野餐桌",
+    "price": 950,
+    "image": "https://images.unsplash.com/photo-1564758568533-2c1b76c1c6e2?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "折疊收納方便，戶外聚會餐桌必備。",
+    "category": "登山杖"
+  },
+  {
+    "id": 16,
+    "name": "防蚊速乾長袖衫",
+    "price": 1100,
+    "image": "https://images.unsplash.com/photo-1603251579431-804140d89bc8?w=600&h=600&fit=crop&auto=format",
+    "gender": "female",
+    "description": "輕薄透氣材質，防蚊功能戶外必需。",
+    "category": "登山服飾"
+  },
+  {
+    "id": 17,
+    "name": "野營吊床",
+    "price": 1400,
+    "image": "https://images.unsplash.com/photo-1533134486753-c833f0ed4866?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "承重力強，易於安裝，休閒放鬆好選擇。",
+    "category": "登山杖"
+  },
+  {
+    "id": 18,
+    "name": "露營掛燈",
+    "price": 700,
+    "image": "https://images.unsplash.com/photo-1591375275268-72af68a9dbf9?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "暖黃光設計，夜晚露營氛圍最佳拍檔。",
+    "category": "登山杖"
+  },
+  {
+    "id": 19,
+    "name": "野營炊具套裝",
+    "price": 1500,
+    "image": "https://images.unsplash.com/photo-1505577058444-a3dab90d4253?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "鍋具組合齊全，適合多人露營烹煮。",
+    "category": "登山杖"
+  },
+  {
+    "id": 20,
+    "name": "戶外急救包",
+    "price": 800,
+    "image": "https://images.unsplash.com/photo-1600959907703-91b08e7b17b0?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "含急救用品，應對戶外突發狀況。",
+    "category": "登山杖"
+  },
+  {
+    "id": 21,
+    "name": "便攜濾水壺",
+    "price": 900,
+    "image": "https://images.unsplash.com/photo-1592750475338-f86d2b203c38?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "內建濾芯，野外取水也能安心飲用。",
+    "category": "水瓶"
+  },
+  {
+    "id": 22,
+    "name": "保暖羽絨外套",
+    "price": 3600,
+    "image": "https://images.unsplash.com/photo-1612831813722-75a11e7a42c1?w=600&h=600&fit=crop&auto=format",
+    "gender": "male",
+    "description": "高填充羽絨，輕便且保暖效果卓越。",
+    "category": "登山杖"
+  },
+  {
+    "id": 23,
+    "name": "多功能瑞士刀",
+    "price": 1200,
+    "image": "https://images.unsplash.com/photo-1600180758895-d3a4c7a46fcb?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "小巧便攜，含剪刀刀具等多種功能。",
+    "category": "登山杖"
+  },
+  {
+    "id": 24,
+    "name": "輕量羽絨睡袋",
+    "price": 2800,
+    "image": "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "羽絨填充，輕盈保暖，適合冬季登山。",
+    "category": "睡袋"
+  },
+  {
+    "id": 25,
+    "name": "折疊登山刀",
+    "price": 600,
+    "image": "https://images.unsplash.com/photo-1615485737466-7eaca3e06b9d?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "鋒利耐用，方便攜帶，戶外求生必備。",
+    "category": "登山杖"
+  },
+  {
+    "id": 26,
+    "name": "充氣睡墊",
+    "price": 1300,
+    "image": "https://images.unsplash.com/photo-1620083514696-ff3e3e12a2ee?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "輕量便攜，隔絕地面寒氣，睡眠更舒適。",
+    "category": "登山杖"
+  },
+  {
+    "id": 27,
+    "name": "登山繩索 30m",
+    "price": 1700,
+    "image": "https://images.unsplash.com/photo-1605009289189-70fcf47d5f32?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "高強度材質，攀登活動安全保障。",
+    "category": "登山杖"
+  },
+  {
+    "id": 28,
+    "name": "防水手機袋",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1612197526211-1a5d295df1c4?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "完全防水保護，戶外活動手機必備。",
+    "category": "登山杖"
+  },
+  {
+    "id": 29,
+    "name": "折疊餐具套裝",
+    "price": 450,
+    "image": "https://images.unsplash.com/photo-1603398938378-68a0b990a836?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "湯匙叉子餐刀一應俱全，便攜易收納。",
+    "category": "登山杖"
+  },
+  {
+    "id": 30,
+    "name": "防風爐頭",
+    "price": 1000,
+    "image": "https://images.unsplash.com/photo-1506801310323-534be5e7f004?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "火力穩定，抗風設計，戶外烹飪更便利。",
+    "category": "登山杖"
+  },
+  {
+    "id": 31,
+    "name": "戶外折疊桌椅組",
+    "price": 2400,
+    "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "桌椅組合設計，露營聚會更輕鬆。",
+    "category": "登山杖"
+  },
+  {
+    "id": 32,
+    "name": "頭巾防曬帽",
+    "price": 650,
+    "image": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "頭巾式帽簷設計，遮陽透氣。",
+    "category": "登山杖"
+  },
+  {
+    "id": 33,
+    "name": "速乾毛巾",
+    "price": 300,
+    "image": "https://images.unsplash.com/photo-1618224748066-5e5db22bbccf?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "吸水力強，快速晾乾，攜帶方便。",
+    "category": "登山杖"
+  },
+  {
+    "id": 34,
+    "name": "頭燈備用電池",
+    "price": 200,
+    "image": "https://images.unsplash.com/photo-1612198731159-c94e8a70ed40?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "高效能電池，確保頭燈持續使用。",
+    "category": "登山杖"
+  },
+  {
+    "id": 35,
+    "name": "保溫野餐壺",
+    "price": 850,
+    "image": "https://images.unsplash.com/photo-1583337130417-3346a1d3a19b?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "雙層保溫設計，長時間維持飲品溫度。",
+    "category": "水瓶"
+  },
+  {
+    "id": 36,
+    "name": "戶外多功能燒烤架",
+    "price": 2200,
+    "image": "https://images.unsplash.com/photo-1556912167-f556f1f39df1?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "可摺疊收納，戶外烤肉聚會最佳選擇。",
+    "category": "登山杖"
+  },
+  {
+    "id": 37,
+    "name": "登山護手套",
+    "price": 500,
+    "image": "https://images.unsplash.com/photo-1600185364927-86a7fbffbb20?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "防滑耐磨，長途健行保護雙手。",
+    "category": "登山杖"
+  },
+  {
+    "id": 38,
+    "name": "保暖羊毛襪",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1622396481878-6e1f3af87b2f?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "加厚羊毛材質，冬季登山保暖首選。",
+    "category": "登山杖"
+  },
+  {
+    "id": 39,
+    "name": "戶外行動冰箱",
+    "price": 4200,
+    "image": "https://images.unsplash.com/photo-1625941369501-b4f6f0a7d89b?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "保冷持久，適合長時間露營使用。",
+    "category": "登山杖"
+  },
+  {
+    "id": 40,
+    "name": "攜帶式淋浴器",
+    "price": 1900,
+    "image": "https://images.unsplash.com/photo-1582719478171-2f23c7b0b8a3?w=600&h=600&fit=crop&auto=format",
+    "gender": "unisex",
+    "description": "戶外露營隨身淋浴，輕鬆解決清潔問題。",
+    "category": "登山杖"
+  }
+]

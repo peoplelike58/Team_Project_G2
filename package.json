@@ -13,10 +13,11 @@
   },
   "dependencies": {
     "@turf/turf": "^7.2.0",
+    "axios": "^1.11.0",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
-    "element-plus": "^2.10.7",
-    "gsap": "^3.13.0",
     "leaflet": "^1.9.4",
+    "gsap": "^3.13.0",
+    "element-plus": "^2.10.7",
     "mitt": "^3.0.1",
     "pinia": "^3.0.3",
     "sass": "^1.90.0",
