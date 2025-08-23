@@ -95,6 +95,7 @@ function handleCtaClick(item) {
     font-weight: $bold;
     text-decoration: 1px underline;
     text-underline-offset: 10px;
+    cursor: pointer;
 }
 
 </style>

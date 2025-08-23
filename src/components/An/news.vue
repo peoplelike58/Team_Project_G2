@@ -20,7 +20,7 @@
             </ul>
   
             <a href="#" class="view-all" @click.prevent>
-                查看全部
+                查看全部消息
             </a>
         </div>
   

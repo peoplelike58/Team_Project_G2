@@ -29,7 +29,7 @@
             <nav class="right-col">
                 <ul class="menu-list">
                     <li v-for="(item, index) in menuItems" :key="index" class="menu-item">
-                        <div class="menu-link" type="button" @click="go(item)">{{ item.label }}</div>
+                        <RouterLink class="menu-link" type="button" @click="go(item)">{{ item.label }}</RouterLink>
                     </li>
                 </ul>
                 <div class="copyright">© 2025 MountainPeak.</div>

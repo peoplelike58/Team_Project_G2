@@ -7,6 +7,6 @@
     <homePage/>
 </template>
 
-<style scoped lang="scss">
+<!-- <style scoped lang="scss">
     @import 'assets/styles/main.scss';
-</style>
+</style> -->
