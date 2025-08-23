@@ -1,0 +1,40 @@
+[
+    {
+        "id": 1,
+        "date": "2025.08.01",
+        "title": "2025 森遊竹縣｜皮皮獅健走日 × 十二寨探索趣",
+        "imageUrl": "/imgs/activity-1.jpg",
+        "tags": [
+            "品牌活動", "皮皮獅探險隊"
+        ],
+        "ctaUrl": "/activities/1"
+    }, 
+    {
+        "id": 2,
+        "date": "2025.08.15",
+        "title": "仲夏森林親子野餐",
+        "imageUrl": "/imgs/activity-2.jpg",
+        "tags": [
+            "親子", "戶外"
+        ],
+        "ctaUrl": "/activities/2"
+    }, 
+    {
+        "id": 3,
+        "date": "2025.09.01",
+        "title": "山林步道健行日",
+        "imageUrl": "/imgs/activity-3.jpg",
+        "tags": ["品牌活動"],
+        "ctaUrl": "/activities/3"
+    }, 
+    {
+        "id": 4,
+        "date": "2025.09.20",
+        "title": "秋季賞楓攝影小聚",
+        "imageUrl": "/imgs/activity-4.jpg",
+        "tags": [
+            "攝影", "社群"
+        ],
+        "ctaUrl": "/activities/4"
+    }
+]

@@ -25,13 +25,10 @@
                 <h2 class="title-vertical">{{ currentSlide.name }}</h2>
                 <p class="altitude">
                     <digitReel
-                        :to="Number(currentSlide.height)"
-                        :stagger="0"
-                        :loopsArr="[1, 1, 1, 1]"
-                        :durationArr="[1.7, 1.7, 1.7, 1.7]"
-                        :easeArr="['power4.out', 'back.out(1.2)', 'power2.out', 'power1.out']"
-                        :heightArr="[64, 64, 64, 64]"
-                        :delayArr="[0, 0, 0, 0.05]"
+                    :to="Number(currentSlide.height)"
+                    :stagger="0"
+                    :easeArr="['power4.out', 'back.out(1.2)', 'power2.out', 'power1.out']"
+                    :delayArr="[0, 0, 0, 0.05]"
                     />
                     m
                 </p>
@@ -141,9 +138,8 @@
         width: fit-content;
         margin-top: 80px;
 
-        text-decoration: none;
-        padding-bottom: 6px;
-        border-bottom: 1px solid currentColor;
+        text-decoration: 1px underline;
+        text-underline-offset: 10px;
         
         color: #fff;
         opacity: 0.9;
