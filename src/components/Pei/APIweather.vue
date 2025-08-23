@@ -4,8 +4,8 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 // ======= 基本設定 =======
-const token = 'CWA-66252587-7CC5-4C09-BCED-09C2746EFFF1' // 你的 API 金鑰
-const locationName = '仁愛鄉' // 要查詢的鄉鎮
+const token = 'CWA-66252587-7CC5-4C09-BCED-09C2746EFFF1' 
+const locationName = '仁愛鄉' // 要串接trail.locationName(須配合API有提供的地區名)
 const dailyForecast = ref([]) // 濃縮後的每日預報資料（用於畫面）
 
 // ======= 共用工具 =======
