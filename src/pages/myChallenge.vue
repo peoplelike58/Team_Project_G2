@@ -65,7 +65,7 @@
         { name: "能高主峰", kind: "小百岳",  latitude: 24.1028, longitude: 121.2403, icon: "mountain.png"},
         { name: "大霸尖山", kind: "小百岳",  latitude: 24.5167, longitude: 121.2500, icon: "mountain.png"},
         { name: "品田山", kind: "小百岳",  latitude: 24.5056, longitude: 121.2942, icon: "mountain.png"},
-        { name: "奇萊主峰", kind: "小百岳",  latitude: 24.1125, longitude: 121.2828, icon: "mountain.png"}
+        { name: "奇萊主峰", kind: "小百岳",  latitude: 24.1183, longitude: 121.3345, icon: "mountain.png"}
     ])
 
     const openWindows = ref({})
@@ -129,7 +129,6 @@
                 goalStore.addDone(target.kind)
             }
 
-                localStorage.setItem("myGoals", JSON.stringify(progress))
             } else {
                 if (coords && coords.length > 0) {
                     alert(`${mountain}：GPX 沒有登頂紀錄，沒有插旗子！`)
@@ -149,6 +148,7 @@
             }
         })
         recordStore.loadAllRecords()
+        goalStore.loadFromStorage()
         })
 
 </script>

@@ -46,6 +46,15 @@ export const useGoalStore = defineStore("goalStore", {
         target.goal = newGoal
         this.save()
       }
+    },
+    loadFromStorage() {
+      const stored = JSON.parse(localStorage.getItem("myGoals") || "[]")
+      if (stored.length > 0) {
+        this.goals = stored.map(g => ({
+          ...g,
+          openSetgoal: false   // 保證不會因為 F5 自動開視窗
+        }))
+      }
     }
   }
 })

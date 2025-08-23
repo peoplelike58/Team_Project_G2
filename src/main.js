@@ -1,6 +1,5 @@
 import '@/assets/styles/main.scss'
-import 'element-plus/dist/index.css'//element-plus
-import ElementPlus from 'element-plus'
+
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
