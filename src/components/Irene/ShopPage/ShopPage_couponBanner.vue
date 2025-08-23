@@ -22,6 +22,7 @@
 
 <style lang="scss" scoped>
 @import '@/assets/styles/main.scss';
+@import '@/assets/styles/othermixins.scss';
 
 .coupon_btn {
   background-color: #fff;
