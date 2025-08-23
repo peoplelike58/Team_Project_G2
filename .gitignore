@@ -58,3 +58,4 @@ composer.lock
 *.css.map
 
 package-lock.json
+App.vue
