@@ -1,5 +1,16 @@
+
+<template>
+  <!-- <MyChallenge /> -->
+  <routesPage />
+
+
+
+  
+</template>
+
 <script setup>
-import MyChallenge from '@/pages/myChallenge.vue'
+  // import MyChallenge from './pages/myChallenge.vue';
+  import routesPage from './pages/routesPage.vue';
 
 </script>
 
