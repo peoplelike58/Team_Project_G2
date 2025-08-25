@@ -1,10 +1,14 @@
 
 <template>
-  <MyChallenge />
+  <!-- <MyChallenge /> -->
+  <!-- <PeakIntro/> -->
+  <PeakMap/>
 </template>
 
 <script setup>
-  import MyChallenge from './pages/myChallenge.vue';
+  // import PeakIntro from './pages/PeakGuide/PeakIntro.vue';
+  import PeakMap from './pages/PeakGuide/PeakMap.vue';
+  // import MyChallenge from './pages/myChallenge.vue';
 
 
 </script>
