@@ -269,7 +269,7 @@ watch(goPage, (newPage) => {
     }
     
     .btns{/* ul 切換按鈕 */
-        border: 1px solid red;
+        // border: 1px solid red;
         display: flex;
 
         justify-content: center; /* li 置中 */

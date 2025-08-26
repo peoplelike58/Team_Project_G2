@@ -9,6 +9,7 @@ import CarouselPic from '@/components/Pei/CarouselPic.vue';
 import APIweather from '@/components/Pei/APIweather.vue';
 import btnPage from '@/components/Pei/btnPage.vue';
 import Comments from '@/components/Pei/Comments.vue';
+import brandFooter from '@/components/An/footer.vue';
 
 const route = useRoute()
 
@@ -42,6 +43,7 @@ const trail = computed(() => trailsData.find(trail => trail.id === id.value))
     <APIweather :town="trail.town"/>
     <btnPage :trail="trail"/>
     <Comments :id="trail.id"/>
+    <brandFooter/>
     </div>
 
     <div v-else>
