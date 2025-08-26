@@ -76,7 +76,7 @@
 </script>
   
 <style scoped lang="scss">
-    @import '../../assets/styles/main.scss';
+    @import '@/assets/styles/main.scss';
   
     .reels {
         display: inline-flex;

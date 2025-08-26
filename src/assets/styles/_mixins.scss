@@ -1,7 +1,7 @@
 //手機 < 430px
 $m: 430px;   // 手機（<= 430px）
 @mixin m(){ 
-    @media screen and (max-width: $m){ 
+    @media screen and (max-width: $m){
     @content; } 
 }
 

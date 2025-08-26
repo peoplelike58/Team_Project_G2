@@ -3,41 +3,25 @@
     <article class="activity-card">
         <div class="top-content">
             <!-- 日期 -->
-            <slot name="date" :item="item" :dateText="dateText" :index="index">
-                <time class="ac-date">{{ dateText }}</time>
-            </slot>
+            <time class="ac-date">{{ dateText }}</time>
             
             <!-- 圖片 -->
-            <slot name="image" :item="item" :index="index">
-                <img class="ac-img" src="./img/activityTestImg.png" loading="lazy"/>
+            <img class="ac-img" src="./img/activityTestImg.png" loading="lazy"/>
                 <!-- <img class="ac-img" :src="item.imageUrl" loading="lazy" /> -->
-            </slot>
             
             <!-- 標題 -->
-            <slot name="title" :item="item" :title="item.title" :index="index">
-                <h3 class="ac-title">{{ item.title }}</h3>
-            </slot>
+            <h3 class="ac-title">{{ item.title }}</h3>
             
             <!-- 標籤 -->
-            <slot name="tags" :item="item" :tags="item.tags" :index="index">
-                <ul class="ac-tags" v-if="item.tags?.length">
-                    <li v-for="tag in item.tags" :key="tag" class="tag">{{ tag }}</li>
-                </ul>
-            </slot>
+            <ul class="ac-tags" v-if="item.tags?.length">
+                <li v-for="tag in item.tags" :key="tag" class="tag">{{ tag }}</li>
+            </ul>
         </div>
             
         <!-- CTA -->
-        <slot
-        name="cta"
-        :item="item"
-        :ctaUrl="item.ctaUrl"
-        :onCta="handleCtaClick"
-        :index="index"
-        >
-            <a v-if="item.ctaUrl" class="ac-cta" :href="item.ctaUrl" @click.stop="handleCtaClick">
-                查看詳情
-            </a>
-        </slot>
+        <a v-if="item.ctaUrl" class="ac-cta" :href="item.ctaUrl" @click.stop="handleCtaClick">
+            查看詳情
+        </a>
     </article>
 </template>
 
@@ -64,7 +48,7 @@ const props = defineProps({
 
 const emit = defineEmits(['cta-click'])
 
-const dateText = computed(() => props.item?.date)
+const dateText = computed(() => props.item.date)
 
 function handleCtaClick() {
   emit('cta-click', props.item)
@@ -72,7 +56,7 @@ function handleCtaClick() {
 </script>
 
 <style scoped="scoped" lang="scss">
-    @import '../../assets/styles/main.scss';
+    @import '@/assets/styles/main.scss';
 
     /* ========== card ========== */
     .activity-card {

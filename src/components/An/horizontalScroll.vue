@@ -1,21 +1,39 @@
 <template>
     <div class="stack-wrap" ref="wrapRef">
         <article class="card card1" ref="card1Ref">
-            <div class="card-inner">
-                <h2>卡片 A</h2>
-                <p>滑到最左側時保持原位。</p>
+            <div class="badge">BRAND PHILOSOPHY</div>
+            <div class="card-inner-1">
+                    <div class="card1-left-col">
+                        <h1 class="title">山上見</h1>
+                        <h3 class="subtitle">SEE YOU UP THERE</h3>
+                    </div>
+                    <div class="card1-right-col">
+                        <h3 class="content-title">山上見，讓登山更親近</h3>
+                        <p class="content-text">為每一個想親近山林的人而生，我們相信，登山不該只是經驗者的專利，而是每個人都能享受的生活方式。從完整的山岳介紹，帶你了解山林故事與自然之美，到智慧化的路線規劃，幫助你選擇最適合的難度與行程，甚至揪團功能，讓你不再孤單，一起找同伴共享登山的樂趣。不論你是初學者，還是想挑戰更高峰的老手，我們都為你準備好一切。輕鬆開啟你的第一步，一起走入山林，重新連結自己與大自然，我們山上見！</p>
+                    </div>
             </div>
         </article>
         <article class="card card2" ref="card2Ref">
-            <div class="card-inner">
-                <h2>卡片 B</h2>
-                <p>向左滑動並疊在 A 上面。</p>
+            <div class="badge">SEE YOU UP THERE</div>
+            <div class="card-inner-2">
+                <figure class="polaroid left-tilt">
+                    <img src="./img/Mahamayan.jpg"/>
+                </figure>
+
+                <!-- 中間直書文案 -->
+                <div class="vertical-text">
+                    上山去，留下你與山的合影
+                </div>
+
+                <!-- 右側拍立得 -->
+                <figure class="polaroid right-tilt">
+                    <img src="./img/patungkuonu.png"/>
+                </figure>
             </div>
         </article>
         <article class="card card3" ref="card3Ref">
             <div class="card-inner">
-                <h2>卡片 C</h2>
-                <p>最後疊到最上層（在 B 上面）。</p>
+                
             </div>
         </article>
     </div>
@@ -40,7 +58,7 @@
   
         const cardsInOrder = [card1Ref.value, card2Ref.value, card3Ref.value]
   
-        // 初始：第一張保持原位；第二、三張先放在右側螢幕外，開啟 3D 可避免閃爍
+        // 初始：第一張保持原位；第二、三張先放在右側螢幕外
         gsap.set([card2Ref.value, card3Ref.value], { xPercent: 100, force3D: true })
         gsap.set(cardsInOrder, { willChange: 'transform' })
   
@@ -57,10 +75,10 @@
             }
         })
   
-        // 依序把第二張、第三張從右滑入到 0%，疊在上層（z-index 由 CSS 控制）
+        // 第二張、第三張控制
         scrollTimeline
-            .fromTo(card2Ref.value, { xPercent: 80 }, { xPercent: 0 })
-            .fromTo(card3Ref.value, { xPercent: 90 }, { xPercent: 0 })
+            .fromTo(card2Ref.value, { xPercent: 88 }, { xPercent: 6 })
+            .fromTo(card3Ref.value, { xPercent: 94 }, { xPercent: 12 })
   
         // 視窗尺寸變更時，刷新計算，確保 end 正確
         resizeHandler = () => {
@@ -77,69 +95,151 @@
 </script>
   
 <style scoped lang="scss">
-@import '../../assets/styles/main.scss';
-
-:root {
-    --h: 70vh;
-}
+@import '@/assets/styles/main.scss';
 
 /* 主要容器 */
 .stack-wrap {
     position: relative;
+
+    width: 100%;
+    max-width: 1200px;
     height: 100vh;
-    /* 允許用 prop 調整 */
+    margin: 0 auto 160px;
+    
+    border-radius: 8px;
+    box-shadow: 0 8px 33px rgba(0,0,0,0.1);
     overflow: hidden;
-    /* 防止溢出與閃爍 */
-    background: #0f172a;
-    border-radius: 20px;
-    margin: 8vh auto;
-    width: min(1100px, 92vw);
-    box-shadow: 0 10px 30px rgba(0,0,0,.2);
 }
 
-/* 卡片層（全部絕對定位疊在一起） */
+/* 卡片層 */
 .card {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
+
     display: grid;
     place-items: center;
-    padding: 24px;
-    border-radius: 20px;
+    
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    
     backface-visibility: hidden;
     transform: translateZ(0);
 }
 
-.card-inner {
-    width: min(920px, 86%);
-    height: 80%;
-    border-radius: 16px;
-    background: rgba(255,255,255,.92);
-    box-shadow: 0 10px 24px rgba(0,0,0,.15);
+.title {
+    font-size: $pcFont-bigTitle-l;
+    font-weight: $black;
+}
+
+.subtitle {
+    font-size: $pcFont-H3;
+    font-weight: $bold;
+}
+
+.content-title{ 
+    font-size: $pcFont-H3;
+    font-weight: $bold;
+}
+
+.content-text {
+    font-weight: $semiBold;
+    line-height: $lineHeight-p-200;
+}
+
+.card-inner-1 {
+    position: relative;
+    display: flex;
+    align-self: stretch;
+
+    padding: 120px;
+    padding-right: 200px;
+    justify-content: space-between;
+}
+
+.card-inner-2{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    padding: 0 240px 0 160px;
+
+    box-sizing: border-box;
+}
+
+.badge{
+    position: absolute;
+    top: 120px;
+    left: 20px;
+
+    writing-mode: vertical-lr;
+
+    font-size: $pcFont-H3;
+    font-weight: $semiBold;
+    font-style: italic;
+}
+
+.card1-left-col {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    gap: 16px;
+
+    width: fit-content;
+}
+
+.card1-right-col {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-end;
+    gap: 16px;
+
+    width: 50%;
+}
+
+/* 拍立得卡片 */
+.polaroid {
+    width: 280px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px 12px 72px; /* 下方留白像拍立得 */
+    box-shadow:
+      0 16px 32px rgba(0,0,0,0.15),
+      0 4px 8px rgba(0,0,0,0.08);
     display: grid;
-    gap: 12px;
-    padding: 28px;
-    text-align: center;
+    place-items: center;
+    user-select: none;
+}
+.polaroid img {
+    display: block;
+    width: 100%;
+    height: 320px;
+    border-radius: 4px;
+    object-fit: cover;
 }
 
-.card h2 {
-    margin: 0;
-    font-size: clamp(24px, 4vw, 36px);
-}
-.card p {
-    margin: 0;
-    color: #334155;
-    line-height: 1.6;
+.left-tilt  { transform: rotate(-8deg); }
+.right-tilt { transform: rotate(10deg); }
+
+.vertical-text {
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    font-weight: $bold;
+    font-size: $pcFont-H3;
+    letter-spacing: 0.5rem;
+    line-height: $lineHeight-p-200;
+    user-select: none;
 }
 
-/* 依需求調整每張的背景與層級：後面的覆蓋前面的 */
+/* 每張的背景與層級 */
 .card1 {
     background-color: $bg-gray;
     z-index: 1;
 }
 .card2 {
-    background-color: $bg-pink-100;
+    background: #fff;
     z-index: 2;
 }
 .card3 {
