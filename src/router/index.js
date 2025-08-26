@@ -20,6 +20,8 @@ import ProductDetailRoute from '@/pages/ShopPage/ProductDetailRoute.vue'
 import Chekout1Cart from '@/pages/ShopPage/Checkout1Cart.vue'   
 import Checkout2Info from '@/pages/ShopPage/Checkout2Info.vue'
 import Checkout3Success from '@/pages/ShopPage/Checkout3Success.vue'
+// 揪上山活動卡片
+import eventCardInfo from '@/components/togetherItem/eventCardInfo.vue'
 
 
 /*後台*/
@@ -53,7 +55,12 @@ const frontroutes = [
   },
   {
     path: '/together',
-    component: togetherPage
+    component: togetherPage,
+  },
+  {
+    path: '/together/activities/:id',
+    name:'eventCard', 
+    component: eventCardInfo,
   },
   {
     path: '/my-challenge',
