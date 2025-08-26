@@ -6,8 +6,7 @@
             <time class="ac-date">{{ dateText }}</time>
             
             <!-- 圖片 -->
-            <img class="ac-img" src="./img/activityTestImg.png" loading="lazy"/>
-                <!-- <img class="ac-img" :src="item.imageUrl" loading="lazy" /> -->
+            <img class="ac-img" :src="item.imageUrl" loading="lazy" />
             
             <!-- 標題 -->
             <h3 class="ac-title">{{ item.title }}</h3>
@@ -51,7 +50,7 @@ const emit = defineEmits(['cta-click'])
 const dateText = computed(() => props.item.date)
 
 function handleCtaClick() {
-  emit('cta-click', props.item)
+    emit('cta-click', props.item)
 }
 </script>
 

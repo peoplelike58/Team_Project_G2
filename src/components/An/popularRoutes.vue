@@ -68,7 +68,7 @@
                 </ul>
             </aside>
         </div>
-        <button class="cta">規劃你的路線</button>
+        <RouterLink to="/routes" class="cta">規劃你的路線</RouterLink>
     </section>
 </template>
 
@@ -331,14 +331,14 @@ onMounted(() => {
 
 .cta {
     display: block;
+    width: fit-content;
     margin: 0 auto;
-    border: none;
-    border-bottom: 1px solid $black-14;
-    padding: 0 0 2px;
-    background: transparent;
 
+    color: $black-14;
     font-size: $pcFont-H3;
     font-weight: $extraBold;
+    text-decoration: 1px underline;
+    text-underline-offset: 10px;
     cursor: pointer;
 }
 

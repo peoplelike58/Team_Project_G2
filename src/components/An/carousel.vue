@@ -18,7 +18,7 @@
                 <p class="badge"># {{ currentSlide.badge }} / {{ slides.length }}</p>
                 <h1 class="latin">{{ currentSlide.latin }}</h1>
                 <p class="subtitle">{{ currentSlide.subtitle }}</p>
-                <a class="cta" href="#">走訪山岳之書</a>
+                <RouterLink to="/peaks" class="cta" href="#">走訪山岳之書</RouterLink>
             </div>
   
             <div class="right">
@@ -43,7 +43,7 @@
     import digitReel from './digitReel.vue'
   
     import Patungkuonu from '@/assets/images/百岳/玉山/516347556_24961926796729060_2046895774293410155_n.jpg'
-    import Sekoan from '@/assets/images/百岳/雪山/511002789_10238811707489777_4111256882028328282_n.jpg'
+    import Sekoan from '@/assets/images/百岳/雪山/Syue.png'
     import Pisayhe from '@/assets/images/百岳/南湖/S__103170057.jpg'
     import Guanshan from '@/assets/images/百岳/關山/497800866_30073497982241602_125545256976496051_n.jpg'
     import Kangkuwan from '@/assets/images/百岳/秀姑巒山/S__103153668.jpg'
@@ -130,6 +130,7 @@
         opacity: 0.9;
         font-weight: $semiBold;
         font-size: 32px;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
 
     .latin {
@@ -137,6 +138,7 @@
         font-size: 64px;
         font-weight: $bold;
         line-height: $lineHeight-title-120;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
 
     .subtitle {
@@ -144,6 +146,7 @@
         font-size: 32px;
         font-weight: $semiBold;
         line-height: $lineHeight-title-120;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
 
     .cta {
@@ -152,13 +155,14 @@
         width: fit-content;
         margin-top: 80px;
 
-        text-decoration: 1px underline;
-        text-underline-offset: 10px;
-        
         color: #fff;
         opacity: 0.9;
         font-size: 24px;
         font-weight: 900;
+
+        text-decoration: 1px underline;
+        text-underline-offset: 10px;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
   
     .right {
@@ -173,7 +177,7 @@
         writing-mode: vertical-rl;
         letter-spacing: 0.5rem;
         font-size: 160px;
-        text-shadow: 0 1px 10px rgba(0,0,0,0.25);
+        text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
   
     .altitude {
