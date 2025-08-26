@@ -65,23 +65,25 @@ const markerMap = new Map()
 let clusterGroup = null
 let mapInstance = null
 
+// --- 建立地圖和icon ---
 function onMapReady(map) {
 	mapInstance = map
-	// 1. 建立 cluster 群組，並自訂 cluster 的 icon 外觀
+	// 1. 建立「群組標記」功能 - 當地圖縮小時，附近的山會合併成一個圓圈
 	clusterGroup = L.markerClusterGroup({
-	showCoverageOnHover: false,
-	iconCreateFunction: (cluster) => {
-			const count = cluster.getChildCount()
-			// 基於數量計算大小（最小 40px，最大 100px）
-			const size = Math.min(40 + count, 100)	// icon 大小依 count 動態改變
+	showCoverageOnHover: false,				// 滑鼠懸停時不顯示覆蓋範圍
+	iconCreateFunction: (cluster) => {		// 群組的設定
+			const count = cluster.getChildCount()	// 群組裡有幾座山
+
+			const size = Math.min(40 + count, 100)	// 圓圈大小：最小40px，最大100px
 
 			// 取得群組裡的所有子 marker
 			const children = cluster.getAllChildMarkers()
 
-			// 判斷 cluster 裡有沒有旗子
-			const hasFlag = children.some(m => m.isClimbed === true)
+			// 檢查群組內是否有「已攀登」的山
+			const hasFlag = children.some(mountain => mountain.isClimbed === true)
+			// 如果有任何一座山被攀登過，群組就顯示旗子圖示，否則顯示山峰圖示
 			const iconFile = hasFlag ? "flag.png" : "mountain.png"
-
+			// 建立群組的視覺外觀（圓形背景 + 圖示）
 			return L.divIcon({
 				html: `
 					<div style="
@@ -104,26 +106,28 @@ function onMapReady(map) {
 		}
 	})
 
-	// 2. 把父層傳進來的山 (props.mountains) 一一加到 cluster
-	props.mountains.forEach(m => {
-		const marker = L.marker([m.latitude, m.longitude], {
-			icon: getIcon(m.icon)	// 單一 marker 的 icon (小旗子 / 山 icon)
+	// 2. 把父層傳進來的山 (props.mountains) 一一加到 群組
+	props.mountains.forEach(mountain => {
+		const marker = L.marker([mountain.latitude, mountain.longitude], {
+			icon: getIcon(mountain.icon)	// 單一 marker 的 icon (小旗子 / 山 icon)
 		})
-		marker.isClimbed = (m.icon === "flag.png") // 初始狀態
-		marker.on("click", () => emit("openUploadModal", m.name))	// 點擊事件
-		clusterGroup.addLayer(marker)
+		marker.isClimbed = (mountain.icon === "flag.png") 
+		marker.on("click", () => emit("openUploadModal", mountain.name))	// 點擊事件
+		clusterGroup.addLayer(marker)		// 加入群組
 
-		markerMap.set(m.name, marker)  // ✅ 存入 Map
+		markerMap.set(mountain.name, marker)  // ✅ 存入 Map
 	})
 
-	// 3. 最後把 cluster 群組丟到地圖
+	// 3. 最後把 群組丟到地圖
 	map.addLayer(clusterGroup)
 }
 
-// ✅ 外部呼叫：把某座山改成旗子
+// 更新攀登狀態
 function setClimbed(mountainName) {
+	// 當用戶成功上傳GPX後，這個函數被呼叫
+
 	// 1. 更新資料源
-	const mountain = props.mountains.find(m => m.name === mountainName)
+	const mountain = props.mountains.find(mountain => mountain.name === mountainName)
 	if (mountain) {
 		mountain.icon = "flag.png"
 	}
@@ -131,10 +135,10 @@ function setClimbed(mountainName) {
 	// 2. 更新對應的 marker
 	const marker = markerMap.get(mountainName)
 	if (marker) {
-		marker.isClimbed = true
-		marker.setIcon(getIcon("flag.png"))
+		marker.isClimbed = true			// 標記為已攀登
+		marker.setIcon(getIcon("flag.png"))		// 改成旗子圖示
 		
-// 3. 強制重建 cluster - 先移除再重新加入
+// 3. 強制重建群組（這是為了更新群組圖示）
 		if (clusterGroup && mapInstance) {
 			// 完全移除舊的 cluster
 			mapInstance.removeLayer(clusterGroup)
@@ -177,7 +181,7 @@ function setClimbed(mountainName) {
 				const mountainsMarker = markerMap.get(mount.name)
 				if (mountainsMarker) {
 					mountainsMarker.isClimbed = (mount.icon === "flag.png")
-					mountainsMarker.setIcon(getIcon(m.icon))
+					mountainsMarker.setIcon(getIcon(mount.icon))
 					clusterGroup.addLayer(mountainsMarker)
 				}
 			})

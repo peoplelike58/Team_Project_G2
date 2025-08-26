@@ -64,7 +64,7 @@ import { useRecordStore } from "@/stores/recordStore"
 
     const isVisible = ref(true)
 
-    // 父層傳入的山資料
+    // --- 1.定義父層傳入的山資料
     const props = defineProps({
     mountain: {
         type: Object,
@@ -196,7 +196,6 @@ import { useRecordStore } from "@/stores/recordStore"
             kilo.value = Number((distance / 1000).toFixed(2))    // 換算成 km
 
             // 計算 gpx 時間
-            // 變數名稱:
             const startTime = new Date(trkpts[0].querySelector("time")?.textContent);
             const endTime   = new Date(trkpts[trkpts.length - 1].querySelector("time")?.textContent);
 
@@ -220,26 +219,7 @@ import { useRecordStore } from "@/stores/recordStore"
     }
 
     const emit = defineEmits(["closeUploadModal","saveGpx"])
-    // 把文字存到 localStorage
-    // function saveThought() {
-    //     const key = `${props.mountain.name}`
-    //     localStorage.setItem(key, thought.value)
-    //     alert(`對於 ${props.mountain.name} 的想法已紀錄！`)
-    //     emit("closeUploadModal")
 
-    // }
-    
-    // onMounted(() => {
-    //     if (props.mountain.name) {
-    //         const saved = localStorage.getItem(`${props.mountain.name}`)
-    //         if (saved) {
-    //             thought.value = saved
-    //             textCount.value = saved.length
-    //         }
-    //     }
-    // })
-
-    
     function saveThought() {
         if (!props.mountain.name) {
             alert("沒有山的名稱，無法保存！")

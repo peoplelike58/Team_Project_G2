@@ -20,13 +20,15 @@
     import { useRecordStore } from "@/stores/recordStore"
     import { storeToRefs } from "pinia"
 
-    // 定義 emit 事件
+    // --- 1.emit 傳遞事件 ---
     const emit = defineEmits(['openHistoryComp'])
 
     const openHistory = () => {
         emit('openHistoryComp')  // 告訴父組件要打開 history
     }
 
+
+    // --- 2.利用 Pinia+解構賦值，把store裡的state轉乘ref
     const recordStore = useRecordStore()
     const { heightTotal, kiloTotal, timeTotal } = storeToRefs(recordStore)
 
