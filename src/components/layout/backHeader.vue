@@ -17,7 +17,7 @@ const router = useRouter()
 
 function logout() {
   localStorage.removeItem('auth')
-  router.push('/login')
+  router.push('/backlogin')
 }
 </script>
 
