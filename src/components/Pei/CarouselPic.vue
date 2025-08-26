@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount,defineProps } from 'vue'
+import { ref, onMounted, onBeforeUnmount,defineProps } from 'vue';
 
 const props = defineProps({
   trail: {
@@ -107,13 +107,20 @@ onBeforeUnmount(stopAutoPlay)
 </template>
 
 <style scoped lang="scss">
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
+@import '../../assets/styles/mixins';
 
 .routeContent {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 40px;
+  padding: 40px;
+
+  @include m(){
+    max-width: 430px;
+    padding: 20px;
+    font-size: 14px;
+  }
 
   h3 {
     font-size: $pcFont-H2;
@@ -130,40 +137,56 @@ onBeforeUnmount(stopAutoPlay)
     margin-top: 24px;
     display: flex;
     gap: 50px;
-    height: 336px;
+    padding: 30px 0;
+    
+    @include m(){
+      flex-direction: column;
+      gap:20px;
+    }
+
 
     .mainPic {
       width: 100%;
-      max-width: 430px;
+      max-width: 500px;
+      @include m(){
+        max-width: 390px;
+      }
 
-    .carousel-window { // 輪播視窗框
-      width: 100%;
-      height: 310px;
-      border-radius: 8px;   // 四個角都圓角
-      overflow: hidden;     // 超出裁切掉，圖片才會被套圓角
-      position: relative;
-    }
 
-    .track {
-      display: flex;
-      transition: transform 0.5s ease; // 滑動動畫
-    }
 
-    .slide {
-      flex: 0 0 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f7f7f7;
-    }
+      .carousel-window { // 輪播視窗框
 
-    .slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;   // 保持比例裁切填滿
-      display: block;
-      border-radius: 8px;  // 保險，避免被 overflow 漏掉
-    }
+        width: 100%;
+        height: 350px;
+        border-radius: 8px;   // 四個角都圓角
+        overflow: hidden;     // 超出裁切掉，圖片才會被套圓角
+        position: relative;
+
+        @include m(){
+          height: 300px;
+        }
+      }
+
+      .track {
+        display: flex;
+        transition: transform 0.5s ease; // 滑動動畫
+      }
+
+      .slide {
+        flex: 0 0 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f7f7f7;
+      }
+
+      .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;   // 保持比例裁切填滿
+        display: block;
+        border-radius: 8px;  
+      }
 
 
       .dots {
@@ -171,6 +194,9 @@ onBeforeUnmount(stopAutoPlay)
         justify-content: center;
         gap: 16px;
         margin-top: 16px;
+        @include m(){
+          margin-top: 8px;
+        }
       }
 
       .dot {
@@ -190,11 +216,18 @@ onBeforeUnmount(stopAutoPlay)
     p {
       width: 52%;
       max-width: 632px;
-      height: 310px;
+      
       padding: 40px 0;
       box-sizing: border-box;
       font-weight: $regular;
       line-height: $lineHeight-p-200;
+      @include m(){
+        width: 100%;
+        max-width: 390px;
+        padding: 20px 0;
+       
+      }
+
     }
   }
 }

@@ -255,20 +255,30 @@ watch(goPage, (newPage) => {
 
 <style scoped lang="scss"> 
 @import '../../assets/styles/main.scss';
+@import '../../assets/styles/mixins';
 
 .btnpages{ /* 最外面的框 */
     padding: 64px 0;
     width: 100%;
     max-width: 1200px;
     margin:0 auto;
+
+    @include m(){
+        max-width: 430px;
+        padding: 50px 20px;
+    }
     
     .btns{/* ul 切換按鈕 */
-        // border: 1px solid red;
+        border: 1px solid red;
         display: flex;
 
         justify-content: center; /* li 置中 */
         align-items: center;
         gap: 48px;
+
+        @include m(){
+            gap:20px;
+        }
 
         li{
 

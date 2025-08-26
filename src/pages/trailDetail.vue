@@ -51,7 +51,8 @@ const trail = computed(() => trailsData.find(trail => trail.id === id.value))
 </template>
 
 <style lang="scss" scoped>
-@import '../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
+@import '@/assets/styles/mixins';
 .wrapper{
     background-color: $bg-gray;
 
@@ -60,6 +61,11 @@ const trail = computed(() => trailsData.find(trail => trail.id === id.value))
         max-width: 1200px;
         margin: 32px auto;
         letter-spacing: 1.5px;
+
+        @include m(){
+            max-width: 430px;
+            padding: 0 20px;
+        }
 
         a{
             text-decoration: none;

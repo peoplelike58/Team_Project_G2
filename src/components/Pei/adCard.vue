@@ -86,8 +86,8 @@ const trailsTen = trailsJson.slice(0,10);
 
     .cardWrapper{
 
-        background-color: rgba(255, 255, 255, 0.5);
-        padding: 30px 0;
+        background-color:rgba(255, 255, 255, 0.5);
+        padding: 50px 0 60px;
 
         @include m(){
           font-size: 14px;
@@ -152,8 +152,12 @@ const trailsTen = trailsJson.slice(0,10);
         }
       }
     .activity-card:hover{
-        background-color: #EBEBDF;
-        color: #292C4B;
+        background-color: $mountain-green;
+        color: white;
+
+        .ac-cta{
+          color: white;
+        }
     }
 
     .top-content{
@@ -219,7 +223,8 @@ const trailsTen = trailsJson.slice(0,10);
         }
     }
     .activity-card:hover .tag{
-        background-color: #292C4B;
+        background-color: $bg-pink-100;
+        color: $tag;
     }
 
     /* CTA */
@@ -238,6 +243,8 @@ const trailsTen = trailsJson.slice(0,10);
         text-underline-offset: 6px;
 
         cursor: pointer;
+        
+        
 
         @include m(){
           margin-top: 10px;

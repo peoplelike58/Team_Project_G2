@@ -172,7 +172,7 @@ function goPage(p) {
         type="text" 
         placeholder="想去哪一座山..." 
         />
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"> <!-- 放大鏡圖示（SVG 容器） -->
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"> <!-- 放大鏡圖示（SVG 容器） -->
           <path
             fill="currentColor"
             d="M10.5 2a8.5 8.5 0 106.02 14.52l4.24 4.24a1 1 0 001.42-1.42l-4.24-4.24A8.5 8.5 0 0010.5 2zm0 2a6.5 6.5 0 110 13 6.5 6.5 0 010-13z" 
@@ -287,6 +287,7 @@ function goPage(p) {
 .flexWrapper{
   display: flex;
   flex-direction: column;
+  background-color: $bg-gray;
   @include m(){
     font-size: 14px;
   }
@@ -390,7 +391,7 @@ button{ // 通用按鈕樣式
 
   }
 
-  .icon{ // 放大鏡圖示
+  .search-icon{ // 放大鏡圖示
     position: absolute; // 絕對定位
     right: 20px; // 右距
     top: 50%; // 垂直置中基準

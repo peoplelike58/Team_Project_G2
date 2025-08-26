@@ -97,7 +97,7 @@ function resolveIconPathByWx(weatherText) {
 function splitMonthAndDay(isoDate) {
   const d = new Date(isoDate)
   return {
-    monthEN: d.toLocaleString('en-US', { month: 'long' }).toUpperCase(), // e.g., AUGUST
+    monthEN: d.toLocaleString('en-US', { month: 'short' }).toUpperCase(), // e.g., AUGUST
     dayOfMonth: String(d.getDate()).padStart(2, '0'),                    // e.g., 05
   }
 }
@@ -194,7 +194,7 @@ const elements = location.WeatherElement
 
             <!-- 天氣icon -->
           <img
-            class="icon"
+            class="weather-icon"
             :src="day.iconPath"
             alt="weather icon"
             width="44"
@@ -222,7 +222,8 @@ const elements = location.WeatherElement
 </style>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
+@import '@/assets/styles/mixins';
 
 .weeklyWrapper{
   background-color: rgba(255, 255, 255, 0.5);
@@ -235,6 +236,12 @@ const elements = location.WeatherElement
   margin: 0 auto;
   padding: 60px 30px 50px;
   border-radius: 16px;
+
+  @include m(){
+    max-width:430px ;
+    padding: 30px 20px;
+    font-size: 14px;
+  }
   
 
   h3{
@@ -261,6 +268,11 @@ const elements = location.WeatherElement
   ul{
     display: flex;
     margin-top: 48px;
+    @include m(){
+      flex-direction: column;
+      gap:12px;
+      max-width: 390px;
+    }
     
 
   
@@ -275,6 +287,12 @@ const elements = location.WeatherElement
       display: flex;
       flex-direction: column;
       gap: 12px;
+
+      @include m(){
+        flex-direction: row;
+        gap:8px;
+        
+      }
 
       .date{ /* 日期框 */
 
@@ -294,11 +312,13 @@ const elements = location.WeatherElement
 
       }
 
-      .icon{ /* img */
+      .weather-icon{ /* img */
         display: block;
         margin: 0 auto;
         height: 50px;
         width: auto;
+
+        
 
       }
 
@@ -321,6 +341,10 @@ const elements = location.WeatherElement
   font-size: 14px;
   color: #999;
   letter-spacing: 1px;
+  width: 100%;
+  @include m(){
+    max-width: 390px;
+  }
 
   }
 
