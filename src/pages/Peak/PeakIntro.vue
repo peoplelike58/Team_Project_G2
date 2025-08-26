@@ -15,54 +15,54 @@
     // Content
     const content ={
         intro:"台灣百岳，是一本寫滿自然與勇氣的書。\n每座山峰，都是大地的詩篇，\n等待你用腳步書寫傳奇，用旗幟記錄你的足跡！",
-        about:"台灣百岳，是指台灣海拔3,000公尺以上的100座山峰，\n由登山先驅選定，象徵勇氣與自然的完美結合。",
+        about:"台灣百岳，是指海拔3,000公尺以上的100座山峰，\n由登山先驅選定，象徵勇氣與自然的完美結合。",
         guide:"從玉山的「亞洲第一高峰」到南湖大山的「帝王之氣」，\n每座百岳都是台灣的驕傲。你準備好打開這本「山岳之書」了嗎？",
     }
 </script>
 
 <template>
-    <main class="hero">
-        <div class="hero-left">
+    <div class="wrapper">
+        <main class="hero">
             <div class="hero-slogan">
                 <h1>{{ heroTitle}}</h1>
                 <p>{{ heroSubTitle}}</p>
             </div>
-        </div>
-        <div class="hero-right">
-            <img :src="images.hero" 
-            alt="PeaksOfTaiwan-01" 
-            loading="lazy">
-        </div>
-    </main>
-    <section class="intro">
-        <div class="intro-content">
-            <div class="intro-text">
-                <p v-html="content.intro.replace(/\n/g, '<br>')"></p>   <!-- 將斷行"/n"替換成<br> -->  
+            <div class="hero-right">
+                <img :src="images.hero" 
+                alt="PeaksOfTaiwan-01" 
+                loading="lazy">
             </div>
-            <div class="intro-media">
-                <img :src="images.intro" alt="PeaksOfTaiwan-02" loading="lazy">
+        </main>
+        <section class="intro">
+            <div class="intro-content">
+                <div class="intro-text">
+                    <p v-html="content.intro.replace(/\n/g, '<br>')"></p>   <!-- 將斷行"/n"替換成<br> -->  
+                </div>
+                <div class="intro-media">
+                    <img :src="images.intro" alt="PeaksOfTaiwan-02" loading="lazy">
+                </div>
             </div>
-        </div>
-    </section>
-    <section class="about">
-        <div class="about-text">
-            <p v-html="content.about.replace(/\n/g, '<br>')"></p>
-        </div>
-        <div class="about-media">
-            <div class="media-right"><img :src="images.about1" alt="PeaksOfTaiwan-03" loading="lazy"></div>
-            <div class="media-left"><img :src="images.about2" alt="PeaksOfTaiwan-04" loading="lazy"></div>
-        </div>
-    </section>
-    <section class="guide">
-        <div class="guide-text">
-            <p v-html="content.guide.replace(/\n/g, '<br>')"></p>
-        </div>
-        <div class="guide-photo">
-            <div class="photo-left"><img :src="images.guide1" alt="PeaksOfTaiwan-05" loading="lazy"></div>
-            <div class="photo-center"><img :src="images.guide2" alt="PeaksOfTaiwan-06" loading="lazy"></div>
-            <div class="photo-right"><img :src="images.guide3" alt="PeaksOfTaiwan-07" loading="lazy"></div>
-        </div>
-    </section>
+        </section>
+        <section class="about">
+            <div class="about-text">
+                <p v-html="content.about.replace(/\n/g, '<br>')"></p>
+            </div>
+            <div class="about-media">
+                <div class="media-right"><img :src="images.about1" alt="PeaksOfTaiwan-03" loading="lazy"></div>
+                <div class="media-left"><img :src="images.about2" alt="PeaksOfTaiwan-04" loading="lazy"></div>
+            </div>
+        </section>
+        <section class="guide">
+            <div class="guide-text">
+                <p v-html="content.guide.replace(/\n/g, '<br>')"></p>
+            </div>
+            <div class="guide-photo">
+                <div class="photo-left"><img :src="images.guide1" alt="PeaksOfTaiwan-05" loading="lazy"></div>
+                <div class="photo-center"><img :src="images.guide2" alt="PeaksOfTaiwan-06" loading="lazy"></div>
+                <div class="photo-right"><img :src="images.guide3" alt="PeaksOfTaiwan-07" loading="lazy"></div>
+            </div>
+        </section>
+    </div>
 </template>
 
 <style scoped lang="scss">
@@ -79,18 +79,28 @@
         margin: 50px auto;
         align-items: center;
         gap: clamp(16px, 4vw, 48px);
+        @include m(){
+            grid-template-columns: 1fr;
+            margin: 24px auto;
+            gap: 24px;
+            text-align: center;
+        }
     }
     .hero-slogan{
         padding-top: 56px;
-        position: fixed;
+        position: sticky;
         top: 24px;
         z-index: 10;
+        @include m(){
+            position: static;
+        }
         h1{
             font-size: $pcFont-bigTitle-l;
             font-weight: $bold;
             line-height: $lineHeight-title-120;
             @include m(){
-                font-size:$pcFont-bigTitle-m;
+                font-size:$pcFont-H1-m;
+                
 
             }
         }
@@ -98,7 +108,7 @@
                 font-size: $pcFont-H1-m;
                 line-height: $lineHeight-p-200;
                 @include m(){
-                font-size:$pcFont-H1-l;
+                font-size:$pcFont-p-m;
 
             }
             }
@@ -106,6 +116,10 @@
     .hero-right{
         img{
             @include peakguide-img;
+            @include m(){
+                max-width: 100%;
+                height: auto;
+            }
         }
     }
     .intro{
@@ -119,6 +133,8 @@
 
         @include m() {
             padding: 20px 16px;
+            gap: 20px;
+            text-align: center;
         }
             .intro-text{
                 p{
@@ -127,6 +143,8 @@
                     text-align: right;
                     @include m() {
                         text-align: center;
+                        font-size:  $pcFont-p-s;
+                        line-height: $lineHeight-p-150;
                 }
             }
         }
@@ -144,10 +162,17 @@
     }
     .about-text{
         padding-left: 150px;
+        @include m(){
+            padding-left: 16px;
+        }
         p{
             font-size: $pcFont-H4;
             line-height: $lineHeight-p-200;
             text-align: left;
+            @include m(){
+                font-size:$pcFont-p-s;
+                line-height: $lineHeight-p-150;
+            }
         }
     }
     .about-media{
@@ -161,6 +186,7 @@
             grid-template-columns: 1fr;
             height: auto;
             gap: 24px;
+            font-size: $pcFont-p-s;
 
         }
     }
@@ -174,8 +200,8 @@
             width: 300px;
             height: 300px;
             @include m() {
-                width: 250px;
-                height: 250px;
+                width: 220px;
+                height: 220px;
             }
          }
     }
@@ -188,7 +214,7 @@
             max-width: 500px;
 
             @include m() {
-                max-width: 300px;
+                max-width: 280px;
             }
         }
     }
@@ -204,6 +230,10 @@
             line-height: $lineHeight-p-200;
             text-align: center;
             margin-bottom: 24px;
+            @include m(){
+                font-size: $pcFont-p-s;
+                margin-bottom: 20px;
+            }
         }
     }
     .guide-photo{
@@ -227,7 +257,7 @@
             @include m() {
                 height: 250px;
                 width: 250px;
-                margin: 12px;
+                margin: 0;
             }
         }
     }
