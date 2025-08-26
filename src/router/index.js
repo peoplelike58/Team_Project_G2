@@ -8,7 +8,7 @@ import homePage from '@/pages/homePage.vue'//前台首頁
 import PeakGuide from '@/pages/PeakGuide.vue'// 百岳之書
 import togetherPage from '@/pages/togetherPage.vue'//揪上山
 import routesPage from '@/pages/routesPage.vue'//路線規劃
-import trailDetail from '@/pages/trailDetail.vue'// 揪安心
+import peacePage from '@/pages/peacePage.vue'// 揪安心
 import myChallenge from '@/pages/myChallenge.vue'//百岳挑戰
 import ShopPage from '@/pages/ShopPage/ShopPage.vue'//山腳雜貨店
 import LoginRegister from '@/pages/LoginPage/LoginRegister.vue'//會員登入
@@ -77,6 +77,10 @@ const frontroutes = [
   {
     path: '/together',
     component: togetherPage,
+  },
+  {
+    path: '/peace',
+    component: peacePage,
   },
   {
     path: '/together/activities/:id',

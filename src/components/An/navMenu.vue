@@ -55,6 +55,7 @@ const menuItems = [
     { label: '首頁', path: 'homepage' },
     { label: '百岳之書', path: 'peaks' },
     { label: '揪上山', path: 'together' },
+    { label: '揪安心', path: 'peace' },
     { label: '路線規劃', path: 'routes' },
     { label: '百岳挑戰', path: 'myChallenge' },
     { label: '山腳雜貨店', path: 'shop' },
