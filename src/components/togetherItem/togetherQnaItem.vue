@@ -49,6 +49,7 @@ function toggle (index) {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/styles/main.scss';
 // 問與答區塊
 .qaList {
 //   border: 2px solid red;
@@ -64,7 +65,7 @@ function toggle (index) {
     margin-left: 20px;
     margin-top: 10px;
     padding-bottom: 30px;
-    border-bottom: 3px dashed gray;
+    border-bottom: 1px dashed $black-14;
   }
 }
 
@@ -101,7 +102,7 @@ function toggle (index) {
 
   .indexList {
     margin-top: 20px;
-    border-bottom: 3px dashed gray;
+    border-bottom: 1px dashed $black-14;
   }
 
   /* 展開狀態 */
