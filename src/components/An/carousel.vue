@@ -42,14 +42,28 @@
     import carouselPlayController from './carouselPlayController.vue'
     import digitReel from './digitReel.vue'
   
-    import mountain01 from '@/assets/images/百岳/玉山/516347556_24961926796729060_2046895774293410155_n.jpg'
-    import mountain02 from '@/assets/images/百岳/雪山/511002789_10238811707489777_4111256882028328282_n.jpg'
-    import mountain03 from '@/assets/images/百岳/南湖/S__103170057.jpg'
+    import Patungkuonu from '@/assets/images/百岳/玉山/516347556_24961926796729060_2046895774293410155_n.jpg'
+    import Sekoan from '@/assets/images/百岳/雪山/511002789_10238811707489777_4111256882028328282_n.jpg'
+    import Pisayhe from '@/assets/images/百岳/南湖/S__103170057.jpg'
+    import Guanshan from '@/assets/images/百岳/關山/497800866_30073497982241602_125545256976496051_n.jpg'
+    import Kangkuwan from '@/assets/images/百岳/秀姑巒山/S__103153668.jpg'
+    import Hehuan from '@/assets/images/百岳/合歡主鋒/hehuan.jpg'
+    import Nenggao from '@/assets/images/百岳/能高/482981083_8784364731668597_4120280109385300698_n.jpg'
+    import PapakWaqa from '@/assets/images/百岳/大霸尖山/S__103153671.jpg'
+    import Pintian from '@/assets/images/百岳/品田山/119779207_3379500632085022_4848165980483849107_n.jpg'
+    import Parusan from '@/assets/images/百岳/奇萊/S__5382274.jpg'
   
     const slides = [
-        { src: mountain01, badge: '01', name: '玉山', height: '3952', latin: 'Patungkuonu', subtitle: '台灣之巔' },
-        { src: mountain02, badge: '02', name: '雪山', height: '3886', latin: 'Hseuhshan',    subtitle: '巍峨雪峰' },
-        { src: mountain03, badge: '03', name: '南湖大山', height: '3742', latin: 'Nanhu Dashan', subtitle: '帝王之山' }
+        { src: Patungkuonu, badge: '01', name: '玉山', height: '3952', latin: 'Patungkuonu', subtitle: '台灣之巔' },
+        { src: Sekoan, badge: '02', name: '雪山', height: '3886', latin: 'Sekoan', subtitle: '巍峨雪峰' },
+        { src: Pisayhe, badge: '03', name: '南湖大山', height: '3742', latin: 'Pisayhe', subtitle: '帝王之山' },
+        { src: Guanshan, badge: '04', name: '關山', height: '3668', latin: 'Guanshan', subtitle: '蒼茫雲嶺' },
+        { src: Kangkuwan, badge: '05', name: '秀姑巒山', height: '3805', latin: 'Kangkuwan', subtitle: '峻拔雄峰' },
+        { src: Hehuan, badge: '06', name: '合歡主峰', height: '3417', latin: 'Hehuan Main Peak', subtitle: '雪舞高嶺' },
+        { src: Nenggao, badge: '07', name: '能高主鋒', height: '3262', latin: 'Nenggao Main Peak', subtitle: '蒼翠長嶺' },
+        { src: PapakWaqa, badge: '08', name: '大霸尖山', height: '3492', latin: 'Papak Waqa', subtitle: '孤高巨嶺' },
+        { src: Pintian, badge: '09', name: '品田山', height: '3524', latin: 'Pintian Mountain', subtitle: '峭壁奇峰' },
+        { src: Parusan, badge: '10', name: '奇萊主峰', height: '3560', latin: 'Parusan', subtitle: '黑色奇萊' },
     ]
 
     const index = ref(0);
@@ -58,7 +72,7 @@
 </script>
   
 <style scoped lang="scss">
-    @import '../../assets/styles/main.scss';
+    @import '@/assets/styles/main.scss';
     
     .hero {
         display: grid;

@@ -66,11 +66,11 @@ const badgeColumnRef = ref(null)
   
 // demo data
 const newsItems = [
-    { date: '2025.07.23', tag: '新聞',   title: '手作家山步道 微笑山線由你守護' },
-    { date: '2025.07.23', tag: '步道資訊', title: '手作家山步道 微笑山線由你守護' },
-    { date: '2025.07.23', tag: '新聞',   title: '手作家山步道 微笑山線由你守護' },
-    { date: '2025.07.23', tag: '新聞',   title: '手作家山步道 微笑山線由你守護' },
-    { date: '2025.07.23', tag: '新聞',   title: '手作家山步道 微笑山線由你守護' },
+    { date: '2025.08.23', tag: '路線旅遊',   title: '手作家山步道，微笑山線由你守護' },
+    { date: '2025.08.17', tag: '新聞時事', title: '受豪雨影響步道0.55k崩塌，北大武山步道暫停開放' },
+    { date: '2025.08.14', tag: '登山知識',   title: '規劃得好，山就走得順 - 行程規劃指南' },
+    { date: '2025.08.03', tag: '路線旅遊',   title: '淡蘭北路：從車站出發，山海美景與小吃全收錄' },
+    { date: '2025.07.28', tag: '登山知識',   title: '新手不越級，行程這樣安排才安全' },
 ]
   
 // 視差滾動控制
@@ -156,7 +156,7 @@ onMounted(() => {
 .news-date {
     font-size: $pcFont-label;
     font-weight: $semiBold;
-    width: 100px; /* 齊頭對齊日期寬度 */
+    min-width: 100px; /* 齊頭對齊日期寬度 */
 }
 
 .news-tag {
@@ -174,6 +174,7 @@ onMounted(() => {
 .news-title {
     font-weight: $semiBold;
     font-size: $pcFont-p-s;
+    line-height: $lineHeight-p-150;
     color: $black-14;
     text-decoration: none;
     transition: opacity 0.4s ease;

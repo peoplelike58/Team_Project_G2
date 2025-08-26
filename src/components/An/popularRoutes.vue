@@ -48,7 +48,7 @@
             <aside class="right">
                 <ul class="route-list">
                     <li
-                        v-for="route in limitedRoutes"
+                        v-for="route in routes"
                         :key="route.id"
                         class="route-item"
                         tabindex="0"
@@ -74,6 +74,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import Xiangshan from '@/assets/images/routesImg/Xiangshan.png'
+import Qixing    from '@/assets/images/routesImg/Qixing.png'
+import Caoling   from '@/assets/images/routesImg/Caoling.png'
+import Qingtiangang   from '@/assets/images/routesImg/Qingtiangang.png'
+import Wangyou   from '@/assets/images/routesImg/Wangyou.png'
+import Hehuan   from '@/assets/images/routesImg/Hehuan.png'
 
 const MAX_ITEMS = 6 // 最大顯示筆數
 
@@ -103,7 +109,7 @@ onMounted(() => {
             distance: 2.5,
             time: { hour: 1, minute: 40 },
             difficulty: '低',
-            thumb: 'https://picsum.photos/seed/route1/120/120',
+            thumb: Xiangshan,
         },
         {
             id: '2',
@@ -111,7 +117,7 @@ onMounted(() => {
             distance: 4.8,
             time: { hour: 3, minute: 0 },
             difficulty: '中',
-            thumb: 'https://picsum.photos/seed/route2/120/120',
+            thumb: Qixing,
         },
         {
             id: '3',
@@ -119,7 +125,7 @@ onMounted(() => {
             distance: 8.5,
             time: { hour: 4, minute: 30 },
             difficulty: '中',
-            thumb: 'https://picsum.photos/seed/route3/120/120',
+            thumb: Caoling,
         },
         {
             id: '4',
@@ -127,7 +133,7 @@ onMounted(() => {
             distance: 2.3,
             time: { hour: 1, minute: 10 },
             difficulty: '低',
-            thumb: 'https://picsum.photos/seed/route4/120/120',
+            thumb: Qingtiangang,
         },
         {
             id: '5',
@@ -135,7 +141,7 @@ onMounted(() => {
             distance: 1.6,
             time: { hour: 0, minute: 50 },
             difficulty: '低',
-            thumb: 'https://picsum.photos/seed/route5/120/120',
+            thumb: Wangyou,
         },
         {
             id: '6',
@@ -143,7 +149,7 @@ onMounted(() => {
             distance: 3.2,
             time: { hour: 3, minute: 20 },
             difficulty: '高',
-            thumb: 'https://picsum.photos/seed/route6/120/120',
+            thumb: Hehuan,
         },
     ]
 

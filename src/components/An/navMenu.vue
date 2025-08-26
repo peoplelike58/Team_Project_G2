@@ -56,6 +56,7 @@ const menuItems = [
     { label: '百岳之書', path: 'peaks' },
     { label: '揪上山', path: 'together' },
     { label: '路線規劃', path: 'routes' },
+    { label: '百岳挑戰', path: 'myChallenge' },
     { label: '山腳雜貨店', path: 'shop' },
     { label: '會員登入', path: 'member' },
 ]
@@ -98,7 +99,7 @@ function go(item) {
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
 
 /* Header */
 .site-header{ 
@@ -152,7 +153,7 @@ function go(item) {
 .overlay{ 
     position: fixed; 
     inset: 0;
-    z-index: 28; 
+    z-index: 99999 !important; 
 }
 
 /* Panel */
@@ -162,7 +163,7 @@ function go(item) {
     
     position: fixed;
     inset: 0; 
-    z-index: 30;
+    z-index: 99999 !important;
     
     background: $ivory-gray-100;
 

@@ -9,16 +9,14 @@
             <!-- 卡片區 -->
             <div class="card-container">
                 <template v-if="activitiesJson.length">
-                 <template
+                    <template
                         v-for="(activity, activityIndex) in activitiesJson"
                         :key="activity.id ?? activityIndex">
-                        <slot name="item" :item="activity" :index="activityIndex">
                             <activityCard
                                 :item="activity"
                                 :index="activityIndex"
                                 @cta-click="handleCtaClick"
                             />
-                        </slot>
                     </template>
                 </template>
             </div>
@@ -54,7 +52,7 @@ function handleCtaClick(item) {
 </script>
   
 <style scoped lang="scss">
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
 
 .activity-section {
     background-color: $ivory-gray-100;

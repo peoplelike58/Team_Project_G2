@@ -3,30 +3,38 @@
     <article class="activity-card">
         <div class="top-content">
             <!-- 日期 -->
-            <time class="ac-date">{{ dateText }}</time>
+            <slot name="date" :item="item" :dateText="dateText" :index="index">
+                <time class="ac-date">{{ dateText }}</time>
+            </slot>
             
             <!-- 圖片 -->
-            <img class="ac-img" src="./img/activityTestImg.png" loading="lazy"/>
-                <!-- <img class="ac-img" :src="item.imageUrl" loading="lazy" /> -->
+            <slot name="image" :item="item" :index="index">
+                <!-- <img class="ac-img" src="@/assets/images/eventCard/cardimg1.jpg" loading="lazy"/> -->
+                <img class="ac-img" :src="item.imageUrl" loading="lazy" />
+            </slot>
             
             <!-- 標題 -->
-            <h3 class="ac-title">{{ item.title }}</h3>
+            <slot name="title" :item="item" :title="item.title" :index="index">
+                <h3 class="ac-title">{{ item.title }}</h3>
+            </slot>
             
             <!-- 標籤 -->
-            <ul class="ac-tags" v-if="item.tags?.length">
-                <li v-for="tag in item.tags" :key="tag" class="tag">{{ tag }}</li>
-            </ul>
+            <slot name="tags" :item="item" :tags="item.tags" :index="index">
+                <ul class="ac-tags" v-if="item.tags?.length">
+                    <li v-for="tag in item.tags" :key="tag" class="tag">{{ tag }}</li>
+                </ul>
+            </slot>
         </div>
             
-        <!-- CTA -->
-        <a v-if="item.ctaUrl" class="ac-cta" :href="item.ctaUrl" @click.stop="handleCtaClick">
-            查看詳情
-        </a>
+            <router-link v-if="item.ctaUrl" class="ac-cta" :href="item.ctaUrl" @click.stop="handleCtaClick" :to="`together/activities/${item.id}`">
+                查看詳情
+            </router-link>
     </article>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 /**
  * 預期的資料格式
@@ -48,11 +56,13 @@ const props = defineProps({
 
 const emit = defineEmits(['cta-click'])
 
-const dateText = computed(() => props.item.date)
+const dateText = computed(() => props.item?.date ?? '')
 
 function handleCtaClick() {
   emit('cta-click', props.item)
 }
+
+const route = useRouter()
 </script>
 
 <style scoped="scoped" lang="scss">
@@ -65,7 +75,7 @@ function handleCtaClick() {
         justify-content: space-between;
 
         width: 100%;
-        max-width: 360px;
+        max-width: 270px;
         padding: 40px;
         border: 1px dashed $black-14;
         border-radius: 16px;
