@@ -59,7 +59,7 @@
                 font-weight: $semiBold;
                 line-height: $lineHeight-p-150;
                 background-color: #fff;
-                margin-left: 204px;
+                // margin-left: 204px;
                 padding: 8px;
                 border: 1px solid $black-14;
                 border-radius: 8px;

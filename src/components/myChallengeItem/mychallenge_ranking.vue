@@ -11,7 +11,7 @@
             </div>
         </div>
         <transition name="dropdown">
-        <div class="totaScore" v-show="openItem == rank.rank">
+        <div class="totalScore" v-show="openItem == rank.rank">
             <div class="nombScore">
                 <article>
                     <p>總累積高度</p>
@@ -42,15 +42,16 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
-    const ranks = reactive([
-        {image:'head1.png', rank:'第一名', icon:`🥇`, name: 'Yuki', height:10006, kilo:9687, time:456, big:41, small:58 },
-        {image:'head2.png', rank:'第二名', icon:`🥈`, name: '貓山王', height:8187, kilo:7432, time:400, big:40, small:40 },
-        {image:'head3.png', rank:'第三名', icon:`🥉`, name: 'JIN', height:6742, kilo:7213, time:420, big:40, small:32 },
-        {image:'head4.png', rank:'第四名', icon:'', name: '嘉明', height:6810, kilo:7110, time:395, big:34, small:29 },
-        {image:'head5.png', rank:'第五名', icon:'', name: 'Pei', height:5013, kilo:4128, time:413, big:23, small:18 },
-    ])
+    // const ranks = ref([
+    //     {image:'head1.png', rank:'第一名', icon:`🥇`, name: 'Yuki', height:10006, kilo:9687, time:456, big:41, small:58 },
+    //     {image:'head2.png', rank:'第二名', icon:`🥈`, name: '貓山王', height:8187, kilo:7432, time:400, big:40, small:40 },
+    //     {image:'head3.png', rank:'第三名', icon:`🥉`, name: 'JIN', height:6742, kilo:7213, time:420, big:40, small:32 },
+    //     {image:'head4.png', rank:'第四名', icon:'', name: '嘉明', height:6810, kilo:7110, time:395, big:34, small:29 },
+    //     {image:'head5.png', rank:'第五名', icon:'', name: 'Pei', height:5013, kilo:4128, time:413, big:23, small:18 },
+    // ])
     
 
     // 控制手風琴開關
@@ -63,6 +64,18 @@ import { ref, reactive } from 'vue'
             openItem.value = index
         }
     }
+
+    const ranks = ref({})
+
+    onMounted(async() => {
+        try{
+            const res = await axios.get("/json/mychallenge/ranks.json")
+            ranks.value = res.data
+
+        }catch(err){
+            console.error("讀取失敗:", err)
+        }
+    })
     
 </script>
 
@@ -130,7 +143,7 @@ import { ref, reactive } from 'vue'
             }
         }
     
-        .totaScore{
+        .totalScore{
             padding: 40px 0 48px 32px;
 
             .nombScore{
@@ -171,6 +184,32 @@ import { ref, reactive } from 'vue'
     .dropdown-enter-from {
         opacity: 0;
         transform: translateY(-20px);
+    }
+
+    @media screen and (max-width: 430px) {
+        .nomb{
+            .totalScore{
+                padding: 16px 16px;
+
+                .nombScore{
+                    display: flex;
+                    justify-content: space-between;
+            
+                    article:nth-child(1n+2){
+                        margin-left: 20px;
+                    }
+                }
+            }
+
+            p{
+
+                span{
+                    font-size: $pcFont-H3;
+
+                }
+            }
+        }
+
     }
 
 </style>

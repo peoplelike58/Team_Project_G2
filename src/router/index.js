@@ -56,7 +56,7 @@ const frontroutes = [
     component: togetherPage
   },
   {
-    path: '/my-challenge',
+    path: '/myChallenge',
     component: myChallenge
   },
   {
