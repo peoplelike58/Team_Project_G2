@@ -1,1 +1,0 @@
-<template><div>CarouselPic</div></template>

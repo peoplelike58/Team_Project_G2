@@ -6,8 +6,10 @@ import WelcomePage from '@/pages/WelcomePage.vue'
 import homePage from '@/pages/homePage.vue'
 // 百岳之書
 import PeakGuide from '@/pages/PeakGuide.vue'
-import routesPage from '@/pages/routesPage.vue'
 import togetherPage from '@/pages/togetherPage.vue'
+//路線規劃
+import routesPage from '@/pages/routesPage.vue'
+import trailDetail from '@/pages/trailDetail.vue'
 // 揪安心
 // import myChallenge from '@/pages/myChallenge.vue'
 import ShopPage from '@/pages/ShopPage/ShopPage.vue'
@@ -60,6 +62,14 @@ const frontroutes = [
     path: '/routes',
     component: routesPage
   },
+//------- 詳細頁面 -----------
+  {
+    path:'/routes/:id',
+    name:'trailDetail',
+    component: trailDetail,
+    props: true
+  },
+//----------------------------
   {
     path: '/together',
     component: togetherPage,
@@ -128,5 +138,8 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
+
+
 
 export default router

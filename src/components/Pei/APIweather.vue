@@ -1,12 +1,26 @@
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineProps } from 'vue'
 import axios from 'axios'
 
 // ======= 基本設定 =======
+
+
+const props = defineProps({
+  town: { 
+    type: String, 
+    required: true 
+  }
+})
+// console.log(props.town);
+
 const token = 'CWA-66252587-7CC5-4C09-BCED-09C2746EFFF1' 
-const locationName = '仁愛鄉' // 要串接trail.locationName(須配合API有提供的地區名)
+const town = props.town //須配合API有提供的地區名
 const dailyForecast = ref([]) // 濃縮後的每日預報資料（用於畫面）
+
+
+
+
 
 // ======= 共用工具 =======
 // 從 WeatherElement 陣列找出指定 ElementName 的 Time 陣列（支援中/英欄位名）
@@ -91,10 +105,13 @@ function splitMonthAndDay(isoDate) {
 // ======= 主流程 =======
 onMounted(async () => {
   const url =
-    `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=${token}&locationName=${locationName}`
+    `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=${token}&locationName=${town}`
 
   const res = await axios.get(url)
-  const elements = res.data.records.Locations[0].Location[0].WeatherElement
+const locations = res.data.records.Locations[0].Location // 這是一個陣列
+const location = locations.find(item => item.LocationName === town)
+console.log(location);
+const elements = location.WeatherElement
 
   // 來源一：天氣預報綜合描述（優先）
   const descriptionSeries = getTimeSeries(elements, ['天氣預報綜合描述', 'WeatherDescription'])
@@ -189,6 +206,10 @@ onMounted(async () => {
           </div>
         </li>
       </ul>
+
+      <div class="showTown">
+        <p>資料來源：氣象署｜預報地區：{{ town }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -212,7 +233,7 @@ onMounted(async () => {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 30px 80px;
+  padding: 60px 30px 50px;
   border-radius: 16px;
   
 
@@ -292,6 +313,18 @@ onMounted(async () => {
 
     }
   }
+  
+  .showTown{
+  // border: 1px solid rebeccapurple;
+  text-align: right;
+  margin-top: 48px;
+  font-size: 14px;
+  color: #999;
+  letter-spacing: 1px;
+
+  }
+
+
 }
 
 </style>

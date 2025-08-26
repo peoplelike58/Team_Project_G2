@@ -21,7 +21,7 @@
         </div>
         <div class="menu-content">
             <div class="left-col">
-                <img class="logo" src="./img/Logo.png" alt="">
+                <img class="logo" src="/images/Logo.png" alt="">
                 <div class="about">
                     <p>山上見為每一個想親近山林的人而生，我們相信，登山不該只是經驗者的專利，而是每個人都能享受的生活方式。<br><br>輕鬆開始你的第一步，一起走入山林，重新連結自己與大自然，我們山上見！</p>
                 </div>
