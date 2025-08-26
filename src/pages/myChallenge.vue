@@ -40,6 +40,7 @@
                 />
         </main>
     </div>
+    <brandFooter />
 </template>
 
 <script setup>
@@ -51,6 +52,7 @@
     import mychallenge_ranking from '@/components/myChallengeItem/mychallenge_ranking.vue';
     import mychallenge_modal from '@/components/myChallengeItem/mychallenge_modal.vue';
     import mychallenge_history from '@/components/myChallengeItem/mychallenge_history.vue';
+    import brandFooter from '@/components/An/footer.vue';
     
     import { ref, onMounted } from 'vue'
     import * as turf from "@turf/turf"
@@ -211,7 +213,7 @@
         .mychallengeRank{
             // max-width: 1067px;
             width: 100%;
-            margin: 152px 0;
+            margin-top: 152px;
             padding: 64px;
             background-color: $ivory-gray-100;
             box-sizing: border-box;
