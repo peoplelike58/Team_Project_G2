@@ -2,8 +2,8 @@
 import navMenu from '@/components/An/navMenu.vue';
 import filterRoute from '@/components/Pei/FilterRoute.vue';
 import adCard from '@/components/Pei/adCard.vue';
-
-import trailsData from '@/assets/json/trails.json';
+import footer from '@/components/An/footer.vue';
+import brandFooter from '@/components/An/footer.vue';
 
 
 
@@ -13,11 +13,11 @@ import trailsData from '@/assets/json/trails.json';
 
 <template>
     <div class="wrapper">
-        <header>
-            <!-- <navMenu /> -->
-        </header>
+        
+            <navMenu />
+        
 
-        <body>
+       
             <nav class="breadcrumb">
                 <router-link to="/homepage">首頁</router-link>
                 <span> &gt; </span>
@@ -27,7 +27,9 @@ import trailsData from '@/assets/json/trails.json';
             
             <filterRoute/>
             <adCard />
-        </body>
+            <brandFooter/>
+            
+        
     
     </div>
 
@@ -35,11 +37,13 @@ import trailsData from '@/assets/json/trails.json';
 </template>
 
 <style lang="scss" scoped>
-@import '../assets/styles/main.scss';
-@import '../assets/styles/mixins';
+@import '@/assets/styles/main.scss';
+@import '@/assets/styles/mixins';
 
 .wrapper{
-    background-color: $bg-gray;
+  background-color: $bg-gray !important; // 整頁背景色
+  width: 100%; // 撐滿
+  min-height: 100vh; // 高度滿版
 
     .breadcrumb{
         width: 100%;
