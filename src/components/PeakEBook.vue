@@ -236,6 +236,9 @@ onUnmounted(() => {
   .icon{
     padding-top: 8px;
     width: 40px;
+    height: auto;
+    background-color: transparent;
+    margin: 0 auto;
   }
   h2{
     line-height: $lineHeight-p-200;

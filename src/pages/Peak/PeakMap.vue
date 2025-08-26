@@ -4,12 +4,12 @@
       <p>{{ peakSubTitle }}</p>
   </div>
 
-  <div class="peak-map" style="height: 1080px; width: 780px; position: relative;">
+  <div class="peak-map">
     <l-map
       ref="mapRef"
       :center="[23.7, 121]"
       :zoom="8.5"                
-      :minZoom="8.5"
+      :minZoom="7"
       :maxZoom="8.5"
       :zoomControl="false"
       :scrollWheelZoom="false"  
@@ -18,7 +18,7 @@
       :dragging="false"    
       :boxZoom="false"
       :keyboard="false"
-      :max-bounds="[[21.5,119.5],[25.5,122.5]]"
+      :max-bounds="[[21,119],[26,123]]"
       :maxBoundsViscosity="1"
       style="height: 100%; width: 100%;"
     >
@@ -66,7 +66,7 @@
               <p >英文名：{{ mountain.englishName }}</p>
               <p >特色：{{ mountain.features }}</p>
               <p >所在地：{{ mountain.location }}</p>
-              <hr>
+              <hr class="line">
           </div>
           <!-- View Details Button -->
           <div class="btn-box">
@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted, h } from "vue";
   //引用 leaflet for vue plugin 的 css, js
   import 'leaflet/dist/leaflet.css'
   import { LMap, LTileLayer, LMarker, LPopup } from '@vue-leaflet/vue-leaflet'
@@ -184,6 +184,12 @@ const closeOverlay = () => {
     showEbook.value = false
     selectedMountain.value = null
   }
+
+ //響應式設定
+  const screenWidth = ref(window.innerWidth)
+  
+
+  
 
   // 山峰資料
   const mountains = ref([
@@ -420,23 +426,37 @@ const closeOverlay = () => {
   *{
     box-sizing: border-box;
   }
+  .peak-map{
+    height: 1080px; 
+    width: 780px; 
+    position: relative;
+    @include m(){
+      height: 60vh;
+      width: 100%;
+      padding: 0 16px;
+    }
+
+  }
   .peaktitle{
     margin-top: 12px;
     margin-left: 48px;
+    @include m(){
+      margin-left: 16px;
+      margin-top: 8px;
+    }
     h1{
       font-size: $pcFont-bigTitle-m;
       font-weight: $bold;
       line-height: $lineHeight-title-120;
       @include m(){
-          font-size:$pcFont-bigTitle-m;
-
+          font-size:$pcFont-H1-m;
         }
   }
     p{
           font-size: $pcFont-H1-m;
           line-height: $lineHeight-p-200;
           @include m(){
-          font-size:$pcFont-H1-l;
+          font-size:$pcFont-H4;
 
         }
       }
@@ -465,9 +485,8 @@ const closeOverlay = () => {
       padding-top: 12px;
     }
 }
-/* .leaflet-popup-content{
-    width: 420px !important;
-} */
+
+
 
 .map-overlay{
   position:absolute; 
@@ -497,8 +516,11 @@ const closeOverlay = () => {
     font-size: 24px;
     cursor: pointer;
   }
+  @media screen and (max-width: 430px) {
+    width: 350px;
+    font-size: 14px;
+  }
 }
-
 
 .mountain-info{
   display: flex;
@@ -508,17 +530,26 @@ const closeOverlay = () => {
     padding-left: 12px;
     font-size: 40px;
     font-weight: 700;
+    @media screen and (max-width: 430px) {
+    font-size: 34px;
+  }
   }
   span{
     padding-right: 12px;
     font-size: 20px;
     font-weight: 700;
+
   }
 }
 .dashed{
     border: none;              
     border-top: 1px dashed #666; 
     margin: 20px 0; 
+    @media screen and (max-width: 430px) {
+    margin: 10px 0; 
+
+  }
+
   }
 .mountain-details{
   span{
@@ -527,15 +558,30 @@ const closeOverlay = () => {
     font-weight: 500;
     line-height: 200%;
      margin-bottom: 12px;
+     @media screen and (max-width: 430px) {
+    font-size: 20px;
+    line-height: 150%;
+  }
   } 
   p{
     padding-left: 12px;
     line-height: 200%;
+    @media screen and (max-width: 430px) {
+    font-size: 14px;
+    line-height: 200%;
+  }
   }
 }
-
+.line{
+  @media screen and (max-width: 430px) {
+    display: none;;
+  }
+}
 .btn-box{
   display: flex;
+  @media screen and (max-width: 430px) {
+    display: none;;
+  }
 }
 .btn {
   margin-left: auto;
