@@ -5,10 +5,11 @@ import WelcomePage from '@/pages/WelcomePage.vue'
 // 首頁
 import homePage from '@/pages/homePage.vue'
 // 百岳之書
+import PeakGuide from '@/pages/PeakGuide.vue'
 import routesPage from '@/pages/routesPage.vue'
 import togetherPage from '@/pages/togetherPage.vue'
 // 揪安心
-import myChallenge from '@/pages/myChallenge.vue'
+// import myChallenge from '@/pages/myChallenge.vue'
 import ShopPage from '@/pages/ShopPage/ShopPage.vue'
 // 會員登入
 
@@ -48,6 +49,10 @@ const frontroutes = [
     component: homePage,
   },
   {
+    path: '/peaks',
+    component: PeakGuide,
+  },
+  {
     path: '/routes',
     component: routesPage
   },
@@ -55,10 +60,10 @@ const frontroutes = [
     path: '/together',
     component: togetherPage
   },
-  {
-    path: '/my-challenge',
-    component: myChallenge
-  },
+  // {
+  //   path: '/my-challenge',
+  //   component: myChallenge
+  // },
   {
     path: '/shop',
     component: ShopPage,
