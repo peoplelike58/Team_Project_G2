@@ -6,9 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-    base: process.env.NODE_ENV === 'production' //base: 用來設定「專案打包後的靜態資源的基準路徑」
-        ? '/tjd102/g2/' // ← production 模式：部署到 FTP 時的子目錄
-        : '/', // ← development 模式：本地開發直接用根目錄
+    base: '/', // ← development 模式：本地開發直接用根目錄
     build: { //build: 控制打包的輸出設定
         outDir: 'dist' // 打包後整個 dist 上傳到 /tjd102/g1/
     },
