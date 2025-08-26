@@ -4,14 +4,14 @@
       <!-- 關閉按鈕 -->
       <button class="close-btn" @click="closeModal">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
         </svg>
       </button>
 
       <!-- 恭喜圖標和橫幅 -->
       <div class="congratulations-section">
-        <div class="congratulations_pic"><img src="" alt=""></div>
-          <div class="congratulations-text">Congratulations!</div>
+        <div class="congratulations_pic"><img src="/public/Products/congratulation_img.png" alt=""></div>
+          <div class="congratulations-text">註冊成功！</div>
       </div>
 
       <!-- 主要內容 -->
@@ -31,9 +31,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-
+import { useRouter } from 'vue-router'
 // 響應式數據
 const showModal = ref(false)
+const router = useRouter()
 
 // 方法
 const closeModal = () => {
@@ -41,9 +42,8 @@ const closeModal = () => {
 }
 
 const viewCoupons = () => {
-  // 這裡可以添加跳轉到優惠券頁面的邏輯
   console.log('前往查看優惠券')
-  // 例如：router.push('/member/coupons')
+  router.push({ name: 'member-coupons' })
   closeModal()
 }
 
@@ -61,7 +61,9 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
+
 
 /* 彈窗遮罩 */
 .modal-overlay {
@@ -119,14 +121,8 @@ defineExpose({
   gap: 10px;
 }
 
-.banner-icon {
-  margin-bottom: 5px;
-}
-
 .congratulations-text {
-  font-family: 'Arial', sans-serif;
-  font-style: italic;
-  font-weight: bold;
+  font-weight: $bold;
   color: #333;
   font-size: 14px;
 }

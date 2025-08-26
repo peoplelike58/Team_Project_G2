@@ -15,12 +15,15 @@
         <div class="product-image">
           <img :src="product.image" :alt="product.name" />
           <button class="favorite-btn" @click="removeFavorite(product.id)">
-            <i class="heart-icon filled"></i>
+            <i class="heart-icon">❤️</i>
           </button>
         </div>
         <div class="product-info">
           <h3 class="product-name">{{ product.name }}</h3>
-          <p class="product-price">${{ product.price }}</p>
+          <div class="box">
+            <p class="product-price">${{ product.price }}</p>
+            <button class="add_cart">加入購物車</button>
+          </div>
         </div>
       </div>
     </div>
@@ -36,20 +39,20 @@ const favoriteProducts = ref([
   {
     id: 1,
     name: '三人帳篷快速收合登山帳',
-    price: 2000,
-    image: '/path/to/tent.jpg'
+    price: 1000,
+    image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=600&fit=crop&auto=format'
   },
   {
     id: 2,
-    name: '三人帳篷快速收合登山帳',
+    name: '帳篷快速收合登山帳',
     price: 2000,
-    image: '/path/to/binoculars.jpg'
+    image: ''
   },
   {
     id: 3,
-    name: '三人帳篷快速收合登山帳',
-    price: 2000,
-    image: '/path/to/poles.jpg'
+    name: '快速收合登山帳',
+    price: 3000,
+    image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=600&fit=crop&auto=format'
   }
 ])
 
@@ -72,7 +75,6 @@ onMounted(() => {
 .member-favorites {
   .page-header {
     margin-bottom: 40px;
-    
     .page-title {
       font-size: $pcFont-H2;
       font-weight: $semiBold;
@@ -100,7 +102,7 @@ onMounted(() => {
     transition: transform 0.3s ease;
     
     &:hover {
-      transform: translateY(-4px);
+      
     }
     
     .product-image {
@@ -108,23 +110,17 @@ onMounted(() => {
       @include product_card_img(100%, 200px, 0);
       
       .favorite-btn {
-        @include btn(50%);
+        @include btn(0);
         position: absolute;
         top: 12px;
         right: 12px;
         width: 40px;
         height: 40px;
-        background: rgba(255, 255, 255, 0.9);
+        background-color: transparent;
         @include flexcenter(0, row);
-        
         .heart-icon {
-          width: 20px;
-          height: 20px;
-          
-          &.filled {
-            background: url('/path/to/heart-filled.svg') no-repeat center;
-            background-size: contain;
-          }
+          width: 24px;
+          height: 24px;
         }
       }
     }
@@ -138,11 +134,25 @@ onMounted(() => {
         margin-bottom: 8px;
         line-height: $lineHeight-title-120;
       }
-      
-      .product-price {
-        font-size: $pcFont-H4;
-        font-weight: $semiBold;
-        color: $black-14;
+      .box{
+        display: flex;
+        justify-content: space-between;
+        .product-price {
+          font-size: $pcFont-H4;
+          font-weight: $semiBold;
+          color: $black-14;
+        }
+        .add_cart{
+          @include btn(0);
+          border-bottom: 1px solid $black-14;
+          font-size: $pcFont-p-s;
+          font-weight: $semiBold;
+          line-height: $lineHeight-p-150;
+          &:hover {
+            color: #374151;
+            border-bottom:1px solid #374151;
+          }
+        }
       }
     }
   }

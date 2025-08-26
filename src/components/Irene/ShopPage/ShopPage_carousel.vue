@@ -1,41 +1,62 @@
 <!-- 精選商品輪播 -->
+<script setup>
+
+import { ref,computed } from 'vue'
+
+const carouselproducts = ref([
+    {"id": 1,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 2,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 3,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 4,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 5,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 6,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 7,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 8,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 9,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+])
+
+// 目前顯示的商品索引（從 0 開始）
+const currentIndex = ref(0)
+const showcount = 6;
+
+const goPre=()=>{
+ // 如果不是第一個商品，就讓 currentIndex 減 1
+  if (currentIndex.value > 0) {
+    currentIndex.value = currentIndex.value - 1
+  }
+}
+
+const goNext=()=>{
+  // 如果還沒到最後一個商品，就讓 currentIndex 加 1
+  if (currentIndex.value < productList.value.length - 1) {
+    currentIndex.value = currentIndex.value + 1
+  }
+}
+
+
+
+
+</script>
+
 <template>
     <section class="featured_products">
         <h2>精選商品</h2>
         <div class="carousel_box">
-            <button class="products_pre"><</button>
+            <button class="products_pre" @click="goPre"><</button>
             <div class="carousel_content">
-                <!-- 精選商品項目 -->
-                <div class="carousel_item">
-                    <div class="item_pic"><img src="/Products/products/墨鏡_1.jpg" alt=""></div>
-                    <p>時尚墨鏡</p>
-                </div>
-                <div class="carousel_item">
-                    <div class="item_pic"><img src="/public/Products/products/墨鏡_1.jpg" alt=""></div>
-                    <p>時尚墨鏡</p>
-                </div>
-                <div class="carousel_item">
-                    <div class="item_pic"><img src="/public/Products/products/墨鏡_1.jpg" alt=""></div>
-                    <p>時尚墨鏡</p>
-                </div>
-                <div class="carousel_item">
-                    <div class="item_pic"><img src="/public/Products/products/墨鏡_1.jpg" alt=""></div>
-                    <p>時尚墨鏡</p>
-                </div><div class="carousel_item">
-                    <div class="item_pic"><img src="/public/Products/products/墨鏡_1.jpg" alt=""></div>
-                    <p>時尚墨鏡</p>
+                <div class="carousel_item" v-for="(item,index) in carouselproducts" :key="item.index">
+                    <div class="item_pic"><img :src="item.pic" alt=""></div>
+                    <p>{{ item.name }}</p>
                 </div>
             </div>
-            <button class="products_next">></button>
+            <button class="products_next" @click="goNext">></button>
         </div>
     </section>
 </template>
 
-<script setup>
-
-</script>
 
 <style scoped lang="scss">
+ 
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
 
@@ -72,6 +93,9 @@ h2{
     }
 }
 
+.carousel_content{
+    max-width: 1100px;
+    overflow: hidden;
+}
 
-
-</style>
+</style> 

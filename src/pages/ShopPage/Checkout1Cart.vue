@@ -1,4 +1,5 @@
 <script setup>
+import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
 import { reactive, ref, computed, watch } from 'vue'
 import { ArrowDown } from '@element-plus/icons-vue'
@@ -41,99 +42,140 @@ function goNext(){ router.push('/Shop/info') }
 </script>
 
 <template>
-    <main>
-        <section>
+    <NavMenu/>
+    <div class="wrapper">
+        <main>
+            <!-- 步驟 -->
+            <section>
             <Checkout_stepup :current="1"/>
-        </section>
-        <div class="toolbar">
-            <el-checkbox v-model="allChecked" @change="toggleAll">全選</el-checkbox>
-            <el-button link type="info"  @click="removeChecked">全部刪除</el-button>
-        </div>
+            </section>
+            <!-- 全部選擇的按鈕 -->
+            <div class="toolbar">
+                <el-checkbox v-model="allChecked" @change="toggleAll">全選</el-checkbox>
+                <el-button link type="info"  @click="removeChecked">全部刪除</el-button>
+            </div>
+            <!-- 已加入商品列表 -->
+            <el-table :data="items"  stripe class="cart-table">
+                <el-table-column width="54" align="center">
+                    <template #default="{ row }"><el-checkbox v-model="checkedMap[row.id]" /></template>
+                </el-table-column>
 
-        <el-table :data="items"  stripe class="cart-table">
-            <el-table-column width="54" align="center">
-                <template #default="{ row }"><el-checkbox v-model="checkedMap[row.id]" /></template>
-            </el-table-column>
+                <el-table-column label="" width="140">
+                    <template #default="{ row }">
+                    <el-image :src="row.image" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
+                    </template>
+                </el-table-column>
+                
+                <el-table-column prop="name" label="商品" min-width="220"><!-- 商品title -->
+                    <template #default="{ row }">
+                    <div class="name">{{ row.name }}</div><!-- 商品名稱 -->
+                    <div class="sku">尺寸：{{ row.size }}   顏色：{{ row.color }}</div><!-- 各商品規格 -->
+                    </template>
+                </el-table-column>
 
-            <el-table-column label="" width="140">
-                <template #default="{ row }">
-                <el-image :src="row.image" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
-                </template>
-            </el-table-column>
+                <el-table-column label="數量" width="160" align="center"><!-- 數量title -->
+                    <template #default="{ row }"><el-input-number v-model="row.qty" :min="1" /></template><!-- 各商品數量選擇 -->
+                </el-table-column>
 
-            <el-table-column prop="name" label="商品" min-width="220">
-                <template #default="{ row }">
-                <div class="name">{{ row.name }}</div>
-                <div class="sku">尺寸：{{ row.size }} 顏色：{{ row.color }}</div>
-                </template>
-            </el-table-column>
+                <el-table-column label="單價" width="120" align="right"><!-- 單價title -->
+                    <template #default="{ row }">NT${{ row.price }}</template><!-- 各商品的單價 -->
+                </el-table-column>
 
-            <el-table-column label="數量" width="160" align="center">
-                <template #default="{ row }"><el-input-number v-model="row.qty" :min="1" /></template>
-            </el-table-column>
-
-            <el-table-column label="單價" width="120" align="right">
-                <template #default="{ row }">NT${{ row.price }}</template>
-            </el-table-column>
-
-            <el-table-column width="64" align="center">
-                <template #default="{ row }"><el-button link type="danger" @click="remove(row.id)">✕</el-button></template>
-            </el-table-column>
-        </el-table>
-
-        <div class="coupon">
-        <el-dropdown @command="applyCoupon">
-            <el-button>
-            選擇優惠券
-            <el-icon class="ml-1"><ArrowDown /></el-icon>
-            </el-button>
-            <template #dropdown>
-            <el-dropdown-menu>
-                <el-dropdown-item v-for="c in coupons" :key="c.id" :command="c">{{ c.title }}</el-dropdown-item>
-            </el-dropdown-menu>
-            </template>
-        </el-dropdown>
-        <span v-if="chosenCoupon" class="coupon-tag">已套用：{{ chosenCoupon.title }}</span>
-        </div>
-
-        <el-card shadow="never" class="summary">
-        <div class="line"><span>共 {{ totalQty }} 件商品</span><span>商品金額</span><strong> $ {{ subtotal.toLocaleString() }}</strong></div>
-        <div class="line"><span></span><span>活動優惠</span><strong class="discount">- $ {{ discount.toLocaleString() }}</strong></div>
-        <el-divider />
-        <div class="line total"><span></span><span>小計</span><strong>$ {{ total.toLocaleString() }}</strong></div>
-        </el-card>
-
-        <div class="actions">
-        <el-button @click="goBack">上一步</el-button>
-        <el-button type="primary" :disabled="!items.length" @click="goNext">下一步</el-button>
-        </div>
-    </main>
+                <el-table-column width="64" align="center">
+                    <template #default="{ row }"><el-button link type="danger" @click="remove(row.id)">✕</el-button></template>
+                </el-table-column>
+            </el-table>
+            <div class="totaldetail">
+                <!-- 選擇優惠券 -->
+                <div class="coupon">
+                    <el-dropdown @command="applyCoupon">
+                        <el-button>
+                        選擇優惠券
+                        <el-icon class="ml-1"><ArrowDown /></el-icon>
+                        </el-button>
+                        <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item v-for="c in coupons" :key="c.id" :command="c">{{ c.title }}</el-dropdown-item>
+                        </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                    <span v-if="chosenCoupon" class="coupon-tag">已使用：{{ chosenCoupon.title }}</span>
+                </div>
+                <!-- 購物總計 -->
+                <el-card shadow="never" class="summary">
+                    <div class="line"><span>共 {{ totalQty }} 件商品</span><span>商品金額</span><strong> $ {{ subtotal.toLocaleString() }}</strong></div>
+                    <div class="line"><span></span><span>活動優惠</span><strong class="discount">- $ {{ discount.toLocaleString() }}</strong></div>
+                    <el-divider style="border-top: 1px solid #ccc; padding:0;"/>
+                    <div class="line total"><span></span><span>小計</span><strong>$ {{ total.toLocaleString() }}</strong></div>
+                </el-card>
+            </div>
+            <!-- 按鈕 -->
+            <div class="actions">
+                <el-button @click="goBack">上一步</el-button>
+                <el-button color="#141414" :dark="isDark" :disabled="!items.length" @click="goNext">下一步</el-button>
+            </div>
+        </main>
+    </div>
 </template>
 
 <style lang="scss" scoped>
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
+.wrapper{
+    width: 100%;
+    main{
+        max-width: 1200px;
+        padding: 2vh;
+        margin: auto;
 
-main{
-    max-width: 1200px;
-    margin: auto;
-    section{
-        padding: 40px 0;
-       
-        :deep(element.style){
-            text-align: center;
-        }
+        // section{
+        //     padding: 40px 0;
+        //     :deep(element.style){
+        //         text-align: center;
+        //     }
+        // }
     }
 }
-.toolbar{
+.toolbar{//全部選擇按鈕
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    :deep(.el-checkbox__label){
-        font-size: $black-14;
+    :deep(.el-checkbox__label){font-size: $pcFont-p-m;}//全選字體大小
+    :deep(.el-button>span){font-size: $pcFont-p-m;}//全部刪除字體大小
+}
+/* 表格 */
+:deep(.el-table .cell){padding: 16px 0;}  //表格每列樣式
+:deep(.el-table_1_column_3 .cell){//商品欄文字樣式
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+:deep(.el-button--danger span){//叉叉的顏色
+    color: $black-14;
+}
+.totaldetail{
+    @include flexcenter(0,row);
+    justify-content:space-between;
+    align-items: flex-start;
+    .coupon{
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
     }
-    :deep(.el-button>span){
-        font-size: $black-14;
+    :deep(.el-card__body){
+        @include flexcenter(18px,column);
+        align-items: flex-end;
+        >.line span,strong{
+            padding-left: 20px;
+        }
     }
 }
+
+.actions{
+    padding: 20px;
+    display: flex;
+    justify-content: end;
+}
+
 </style>

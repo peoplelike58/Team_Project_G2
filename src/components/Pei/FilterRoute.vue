@@ -240,8 +240,6 @@ function goPage(p) {
 
 </template>
 
-
-
 <style scoped lang="scss"> /* 元件私有樣式 */
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/mixins';

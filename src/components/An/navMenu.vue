@@ -58,7 +58,7 @@ const menuItems = [
     { label: '路線規劃', path: 'routes' },
     { label: '百岳挑戰', path: 'myChallenge' },
     { label: '山腳雜貨店', path: 'shop' },
-    { label: '會員登入', path: 'member' },
+    { label: '會員中心', path: 'loginregister' },
 ]
 
 let gsapTimeline

@@ -12,11 +12,17 @@
         </div>
   </section> -->
   
-    <button class="coupon_btn">
+    <button class="coupon_btn" @click="ToRegister">
         <img src="/Products/ProductPage_coupon_pc.png" alt="">
     </button>
 </template>
 <script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+const ToRegister = () => {
+  router.push({name:'loginregister-fontregister'})
+}
 
 </script>
 

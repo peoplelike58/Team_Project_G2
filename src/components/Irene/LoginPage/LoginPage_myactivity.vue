@@ -189,7 +189,7 @@ onMounted(() => {
           
           .cancel-btn {
             @include btn(4px);
-            padding: 8px 16px;
+            padding: 4px 8px;
             background-color: $bg-gray;
             color: $black-14;
             font-size: $pcFont-label;
@@ -197,9 +197,8 @@ onMounted(() => {
             @include border($ash-olive-400);
             
             &:hover {
-              background-color: #ff6b6b;
+              background-color: $ash-olive-400;
               color: white;
-              border-color: #ff6b6b;
             }
           }
         }
