@@ -7,8 +7,10 @@ import homePage from '@/pages/homePage.vue'
 // 百岳之書
 import PeakGuide from '@/pages/PeakGuide.vue'
 import routesPage from '@/pages/routesPage.vue'
+// 揪上山
 import togetherPage from '@/pages/togetherPage.vue'
 // 揪安心
+import peacePage from '@/pages/peacePage.vue'
 // import myChallenge from '@/pages/myChallenge.vue'
 import ShopPage from '@/pages/ShopPage/ShopPage.vue'
 // 會員登入
@@ -63,6 +65,10 @@ const frontroutes = [
   {
     path: '/together',
     component: togetherPage,
+  },
+  {
+    path: '/peace',
+    component: peacePage,
   },
   {
     path: '/together/activities/:id',
