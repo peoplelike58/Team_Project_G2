@@ -68,12 +68,12 @@ const frontroutes = [
     component: routesPage
   },
 //------- 詳細頁面 -----------
-  {
-    path:'/routes/:id',
-    name:'trailDetail',
-    component: trailDetail,
-    props: true
-  },
+  // {
+  //   path:'/routes/:id',
+  //   name:'trailDetail',
+  //   component: trailDetail,
+  //   props: true
+  // },
 //----------------------------
   {
     path: '/together',

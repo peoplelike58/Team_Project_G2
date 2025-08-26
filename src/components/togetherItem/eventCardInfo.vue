@@ -6,9 +6,10 @@
             <div class="topInfoImg">
                 <img src="@/assets/images/eventCard/cardimg1.jpg" alt="">
             </div>
-
+            
             <div class="topInfo">
                 <h1>揪團中</h1>
+            <!-- <div class="closeBtn" @click="goBack">✕</div> -->
                 <h2>陽明山緩慢散步之旅</h2>
                 <div class="topInfoP">
                     <p>日期</p>
@@ -75,6 +76,7 @@
                 <button>報名參加</button>
             </div>
 </div>
+<Footer/>
 </template>
 
         <script setup>
@@ -82,6 +84,7 @@
         import { useRoute } from 'vue-router';
         import activitiesJson from '@/components/togetherItem/activities.json';
         import NavMenu from '../An/navMenu.vue';
+        import Footer from '../An/footer.vue';
 
         const route = useRoute()
         // const json = activitiesJson()
@@ -89,6 +92,8 @@
         // const id = computed(() => parseInt(route.params.id))
 
         // const cardId = comp
+
+        const goBack = () => {router.back()}
     
         </script>
 
@@ -100,7 +105,18 @@
                 align-items: center;
                 background-color: #fff;
             }
-
+            .closeBtn {
+                margin-left: 100px; // 距離 h1 右邊 100px
+                font-size: 28px;
+                font-weight: bold;
+                color: $black-14;
+                cursor: pointer;
+                transition: 0.2s ease;
+            &:hover {
+                color: #E13535;
+                transform: scale(1.1);
+            }
+            }
             // top資訊區
             .topInfoImg {
                 img {
