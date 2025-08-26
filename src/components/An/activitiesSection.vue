@@ -23,11 +23,7 @@
 
             <!-- 底部 CTA -->
             <footer class="section-footer">
-                <a
-                    class="view-all"
-                >
-                    查看活動一覽
-                </a>
+                <RouterLink to="/together" class="view-all">查看活動一覽</RouterLink>
             </footer>
         </div>
     </section>
@@ -86,9 +82,10 @@ function handleCtaClick(item) {
 }
 .section-footer { 
     display: flex; 
-    justify-content: center; 
+    justify-content: center;
 }
-.view-all {
+.view-all {  
+    color: $black-14;
     font-size: $pcFont-H3;
     font-weight: $bold;
     text-decoration: 1px underline;
