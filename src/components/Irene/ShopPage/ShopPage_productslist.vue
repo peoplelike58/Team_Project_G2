@@ -1,32 +1,8 @@
 <script setup>
 import { ref,computed,watch } from 'vue'
-import Products from '@/assets/json/products.json'// 從json引入
 import { useRouter } from 'vue-router'
+import Products from '@/assets/json/products.json'// 從json引入
 
-
-
-/* 暫時假資料 */
-// const products = ref([
-//    { id: 1, name: '三人帳篷輕量版', price: 3200, image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'unisex' },
-//   { id: 2, name: '雙人睡袋加厚保暖', price: 1800, image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'unisex' },
-//   { id: 3, name: '登山健行背包 45L', price: 2500, image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'unisex' },
-//   { id: 4, name: '鋁合金登山杖', price: 750, image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'unisex' },
-//   { id: 5, name: '不鏽鋼保溫水瓶 800ml', price: 600, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'unisex' },
-//   { id: 6, name: '快乾登山褲', price: 1200, image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'male' },
-//   { id: 7, name: '防風防水外套', price: 2800, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'female' },
-//   { id: 8, name: '登山頭燈可充電', price: 950, image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'unisex' },
-//   { id: 9, name: '戶外折疊椅', price: 1100, image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'unisex' },
-//   { id: 10, name: '行動電源 20000mAh', price: 1600, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop' , gender: 'unisex' },
-//   { id: 11, name: '野營卡式爐', price: 1300, image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'unisex' },
-//   { id: 12, name: '登山護膝支撐帶', price: 500, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop' , gender: 'unisex' },
-//   { id: 13, name: '防水登山鞋', price: 3200, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop', gender: 'male' },
-//   { id: 14, name: '女款透氣登山鞋', price: 3000, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop' , gender: 'female' },
-//   { id: 15, name: '便攜野餐桌', price: 950, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop' , gender: 'unisex' },
-//   { id: 16, name: '防蚊速乾長袖衫', price: 1100, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop' , gender: 'female' },
-//   { id: 17, name: '野營吊床', price: 1400, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop' , gender: 'unisex' },
-//   { id: 18, name: '露營燈掛燈', price: 700, image:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=300&fit=crop' , gender: 'unisex' }
-// ]
-// )
 const products = Products;
 
 /*點擊收藏*/
@@ -46,7 +22,7 @@ function Showdetail(product){
   router.push(`/Shop/product/${product.id}`);
 }
 
-/*關鍵字搜尋*/
+
 // 接收篩選條件&接收分頁參數 props
 const props = defineProps({
   filters: {
@@ -60,11 +36,12 @@ const props = defineProps({
   currentPage: { type: Number, default: 1 },
   pageSize: { type: Number, default: 20 }
 })
-//接收到篩選方式後篩選商品
 
+//接收到篩選方式後篩選商品
 const sortOrder = ref('')//排序
 const filteredProducts = computed(()=>{
   let result = products ;//原本的顯示結果是所有的商品
+
   //排序功能 (要在所有篩選之前，不然篩選後才能排序，- 無論有沒有分類都要執行排序)
   if (sortOrder.value === 'price-low') {
     result = result.sort((a, b) => a.price - b.price); // 價格低到高
@@ -87,8 +64,6 @@ const filteredProducts = computed(()=>{
   if (props.filters.category && props.filters.category !== '') {
     result = result.filter(product => product.category === props.filters.category);
   }
-
-  // 如果 category 是空字串，就顯示全部商品（不做篩選）
 
   return result;
 })
@@ -140,18 +115,6 @@ const pagedProducts = computed(() => {
           <p class="product-price">${{ product.price }}</p>
       </div>
     </div>
-  <!-- <div class="products-grid">
-        <div class="product-card" v-for="product in filteredProducts" :key="product.id" @click="goToProduct(product.id)">
-            <div class="product-image">
-                <img :src="product.image" :alt="product.name" />
-                <button class="favorite-btn" @click.stop="toggleFavorite(product.id)">
-                    {{ favorites.includes(product.id) ? '❤️' : '🤍' }}
-                </button>
-            </div>
-            <h3 class="product-name">{{ product.name }}</h3>
-            <p class="product-price">${{ product.price }}</p>
-        </div>
-    </div>  -->
   </div> 
 
 </template>
@@ -221,7 +184,7 @@ const pagedProducts = computed(() => {
         right: 12px;
         background: transparent;
         font-size: 16px;
-        z-index: 50;
+        z-index: 20;
       }
     }
 

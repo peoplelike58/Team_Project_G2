@@ -7,13 +7,13 @@
 
 
 <template>
-  <el-steps style="max-width: 600px" :active="props.current" align-center>
-    <el-step title="Step 1" description="購物車" />
-    <el-step title="Step 2" description="填寫資料" />
-    <el-step title="Step 3" description="完成訂單" />
-  </el-steps>
-
-
+  <section class="setup3">
+    <el-steps style="max-width: 600px" :active="props.current" align-center>
+      <el-step title="Step 1" description="購物車" />
+      <el-step title="Step 2" description="填寫資料" />
+      <el-step title="Step 3" description="完成訂單" />
+    </el-steps>
+  </section>
 </template>
 
 
@@ -21,6 +21,9 @@
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
 
+.setup3{
+  padding: 40px 0;
+}
 
 .el-steps.el-steps--horizontal{
     margin: auto;

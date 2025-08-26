@@ -4,7 +4,7 @@
 
 <template>
     <RouterLink to="/homepage">前台</RouterLink>
-    <RouterLink to="/login">後台</RouterLink>
+    <RouterLink to="/backlogin">後台</RouterLink>
 </template>
 
 

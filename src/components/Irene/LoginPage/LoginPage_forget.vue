@@ -1,121 +1,258 @@
-<script setup>
-import { ref, onMounted, watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
-
-const props = defineProps({
-  modelValue: { type: Boolean, default: false },
-  redirectToLoginPath: { type: String, default: '' },
-  showHumanCheck: { type: Boolean, default: true },
-  autoCloseOnSuccess: { type: Boolean, default: true }
-})
-const emit = defineEmits(['update:modelValue', 'success', 'close'])
-
-const isOpen = ref(props.modelValue)
-const email = ref('')
-const pending = ref(false)
-const msg = ref('')
-const msgType = ref('info')
-const isHuman = ref(false)
-const emailRef = ref(null)
-
-const router = useRouter()
-
-onMounted(() => emailRef.value?.focus())
-watchEffect(() => { isOpen.value = props.modelValue })
-
-const closeModal = () => {
-  emit('close')
-  emit('update:modelValue', false)
-}
-const backToLogin = () => {
-  closeModal()
-  if (props.redirectToLoginPath) router.push(props.redirectToLoginPath)
-}
-const onSubmit = async () => {
-  msg.value = ''
-  msgType.value = 'info'
-  if (!email.value) {
-    msg.value = '請輸入 Email'
-    msgType.value = 'error'
-    emailRef.value?.focus()
-    return
-  }
-  if (props.showHumanCheck && !isHuman.value) {
-    msg.value = '請完成驗證'
-    msgType.value = 'error'
-    return
-  }
-  try {
-    pending.value = true
-    await new Promise(r => setTimeout(r, 700))
-    msg.value = '已寄出重設密碼連結，請至信箱收信。'
-    msgType.value = 'success'
-    emit('success', { email: email.value })
-    if (props.autoCloseOnSuccess) setTimeout(closeModal, 600)
-  } catch (e) {
-    msg.value = '寄送失敗，請稍後再試。'
-    msgType.value = 'error'
-  } finally {
-    pending.value = false
-  }
-}
-</script>
-
-<template>
-  <div v-if="isOpen" class="modal-overlay" @click="closeModal">
-    <div class="modal-container" @click.stop>
-      <button @click="closeModal" class="close-btn" aria-label="關閉">×</button>
-
-      <div class="modal-content" role="dialog" aria-labelledby="fp-title" aria-modal="true">
-        <h1 id="fp-title" class="title">忘記密碼</h1>
-
-        <form class="form-container" @submit.prevent="onSubmit" novalidate>
-          <div class="input-group">
-            <label for="fp-email" class="input-label">Email</label>
-            <div class="input-wrapper">
-              <span class="input-icon">@</span>
-              <input
-                id="fp-email"
-                ref="emailRef"
-                v-model.trim="email"
-                type="email"
-                class="input-field"
-                inputmode="email"
-                autocomplete="email"
-                placeholder="you@example.com"
-                required
-                aria-invalid="false"
-              />
-            </div>
-          </div>
-
-          <div class="input-group" v-if="showHumanCheck">
-            <label class="input-label">驗證</label>
-            <div class="input-wrapper" style="align-items:center">
-              <input id="isHuman" type="checkbox" v-model="isHuman" style="width:18px;height:18px;margin:0 10px 0 4px" />
-              <label for="isHuman" style="cursor:pointer">我不是機器人</label>
-            </div>
-          </div>
-
-          <div class="action-row">
-            <button type="submit" class="primary-btn" :disabled="pending">
-              {{ pending ? '寄送中…' : '寄送重設連結' }}
-            </button>
-            <button type="button" class="secondary-btn" @click="backToLogin">
-              返回登入
-            </button>
-          </div>
-
-          <p v-if="msg" :class="['helper-text', msgType]" role="status" style="margin-top:8px">
-            {{ msg }}
-          </p>
-        </form>
+<template>   
+  <div class="modal-content">
+    <h1 class="title">忘記密碼</h1>
+    <p class="subtitle">請輸入您註冊時使用的電子郵件地址，我們將發送重設密碼的連結給您。</p>
+    
+    <form class="form-container">
+      <div class="input-group">
+        <label for="fp-email" class="input-label">帳號</label>
+        <div class="input-wrapper">
+          <input
+            id="fp-email"
+            type="email"
+            class="input-field"
+            placeholder="請輸入電子郵件"
+          />
+        </div>
       </div>
+      
+      <div class="input-group">
+        <label class="input-label">驗證</label>
+        <div class="checkbox-wrapper">
+          <input id="isHuman" type="checkbox" class="checkbox-input" />
+          <label for="isHuman" class="checkbox-label">我不是機器人</label>
+        </div>
+      </div>
+      
+      <div class="action-row">
+        <button type="submit" class="primary-btn" @click="gochek">立即發送</button>
+        <button type="button" class="secondary-btn" @click="backToLogin">返回登入</button>
+      </div>
+    </form>
     </div>
-  </div>
 </template>
 
-<style lang="scss" scoped>
-@import '@/assets/styles/othermixins.scss';
-</style>
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const backToLogin = ()=>{
+  router.push({name:'loginregister-fontrelogin' })
+}
+const gochek = () =>{
+  router.push({name:'loginregister-forgetsend' })
+}
+
+
+</script>
+
+<style lang="scss" scoped>
+// 變數定義
+$primary-color: #000;
+$secondary-color: #6c757d;
+$error-color: #dc3545;
+$success-color: #28a745;
+$border-color: #dee2e6;
+$border-radius: 8px;
+$box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+
+.modal-content {
+  padding: 40px 32px 32px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: $primary-color;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: $secondary-color;
+  margin: 0 0 32px 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px 12px 16px;
+  border: 2px solid $border-color;
+  border-radius: $border-radius;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  outline: none;
+  box-sizing: border-box;
+  
+  &::placeholder {
+    color: #9ca3af;
+  }
+  
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 4px;
+}
+
+.checkbox-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+}
+
+.action-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 12px 24px;
+  border-radius: $border-radius;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.primary-btn {
+  background: $primary-color;
+  color: white;
+  
+  &:hover {
+    background: #333;
+  }
+}
+
+.secondary-btn {
+  background: transparent;
+  color: $secondary-color;
+  border: 2px solid $border-color;
+  
+  &:hover {
+    background: #f8f9fa;
+    color: #374151;
+  }
+}
+
+
+
+
+.social-login {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.social-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .social-icon {
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.google-btn {
+  background: #db4437;
+  color: white;
+  
+  &:hover {
+    background: #c23321;
+  }
+}
+
+.facebook-btn {
+  background: #3b5998;
+  color: white;
+  
+  &:hover {
+    background: #2d4373;
+  }
+}
+
+.line-btn {
+  background: #00c300;
+  color: white;
+  
+  &:hover {
+    background: #009a00;
+  }
+  
+  .social-icon {
+    font-size: 12px;
+  }
+}
+
+// 響應式設計
+@media (max-width: 480px) {
+  .modal-container {
+    width: 95%;
+    margin: 16px;
+  }
+  
+  .modal-content {
+    padding: 32px 24px 24px;
+  }
+  
+  .title {
+    font-size: 20px;
+  }
+  
+  .input-field {
+    font-size: 16px;
+  }
+}
+</style>

@@ -1,16 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Member from './member'
+import Member from './member'//會員中心
+
+
 /*前台 */
 import WelcomePage from '@/pages/WelcomePage.vue'
-// 首頁
-import homePage from '@/pages/homePage.vue'
+import homePage from '@/pages/homePage.vue'//首頁
 // 百岳之書
-import routesPage from '@/pages/routesPage.vue'
-import togetherPage from '@/pages/togetherPage.vue'
+import routesPage from '@/pages/routesPage.vue'//路線規劃
+import togetherPage from '@/pages/togetherPage.vue'//揪上山
 // 揪安心
-import myChallenge from '@/pages/myChallenge.vue'
-import ShopPage from '@/pages/ShopPage/ShopPage.vue'
-// 會員登入
+import myChallenge from '@/pages/myChallenge.vue'//百岳挑戰
+import ShopPage from '@/pages/ShopPage/ShopPage.vue'//山腳雜貨店
+import LoginRegister from '@/pages/LoginPage/LoginRegister.vue'//會員登入
 
 /* 各分頁的子頁面 */
 
@@ -20,7 +21,13 @@ import ProductDetailRoute from '@/pages/ShopPage/ProductDetailRoute.vue'
 import Chekout1Cart from '@/pages/ShopPage/Checkout1Cart.vue'   
 import Checkout2Info from '@/pages/ShopPage/Checkout2Info.vue'
 import Checkout3Success from '@/pages/ShopPage/Checkout3Success.vue'
-
+//會員登入
+import LoginPage_login from '@/components/Irene/LoginPage/LoginPage_login.vue'
+import LoginPage_register from '@/components/Irene/LoginPage/LoginPage_register.vue'
+import LoginPage_forget from '@/components/Irene/LoginPage/LoginPage_forget.vue'
+import LoginPage_registercoupon from '@/components/Irene/LoginPage/LoginPage_registercoupon.vue'
+import LoginPage_forgetsend from '@/components/Irene/LoginPage/LoginPage_forgetsend.vue'
+import LoginPage_resetpassword from '@/components/Irene/LoginPage/LoginPage_resetpassword.vue'
 
 /*後台*/
 import backLogin from '@/pages/backLogin.vue'
@@ -37,6 +44,7 @@ import FlagPage from '@/pages/admin/FlagPage.vue'
 
 
 // 定義 routes 陣列
+
 /* 前台 */
 const frontroutes = [
   {
@@ -61,19 +69,39 @@ const frontroutes = [
   },
   {
     path: '/shop',
+    alias: '/Shop',          // 兩個都算進來
     component: ShopPage,
-      children:[
-      {path:'product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true }} // ← 子路由}
+    children:[
+      {path:'product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true }}, // ← 子路由}
       //: 開頭的東西叫「動態參數 (Dynamic Segment)」,meta標記這是一個彈窗路由
-     ]
+    ]
   },
+
   //前台-結賬流程
   { path: '/Shop/cart',name:'Shop-cart', component: Chekout1Cart },
   { path: '/Shop/info',name:'Shop-info', component: Checkout2Info },
   { path: '/Shop/success', name:'Shop-success',component: Checkout3Success },
 
+  // //前台-會員登入 
+  {
+    path: '/loginregister',
+    name: 'loginregister',
+    component:LoginRegister,
+    children: [
+      { path: '', redirect: { name: 'loginregister-fontrelogin' } },
+      { path: 'fontrelogin',name:'loginregister-fontrelogin', component: LoginPage_login },
+      { path: 'fontregister',name:'loginregister-fontregister', component: LoginPage_register },
+      { path: 'forgetpassword',name:'loginregister-forgetpassword', component: LoginPage_forget},
+      { path: 'forgetsend',name:'loginregister-forgetsend', component: LoginPage_forgetsend },
+      { path: 'registercoupon',name:'loginregister-registercoupon', component: LoginPage_registercoupon },
+      { path: 'resetpassword',name:'loginregister-resetpassword', component: LoginPage_resetpassword }
+     
+    ]
+  },
+  // { path: '/forgetpassword',name:'loginregister-forgetpassword', component: LoginPage_forget },
+
   /* 後台 */
-  { path: '/login', component: backLogin },
+  { path: '/backlogin', component: backLogin },
   {
     path: '/',
     component: DefaultLayout,

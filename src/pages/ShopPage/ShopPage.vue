@@ -1,10 +1,12 @@
 <script setup>
+import NavMenu from '@/components/An/navMenu.vue';
 import ShopPage_carousel from '@/components/Irene/ShopPage/ShopPage_carousel.vue';
 import ShopPage_couponBanner from '@/components/Irene/ShopPage/ShopPage_couponBanner.vue';
 import ShopPage_pagination from '@/components/Irene/ShopPage/ShopPage_pagination.vue';
 import ShopPage_productslist from '@/components/Irene/ShopPage/ShopPage_productslist.vue';
 import ShopPage_sidebar from '@/components/Irene/ShopPage/ShopPage_sidebar.vue';
 import { reactive } from 'vue';
+import { ShoppingCart } from '@element-plus/icons-vue'
 
 // 篩選的方式管理
 const filters = reactive({
@@ -53,43 +55,73 @@ const handlePageChange = (page) => {
 
 <!-- 這是商品首頁 -->
 <template>
-    <main>
-        <section class="featured_products">
-            <ShopPage_carousel/>
-        </section>
-        <section class="coupon">
-            <ShopPage_couponBanner/>
-        </section>
-        <section class="products">
-            <ShopPage_sidebar 
-                @search="handleSearch" 
-                @gender-filter="handleGenderFilter"
-                @category-filter="handleCategoryFilter" />
-            <!-- 建立事件聆聽接收子層傳來是時間，用handleSearch接收 -->
-            <ShopPage_productslist 
-                :filters="filters"
-                :current-page="pagination.currentPage"
-                :page-size="pagination.pageSize"
-                @total-change="handleTotalChange"/>
-        </section >
-        
-        <!-- 把filters傳給子組件 -->
-        <section class="pagination">
-            <ShopPage_pagination 
-                :total="pagination.total"
-                :page-size="pagination.pageSize"
-                :current-page="pagination.currentPage"
-                @page-change="handlePageChange"/>
-        </section>
-    </main>
+        <NavMenu/>
+        <div class="position_shopcar">
+            <RouterLink :to="{name:'Shop-cart'}" class="link_cart"><img src="/public/Products/icons/icon_shopcar.svg" alt=""></RouterLink>
+        </div>
+        <main>
+            <section class="featured_products">
+                <ShopPage_carousel/>
+            </section>
+            <section class="coupon">
+                <ShopPage_couponBanner/>
+            </section>
+            <section class="products">
+                <ShopPage_sidebar 
+                    @search="handleSearch" 
+                    @gender-filter="handleGenderFilter"
+                    @category-filter="handleCategoryFilter" />
+                <!-- 建立事件聆聽接收子層傳來是時間，用handleSearch接收 -->
+                <ShopPage_productslist 
+                    :filters="filters"
+                    :current-page="pagination.currentPage"
+                    :page-size="pagination.pageSize"
+                    @total-change="handleTotalChange"/>
+            </section >
+            
+            <!-- 把filters傳給子組件 -->
+            <section class="pagination">
+                <ShopPage_pagination 
+                    :total="pagination.total"
+                    :page-size="pagination.pageSize"
+                    :current-page="pagination.currentPage"
+                    @page-change="handlePageChange"/>
+            </section>
+        </main>
     <RouterView/>
-    
 </template>
 
 <style scoped lang="scss">
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
 
+.position_shopcar{
+    position: sticky;
+    top: 52px;
+    z-index: 20;
+}
+.link_cart {
+  display: flex;                 // 改成 flex 容器
+  justify-content: center;       // 水平置中
+  align-items: center;           // 垂直置中
+  width: 60px;
+  height: 60px;
+  background-color: $black-14;   // 黑底
+  border-radius: 8px;
+  margin-left: auto;
+  margin-right: 40px;
+
+    &:hover {
+        background-color: lighten($black-14, 20%); // hover 底色變亮
+    }
+  img {
+    width: 40px;                 // 控制 icon 大小
+    height: 40px;
+    object-fit: contain;         // 避免變形
+    display: block;
+
+}
+}
 main{
     background-color: #fff;
     section{

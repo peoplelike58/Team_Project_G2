@@ -202,7 +202,7 @@ function goPage(p) {
 
 </template>
 
-<style lang="scss"> /* 全域樣式（非 scoped） */
+<style lang="scss" scoped> /* 全域樣式（非 scoped） */
 body { // 全頁背景色
   background-color: #EFF1F2; // 淺灰底
 }

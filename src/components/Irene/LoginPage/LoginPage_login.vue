@@ -1,115 +1,109 @@
 <template>
-  <div>
-    <!-- 登入視窗 -->
-    <div v-if="isOpen" class="modal-overlay" @click="closeModal">
-      <div class="modal-container" @click.stop>
-        <!-- 關閉按鈕 -->
-        <button @click="closeModal" class="close-btn">
-          ×
-        </button>
+  <div class="modal-content">
+    <!-- 標題 -->
+    <h1 class="title">會員登入</h1>
 
-        <div class="modal-content">
-          <!-- 標題 -->
-          <h1 class="title">會員登入</h1>
-
-          <!-- 登入表單 -->
-          <div class="form-container">
-            <!-- 帳號輸入 -->
-            <div class="input-group">
-              <label class="input-label">帳號</label>
-              <input
-                v-model="email"
-                type="email"
-                placeholder="請輸入電子郵件"
-                class="input-field"
-              />
-            </div>
-
-            <!-- 密碼輸入 -->
-            <div class="input-group">
-              <label class="input-label">密碼</label>
-              <input
-                v-model="password"
-                type="password"
-                placeholder="請輸入密碼"
-                class="input-field"
-              />
-            </div>
-
-            <!-- 忘記密碼 -->
-            <div class="forgot-password">
-              <button @click="handleForgotPassword" class="forgot-btn">
-                忘記密碼？
-              </button>
-            </div>
-
-            <!-- 登入按鈕 -->
-            <button @click="handleLogin" class="login-btn">
-              立即登入
-            </button>
-          </div>
-
-          <!-- 註冊連結 -->
-          <div class="register-section">
-            <span class="register-text">還沒有帳號？</span>
-            <button @click="handleRegister" class="register-btn">
-              立即註冊
-            </button>
-          </div>
-
-          <!-- 分隔線 -->
-          <div class="divider">
-            <div class="divider-line"></div>
-            <span class="divider-text">or</span>
-            <div class="divider-line"></div>
-          </div>
-
-          <!-- 社交登入按鈕 -->
-          <div class="social-login">
-            <button @click="handleSocialLogin('Google')" class="social-btn">
-              <span class="google-icon">G+</span>
-            </button>
-            <button @click="handleSocialLogin('Facebook')" class="social-btn">
-              <span class="facebook-icon">f</span>
-            </button>
-            <button @click="handleSocialLogin('Line')" class="social-btn">
-              <div class="line-icon">
-                <span class="line-text">LINE</span>
-              </div>
-            </button>
-          </div>
-        </div>
+    <!-- 登入表單 -->
+    <div class="form-container">
+      <!-- 帳號輸入 -->
+      <div class="input-group">
+        <label class="input-label">帳號</label>
+        <input
+          v-model="email"
+          type="email"
+          placeholder="請輸入電子郵件"
+          class="input-field"
+        />
       </div>
+
+      <!-- 密碼輸入 -->
+      <div class="input-group">
+        <label class="input-label">密碼</label>
+        <!-- <input
+          v-model="password"
+          type="password"
+          placeholder="請輸入密碼"
+          class="input-field"
+        /> -->
+        <el-input
+          v-model="password"
+          type="password"
+          placeholder="請輸入密碼"
+          show-password
+          blur
+        /> 
+      </div>
+
+      <!-- 忘記密碼 -->
+      <div class="forgot-password">
+        <button @click="handleForgotPassword" class="forgot-btn">
+          忘記密碼？
+        </button>
+      </div>
+
+      <!-- 登入按鈕 -->
+      <button @click="handleLogin" class="login-btn">
+        立即登入
+      </button>
+    </div>
+
+    <!-- 註冊連結 -->
+    <div class="register-section">
+      <span class="register-text">還沒有帳號？</span>
+      <button @click="handleRegister" class="register-btn">
+        立即註冊
+      </button>
+    </div>
+
+    <!-- 分隔線 -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">or</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- 社交登入按鈕 -->
+    <div class="social-login">
+      <button type="button" class="social-btn google">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+      </button>
+      
+      <button type="button" class="social-btn facebook">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      </button>
+      
+      <button type="button" class="social-btn line">
+        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
+        <path fill="#00c300" d="M12.5,42h23c3.59,0,6.5-2.91,6.5-6.5v-23C42,8.91,39.09,6,35.5,6h-23C8.91,6,6,8.91,6,12.5v23C6,39.09,8.91,42,12.5,42z"></path><path fill="#fff" d="M37.113,22.417c0-5.865-5.88-10.637-13.107-10.637s-13.108,4.772-13.108,10.637c0,5.258,4.663,9.662,10.962,10.495c0.427,0.092,1.008,0.282,1.155,0.646c0.132,0.331,0.086,0.85,0.042,1.185c0,0-0.153,0.925-0.187,1.122c-0.057,0.331-0.263,1.296,1.135,0.707c1.399-0.589,7.548-4.445,10.298-7.611h-0.001C36.203,26.879,37.113,24.764,37.113,22.417z M18.875,25.907h-2.604c-0.379,0-0.687-0.308-0.687-0.688V20.01c0-0.379,0.308-0.687,0.687-0.687c0.379,0,0.687,0.308,0.687,0.687v4.521h1.917c0.379,0,0.687,0.308,0.687,0.687C19.562,25.598,19.254,25.907,18.875,25.907z M21.568,25.219c0,0.379-0.308,0.688-0.687,0.688s-0.687-0.308-0.687-0.688V20.01c0-0.379,0.308-0.687,0.687-0.687s0.687,0.308,0.687,0.687V25.219z M27.838,25.219c0,0.297-0.188,0.559-0.47,0.652c-0.071,0.024-0.145,0.036-0.218,0.036c-0.215,0-0.42-0.103-0.549-0.275l-2.669-3.635v3.222c0,0.379-0.308,0.688-0.688,0.688c-0.379,0-0.688-0.308-0.688-0.688V20.01c0-0.296,0.189-0.558,0.47-0.652c0.071-0.024,0.144-0.035,0.218-0.035c0.214,0,0.42,0.103,0.549,0.275l2.67,3.635V20.01c0-0.379,0.309-0.687,0.688-0.687c0.379,0,0.687,0.308,0.687,0.687V25.219z M32.052,21.927c0.379,0,0.688,0.308,0.688,0.688c0,0.379-0.308,0.687-0.688,0.687h-1.917v1.23h1.917c0.379,0,0.688,0.308,0.688,0.687c0,0.379-0.309,0.688-0.688,0.688h-2.604c-0.378,0-0.687-0.308-0.687-0.688v-2.603c0-0.001,0-0.001,0-0.001c0,0,0-0.001,0-0.001v-2.601c0-0.001,0-0.001,0-0.002c0-0.379,0.308-0.687,0.687-0.687h2.604c0.379,0,0.688,0.308,0.688,0.687s-0.308,0.687-0.688,0.687h-1.917v1.23H32.052z"></path>
+        </svg>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-
+import { useRouter } from 'vue-router'
 // 響應式數據
 const isOpen = ref(true)
 const email = ref('')
 const password = ref('')
+const input = ref('')
 
-// 方法定義
-const openModal = () => {
-  isOpen.value = true
-}
-
-const closeModal = () => {
-  isOpen.value = false
-}
 
 const handleLogin = () => {
-  console.log('登入資料:', {
-    email: email.value,
-    password: password.value
-  })
+  console.log('立即登入')
   
-  if (email.value && password.value) {
+  if (email.value && password.value && email.value.includes('@')) {
     alert(`登入成功！歡迎 ${email.value}`)
-    closeModal()
+    router.push({ name: 'member-profile' })
   } else {
     alert('請填寫完整的登入資訊')
   }
@@ -117,12 +111,13 @@ const handleLogin = () => {
 
 const handleForgotPassword = () => {
   console.log('忘記密碼')
-  alert('忘記密碼功能')
+  router.push({name:'loginregister-forgetpassword' })
 }
 
+const router = useRouter()
 const handleRegister = () => {
-  console.log('前往註冊')
-  alert('前往註冊頁面')
+  console.log('立即註冊')
+  router.push({name: 'loginregister-fontregister' })
 }
 
 const handleSocialLogin = (provider) => {
@@ -132,133 +127,138 @@ const handleSocialLogin = (provider) => {
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
-/* Demo 容器 */
-.demo-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #f3f4f6;
-}
 
-.open-btn {
-  padding: 12px 24px;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
 
-.open-btn:hover {
-  background-color: #2563eb;
-}
-
-/* 模態視窗遮罩 */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  z-index: 50;
-}
-
-/* 模態視窗容器 */
-.modal-container {
-  background-color: white;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 448px;
-  position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* 關閉按鈕 */
-.close-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b7280;
-  font-size: 24px;
-  font-weight: 300;
-  border: none;
-  background: none;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.close-btn:hover {
-  color: #374151;
-}
 
 /* 模態視窗內容 */
 .modal-content {
   padding: 48px 32px;
+   width: 90%;
+  max-width: 440px;
+  box-sizing: border-box;
+  margin: auto;
 }
 
 /* 標題 */
 .title {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: $pcFont-H2;
+  font-weight: $semiBold;
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 24px;
   color: #1f2937;
   margin-top: 0;
 }
 
 /* 表單容器 */
 .form-container {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 /* 輸入群組 */
 .input-group {
-  margin-bottom: 32px;
-}
-
-/* 輸入標籤 */
+  margin-bottom: 20px;}
+  /* 輸入標籤 */
 .input-label {
-  display: block;
-  color: #374151;
-  font-size: 16px;
-  margin-bottom: 12px;
-  font-weight: 500;
-}
+  // display: block;
+  // color: #374151;
+  // margin-bottom: 12px;
+  font-size: $pcFont-label;
+  font-weight: $medium;
+  color: $black-14;
+  text-align: left;
+  }
+  /* 輸入欄位 */
+//  .input-field , :deep(.el-input__wrapper){
+//     width: 100%;
+//     padding: 12px 16px;
+//     background: transparent;
+//     border: none;
+//     border-bottom: 2px solid #ccc;
+//     outline: none;
+//     transition: border-color 0.2s;
+//     box-sizing: border-box;
+//     font-size: $pcFont-p-s;
+//   }
 
-/* 輸入欄位 */
-.input-field {
-  width: 100%;
-  padding: 12px 0;
-  font-size: 16px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid #e5e7eb;
-  outline: none;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-}
+//   .input-field::placeholder {
+//     color: #999;
+//   }
 
-.input-field::placeholder {
-  color: #9ca3af;
-}
+//   .input-field:focus {
+//     border-bottom-color: #6b7280;
+//   }
+// }
+// .el-input__wrapper:hover{
+//   box-shadow:none;
+// }
+/* 只改 <el-input class="input-field" /> 這一個欄位 */
+.input-field{
+    width: 100%;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    font-size: $pcFont-p-s;
+    
+  }
+  /* 🟢 外框：透明 + 底線 */
+  :deep(.el-input__wrapper){
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;              /* 移除預設外框陰影 */
+    border-bottom: 2px solid #ccc; /* 只留底線 */
+    padding: 0 8px;                /* 給右側眼睛圖示留空間 */
+    outline: none; 
+    box-shadow: none; 
+  }
 
-.input-field:focus {
-  border-bottom-color: #6b7280;
-}
+  /* 🟢 內部輸入框 */
+  :deep(.el-input__inner){
+    background: transparent;
+    box-shadow: none;
+    height: 44px;
+    padding: 12px 0;               /* 上下 12、左右 0 → 視覺同你圖片 */
+    font-size: $pcFont-p-s;
+    color: #111;
+    &::placeholder{ color:#9ca3af; }
+  
+
+  /*  focus：底線變深，不出現陰影 */
+  &:focus-within{
+    :deep(.el-input__wrapper){
+      border-bottom-color:#6b7280;
+    
+    }
+  }}
+  :deep(.el-input__wrapper.is-focus){ box-shadow:none !important; outline:none; }
+  :deep(.el-input__wrapper:hover){ box-shadow: none; }
+  :deep(.el-input__inner),  :deep(.el-input__inner:focus){
+    outline:none; box-shadow:none; background:transparent;
+  }
+  /* 密碼眼睛圖示間距/顏色 */
+  :deep(.el-input__suffix){ padding-left: 6px; }
+  :deep(.el-input__password){
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; color:#9ca3af;
+  }
+  :deep(.el-input__password:hover){ color:#6b7280; }
+
+  /*  停用狀態 */
+  :deep(.is-disabled .el-input__wrapper){
+    border-bottom-color:#e5e7eb;
+    background: transparent;
+  }
+
+
+
+
+
+
 
 /* 忘記密碼 */
 .forgot-password {
@@ -281,30 +281,31 @@ const handleSocialLogin = (provider) => {
 
 /* 登入按鈕 */
 .login-btn {
-  width: 100%;
-  background-color: #000;
+  width: 90%;
+  background-color: $black-14;
   color: white;
   padding: 16px;
-  border-radius: 9999px;
-  font-size: 16px;
-  font-weight: 500;
+  border-radius: 8px;
+  font-weight: $medium;
+  font-size: $pcFont-p-s;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-top: 32px;
+  display: block;
+  margin: 24px auto 0;
 }
 
 .login-btn:hover {
   background-color: #1f2937;
 }
 
-/* 註冊區域 */
+/* 去註冊區域 */
 .register-section {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 40px;
   margin-top: 32px;
-  font-size: 16px;
 }
 
 .register-text {
@@ -312,12 +313,13 @@ const handleSocialLogin = (provider) => {
 }
 
 .register-btn {
-  color: #000;
-  font-weight: 500;
+  color: $black-14;
+  font-weight: $medium;
+  line-height: $lineHeight-p-200;
   border: none;
   background: none;
   cursor: pointer;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid $black-14;
   transition: color 0.3s;
 }
 
@@ -365,37 +367,9 @@ const handleSocialLogin = (provider) => {
 }
 
 .social-btn:hover {
-  border-color: #6b7280;
+  border-color: $ash-olive-400;
 }
 
-/* 社交圖標 */
-.google-icon {
-  font-size: 18px;
-  font-weight: bold;
-  color: #ef4444;
-}
-
-.facebook-icon {
-  font-size: 18px;
-  font-weight: bold;
-  color: #2563eb;
-}
-
-.line-icon {
-  width: 24px;
-  height: 24px;
-  background-color: #22c55e;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.line-text {
-  color: white;
-  font-size: 10px;
-  font-weight: bold;
-}
 
 /* 響應式設計 */
 @media (max-width: 640px) {

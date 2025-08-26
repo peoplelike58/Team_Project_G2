@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 const router = useRouter()
-// const id = router.params.id
+
 
 //關閉回到商品頁
 const close = () => router.push('/Shop')
@@ -90,7 +90,7 @@ const close = () => router.push('/Shop')
             <div class="product_accordion">
                 <div class="product_acc-title">付款方式</div>
                 <ul>
-                  <li>信用卡：VISA / Master / JCB</li>
+                  <li>信用卡:VISA / Master / JCB</li>
                   <li>LINE Pay</li>
                   <li>超商取貨付款（限額 $2,000 以下）</li>
                 </ul>

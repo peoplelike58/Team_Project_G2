@@ -1,142 +1,3 @@
-<!-- <template>
-  <div class="profile">
-    <h2>個人資料</h2>
-    <button class="float" size="small" @click="isEdit = !isEdit">{{ isEdit ? '取消' : '編輯' }}</button>
-    <div :disabled="!isEdit" class="table">
-      <div class="row">
-        <label for="">頭像</label>
-        <upload
-          class="avatar-uploader"
-          action="#"
-          :show-file-list="false"
-          :on-change="onAvatarChange"
-          :auto-upload="false"
-        >
-          <img v-if="form.avatar" :src="form.avatar" class="avatar" />
-          <div v-else class="avatar placeholder"></div>
-          <button size="small" class="ml-3" :disabled="!isEdit">上傳檔案</button>
-        </upload>
-      </div>
-      <div class="row">
-        <label for="">暱稱</label>
-        <input v-model="form.nickname" placeholder="請輸入暱稱" />
-      </div>
-      <div class="row">
-        <label for="">關於我</label>
-        <input v-model="form.about" type="textarea" placeholder="簡短自我介紹" />
-      </div>
-      <div class="row">
-        <label for="">生日</label>
-        <date-picker v-model="form.birthday" type="date" placeholder="選擇日期" style="width: 240px;" />
-      </div>
-      <div class="row">
-        <label for="">聯絡電話</label>
-        <input v-model="form.phone" placeholder="0912-345-678" />
-      </div>
-      <div class="row">
-        <label for="">聯絡地址</label>
-        <input v-model="form.addr" placeholder="請輸入地址" />
-      </div>
-      <div class="row">
-        <button type="primary" v-if="isEdit" @click="save">儲存變更</button>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-
-const isEdit = ref(false)
-const form = reactive({
-  avatar: '',
-  nickname: '',
-  about: '',
-  birthday: '',
-  phone: '',
-  addr: ''
-})
-
-function onAvatarChange(file){
-  // demo：本地預覽
-  const reader = new FileReader()
-  reader.onload = e => form.avatar = e.target.result
-  reader.readAsDataURL(file.raw)
-}
-function save(){
-  isEdit.value = false
-  ElMessage.success('已儲存（示意）')
-}
-</script>
-
-<style scoped lang="scss">
-@import '@/assets/styles/main.scss';
-
-h2{
-  font-size: $pcFont-H2;
-  font-weight: $semiBold;
-  color: $black-14;
-}
-.profile{ 
-  position:relative;
-  @include flexcenter(60px,column);
-  align-items: flex-start;
-  button{
-    @include btn(4px);
-    @include border($ash-olive-400);
-    padding: 6px 12px;
-  }
-  .float{ 
-    position:absolute; 
-    right:0; 
-    top:0; }
-}
-
-.table{
-  @include flexcenter(20px,column);
-  align-items: flex-start;
-  .row{
-    @include flexcenter(10px,row);
-    align-items: flex-start;
-    label{
-      text-align: right;
-      width: 100px;
-      color: $black-14;
-      font-size: $pcFont-p-s;
-      font-weight: $medium;
-      line-height: $lineHeight-p-200;
-    }
-    input{
-      width: 100%;
-      height: 100%;
-      padding: 8px 12px;
-      @include border($ash-olive-400);
-      border-radius: 6px;
-    }
-
-  }
-}
-.avatar-uploader{ 
-  display:flex; 
-  align-items:center; }
-
-
-.avatar{ 
-  width:80px; 
-  height: 80px;
-  border-radius:50%; 
-  object-fit:cover; 
-  @include border(#ccc);
-}
-
-.placeholder{ 
-  background:#eee; 
-  }
-
-</style>
- -->
-
  <template>
   <div class="member-profile">
     <!-- 頁面標題 -->
@@ -155,7 +16,7 @@ h2{
           <label class="form-label">頭像</label>
           <div class="avatar-upload">
             <div class="avatar-preview">
-              <img :src="profileData.avatar || '/default-avatar.jpg'" alt="頭像" />
+              <img :src="profileData.avatar || '/Products/default-avatar.jpg'" alt="頭像" />
             </div>
             <button 
               v-if="isEditing" 
@@ -353,10 +214,10 @@ onMounted(() => {
         
         .avatar-upload {
           @include flexcenter(16px, row);
-          align-items: center;
+          align-items: flex-start;
           
           .avatar-preview {
-            @include product_card_img(80px, 80px, 50%);
+            @include product_card_img(100px, 100px, 50%);
             flex-shrink: 0;
             background-color: $bg-gray;
           }
@@ -380,7 +241,6 @@ onMounted(() => {
       
       .form-group {
         margin-bottom: 24px;
-        
         .form-label {
           display: block;
           font-size: $pcFont-p-s;
@@ -389,7 +249,7 @@ onMounted(() => {
           margin-bottom: 8px;
         }
         
-        .form-input {
+        :deep(.form-input) {
           width: 100%;
           padding: 12px 16px;
           font-size: $pcFont-p-s;
@@ -424,7 +284,7 @@ onMounted(() => {
           font-family: inherit;
           line-height: $lineHeight-p-150;
           transition: border-color 0.3s ease;
-          
+          box-sizing: border-box;
           &:focus {
             outline: none;
             border-color: $tag;
@@ -444,7 +304,6 @@ onMounted(() => {
       justify-content: flex-end;
       margin-top: 32px;
       padding-top: 24px;
-      border-top: 1px solid $ash-olive-400;
       
       .save-btn {
         @include btn(6px);
@@ -462,4 +321,9 @@ onMounted(() => {
     }
   }
 }
+
+:deep(.form-input){
+  box-sizing: border-box;
+}
+
 </style>
