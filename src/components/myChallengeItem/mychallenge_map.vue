@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 // import * as turf from '@turf/turf'
 
 import 'leaflet/dist/leaflet.css'
@@ -173,12 +173,12 @@ function setClimbed(mountainName) {
 			})
 			
 			// 重新加入所有 markers
-			props.mountains.forEach(m => {
-				const mk = markerMap.get(m.name)
-				if (mk) {
-					mk.isClimbed = (m.icon === "flag.png")
-					mk.setIcon(getIcon(m.icon))
-					clusterGroup.addLayer(mk)
+			props.mountains.forEach(mount => {
+				const mountainsMarker = markerMap.get(mount.name)
+				if (mountainsMarker) {
+					mountainsMarker.isClimbed = (mount.icon === "flag.png")
+					mountainsMarker.setIcon(getIcon(m.icon))
+					clusterGroup.addLayer(mountainsMarker)
 				}
 			})
 			

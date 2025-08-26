@@ -24,6 +24,8 @@ import Checkout3Success from '@/pages/ShopPage/Checkout3Success.vue'
 // 揪上山活動卡片
 import eventCardInfo from '@/components/togetherItem/eventCardInfo.vue'
 
+import myChallenge from '@/pages/myChallenge.vue'
+
 
 /*後台*/
 import backLogin from '@/pages/backLogin.vue'
@@ -69,7 +71,7 @@ const frontroutes = [
   },
   {
     path: '/mychallenge',
-    component: myChallenge
+    component: myChallenge,
   },
   {
     path: '/shop',
@@ -91,7 +93,7 @@ const frontroutes = [
     component: DefaultLayout,
     children: [
       { path: '', redirect: '/admin/members' }, // 根路徑導向會員管理
-      { path: 'home', component: Home },
+      { path: 'admin/home', component: Home },
       { path: 'admin/members', component: MemberPage },
       { path: 'admin/orders', component: OrderPage },
       { path: 'admin/products', component: ProductPage },

@@ -163,7 +163,7 @@ function go(item) {
     
     position: fixed;
     inset: 0; 
-    z-index:  99999 !important;
+    z-index: 99999 !important;
     
     background: $ivory-gray-100;
 
