@@ -91,7 +91,7 @@ const frontroutes = [
     component: DefaultLayout,
     children: [
       { path: '', redirect: '/admin/members' }, // 根路徑導向會員管理
-      { path: 'home', component: Home },
+      { path: 'admin/home', component: Home },
       { path: 'admin/members', component: MemberPage },
       { path: 'admin/orders', component: OrderPage },
       { path: 'admin/products', component: ProductPage },
