@@ -40,15 +40,15 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 
-    const histories = reactive([
-        {name: '玉山', date:'2025.08.09', height: 3852, kilo: 320, time:52},
-        {name: '阿里山', date:'2025.06.23', height: 2413, kilo: 365, time:44},
-        {name: '合歡山', date:'2025.05.20', height: 774, kilo: 58, time:56},
-        {name: '雪山', date:'2025.04.31', height: 1314, kilo: 520, time:74},
-        {name: '大霸尖山', date:'2025.03.23', height: 317, kilo: 45, time: 8},
-    ])
+    // const histories = reactive([
+    //     {name: '玉山', date:'2025.08.09', height: 3852, kilo: 320, time:52},
+    //     {name: '阿里山', date:'2025.06.23', height: 2413, kilo: 365, time:44},
+    //     {name: '合歡山', date:'2025.05.20', height: 774, kilo: 58, time:56},
+    //     {name: '雪山', date:'2025.04.31', height: 1314, kilo: 520, time:74},
+    //     {name: '大霸尖山', date:'2025.03.23', height: 317, kilo: 45, time: 8},
+    // ])
 
     // 控制手風琴開關
     const openItem = ref(null)
@@ -68,6 +68,22 @@ import { ref, reactive } from 'vue'
     const closeHistory = () => {
         emit('closeHistoryComp')  // 告訴父組件要關閉 history
     }
+
+    // Json檔
+    const histories = ref({})
+
+    onMounted(async() => {
+        try{
+            const res = await fetch("/json/mychallenge/histories.json")
+            // console.log(res)
+            const data = await res.json()
+            // console.log(data)
+            histories.value = data
+        }catch(err){
+            console.error("讀取失敗:", err)
+        }
+    
+    })
 
 </script>
 

@@ -71,13 +71,6 @@ import { ref, watch } from 'vue'
 
 <style scoped lang="scss">
     @import '@/assets/styles/main.scss';
-    .goal{
-    width: 100%;
-    font-size: $pcFont-H2;
-    text-align: center;
-    margin: 24px 0 ;
-    border-radius: 16px;
-}
     .modalOverlay{
         position: fixed;
         inset: 0;
@@ -85,6 +78,8 @@ import { ref, watch } from 'vue'
         justify-content: center;
         align-items: center;
         background-color: rgba(20, 20, 20, 0.2);
+        z-index: 2222 !important;
+        
         
         .goalsetModal{
             position: relative;
@@ -123,6 +118,7 @@ import { ref, watch } from 'vue'
                 }
 
                 .goal{
+                    width: 100%;
                     font-size: $pcFont-H2;
                     text-align: center;
                     margin: 24px 0 ;
@@ -150,5 +146,19 @@ import { ref, watch } from 'vue'
                 }
             }
         }
+    }
+
+    @media screen and (max-width: 430px) {
+        
+        .modalOverlay{
+
+            .goalsetModal{
+                width: 60%;
+                // height: 600px;
+                padding: 60px;
+                
+            }
+        }
+
     }
 </style>

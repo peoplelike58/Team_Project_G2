@@ -301,6 +301,7 @@ import { useRecordStore } from "@/stores/recordStore"
         background-color: rgba(20, 20, 20, 0.2);
         overflow-y: auto;
         padding: 60px 0;
+        z-index: 214748;
     
         .mychallengeModal{
             position: relative;
@@ -310,7 +311,6 @@ import { useRecordStore } from "@/stores/recordStore"
             padding: 60px;
             background-color: $ivory-gray-100;
             overflow: visible;
-            z-index: 20;
         
             .closeBtn{
                 position: absolute;
@@ -449,5 +449,36 @@ import { useRecordStore } from "@/stores/recordStore"
             }
         }
     }
-  
+
+
+
+    @media screen and (max-width: 430px) {
+		.modalOverlay{
+            z-index: 20 !important;
+            padding: 20px 0;
+    
+            .mychallengeModal{
+                position: relative;
+                max-width: 800px;
+                width: 80%;
+                padding: 20px;
+
+                .uploadArea{
+                
+                    .add{
+                        font-size: $pcFont-H3;
+                    }
+                    
+                }
+                .score{
+                
+                    p{
+                        span{
+                            font-size: $pcFont-H4;
+                        }
+                    }
+                }
+            }
+        }
+    }
 </style>

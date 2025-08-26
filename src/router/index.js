@@ -67,10 +67,10 @@ const frontroutes = [
     name:'eventCard', 
     component: eventCardInfo,
   },
-  // {
-  //   path: '/my-challenge',
-  //   component: myChallenge
-  // },
+  {
+    path: '/mychallenge',
+    component: myChallenge
+  },
   {
     path: '/shop',
     component: ShopPage,
