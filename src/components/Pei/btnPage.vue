@@ -1,20 +1,44 @@
 <script setup>
-import { ref, onMounted, watch } from "vue"
+import { ref, onMounted, watch, defineProps } from "vue"
+import { useRouter } from 'vue-router';
+
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
+const router = useRouter()  
+const goShopping = () => router.push('/shop')
+
+
+
+
+// 設定分頁按鈕
 const goPage = ref("detailPage")
 const showPopup = ref(false)
 const mapBox = ref(null)
+
+//接收父層
+const props = defineProps({
+  trail: {
+    type: Object,
+    // required: true
+  }
+})
+//設定leaflet經緯度
+const latitude = props.trail.latitude
+// console.log(props.trail.latitude);
+const longitude = props.trail.longitude
+// console.log(props.trail.longitude);
+const name = props.trail.name
+
 let map // 宣告在外面，讓後面可以存取
 
 onMounted(() => {
   // 初始化地圖
-  map = L.map(mapBox.value).setView([24.457743, 121.258031], 15) // 要串接trail.longitude 和 trail.latitude
+  map = L.map(mapBox.value).setView([latitude, longitude], 15) // 要串接trail.longitude 和 trail.latitude
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap"
   }).addTo(map)
-  L.marker([24.457743, 121.258031]).addTo(map).bindPopup("大霸尖山")
+  L.marker([latitude, longitude]).addTo(map).bindPopup(`${name}`)
 })
 
 // 監聽 goPage 切換，防止map用v-show切換到路線地圖分頁時抓不到高度
@@ -58,7 +82,7 @@ watch(goPage, (newPage) => {
             <ul class="detail">
                 <li>
                     <span>地區</span>
-                    <p>新竹縣尖石鄉／苗栗縣泰安鄉</p> <!-- 要串接 trail.region -->
+                    <p>{{ trail.region }}</p> <!-- 要串接 trail.region -->
                 </li>
 
                 <li>
@@ -73,20 +97,20 @@ watch(goPage, (newPage) => {
                         />
                         
                     </span>
-                    <p>難</p> <!-- 要串接 trail.level -->
+                    <p>{{ trail.level }}</p> <!-- 要串接 trail.level -->
                 </li>
 
                 <li>
                     <span>交通</span>
-                    <p>需開車前往</p> <!-- 要串接 trail.traffic -->
+                    <p>{{ trail.traffic }}</p> <!-- 要串接 trail.traffic -->
                 </li>
                 <li>
                     <span>里程</span>
-                    <p>單程13公里</p> <!-- 要串接 trail.long -->
+                    <p>{{ trail.long }}</p> <!-- 要串接 trail.long -->
                 </li>
                 <li>
                     <span>建議時間</span>
-                    <p>3天2夜</p> <!-- 要串接 trail.time -->
+                    <p>{{ trail.time }}</p> <!-- 要串接 trail.time -->
                 </li>
             </ul>
 
@@ -149,42 +173,77 @@ watch(goPage, (newPage) => {
                 <li>
                     <div>
                         <!--到時候會放商品圖-->
+                        <img
+                        src="../../../public/img/equipment/登山鞋.png" 
+                        alt="登山鞋圖片">
                     </div>
                     <span>登山鞋</span>
                 </li>
                 <li>
                     <div>
+                        <img 
+                        src="../../../public/img/equipment/登山杖.png" 
+                        alt="登山杖圖片">
                         <!--到時候會放商品圖-->
                     </div>
                     <span>登山杖</span>
                 </li>
                 <li>
                     <div>
+                        <img 
+                        src="../../../public/img/equipment/手套.png" 
+                        alt="手套圖片"
+                        :class="{ grayImg: ('易').includes(trail.level) }">
                         <!--到時候會放商品圖-->
                     </div>
-                    <span>手套</span>
+                    <span :class="{ graySpan: ('易').includes(trail.level) }">
+                        手套
+                    </span>
+                </li>
+                <li>
+                    <div>
+                        <img
+                        src="../../../public/img/equipment/頭燈.png"
+                        alt="頭燈圖片"
+                        :class="{ grayImg: ('易').includes(trail.level) }">
+                    </div>
+                    <span :class="{ graySpan: ('易').includes(trail.level) }">
+                        頭燈
+                    </span>
                 </li>
                 <li>
                     <div>
                         <!--到時候會放商品圖-->
+                        <img
+                        src="../../../public/img/equipment/爐具.png"
+                        alt="登山爐具圖片"
+                        :class="{ grayImg: ['中', '易'].includes(trail.level) }">
+
                     </div>
-                    <span>頭燈</span>
+                    <span :class="{ graySpan: ['中', '易'].includes(trail.level) }">
+                        登山爐具
+                    </span>
                 </li>
                 <li>
                     <div>
                         <!--到時候會放商品圖-->
+                        <img
+                        src="../../../public/img/equipment/帳篷.png"
+                        alt="帳篷圖片"
+                        :class="{ grayImg: ['中', '易'].includes(trail.level) }">
+
                     </div>
-                    <span>登山爐具</span>
-                </li>
-                <li>
-                    <div>
-                        <!--到時候會放商品圖-->
-                    </div>
-                    <span>睡袋&帳篷</span>
+                    <span :class="{ graySpan: ['中', '易'].includes(trail.level) }">
+                        睡袋&帳篷
+                    </span>
                 </li>
             </ul>
 
-            <button>前往山腳雜貨店↗</button>
+            <button
+            @click="goShopping"
+            >
+                前往山腳雜貨店↗
+            </button>
         
         
         </div>
@@ -330,11 +389,28 @@ watch(goPage, (newPage) => {
                     height: 120px;
                     border-radius: 50%;
                     background-color: #666;
-                }
-                span{/* 裝備名稱 */
+                    overflow: hidden;
+                    // border:0.3px solid #ccc;
 
-                font-size: $pcFont-p-m;
-                    
+                    img{
+                        object-fit: cover;
+                        width: 100%;
+                        height: 100%;
+                    }
+
+                    .grayImg {
+                        filter: grayscale(100%); /* 讓圖片變灰階 */
+                    }
+                }
+
+                span{/* 裝備名稱 */
+                    font-size: $pcFont-p-m;
+                    font-weight:$medium;
+                }
+
+                .graySpan{
+                    color: #999;
+                    font-weight:$regular;
 
                 }
 

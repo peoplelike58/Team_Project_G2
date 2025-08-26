@@ -1,6 +1,16 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps } from 'vue'
 
+
+//接收父層
+const props = defineProps({
+  id: {
+    type: Number,
+  }
+})
+
+
+//留言假資料
 const messages = ref([
   {
     id: 'cmt-1001',
