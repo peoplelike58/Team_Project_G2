@@ -5,10 +5,11 @@ import WelcomePage from '@/pages/WelcomePage.vue'
 // 首頁
 import homePage from '@/pages/homePage.vue'
 // 百岳之書
+import PeakGuide from '@/pages/PeakGuide.vue'
 import routesPage from '@/pages/routesPage.vue'
 import togetherPage from '@/pages/togetherPage.vue'
 // 揪安心
-import myChallenge from '@/pages/myChallenge.vue'
+// import myChallenge from '@/pages/myChallenge.vue'
 import ShopPage from '@/pages/ShopPage/ShopPage.vue'
 // 會員登入
 
@@ -20,6 +21,10 @@ import ProductDetailRoute from '@/pages/ShopPage/ProductDetailRoute.vue'
 import Chekout1Cart from '@/pages/ShopPage/Checkout1Cart.vue'   
 import Checkout2Info from '@/pages/ShopPage/Checkout2Info.vue'
 import Checkout3Success from '@/pages/ShopPage/Checkout3Success.vue'
+// 揪上山活動卡片
+import eventCardInfo from '@/components/togetherItem/eventCardInfo.vue'
+
+import myChallenge from '@/pages/myChallenge.vue'
 
 
 /*後台*/
@@ -48,16 +53,25 @@ const frontroutes = [
     component: homePage,
   },
   {
+    path: '/peaks',
+    component: PeakGuide,
+  },
+  {
     path: '/routes',
     component: routesPage
   },
   {
     path: '/together',
-    component: togetherPage
+    component: togetherPage,
   },
   {
-    path: '/my-challenge',
-    component: myChallenge
+    path: '/together/activities/:id',
+    name:'eventCard', 
+    component: eventCardInfo,
+  },
+  {
+    path: '/mychallenge',
+    component: myChallenge,
   },
   {
     path: '/shop',
@@ -79,7 +93,7 @@ const frontroutes = [
     component: DefaultLayout,
     children: [
       { path: '', redirect: '/admin/members' }, // 根路徑導向會員管理
-      { path: 'home', component: Home },
+      { path: 'admin/home', component: Home },
       { path: 'admin/members', component: MemberPage },
       { path: 'admin/orders', component: OrderPage },
       { path: 'admin/products', component: ProductPage },

@@ -1,15 +1,19 @@
 <template>
+    <navMenu />
     <div class="wrapper">
         <main>
             <div class="breadCrumb">
                 <mychallenge_breadcrumb />
             </div>
             <div class="mychallengeInfo">
-                <mychallenge_map
-                :mountains="mountains"
-                @openUploadModal="openModal"
-                style="z-index: 0;"
-                />   
+                <div class="mychallengeMap">
+                    <mychallenge_map
+                    :mountains="mountains"
+                    @openUploadModal="openModal"
+                    style="z-index: 0;"
+                    ref="mapRef"
+                    />
+                </div>
                 <div class="mychallengeAcheve">
                     <div class="totalAcheve" v-show="!showHistory">
                         <h2>[您的成就]</h2>
@@ -39,6 +43,7 @@
 </template>
 
 <script setup>
+    import navMenu from '@/components/An/navMenu.vue';
     import mychallenge_breadcrumb from '@/components/myChallengeItem/mychallenge_breadcrumb.vue';
     import mychallenge_map from '@/components/myChallengeItem/mychallenge_map.vue';
     import mychallenge_info from '@/components/myChallengeItem/mychallenge_info.vue';
@@ -52,26 +57,25 @@
     
     import { useGoalStore } from "@/stores/goalStore"
     import { useRecordStore } from "@/stores/recordStore"
+    import axios from 'axios';
 
     const showHistory = ref(false)
-    
-    const mountains = ref([
-        { name: "玉山", kind: "大百岳",  latitude: 23.4712, longitude: 120.9575, icon: "mountain.png"},
-        { name: "雪山", kind: "大百岳",  latitude: 24.3886, longitude: 121.2336, icon: "mountain.png"},
-        { name: "關山", kind: "小百岳", latitude: 23.3239, longitude: 121.0036, icon: "mountain.png"},
-        { name: "南湖大山", kind: "大百岳",  latitude: 24.3819, longitude: 121.4194, icon: "mountain.png"},
-        { name: "秀姑巒山", kind: "大百岳",  latitude: 23.4625, longitude: 121.0225, icon: "mountain.png"},
-        { name: "合歡主峰", kind: "小百岳",  latitude: 24.1445, longitude: 121.2722, icon: "mountain.png"},
-        { name: "能高主峰", kind: "小百岳",  latitude: 24.1028, longitude: 121.2403, icon: "mountain.png"},
-        { name: "大霸尖山", kind: "小百岳",  latitude: 24.5167, longitude: 121.2500, icon: "mountain.png"},
-        { name: "品田山", kind: "小百岳",  latitude: 24.5056, longitude: 121.2942, icon: "mountain.png"},
-        { name: "奇萊主峰", kind: "小百岳",  latitude: 24.1125, longitude: 121.2828, icon: "mountain.png"}
-    ])
+    const mountains = ref([])
+    // const mountains = ref([
+    //     { name: "玉山", kind: "大百岳",  latitude: 23.4712, longitude: 120.9575, icon: "mountain.png"},
+    //     { name: "雪山", kind: "大百岳",  latitude: 24.3886, longitude: 121.2336, icon: "mountain.png"},
+    //     { name: "關山", kind: "小百岳", latitude: 23.3239, longitude: 121.0036, icon: "mountain.png"},
+    //     { name: "南湖大山", kind: "大百岳",  latitude: 24.3819, longitude: 121.4194, icon: "mountain.png"},
+    //     { name: "秀姑巒山", kind: "大百岳",  latitude: 23.4625, longitude: 121.0225, icon: "mountain.png"},
+    //     { name: "合歡主峰", kind: "小百岳",  latitude: 24.1445, longitude: 121.2722, icon: "mountain.png"},
+    //     { name: "能高主峰", kind: "小百岳",  latitude: 24.1028, longitude: 121.2403, icon: "mountain.png"},
+    //     { name: "大霸尖山", kind: "小百岳",  latitude: 24.5167, longitude: 121.2500, icon: "mountain.png"},
+    //     { name: "品田山", kind: "小百岳",  latitude: 24.5056, longitude: 121.2942, icon: "mountain.png"},
+    //     { name: "奇萊主峰", kind: "小百岳",  latitude: 24.1183, longitude: 121.3345, icon: "mountain.png"}
+    // ])
 
     const openWindows = ref({})
-    mountains.value.forEach(mountain => {
-        openWindows.value[mountain.name] = false
-    })   
+    
 
     function openModal(mountainName) {
         openWindows.value[mountainName] = true
@@ -82,6 +86,7 @@
     }
 
         const goalStore = useGoalStore()
+        const mapRef = ref(null)
 
     function handleGpxSave({ mountain, coords }) {
         console.log("上傳 GPX 給", mountain, coords)
@@ -107,7 +112,8 @@
 
         if (climbed) {
             // 換 icon
-            target.icon = "flag.png"
+            // target.icon = "flag.png"
+            mapRef.value.setClimbed(mountain)
 
             // 讀 localStorage
             let climbedList = JSON.parse(localStorage.getItem("climbedMountains") || "[]")
@@ -129,7 +135,6 @@
                 goalStore.addDone(target.kind)
             }
 
-                localStorage.setItem("myGoals", JSON.stringify(progress))
             } else {
                 if (coords && coords.length > 0) {
                     alert(`${mountain}：GPX 沒有登頂紀錄，沒有插旗子！`)
@@ -149,6 +154,21 @@
             }
         })
         recordStore.loadAllRecords()
+        goalStore.loadFromStorage()
+        })
+
+        
+        onMounted(async() => {
+            try{
+                const res = await axios.get("/json/mychallenge/mountains.json")
+                mountains.value = res.data
+
+                mountains.value.forEach(mountain => {
+                openWindows.value[mountain.name] = false
+                })   
+            }catch(err){
+                console.error("讀取失敗:", err)
+            }
         })
 
 </script>
@@ -160,13 +180,20 @@
         margin: 0 auto;
 
         .breadCrumb{
-            margin-top: 49px;
-            margin-bottom: 111px;
+            margin-top: 48px;
+            margin-bottom: 20px;
         }
         
         .mychallengeInfo{
             display: flex;
             height: 713px;
+            align-items: stretch;
+            // justify-content: space-around;
+
+            .mychallengeMap{
+                width: 50%;
+                // height: 713px;
+            }
         
             .mychallengeAcheve, .mychallenge-history{
                 width: 50%;
@@ -182,11 +209,12 @@
         }
         
         .mychallengeRank{
-            max-width: 1067px;
+            // max-width: 1067px;
             width: 100%;
             margin: 152px 0;
             padding: 64px;
             background-color: $ivory-gray-100;
+            box-sizing: border-box;
         
             h2{
                 font-size: $pcFont-H2;
@@ -198,6 +226,52 @@
 
     }
 
+    @media screen and (max-width: 1200px) {
+		.wrapper{
+            width: 100%;
+        }
+	}
+
+    @media screen and (max-width: 430px) {
+		.wrapper{
+            max-width: 430px;
+            width: 100%;
+            padding: 0 16px;
+
+            .breadCrumb{
+                margin-top: 49px;
+                margin-bottom: 20px;
+            }
+
+            
+            .mychallengeInfo{
+                display: flex;
+                flex-direction: column;
+                height: auto;
+                margin-bottom: 0;
+                box-sizing: border-box;
+                
+                .mychallengeMap{
+                    width: 100%;
+                    height: 600px;
+                }
+                .mychallengeAcheve, .mychallenge-history{
+                    width: 100%;
+                    margin: 40px 0;
+                }
+                
+            }
+
+            .mychallengeRank{
+                box-sizing: border-box;
+                // max-width: 100%;
+                width: 100%;
+                padding: 32px 16px;
+                margin: 60px 0;
+        
+            }
+        }
+	}
 </style>
 
 <!-- 

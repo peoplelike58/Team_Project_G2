@@ -21,7 +21,7 @@
         <div class="flagArea">
             <div class="line">
             </div>
-            <img src="../../assets/images/mychallenge/flag.png" alt="旗子" 
+            <img src="../../../public/images/myChallenge/flag.png" alt="旗子" 
                 :style="{ transform: imgPosition(item) }">
         </div>
     </section>
@@ -118,6 +118,8 @@ const { goals } = storeToRefs(goalStore)
             }
 
             img{
+                width: 41px;
+                height: 41px;
                 position: absolute;
                 top: -24px;
                 left: 0;

@@ -2,7 +2,7 @@
     <div class="login-page">
         <div class="login-card">
             <header class="login-header">
-                <img src="../assets/icons/Logo.png" alt="山上見 Logo" class="logo" />
+                <img src="@/assets/icons/Logo.png" alt="山上見 Logo" class="logo" />
                 <h2>山上見後台管理系統</h2>
             </header>
 
@@ -31,6 +31,7 @@
     import {reactive} from 'vue'
     import {useRouter} from 'vue-router'
     import {ElMessage} from 'element-plus'
+    // import bgUrl from '@/assets/mountain-bg.jpg';
 
     const router = useRouter()
     const form = reactive({username: '', password: ''})
@@ -49,7 +50,7 @@
     .login-page {
         width: 100vw;
         height: 100vh;
-        background: url("@/assets/mountain-bg.jpg") no-repeat center/cover;
+        // background: url("../assets/mountain-bg.jpg") no-repeat center/cover;
         display: flex;
         align-items: center;
         justify-content: center;
