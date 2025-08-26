@@ -23,7 +23,6 @@ import Checkout2Info from '@/pages/ShopPage/Checkout2Info.vue'
 import Checkout3Success from '@/pages/ShopPage/Checkout3Success.vue'
 // 揪上山活動卡片
 import eventCardInfo from '@/components/togetherItem/eventCardInfo.vue'
-import myChallenge from '@/pages/myChallenge.vue'
 
 //會員登入
 import LoginPage_login from '@/components/Irene/LoginPage/LoginPage_login.vue'

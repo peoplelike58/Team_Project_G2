@@ -5,8 +5,8 @@ import ShopPage_couponBanner from '@/components/Irene/ShopPage/ShopPage_couponBa
 import ShopPage_pagination from '@/components/Irene/ShopPage/ShopPage_pagination.vue';
 import ShopPage_productslist from '@/components/Irene/ShopPage/ShopPage_productslist.vue';
 import ShopPage_sidebar from '@/components/Irene/ShopPage/ShopPage_sidebar.vue';
+import brandFooter from '@/components/An/footer.vue'
 import { reactive } from 'vue';
-import { ShoppingCart } from '@element-plus/icons-vue'
 
 // 篩選的方式管理
 const filters = reactive({
@@ -88,6 +88,7 @@ const handlePageChange = (page) => {
                     @page-change="handlePageChange"/>
             </section>
         </main>
+        <brandFooter/>
     <RouterView/>
 </template>
 
@@ -140,5 +141,7 @@ main{
     @include flexcenter(50px,row);
     align-items: flex-start; /* 避免側欄與清單被垂直置中而高度不齊 */
 }
+
+
 
 </style>

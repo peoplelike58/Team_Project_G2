@@ -1,7 +1,7 @@
 
 <script setup>
 import NavMenu from '@/components/An/navMenu.vue';
-
+import brandFooter from '@/components/An/footer.vue'
 </script>
 
 
@@ -13,7 +13,9 @@ import NavMenu from '@/components/An/navMenu.vue';
                 <RouterView/>
             </div>
         </main>
-    </div> 
+        
+    </div>
+    <brandFooter/> 
 </template>
 
 

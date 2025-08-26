@@ -1,6 +1,7 @@
 <script setup>
 import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
+import brandFooter from '@/components/An/footer.vue'
 import { reactive, ref, computed, watch } from 'vue'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -116,6 +117,7 @@ function goNext(){ router.push('/Shop/info') }
             </div>
         </main>
     </div>
+    <brandFooter/>
 </template>
 
 <style lang="scss" scoped>

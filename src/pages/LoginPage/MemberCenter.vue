@@ -7,12 +7,14 @@
       <RouterView />
     </section>
   </main>
+  <brandFooter/>
 </div>
 </template>
 
 <script setup>
 import LoginPage_nav from '@/components/Irene/LoginPage/LoginPage_nav.vue';
 import NavMenu from '@/components/An/navMenu.vue';
+import brandFooter from '@/components/An/footer.vue'
 
 
 

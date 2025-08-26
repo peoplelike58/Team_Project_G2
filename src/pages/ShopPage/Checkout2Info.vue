@@ -1,6 +1,7 @@
 <script setup>
 import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
+import brandFooter from '@/components/An/footer.vue'
 import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -105,7 +106,7 @@ function submitNext(){ formRef.value?.validate?.((ok)=> { if (ok) router.push('/
             </div>
         </div>
     </main>
-
+    <brandFooter/>
 </template>
 
 <style lang="scss" scoped>

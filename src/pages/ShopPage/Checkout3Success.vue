@@ -1,6 +1,7 @@
 <script setup>
 import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
+import brandFooter from '@/components/An/footer.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 function goShop(){ router.push('/Shop') }
@@ -55,7 +56,7 @@ function goShop(){ router.push('/Shop') }
             </div>
         </div>
     </main>
-
+    <brandFooter/>
 </template>
 
 <style lang="scss" scoped>
