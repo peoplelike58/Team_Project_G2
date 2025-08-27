@@ -13,6 +13,10 @@ import brandFooter from '@/components/An/footer.vue';
 
 const route = useRoute()
 
+// ===== baseUrl 與路徑轉換工具 =====
+const baseUrl = import.meta.env.BASE_URL   
+const toUrl = (p) => (p ? `${baseUrl}${String(p).replace(/^\/+/, '')}` : '')
+
 // 取得 URL 上的 id 將其轉成數字 int
 const id = computed(() => parseInt(route.params.id)) 
 
@@ -34,7 +38,7 @@ const trail = computed(() => trailsData.find(trail => trail.id === id.value))
         <span> &gt; </span>
         <router-link to="/routes">路線規劃</router-link>  
         <span> &gt; </span>
-        <router-link >{{ trail.name }}</router-link>  
+        <span calss="current">{{ trail.name }}</span>  
 
 
     </nav>
@@ -74,7 +78,8 @@ const trail = computed(() => trailsData.find(trail => trail.id === id.value))
             color: $tag;
         }
 
-        a:last-child{
+        a:last-child,
+        .current{
             font-weight:$medium;
         }
         

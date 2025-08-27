@@ -1,175 +1,138 @@
 
 <script setup>
-import { ref, onMounted, defineProps } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
-// ======= 基本設定 =======
-
-
+// ====== 父層傳入：預報地區 ======
 const props = defineProps({
-  town: { 
-    type: String, 
-    required: true 
-  }
+  town: { type: String, required: true }
 })
-// console.log(props.town);
+const town = props.town
 
-const token = 'CWA-66252587-7CC5-4C09-BCED-09C2746EFFF1' 
-const town = props.town //須配合API有提供的地區名
-const dailyForecast = ref([]) // 濃縮後的每日預報資料（用於畫面）
+// ====== 路徑基準（子目錄部署會自動帶上） ======
+const baseUrl = import.meta.env.BASE_URL
 
+// ====== 畫面資料 ======
+const dailyForecast = ref([]) // 濃縮為每日一筆，共 7 天
 
-
-
-
-// ======= 共用工具 =======
-// 從 WeatherElement 陣列找出指定 ElementName 的 Time 陣列（支援中/英欄位名）
+// ====== 共用工具 ======
 function getTimeSeries(elements, names) {
   const matched = elements.find(el => names.includes(el.ElementName))
   return matched?.Time ?? []
 }
-
-// 從 ElementValue 陣列取實際值（API 不同版本的 key 可能不同）
-function pickElementValue(elementValueArray) {
-  if (!Array.isArray(elementValueArray) || elementValueArray.length === 0) return ''
-  const obj = elementValueArray[0]
+function pickElementValue(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return ''
+  const obj = arr[0]
   return obj.Value ?? obj.Weather ?? obj.Temperature ?? obj.Probability ?? Object.values(obj)[0] ?? ''
 }
-
-// 解析「天氣預報綜合描述」成結構化欄位（wx/pop/minT/maxT）
 function parseWeatherDescription(text) {
   const s = (text || '').replace(/\s+/g, ' ').trim()
-
-  // 天氣現象：取描述開頭直到遇到「溫度/氣溫/最高/最低/降雨…」或標點
   const wxMatch = s.match(/^(.+?)(?=(溫度|氣溫|最高|最低|降雨|降雨率|降雨機率|，|,|。|$))/)
   const wxText = (wxMatch?.[1] || '-').replace(/[，,。]$/, '').trim()
-
-  // 降雨率（整數％）
   const popMatch = s.match(/降雨(?:率|機率)\s*[:：]?\s*(\d{1,3})\s*%?/)
   const popValue = popMatch?.[1] || '-'
-
-  // 溫度範圍
   let minT = '-', maxT = '-'
   const range1 = s.match(/(?:溫度|氣溫)[^0-9\-]*?(-?\d+(?:\.\d+)?)\s*(?:至|-|~|—|–)\s*(-?\d+(?:\.\d+)?)/)
   if (range1) {
-    minT = range1[1]
-    maxT = range1[2]
+    minT = range1[1]; maxT = range1[2]
   } else {
     const hi = s.match(/最高(?:溫|溫度)?\s*[:：]?\s*(-?\d+(?:\.\d+)?)/)
     const lo = s.match(/最低(?:溫|溫度)?\s*[:：]?\s*(-?\d+(?:\.\d+)?)/)
-    if (hi && lo) {
-      maxT = hi[1]
-      minT = lo[1]
-    } else {
+    if (hi && lo) { maxT = hi[1]; minT = lo[1] }
+    else {
       const range2 = s.match(/(-?\d+(?:\.\d+)?)\s*(?:至|-|~|—|–)\s*(-?\d+(?:\.\d+)?)/)
-      if (range2) {
-        minT = range2[1]
-        maxT = range2[2]
-      }
+      if (range2) { minT = range2[1]; maxT = range2[2] }
     }
   }
-
   return { wxText, popValue, minT, maxT }
 }
-
-// 依天氣現象關鍵字回傳對應 SVG 檔路徑（public/img/weather）
-// 你提供的檔案：sunny.svg / cloudy.svg / rain.svg / windy.svg
-function resolveIconPathByWx(weatherText) {
-  const text = weatherText || ''
-  const isThunder = /雷/.test(text)
-  const isSnow = /雪|霰/.test(text)
-  const isRain = /雨/.test(text)
-  const isWindy = /風/.test(text)
-  const isCloudy = /雲|陰/.test(text)
-  const isSunny = /晴/.test(text)
-
-  // 先判斷較嚴重/明顯的天氣
-  if (isThunder || isRain) return '/img/weather/rain.svg'
-  if (isSnow) return '/img/weather/rain.svg' // 如果有雪的專用圖，改成 /snow.svg
-  if (isWindy) return '/img/weather/windy.svg'
-  if (isCloudy) return '/img/weather/cloudy.svg'
-  if (isSunny) return '/img/weather/sunny.svg'
-  // 預設：多雲
-  return '/img/weather/cloudy.svg'
-}
-
-// 月份/日期切割（月份英文大寫，日期兩位數）
 function splitMonthAndDay(isoDate) {
   const d = new Date(isoDate)
   return {
-    monthEN: d.toLocaleString('en-US', { month: 'short' }).toUpperCase(), // e.g., AUGUST
-    dayOfMonth: String(d.getDate()).padStart(2, '0'),                    // e.g., 05
+    monthEN: d.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
+    dayOfMonth: String(d.getDate()).padStart(2, '0'),
   }
 }
 
-// ======= 主流程 =======
+// 天氣 → 本地 SVG 路徑（public/img/weather/*.svg）
+function resolveIconPathByWx(weatherText) {
+  const text = weatherText || ''
+  const isThunder = /雷/.test(text)
+  const isSnow    = /雪|霰/.test(text)
+  const isRain    = /雨/.test(text)
+  const isWindy   = /風/.test(text)
+  const isCloudy  = /雲|陰/.test(text)
+  const isSunny   = /晴/.test(text)
+
+  let name = 'cloudy'
+  if (isThunder || isRain) name = 'rain'
+  else if (isSnow)         name = 'rain'   // 若日後有 snow.svg 改成 'snow'
+  else if (isWindy)        name = 'windy'
+  else if (isCloudy)       name = 'cloudy'
+  else if (isSunny)        name = 'sunny'
+
+  return `${baseUrl}img/weather/${name}.svg`
+}
+
+// ====== 主流程：抓氣象署 7 日資料 ======
 onMounted(async () => {
+  const token = 'CWA-66252587-7CC5-4C09-BCED-09C2746EFFF1'
   const url =
-    `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=${token}&locationName=${town}`
+    `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=${token}&locationName=${encodeURIComponent(town)}`
 
-  const res = await axios.get(url)
-const locations = res.data.records.Locations[0].Location // 這是一個陣列
-const location = locations.find(item => item.LocationName === town)
-console.log(location);
-const elements = location.WeatherElement
+  const { data } = await axios.get(url)
+  const locations = data.records?.Locations?.[0]?.Location || []
+  const location = locations.find(item => item.LocationName === town)
+  if (!location) { dailyForecast.value = []; return }
 
-  // 來源一：天氣預報綜合描述（優先）
-  const descriptionSeries = getTimeSeries(elements, ['天氣預報綜合描述', 'WeatherDescription'])
-
-  // 來源二：單一要素（作為缺值補強）
+  const elements   = location.WeatherElement
+  const descSeries = getTimeSeries(elements, ['天氣預報綜合描述', 'WeatherDescription'])
   const wxSeries   = getTimeSeries(elements, ['天氣現象', 'Wx'])
   const popSeries  = getTimeSeries(elements, ['12小時降雨機率', '降雨機率', 'PoP12h'])
   const minTSeries = getTimeSeries(elements, ['最低溫度', 'MinT'])
   const maxTSeries = getTimeSeries(elements, ['最高溫度', 'MaxT'])
 
-  // 將 12 小時資料濃縮為「每日一筆」：優先取 06:00~18:00；若無則取同日第一筆
+  // 以 06:00~18:00 為優先，濃縮成每日一筆
   const byDate = new Map()
-  const baseCandidates = descriptionSeries.length ? descriptionSeries : wxSeries
-  baseCandidates.forEach(timeSlice => {
-    const dateISO = timeSlice.StartTime.slice(0, 10)
-    const isDaytime = timeSlice.StartTime.includes('06:00')
-    const existing = byDate.get(dateISO)
-    if (!existing || (isDaytime && !existing.isDaytime)) {
-      byDate.set(dateISO, { timeSlice, isDaytime })
-    }
+  const baseCandidates = descSeries.length ? descSeries : wxSeries
+  baseCandidates.forEach(ts => {
+    const dateISO   = ts.StartTime.slice(0, 10)
+    const isDaytime = ts.StartTime.includes('06:00')
+    const exist = byDate.get(dateISO)
+    if (!exist || (isDaytime && !exist.isDaytime)) byDate.set(dateISO, { timeSlice: ts, isDaytime })
   })
 
-  const dateList = Array.from(byDate.keys()).slice(0, 7) // 只取七天
+  const dateList = Array.from(byDate.keys()).slice(0, 7)
+
+  const pickSameDayValue = (series, dateISO) => {
+    const same = series.filter(t => t.StartTime.slice(0, 10) === dateISO)
+    const day06 = same.find(t => t.StartTime.includes('06:00')) || same[0]
+    return day06 ? pickElementValue(day06.ElementValue) : ''
+  }
 
   dailyForecast.value = dateList.map(dateISO => {
-    const baseTimeSlice = byDate.get(dateISO).timeSlice
+    const baseTimeSlice  = byDate.get(dateISO).timeSlice
+    const descText       = pickElementValue(baseTimeSlice.ElementValue)
+    const parsed         = parseWeatherDescription(descText)
 
-    // 綜合描述解析
-    const descriptionText = pickElementValue(baseTimeSlice.ElementValue)
-    const parsed = parseWeatherDescription(descriptionText)
+    const wxText = parsed.wxText !== '-' ? parsed.wxText : (pickSameDayValue(wxSeries, dateISO) || '-')
 
-    // 同日的單要素備援取值（若解析不到就用單要素）
-    const pickSameDayValue = (series) => {
-      const sameDay = series.filter(t => t.StartTime.slice(0, 10) === dateISO)
-      const day06 = sameDay.find(t => t.StartTime.includes('06:00')) || sameDay[0]
-      return day06 ? pickElementValue(day06.ElementValue) : ''
-    }
-
-    const wxText = parsed.wxText !== '-' ? parsed.wxText : (pickSameDayValue(wxSeries) || '-')
-
-    // 降雨率顯示需求：如果沒有資料就顯示「超出範圍」
-    let popText = parsed.popValue !== '-' ? parsed.popValue + '%' : (pickSameDayValue(popSeries) || '-')
+    let popText = parsed.popValue !== '-' ? `${parsed.popValue}%` : (pickSameDayValue(popSeries, dateISO) || '-')
     if (popText === '-') popText = '尚未偵測'
 
-    const minText = parsed.minT !== '-' ? parsed.minT : (pickSameDayValue(minTSeries) || '-')
-    const maxText = parsed.maxT !== '-' ? parsed.maxT : (pickSameDayValue(maxTSeries) || '-')
+    const minText = parsed.minT !== '-' ? parsed.minT : (pickSameDayValue(minTSeries, dateISO) || '-')
+    const maxText = parsed.maxT !== '-' ? parsed.maxT : (pickSameDayValue(maxTSeries, dateISO) || '-')
 
     const { monthEN, dayOfMonth } = splitMonthAndDay(dateISO)
-    const iconPath = resolveIconPathByWx(wxText)
 
     return {
-      monthEN,          // e.g., AUGUST
-      dayOfMonth,       // e.g., 05
-      wx: wxText,       // 天氣現象文字
-      popDisplay: popText, // "30%" or "超出範圍"
+      monthEN,
+      dayOfMonth,
+      wx: wxText,
+      popDisplay: popText,
       minT: minText,
       maxT: maxText,
-      iconPath,         // 對應的 SVG 路徑
+      iconPath: resolveIconPathByWx(wxText),
     }
   })
 })
