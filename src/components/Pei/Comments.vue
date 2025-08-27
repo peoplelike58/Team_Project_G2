@@ -218,7 +218,7 @@ function deleteMessageById(messageId) {
     </div>
   </div>
 
-  <!-- ① 照片放大檢視（所有使用者可用） -->
+  <!--  照片放大檢視（所有使用者可用） -->
   <div
     class="imageViewerMask"
     v-if="isImageViewerVisible"
@@ -232,15 +232,22 @@ function deleteMessageById(messageId) {
 </template>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
+@import '@/assets/styles/mixins';
 
 .comments {
+  // border: 1px solid rgb(144, 0, 255);
   width: 100%;
   max-width: 1200px;
   margin: 48px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
+  @include m(){
+    max-width: 430px;
+    padding: 0 20px;
+  }
 
   h1 {
     font-size: $pcFont-H1-m;
@@ -270,6 +277,10 @@ function deleteMessageById(messageId) {
     background-color: $tag;
     color: white;
     cursor: pointer;
+    @include m(){
+      width: 220px;
+    }
+    
   }
 
   .noRude {
@@ -291,6 +302,12 @@ function deleteMessageById(messageId) {
     width: 95%;
     max-width: 1140px;
     margin-top: 40px;
+    box-sizing: border-box;
+    // border: 1px solid red;
+    @include m(){
+      width: 100%;
+
+    }
 
     .noComment {
       text-align: center;
@@ -410,7 +427,14 @@ function deleteMessageById(messageId) {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 1000;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  @include m(){
+  max-width: 430px;  
+  }
 
   .showPopup {
     background-color: $ivory-gray-100;
@@ -424,6 +448,11 @@ function deleteMessageById(messageId) {
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    @include m(){
+      // border: 1px solid red;
+      width: 350px
+    }
 
     .closeBtn {
       margin-left: auto;
@@ -493,11 +522,18 @@ function deleteMessageById(messageId) {
       font-size: 14px;
       width: 35%;
       text-align: center;
+      
+      @include m(){
+        width: 200px;
+        
+      }
     }
 
     .hasphotoUploadBtn {
       background-color: $tag;
       color: white;
+
+     
     }
 
     .previewBox {
@@ -543,6 +579,9 @@ function deleteMessageById(messageId) {
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      @include m(){
+        width: 200px;
+      }
 
       &:hover {
         background-color: rgba(186, 186, 171, 0.6);
@@ -553,6 +592,7 @@ function deleteMessageById(messageId) {
 
 /* 照片放大檢視樣式 */
 .imageViewerMask {
+  
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.7);
