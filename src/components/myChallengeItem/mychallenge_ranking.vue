@@ -2,7 +2,7 @@
     <section v-for="rank in ranks" :key="rank.rank" class="nomb">
         <div class="personInfo" @click="toggle(rank.rank)">
             <div class="personInfoTitle">
-                <img :src="`${ICON_BASE}${rank.image}`" alt="" class="head">
+                <img :src="`images/mychallenge/${rank.image}`" alt="" class="head">
                 <h4 class="place">{{ rank.rank }}<br />{{ rank.icon }}</h4>
                 <h4>{{ rank.name }}</h4>
             </div>
@@ -52,9 +52,6 @@ import axios from 'axios'
     //     {image:'head4.png', rank:'第四名', icon:'', name: '嘉明', height:6810, kilo:7110, time:395, big:34, small:29 },
     //     {image:'head5.png', rank:'第五名', icon:'', name: 'Pei', height:5013, kilo:4128, time:413, big:23, small:18 },
     // ])
-    
-    const PUBLIC_BASE = import.meta.env.BASE_URL; 
-    const ICON_BASE = `${PUBLIC_BASE}images/myChallenge/`;
 
     // 控制手風琴開關
     const openItem = ref(null)
