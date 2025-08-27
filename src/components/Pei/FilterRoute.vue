@@ -483,14 +483,14 @@ button{ // 通用按鈕樣式
 }
 
 .totalCard{ /* 卡片清單（ul） */
-  list-style: none; // 移除項目符號
+ 
   padding: 20px; 
 
-  width: 100%; // 滿版寬
+  width: 100%; 
   max-width: 1200px;
   margin: auto;
-  min-height: 600px; // 最小高度避免跳動
-  margin-top: 52px; // 與標題間距
+  min-height: 600px; 
+  margin-top: 52px; 
   box-sizing: border-box;
   // border:2px solid #1115e7; 
 
@@ -523,6 +523,10 @@ button{ // 通用按鈕樣式
   flex-direction: column;//為了把tags靠底部貼邊
 
   cursor: pointer;
+
+  &:hover{
+    border: 2px dashed $mountain-green;
+  }
 
   @include m(){
    

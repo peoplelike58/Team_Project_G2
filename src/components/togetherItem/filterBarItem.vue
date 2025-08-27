@@ -1,47 +1,50 @@
 <template>
-    <!-- 篩選選單 -->
-    <div class="filter-bar">
-        <div class="filter-content">
-            <div class="filter-item">
-                <label>地點</label>
-                <select v-model="filters.location">
-                    <option value="">選擇城市</option>
-                    <option>台北</option>
-                    <option>新北</option>
-                    <option>台中</option>
-                    <option>高雄</option>
-                </select>
-            </div>
+  <div class="filter-bar">
+    <div class="filter-content">
+      <div class="filter-item">
+        <label>地點</label>
+        <select v-model="searchCriteria.location">
+          <option value="">全部地點</option>
+          <option v-for="loc in locationOptions" :key="loc" :value="loc">{{ loc }}</option>
+        </select>
+      </div>
 
-            <div class="filter-item">
-                <label>日期</label>
-                <input type="date" v-model="filters.date"/>
-            </div>
+      <div class="filter-item">
+        <label>日期</label>
+        <input type="date" v-model="searchCriteria.date" />
+      </div>
 
-            <div class="filter-item">
-                <label>關鍵字</label>
-                <input type="text" placeholder="輸入關鍵字" v-model="filters.keyword"/>
-            </div>
+      <div class="filter-item">
+        <label>關鍵字</label>
+        <input type="text" placeholder="輸入關鍵字" v-model="searchCriteria.keyword" />
+      </div>
 
-            <button class="search-btn" @click="search">搜出揪團</button>
-        </div>
+      <button class="search-btn" @click="emitSearch">搜出揪團</button>
     </div>
+  </div>
 </template>
 
-<script setup="setup">
+<script setup>
+import { reactive } from 'vue'
 
-    // 篩選清單
-    import { reactive } from 'vue'
+// 由父層傳入可以避免東西寫死
+const props = defineProps({
+  locationOptions: { type: Array, default: () => [] }
+})
 
-    const filters = reactive({location: '', date: '', keyword: ''})
+// 目前設定的查詢條件
+const searchCriteria = reactive({
+  location: '',
+  date: '',
+  keyword: ''
+})
 
-    // 定義事件
-    const emit = defineEmits(['search'])
-
-    // 點擊時將 filters 深複製再往外傳
-    function search() {
-        emit('search', { ...filters })
-    }
+// 點擊按鈕時才觸發搜尋
+const emit = defineEmits(['search'])
+function emitSearch() {
+  // 避免父層誤改到子層狀態
+  emit('search', JSON.parse(JSON.stringify(searchCriteria)))
+}
 </script>
 
 <style lang="scss" scoped="scoped">

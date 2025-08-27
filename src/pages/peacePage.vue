@@ -33,6 +33,7 @@
       </ul>
     </div>
   </div>
+<Footer/>
 </template>
 
 <script setup>
@@ -42,6 +43,7 @@ import Back   from '@/assets/images/peaceCard/back.png'
 import People from '@/assets/images/peaceCard/people.png'
 import Info   from '@/assets/images/peaceCard/info.png'
 import NavMenu from '@/components/An/navMenu.vue'
+import Footer from '@/components/An/footer.vue'
 
 // 1. 定義 tabs 時直接把 content 變陣列，每項都是一句
 const tabs = [
@@ -140,7 +142,7 @@ function selectTab(key) {
 }
 
 .game {
-  width: 1421px;
+  width: 1400px;
   height: 550px;
   border: 1px solid red;
   text-align: center;

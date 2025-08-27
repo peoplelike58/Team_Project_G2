@@ -266,6 +266,7 @@ watch(goPage, (newPage) => {
     @include m(){
         max-width: 430px;
         padding: 50px 20px;
+        font-size: 14px;
     }
     
     .btns{/* ul 切換按鈕 */
@@ -277,20 +278,26 @@ watch(goPage, (newPage) => {
         gap: 48px;
 
         @include m(){
-            gap:20px;
+            max-width: 390px;
+            gap:12px;
         }
 
         li{
 
             button{
                 cursor: pointer;
-                width: 192px;
+                // width: 192px;
                 padding: 8px 52px;
                 border-radius: 8px;
                 border: none;
                 background-color: $ivory-gray-100;
 
                 font-size: $pcFont-p-m;
+
+                @include m(){
+                   
+                    padding: 8px 20px;
+                }
 
                 &:focus{
                     background-color:white;
@@ -309,6 +316,11 @@ watch(goPage, (newPage) => {
         width: 80%;
         max-width: 912px;
         margin:64px auto 0;
+        // border: 1px solid red;
+
+        @include m(){
+            width: 100%;
+        }
         
             li{
                 border-bottom: 1px solid #999;
@@ -319,6 +331,12 @@ watch(goPage, (newPage) => {
                 font-weight: $medium;
                 
                 gap: 7rem;
+
+                @include m(){
+                    gap:0;
+                    justify-content: space-between;
+                    padding: 8px;
+                }
 
                 p{ /* 內容 */
 
@@ -340,13 +358,14 @@ watch(goPage, (newPage) => {
         }
     }
 
-
-
     .mapPage{ /* 路線地圖的框 */ 
-        height: 600px;
+        padding: 50px 20px;
+        
         .mapBox{
+            
             height: 500px;
             width: 100%;
+            border-radius: 16px;
         }
         
     }
@@ -363,13 +382,15 @@ watch(goPage, (newPage) => {
         }
         
         
-
-
         p{ /* 必備文字提示*/
             align-self: flex-start;
             margin: 0 80px;
             flex-grow: 1;
-            
+            width: 100%;
+
+            @include m(){
+                margin: 0;
+            }
 
 
         }
@@ -380,6 +401,12 @@ watch(goPage, (newPage) => {
             margin: 0 auto;
             display: flex;
             flex-grow: 2;
+
+            @include m(){
+            width: 100%;
+            flex-wrap: wrap;
+
+            }
 
 
             li{
@@ -393,6 +420,10 @@ watch(goPage, (newPage) => {
             align-items: center;
             gap:40px;
 
+            @include m(){
+                gap:16px;
+            }
+
         
                 div{ /* 裝備圖片 */ 
                     width: 120px;
@@ -401,6 +432,11 @@ watch(goPage, (newPage) => {
                     background-color: #666;
                     overflow: hidden;
                     // border:0.3px solid #ccc;
+
+                    @include m(){
+                        width: 100px;
+                        height: 100px;
+                    }
 
                     img{
                         object-fit: cover;
@@ -416,6 +452,10 @@ watch(goPage, (newPage) => {
                 span{/* 裝備名稱 */
                     font-size: $pcFont-p-m;
                     font-weight:$medium;
+
+                    @include m(){
+                        font-size: 14px;
+                    }
                 }
 
                 .graySpan{
@@ -445,6 +485,12 @@ watch(goPage, (newPage) => {
             font-size: $pcFont-p-m;
             cursor: pointer;
 
+            @include m(){
+                width: 80%;
+                font-size: 14px;
+                margin-bottom: 0;
+            }
+
             
 
         }
@@ -467,21 +513,39 @@ watch(goPage, (newPage) => {
     padding: 32px;
     box-sizing: border-box;
 
+    @include m(){
+        max-width: 390px;
+        padding: 20px;
+        font-size: 14px;
+        padding: 20px;
+    }
+
+
     h2{
             font-size: $pcFont-H2;
             font-weight: $semiBold;
             text-align: center;
-            margin-top: 32px;
+            
         }
 
     .popupMask {
-        position: fixed; // 蓋住整個畫面
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.3); // 半透明背景
+        // position: fixed; // 蓋住整個畫面
+        // top: 0;
+        // left: 0;
+        // width: 100vw;
+        // height: 100vh;
+        // background-color: rgba(0, 0, 0, 0.7); // 半透明背景
         
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+        overflow-x: hidden;
+
         .showPopup{ /* 彈窗的框 */
             width: 30%;
             background-color:$ivory-gray-100;         
@@ -497,6 +561,12 @@ watch(goPage, (newPage) => {
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%); 
+
+            @include m(){
+                width: 100%;
+                max-width: 340px;
+                padding: 20px;
+            }
 
             button{
                 margin-left: auto;
@@ -525,6 +595,10 @@ watch(goPage, (newPage) => {
 
             border-collapse: collapse;
             border-spacing: 0;
+
+            @include m(){
+                font-size: 12px;
+            }
             
 
                 
@@ -565,6 +639,8 @@ watch(goPage, (newPage) => {
             
             }
         }
+
+ 
 
     }   
 
