@@ -4,6 +4,14 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router';
 import trailsData from '@/assets/json/trails.json'
 
+// 先把 BASE_URL 存成變數，避免在 template 直接寫 import.meta
+// 取得部署子目錄，如 '/tjd102/g2/' 
+const baseUrl = import.meta.env.BASE_URL                              
+
+// 小工具：把 JSON 裡的相對路徑拼成可用網址
+// 回傳拼好的完整路徑
+const toUrl = (p) => `${baseUrl}${p}`     
+
 // 引導至詳細頁面
 const router = useRouter()  
 const goDetail = id => router.push({name:'trailDetail' , params:{id}})
@@ -211,7 +219,8 @@ function goPage(p) {
         v-for="trail in pagedTrails" 
         :key="trail.id"
         > <!-- 只渲染當前頁的8張卡片 -->
-          <img :src="trail.img" :alt="trail.name" /> 
+          <img :src="toUrl(trail.img)" :alt="trail.name" />
+          <!-- <img :src="trail.img" :alt="trail.name" />  -->
           <div class="meta">
             <h4 class="name">{{ trail.name }}</h4> 
             <span>{{ trail.region }}</span> 

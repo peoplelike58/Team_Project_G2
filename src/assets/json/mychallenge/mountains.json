@@ -1,0 +1,12 @@
+[
+  { "name": "玉山", "kind": "大百岳", "latitude": 23.4712, "longitude": 120.9575, "icon": "mountain.png" },
+  { "name": "雪山", "kind": "大百岳", "latitude": 24.3886, "longitude": 121.2336, "icon": "mountain.png" },
+  { "name": "關山", "kind": "小百岳", "latitude": 23.3239, "longitude": 121.0036, "icon": "mountain.png" },
+  { "name": "南湖大山", "kind": "大百岳", "latitude": 24.3819, "longitude": 121.4194, "icon": "mountain.png" },
+  { "name": "秀姑巒山", "kind": "大百岳", "latitude": 23.4625, "longitude": 121.0225, "icon": "mountain.png" },
+  { "name": "合歡主峰", "kind": "小百岳", "latitude": 24.1445, "longitude": 121.2722, "icon": "mountain.png" },
+  { "name": "能高主峰", "kind": "小百岳", "latitude": 24.1028, "longitude": 121.2403, "icon": "mountain.png" },
+  { "name": "大霸尖山", "kind": "小百岳", "latitude": 24.5167, "longitude": 121.2500, "icon": "mountain.png" },
+  { "name": "品田山", "kind": "小百岳", "latitude": 24.5056, "longitude": 121.2942, "icon": "mountain.png" },
+  { "name": "奇萊主峰", "kind": "小百岳", "latitude": 24.1183, "longitude": 121.3345, "icon": "mountain.png" }
+]

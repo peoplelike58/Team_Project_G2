@@ -1,7 +1,7 @@
 <template>
     <section class="map" id="map">
 		<div class="remind">
-			<p>點擊 <img src="/images/myChallenge/mountain.png" alt="山icon">即可上傳您的足跡</p>
+			<p>點擊 <img src="@/assets/images/myChallenge/mountain.png" alt="山icon">即可上傳您的足跡</p>
 		</div>
         <l-map
         :zoom="zoom" 
@@ -31,10 +31,14 @@ import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet'
 import L from "leaflet"
 import "leaflet.markercluster"
 
+const PUBLIC_BASE = import.meta.env.BASE_URL; 
+const ICON_BASE = `${PUBLIC_BASE}images/myChallenge/`;
+
+
 function getIcon(fileName) {
 	return new Icon({
-		iconUrl: `/images/myChallenge/${fileName}`,
-		iconRetinaUrl: `/images/myChallenge/${fileName}`,
+		iconUrl: `${ICON_BASE}${fileName}`,
+		iconRetinaUrl: `${ICON_BASE}${fileName}`,
 		shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 		iconSize: [41, 41],
 		iconAnchor: [16, 32],
@@ -96,7 +100,7 @@ function onMapReady(map) {
 						justify-content: center;"
 						>
 					<img 
-						src="/images/myChallenge/${iconFile}" 
+						src="${ICON_BASE}${iconFile}" 
 						style="width:${size * 0.6}px; height:${size * 0.6}px;" 
 					/>
 					</div> `,
@@ -166,7 +170,7 @@ function setClimbed(mountainName) {
 								justify-content: center;"
 								>
 							<img 
-								src="/images/myChallenge/${iconFile}" 
+								src="${ICON_BASE}${iconFile}" 
 								style="width:${size * 0.6}px; height:${size * 0.6}px;" 
 							/>
 							</div> `,

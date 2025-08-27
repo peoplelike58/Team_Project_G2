@@ -1,83 +1,83 @@
 [
-    {
-        "id": 1,
-        "date": "2025.08.01",
-        "title": "2025 森遊竹縣｜皮皮獅健走日 × 十二寨探索趣",
-        "imageUrl": "/images/eventCard/cardimg1.jpg",
-        "tags": ["台北市"],
-        "location": "台北",
-        "ctaUrl": "/activities/1"
-    }, 
-    {
-        "id": 2,
-        "date": "2025.08.15",
-        "title": "仲夏森林親子野餐",
-        "imageUrl": "/images/eventCard/cardimg2.jpg",
-        "tags": ["親子", "戶外", "新北市"],
-        "location": "新北",
-        "ctaUrl": "/activities/2"
-    }, 
-    {
-        "id": 3,
-        "date": "2025.09.01",
-        "title": "山林步道健行日",
-        "imageUrl": "/images/eventCard/cardimg3.jpg",
-        "tags": ["品牌活動"],
-        "location": "台北",
-        "ctaUrl": "/activities/3"
-    }, 
-    {
-        "id": 4,
-        "date": "2025.09.20",
-        "title": "秋季賞楓攝影小聚",
-        "imageUrl": "/images/eventCard/cardimg2.jpg",
-        "tags": ["攝影", "社群"],
-        "location": "高雄",
-        "ctaUrl": "/activities/4"
-    },
-    {
-        "id": 5,
-        "date": "2025.10.01",
-        "title": "步道健行日",
-        "imageUrl": "/images/eventCard/cardimg3.jpg",
-        "tags": ["品牌活動"],
-        "location": "高雄",
-        "ctaUrl": "/activities/3"
-    }, 
-    {
-        "id": 6,
-        "date": "2025.11.11",
-        "title": "陽明山月圓之夜",
-        "imageUrl": "/images/eventCard/cardimg1.jpg",
-        "tags": ["品牌活動"],
-        "location": "台中",
-        "ctaUrl": "/activities/3"
-    }, 
-    {
-        "id": 7,
-        "date": "2025.12.01",
-        "title": "月初我不想爬山日",
-        "imageUrl": "/images/eventCard/cardimg1.jpg",
-        "tags": ["品牌活動"],
-        "location": "台中",
-        "ctaUrl": "/activities/3"
-    }, 
-    {
-        "id": 8,
-        "date": "2025.05.05",
-        "title": "嗚嗚山嗚嗚日",
-        "imageUrl": "/images/eventCard/cardimg2.jpg",
-        "tags": ["品牌活動"],
-        "location": "台中",
-        "ctaUrl": "/activities/3"
-    }, 
-    {
-        "id": 9,
-        "date": "2025.08.08",
-        "title": "爸爸也想爬山",
-        "imageUrl": "/images/eventCard/cardimg3.jpg",
-        "tags": ["品牌活動"],
-        "location": "台北",
-        "ctaUrl": "/activities/3"
-    }
+  {
+    "id": 1,
+    "date": "2025.08.01",
+    "title": "2025 森遊竹縣｜皮皮獅健走日 × 十二寨探索趣",
+    "imageUrl": "../../assets/images/eventCard/cardimg1.jpg",
+    "tags": ["台北市"],
+    "location": "台北",
+    "ctaUrl": "/activities/1"
+  },
+  {
+    "id": 2,
+    "date": "2025.08.15",
+    "title": "仲夏森林親子野餐",
+    "imageUrl": "../../assets/images/eventCard/cardimg2.jpg",
+    "tags": ["親子", "戶外", "新北市"],
+    "location": "新北",
+    "ctaUrl": "/activities/2"
+  },
+  {
+    "id": 3,
+    "date": "2025.09.01",
+    "title": "山林步道健行日",
+    "imageUrl": "../../assets/images/eventCard/cardimg3.jpg",
+    "tags": ["品牌活動"],
+    "location": "台北",
+    "ctaUrl": "/activities/3"
+  },
+  {
+    "id": 4,
+    "date": "2025.09.20",
+    "title": "秋季賞楓攝影小聚",
+    "imageUrl": "../../assets/images/eventCard/cardimg2.jpg",
+    "tags": ["攝影", "社群"],
+    "location": "高雄",
+    "ctaUrl": "/activities/4"
+  },
+  {
+    "id": 5,
+    "date": "2025.10.01",
+    "title": "步道健行日",
+    "imageUrl": "../../assets/images/eventCard/cardimg3.jpg",
+    "tags": ["品牌活動"],
+    "location": "高雄",
+    "ctaUrl": "/activities/3"
+  },
+  {
+    "id": 6,
+    "date": "2025.11.11",
+    "title": "陽明山月圓之夜",
+    "imageUrl": "../../assets/images/eventCard/cardimg1.jpg",
+    "tags": ["品牌活動"],
+    "location": "台中",
+    "ctaUrl": "/activities/3"
+  },
+  {
+    "id": 7,
+    "date": "2025.12.01",
+    "title": "月初我不想爬山日",
+    "imageUrl": "../../assets/images/eventCard/cardimg1.jpg",
+    "tags": ["品牌活動"],
+    "location": "台中",
+    "ctaUrl": "/activities/3"
+  },
+  {
+    "id": 8,
+    "date": "2025.05.05",
+    "title": "嗚嗚山嗚嗚日",
+    "imageUrl": "../../assets/images/eventCard/cardimg2.jpg",
+    "tags": ["品牌活動"],
+    "location": "台中",
+    "ctaUrl": "/activities/3"
+  },
+  {
+    "id": 9,
+    "date": "2025.08.08",
+    "title": "爸爸也想爬山",
+    "imageUrl": "../../assets/images/eventCard/cardimg3.jpg",
+    "tags": ["品牌活動"],
+    "location": "台北",
+    "ctaUrl": "/activities/3"
+  }
 ]

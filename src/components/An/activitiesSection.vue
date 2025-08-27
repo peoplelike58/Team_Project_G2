@@ -8,9 +8,9 @@
 
             <!-- 卡片區 -->
             <div class="card-container">
-                <template v-if="activitiesJson.length">
+                <template v-if="displayItems.length">
                     <template
-                        v-for="(activity, activityIndex) in activitiesJson"
+                        v-for="(activity, activityIndex) in displayItems"
                         :key="activity.id ?? activityIndex">
                             <activityCard
                                 :item="activity"
@@ -38,13 +38,26 @@ const props = defineProps({
     limit: { type: Number, default: 3 },          // 首頁顯示 3 張
 })
   
-const emit = defineEmits(['view-all', 'cta-click'])
-  
-const activitiesJson = computed(() => props.items.slice(0, props.limit))
+// 取前 limit 筆，並把 imageUrl 轉為可用 URL
+const displayItems = computed(() =>
+    (props.items).slice(0, props.limit).map(item => ({
+        ...item, imageUrl: transformImageUrl(item.imageUrl)
+    }))
+)
+
+// URL 轉址
+const transformImageUrl = (url) => {
+    // '@/assets/...' 轉成 /src/assets/... 再用 new URL 解析（讓 Vite 參與打包）
+    const normalized = url.replace('@/assets/', '/src/assets/')
+    return new URL(normalized, import.meta.url).href
+}
+
+const emit = defineEmits(['view-all', 'cta-click'])  
   
 function handleCtaClick(item) {
     emit('cta-click', item)
 }
+
 </script>
   
 <style scoped lang="scss">
