@@ -1,7 +1,7 @@
 <template>
     <section class="mychallengeHistroy">
         <div class="back" @click="closeHistory">
-            <img src="../../assets/images/mychallenge/left.png" alt="">
+            <img src="@/assets/images/mychallenge/left.png" alt="">
             <h4>返回</h4>
         </div>
         <h2>[ 歷史足跡 ]</h2>
@@ -16,7 +16,7 @@
                         <h4 class="mountain">{{ history.name }}</h4>
                         <h4>{{ history.date }}</h4>
                     </div>
-                    <img src="../../assets/images/mychallenge/down.png" alt="">
+                    <img src="@/assets/images/mychallenge/down.png" alt="">
                 </div>
                 <transition name="dropdown">
                     <div class="totalScore"  v-show="openItem == history.name">
@@ -168,8 +168,8 @@ import { ref, onMounted } from 'vue'
                 }
 
                 img{
-                    width: 16px;
-                    height: 8px;
+                    width: 40px;
+                    height: 40px;
                 }
             }
 

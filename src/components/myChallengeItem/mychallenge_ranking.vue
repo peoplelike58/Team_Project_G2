@@ -2,12 +2,12 @@
     <section v-for="rank in ranks" :key="rank.rank" class="nomb">
         <div class="personInfo" @click="toggle(rank.rank)">
             <div class="personInfoTitle">
-                <img :src="`/images/myChallenge/${rank.image}`" alt="" class="head">
+                <img :src="`${ICON_BASE}${rank.image}`" alt="" class="head">
                 <h4 class="place">{{ rank.rank }}<br />{{ rank.icon }}</h4>
                 <h4>{{ rank.name }}</h4>
             </div>
             <div class="allow">
-                <img src="../../assets/images/mychallenge/down.png" alt="">
+                <img src="@/assets/images/mychallenge/down.png" alt="">
             </div>
         </div>
         <transition name="dropdown">
@@ -53,6 +53,8 @@ import axios from 'axios'
     //     {image:'head5.png', rank:'第五名', icon:'', name: 'Pei', height:5013, kilo:4128, time:413, big:23, small:18 },
     // ])
     
+    const PUBLIC_BASE = import.meta.env.BASE_URL; 
+    const ICON_BASE = `${PUBLIC_BASE}images/myChallenge/`;
 
     // 控制手風琴開關
     const openItem = ref(null)

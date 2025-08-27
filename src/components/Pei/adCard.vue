@@ -2,10 +2,18 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import trailsJson from '../../assets/json/trails.json';
+import trailsJson from '@/assets/json/trails.json';
 const trailsTen = trailsJson.slice(0,10);
 // 只取十座百岳
 // console.log(trailsTen);
+
+// 先把 BASE_URL 存成變數，避免在 template 直接寫 import.meta
+// 取得部署子目錄，如 '/tjd102/g2/' 
+const baseUrl = import.meta.env.BASE_URL                              
+
+// 小工具：把 JSON 裡的相對路徑拼成可用網址
+// 回傳拼好的完整路徑
+const toUrl = (p) => `${baseUrl}${p}`  
 
 
 
@@ -31,8 +39,12 @@ const trailsTen = trailsJson.slice(0,10);
                 <p class="ac-date">{{ trail.region }}</p>
               </div>
 
+              <!--:src="trail.img"-->
               <div name="image">
-                <img class="ac-img" :src="trail.img" loading="lazy" />
+                <img class="ac-img" 
+                :src="toUrl(trail.img)"
+                 
+                loading="lazy" />
               </div>
 
               <div name="title">
