@@ -2,18 +2,20 @@
 <script setup>
 
 import { ref,computed } from 'vue'
+import sunglasses1 from '@/assets/images/Products/products/墨鏡_1.jpg'
 
 const carouselproducts = ref([
-    {"id": 1,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
-    {"id": 2,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
-    {"id": 3,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
-    {"id": 4,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
-    {"id": 5,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
-    {"id": 6,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
-    {"id": 7,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
-    {"id": 8,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
-    {"id": 9,"name":"時尚墨鏡","pic":"/Products/products/墨鏡_1.jpg"},
+    {"id": 1,"name":"時尚墨鏡","pic":sunglasses1},
+    {"id": 2,"name":"時尚墨鏡","pic":sunglasses1},
+    {"id": 3,"name":"時尚墨鏡","pic":sunglasses1},
+    {"id": 4,"name":"時尚墨鏡","pic":sunglasses1},
+    {"id": 5,"name":"時尚墨鏡","pic":sunglasses1},
+    {"id": 6,"name":"時尚墨鏡","pic":sunglasses1},
+    {"id": 7,"name":"時尚墨鏡","pic":sunglasses1},
+    {"id": 8,"name":"時尚墨鏡","pic":sunglasses1},
+    {"id": 9,"name":"時尚墨鏡","pic":sunglasses1},
 ])
+
 
 // 目前顯示的商品索引（從 0 開始）
 const currentIndex = ref(0)

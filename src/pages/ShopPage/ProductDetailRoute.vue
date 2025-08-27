@@ -22,7 +22,7 @@ const close = () => router.push('/Shop')
         <!-- 左：主圖 -->
         <div class="product_show">
             <div class="product_image">
-                <img src="/public/Products/products/望遠鏡_3.png" alt="折疊雙筒望遠鏡"/>
+                <img src="@/assets/images/Products/products/望遠鏡_3.png" alt="折疊雙筒望遠鏡"/>
             </div> 
           <!-- 標籤 -->
           <div class="product_tags">

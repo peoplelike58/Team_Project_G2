@@ -96,12 +96,12 @@ const handlePageChange = (page) => {
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
 
-.position_shopcar{
+.position_shopcar{//購物車icon定位
     position: sticky;
     top: 52px;
     z-index: 20;
 }
-.link_cart {
+.link_cart {//購物車icon
   display: flex;                 // 改成 flex 容器
   justify-content: center;       // 水平置中
   align-items: center;           // 垂直置中
@@ -123,7 +123,7 @@ const handlePageChange = (page) => {
 
 }
 }
-main{
+main{//頁面內容
     background-color: #fff;
     section{
     padding-bottom: 40px;
@@ -133,11 +133,11 @@ main{
     }
 }
 
-.coupon{
+.coupon{//優惠券
     text-align: center;
 }
 
-.products{
+.products{//商品卡
     @include flexcenter(50px,row);
     align-items: flex-start; /* 避免側欄與清單被垂直置中而高度不齊 */
 }
