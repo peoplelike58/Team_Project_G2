@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount,defineProps } from 'vue';
+import { ref, onMounted, onBeforeUnmount,defineProps,computed } from 'vue';
 
 const props = defineProps({
   trail: {
@@ -8,7 +8,22 @@ const props = defineProps({
   }
 })
 
-// 當前圖片索引
+// trail.detailUrl轉址
+const baseUrl = import.meta.env.BASE_URL                                     // 取得部署子目錄（例如 '/tjd102/g2/'） // 繁中註解
+
+const toUrl = (p) => {                                                        // 將字串路徑轉為可用網址的工具函式 // 繁中註解
+  if (!p) return ''                                                           // 空值直接回空字串 // 繁中註解
+  if (p.startsWith('http') || p.startsWith('data:') || p.startsWith('/assets/')) return p // 已是完整/打包資產就原樣回傳 // 繁中註解
+  return `${baseUrl}${String(p).replace(/^\/+/, '')}`                         // 其他情況加上 base 並移除開頭斜線 // 繁中註解
+}
+
+const images = computed(() => {                                               // 計算屬性：把 detailUrl 全部轉成完整網址 // 繁中註解
+  const list = Array.isArray(props.trail?.detailUrl) ? props.trail.detailUrl : [] // 取得字串陣列或空陣列 // 繁中註解
+  return list.map(toUrl)                                                      // 逐一轉換成可用網址 // 繁中註解
+})
+
+
+// 做輪播,當前圖片索引
 const current = ref(0)
 const intervalTime = 5000
 let timer = null
@@ -83,7 +98,7 @@ onBeforeUnmount(stopAutoPlay)
         <!-- 輪播圖 -->
         <div class="carousel-window">
           <div class="track" :style="{ transform: `translateX(-${current * 100}%)` }">
-            <div class="slide" v-for="(img, index) in props.trail.detailUrl" :key="index">
+            <div class="slide" v-for="(img, index) in images" :key="index">
               <img :src="img" />
             </div>
           </div>
@@ -108,7 +123,7 @@ onBeforeUnmount(stopAutoPlay)
 
 <style scoped lang="scss">
 @import '@/assets/styles/main.scss';
-@import '../../assets/styles/mixins';
+@import '@/assets/styles/mixins';
 
 .routeContent {
   width: 100%;
