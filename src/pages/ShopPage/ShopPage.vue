@@ -150,7 +150,7 @@ main{//頁面內容
     }
  }
 
-@include mq(830px) {
+@include mq(750px) {
     main{
        
     }
