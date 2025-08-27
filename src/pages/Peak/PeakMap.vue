@@ -95,7 +95,55 @@
   import L from 'leaflet'
   import PeakEBook from "@/components/PeakEBook.vue";
 
+  import yushanMap from '@/assets/images/MapOfMountain/Yushan.png'
+import yushanFull from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_full.jpg'
+import yushanLeft from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_left.jpg'
+import yushanRight from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_right.jpg'
 
+import xueshanMap from '@/assets/images/MapOfMountain/Xueshan.png'
+import xueshanFull from '@/assets/images/PeaksOfTaiwan/Xueshan/Xueshan_full.png'
+import xueshanLeft from '@/assets/images/PeaksOfTaiwan/Xueshan/Xueshan_left.jpg'
+import xueshanRight from '@/assets/images/PeaksOfTaiwan/Xueshan/Xueshan_right.jpg'
+
+import xiuguluanMap from '@/assets/images/MapOfMountain/Xiuguluan.png'
+import xiuguluanFull from '@/assets/images/PeaksOfTaiwan/Xiuguluan/Xiuguluan_full.png'
+import xiuguluanLeft from '@/assets/images/PeaksOfTaiwan/Xiuguluan/Xiuguluan_left.jpg'
+import xiuguluanRight from '@/assets/images/PeaksOfTaiwan/Xiuguluan/Xiuguluan_right.jpg'
+
+import hehuanMap from '@/assets/images/MapOfMountain/Hehuan.png'
+import hehuanFull from '@/assets/images/PeaksOfTaiwan/Hehuan/Hehuan_full.png'
+import hehuanLeft from '@/assets/images/PeaksOfTaiwan/Hehuan/Hehuan_left.jpg'
+import hehuanRight from '@/assets/images/PeaksOfTaiwan/Hehuan/Hehuan_right.jpg'
+
+import pintianMap from '@/assets/images/MapOfMountain/Pintian.png'
+import pintianFull from '@/assets/images/PeaksOfTaiwan/Pintian/Pintian_full.png'
+import pintianLeft from '@/assets/images/PeaksOfTaiwan/Pintian/Pintian_left.jpg'
+import pintianRight from '@/assets/images/PeaksOfTaiwan/Pintian/Pintian_right.jpg'
+
+import dabaMap from '@/assets/images/MapOfMountain/Daba.png'
+import dabaFull from '@/assets/images/PeaksOfTaiwan/Dabajianshan/Daba_full.png'
+import dabaLeft from '@/assets/images/PeaksOfTaiwan/Dabajianshan/Daba_left.jpg'
+import dabaRight from '@/assets/images/PeaksOfTaiwan/Dabajianshan/Daba_right.jpg'
+
+import qilaiMap from '@/assets/images/MapOfMountain/Qilai.png'
+import qilaiFull from '@/assets/images/PeaksOfTaiwan/Qilai/Qilai_full.png'
+import qilaiLeft from '@/assets/images/PeaksOfTaiwan/Qilai/Qilai_left.jpg'
+import qilaiRight from '@/assets/images/PeaksOfTaiwan/Qilai/Qilai_right.jpg'
+
+import nanhuMap from '@/assets/images/MapOfMountain/Nanhu.png'
+import nanhuFull from '@/assets/images/PeaksOfTaiwan/Nanhu/Nanhu_full.png'
+import nanhuLeft from '@/assets/images/PeaksOfTaiwan/Nanhu/Nanhu_left.jpg'
+import nanhuRight from '@/assets/images/PeaksOfTaiwan/Nanhu/Nanhu_right.jpg'
+
+import guanshanMap from '@/assets/images/MapOfMountain/Guanshan.png'
+import guanshanFull from '@/assets/images/PeaksOfTaiwan/Guanshan/Guanshan_full.png'
+import guanshanLeft from '@/assets/images/PeaksOfTaiwan/Guanshan/Guanshan_left.jpg'
+import guanshanRight from '@/assets/images/PeaksOfTaiwan/Guanshan/Guanshan_right.jpg'
+
+import nenggaoMap from '@/assets/images/MapOfMountain/Nenggao.png'
+import nenggaoFull from '@/assets/images/PeaksOfTaiwan/Nenggao/Nenggao_full.png'
+import nenggaoLeft from '@/assets/images/PeaksOfTaiwan/Nenggao/Nenggao_left.jpg'
+import nenggaoRight from '@/assets/images/PeaksOfTaiwan/Nenggao/Nenggao_right.jpg'
   //先載入PageFlip 再載入地圖
 
   // const pageFliploaded = ref(false);
@@ -204,10 +252,10 @@ const closeOverlay = () => {
     englishName: 'Yushan Mountain',
     features: '台灣第一高峰，擁有豐富的高山生態系統',
     coord: [23.4697, 120.9576],
-    mapImage: '/images/MapOfMountain/Yushan.png',
-    fullImage: '/images/PeaksOfTaiwan/Yushan/Yushan_full.jpg',
-    leftImage: '/images/PeaksOfTaiwan/Yushan/Yushan_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Yushan/Yushan_right.jpg',
+    mapImage: yushanMap,
+    fullImage: yushanFull,
+    leftImage: yushanLeft,
+    rightImage: yushanRight,
     slogan:'海拔3952公尺的凝視',
     subSlogan:'的時間、風與靜默',
     title:'地之高，心之遠',
@@ -227,10 +275,10 @@ const closeOverlay = () => {
     englishName: 'Xueshan Main Peak',
     features: '雲海仙境，黑森林步道聞名，適合新手挑戰',
     coord: [24.4806, 121.2500],
-    mapImage: '/images/MapOfMountain/Xueshan.png',
-    fullImage: '/images/PeaksOfTaiwan/Xueshan/Xueshan_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Xueshan/Xueshan_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Xueshan/Xueshan_right.jpg',
+    mapImage: xueshanMap,
+    fullImage: xueshanFull,
+    leftImage: xueshanLeft,
+    rightImage: xueshanRight,
     slogan:'海拔3886公尺的凝目',
     subSlogan:'時光、雲霞與寧靜',
     title:'天際廣闊，心境無垠',
@@ -249,10 +297,10 @@ const closeOverlay = () => {
     englishName: 'Xiuguluan Mountain',
     features: '台灣第三高峰，擁有高山箭竹與異國風野',
     coord: [23.496791, 121.062309],
-    mapImage: '/images/MapOfMountain/Xiuguluan.png',
-    fullImage: '/images/PeaksOfTaiwan/Xiuguluan/Xiuguluan_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Xiuguluan/Xiuguluan_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Xiuguluan/Xiuguluan_right.jpg',
+    mapImage: xiuguluanMap,
+    fullImage: xiuguluanFull,
+    leftImage: xiuguluanLeft,
+    rightImage: xiuguluanRight,
     slogan:'地標的3805公尺',
     subSlogan:'與風與霧與安然共舞',
     title:'天地遼闊，心亦遠',
@@ -271,10 +319,10 @@ const closeOverlay = () => {
     englishName: 'Hehuan Main Peak',
     features: '新手友善，擁有高山花海與日出美景',
     coord: [24.1420, 121.2720],
-    mapImage: '/images/MapOfMountain/Hehuan.png',
-    fullImage: '/images/PeaksOfTaiwan/Hehuan/Hehuan_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Hehuan/Hehuan_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Hehuan/Hehuan_right.jpg',
+    mapImage: hehuanMap,
+    fullImage: hehuanFull,
+    leftImage: hehuanLeft,
+    rightImage: hehuanRight,
     slogan:'站在海拔3417的視界',
     subSlogan:'風語與時光的低語',
     title:'心隨山高，境與天長',
@@ -293,10 +341,10 @@ const closeOverlay = () => {
     englishName: 'Pintian Mountain',
     features: '聖稜線群峰之一，奇岩峭壁極具挑戰性',
     coord: [24.4667, 121.1417],
-    mapImage: '/images/MapOfMountain/Pintian.png',
-    fullImage: '/images/PeaksOfTaiwan/Pintian/Pintian_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Pintian/Pintian_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Pintian/Pintian_right.jpg',
+    mapImage: pintianMap,
+    fullImage: pintianFull,
+    leftImage: pintianLeft,
+    rightImage: pintianRight,
     slogan:'高聳於3668公尺高空',
     subSlogan:'風、光與寂然的對話',
     title:'峰高心遠，境拓思深',
@@ -315,10 +363,10 @@ const closeOverlay = () => {
     englishName: 'Dabajianshan',
     features: '霸氣十足的岩峰，聖稜線聞名，被譽為「聖山」',
     coord: [24.4000, 121.3500],
-    mapImage: '/images/MapOfMountain/Daba.png',
-    fullImage: '/images/PeaksOfTaiwan/Dabajianshan/Daba_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Dabajianshan/Daba_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Dabajianshan/Daba_right.jpg',
+    mapImage: dabaMap,
+    fullImage: dabaFull,
+    leftImage: dabaLeft,
+    rightImage: dabaRight,
     slogan:'海拔3492公尺的磅礡',
     subSlogan:'石與風的語言',
     title:'地之力，心之堅',
@@ -338,10 +386,10 @@ const closeOverlay = () => {
     englishName: 'Qilai Main Peak',
     features: '雲霧之王，擁有險峻稜線與高山草原',
     coord: [24.3, 121.2],
-    mapImage: '/images/MapOfMountain/Qilai.png',
-    fullImage: '/images/PeaksOfTaiwan/Qilai/Qilai_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Qilai/Qilai_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Qilai/Qilai_right.jpg',
+    mapImage: qilaiMap,
+    fullImage: qilaiFull,
+    leftImage: qilaiLeft,
+    rightImage: qilaiRight,
     slogan:'3560海拔的凝視',
     subSlogan:'時光流影，風吟幽靜',
     title:'地的崢嶸，心的馳宇',
@@ -360,10 +408,10 @@ const closeOverlay = () => {
     englishName: 'Nanhu Mountain',
     features: '山形近似富士山，擁有高山湖泊與星空',
     coord: [24.6908, 121.325],
-    mapImage: '/images/MapOfMountain/Nanhu.png',
-    fullImage: '/images/PeaksOfTaiwan/Nanhu/Nanhu_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Nanhu/Nanhu_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Nanhu/Nanhu_right.jpg',
+    mapImage: nanhuMap,
+    fullImage: nanhuFull,
+    leftImage: nanhuLeft,
+    rightImage: nanhuRight,
     slogan:'峰巔雕刻的3742高度',
     subSlogan:'時間的流影，風的吟唱',
     title:'心隨山高，境與天長',
@@ -382,10 +430,10 @@ const closeOverlay = () => {
     englishName: 'Guanshan',
     features: '南台灣名峰，擁有開闊稜線與夕陽美景',
     coord: [23.2278, 120.9114],
-    mapImage:  '/images/MapOfMountain/Guanshan.png',
-    fullImage: '/images/PeaksOfTaiwan/Guanshan/Guanshan_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Guanshan/Guanshan_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Guanshan/Guanshan_right.jpg',
+    mapImage: guanshanMap,
+    fullImage: guanshanFull,
+    leftImage: guanshanLeft,
+    rightImage: guanshanRight,
     slogan:'3668的凝目',
     subSlogan:'風起時，靜默與歲月相陪',
     title:'天地遼闊，心亦遠',
@@ -404,10 +452,10 @@ const closeOverlay = () => {
     englishName: 'Nenggao Main Peak',
     features: '具歷史意義的越嶺古道，擁有雲海與杉木林景觀',
     coord: [ 24.2, 121.0],
-    mapImage: '/images/MapOfMountain/Nenggao.png',
-    fullImage: '/images/PeaksOfTaiwan/Nenggao/Nenggao_full.png',
-    leftImage: '/images/PeaksOfTaiwan/Nenggao/Nenggao_left.jpg',
-    rightImage:'/images/PeaksOfTaiwan/Nenggao/Nenggao_right.jpg',
+    mapImage: nenggaoMap,
+    fullImage: nenggaoFull,
+    leftImage: nenggaoLeft,
+    rightImage: nenggaoRight,
     slogan:'海拔3668的巔峰凝視',
     subSlogan:'時與風的低語，靜謐的映照',
     title:'地的崢嶸，心的馳宇',

@@ -1,17 +1,24 @@
 <script setup>
+    import hero from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main01.jpg'
+    import intro from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main02.png'
+    import about1 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main03.png'
+    import guide1 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main05.png'
+    import about2 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main04.png'
+    import guide2 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main06.png'
+    import guide3 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main07.jpg'
     // Hero Title
     const heroTitle = "百岳之書"
     const heroSubTitle = "翻開台灣百岳，插旗每座山峰！"
     // Images
     const images = {
-        hero:"/images/PeaksOfTaiwan/Yushan/Yushan_main01.jpg",
-        intro:"/images/PeaksOfTaiwan/Yushan/Yushan_main02.png",
-        about1:"/images/PeaksOfTaiwan/Yushan/Yushan_main03.png",
-        about2:"/images/PeaksOfTaiwan/Yushan/Yushan_main04.png",
-        guide1:"/images/PeaksOfTaiwan/Yushan/Yushan_main05.png",
-        guide2:"/images/PeaksOfTaiwan/Yushan/Yushan_main06.png",
-        guide3:"/images/PeaksOfTaiwan/Yushan/Yushan_main07.jpg",
-    }
+        hero,
+        intro,
+        about1,
+        guide1,
+        about2,
+        guide2,
+        guide3
+}
     // Content
     const content ={
         intro:"台灣百岳，是一本寫滿自然與勇氣的書。\n每座山峰，都是大地的詩篇，\n等待你用腳步書寫傳奇，用旗幟記錄你的足跡！",
