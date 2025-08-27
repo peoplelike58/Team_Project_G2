@@ -5,7 +5,7 @@
             <!-- 左側：logo + 標語 -->
             <div class="footer-left">
                 <router-link to="/homepage">
-                    <img :src="logoSrc" class="logo"/>
+                    <img src="@/assets/images/Logo.png" class="logo"/>
                 </router-link>
                 <div class="brand-text">
                     <div class="copyright">© 2025 MountainPeak.</div>
@@ -32,8 +32,6 @@
   
 <script setup>
     import { RouterLink } from 'vue-router';
-
-    const logoSrc = '/images/Logo.png';
 </script>
   
 <style scoped lang="scss">
