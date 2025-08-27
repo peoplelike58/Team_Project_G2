@@ -127,7 +127,7 @@ main{
     background-color: #fff;
     section{
     padding-bottom: 40px;
-    width: 1200px;
+    max-width: 1200px;
     margin: auto;
     
     }
@@ -142,6 +142,19 @@ main{
     align-items: flex-start; /* 避免側欄與清單被垂直置中而高度不齊 */
 }
 
+
+
+@include mq(1199px) {
+    main{
+        padding: 0 2vh;
+    }
+ }
+
+@include mq(830px) {
+    main{
+       
+    }
+ }
 
 
 </style>
