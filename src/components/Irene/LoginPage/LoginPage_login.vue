@@ -91,39 +91,65 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+
 // 響應式數據
-const isOpen = ref(true)
 const email = ref('')
 const password = ref('')
-const input = ref('')
+const router = useRouter()
 
-
+//立即登入-按鈕
+// 「一般用戶登入」可以把登入資訊放在 localStorage 內，登出時要刪除
 const handleLogin = () => {
+  localStorage.setItem('Email', email.value)
+  localStorage.setItem('PassWord',password.value)
   console.log('立即登入')
-  
-  if (email.value && password.value && email.value.includes('@')) {
-    alert(`登入成功！歡迎 ${email.value}`)
+  //
+  if (email.value && password.value && email.value.includes('@')/*&& 這裡要加上資料庫匹配的條件*/) {
+    alert(`登入成功！歡迎 ${email.value}`)/*這個alert前面要加上判斷資料庫匹配成功的條件 ，在這個位子再加一個if..else*/
     router.push({ name: 'member-profile' })
   } else {
     alert('請填寫完整的登入資訊')
   }
 }
-
+//忘記密碼-按鈕
 const handleForgotPassword = () => {
   console.log('忘記密碼')
   router.push({name:'loginregister-forgetpassword' })
 }
-
-const router = useRouter()
+//立即註冊-按鈕
 const handleRegister = () => {
   console.log('立即註冊')
   router.push({name: 'loginregister-fontregister' })
 }
 
+//社群登入-按鈕
 const handleSocialLogin = (provider) => {
   console.log(`使用 ${provider} 登入`)
   alert(`使用 ${provider} 登入`)
 }
+
+//
+fetch('/tjd102/g2/PHP/LoginPage_fontlogin.php',{//這是當前路徑的寫法，前面會和目錄一樣，要注意路徑
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({
+      Email:email.value,
+      password:password.value
+    })
+  })
+  .then(resp=>resp.json())
+  .then(member => {
+      const { success} = member;
+      alert(success)
+      // if(success){
+   
+      // }else{
+
+      // }
+
+  });
+
+
 </script>
 
 <style scoped lang="scss">

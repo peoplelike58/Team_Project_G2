@@ -13,18 +13,20 @@ import LoginPage_myprofile from '@/components/Irene/LoginPage/LoginPage_myprofil
 export default[
 
   //會員中心
-  {path: '/Member'
-    ,name:'Member', 
-    component: MemberCenter ,
-    children:[
-    { path: '', redirect: { name: 'member-profile' } },
-    { path: 'profile',name:'member-profile', component: LoginPage_myprofile,},
-    { path: 'orders',name:'member-orders', component: LoginPage_myorder,},
-    { path: 'collections',name:'member-collections', component: LoginPage_mycollection,},
-    { path: 'messages',name:'member-messages', component: LoginPage_mymessage,},
-    { path: 'activitys',name:'member-activitys', component: LoginPage_myactivity,},
-    { path: 'coupons',name:'member-coupons', component: LoginPage_mycoupon,},
-    { path: 'challenges',name:'member-challenges', component: LoginPage_hundredpeakschallenge,},
-    ]}
+  {path: '/Member',
+  name:'Member', 
+  component: MemberCenter ,
+  meta: { requiresAuth: true },        //  會員中心需要登入,所以做標記
+  alias: ['/member'], 
+  children:[
+  { path: '', redirect: { name: 'member-profile' } },
+  { path: 'profile',name:'member-profile', component: LoginPage_myprofile,},
+  { path: 'orders',name:'member-orders', component: LoginPage_myorder,},
+  { path: 'collections',name:'member-collections', component: LoginPage_mycollection,},
+  { path: 'messages',name:'member-messages', component: LoginPage_mymessage,},
+  { path: 'activitys',name:'member-activitys', component: LoginPage_myactivity,},
+  { path: 'coupons',name:'member-coupons', component: LoginPage_mycoupon,},
+  { path: 'challenges',name:'member-challenges', component: LoginPage_hundredpeakschallenge,},
+  ]}
 ]
 

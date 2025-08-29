@@ -17,8 +17,13 @@ function goShop(){ router.push('/Shop') }
 
         <div class="page">
             <el-card class="center" shadow="never">
-            <el-result icon="success" title="付款完成" sub-title="您的訂單編號為：12345678，稍後可在〈會員中心〉查詢詳細資訊" />
+            <el-result icon="success" title="付款完成" sub-title="您的訂單編號為:12345678,稍後可在〈會員中心〉查詢詳細資訊" />
+            <!-- 這裡的訂單編號要改成動態的 -->
             </el-card>
+
+            <div class="actions center">
+            <el-button @click="goShop" style="background-color: black;color: #fff; padding: 8px 16px;">返回商城</el-button>
+            </div>
 
             <el-card shadow="never" class="panel">
             <template #header>📦出貨提醒與注意事項</template>
@@ -51,9 +56,6 @@ function goShop(){ router.push('/Shop') }
             </el-descriptions>
             </el-card>
 
-            <div class="actions center">
-            <el-button @click="goShop">返回商城</el-button>
-            </div>
         </div>
     </main>
     <brandFooter/>
@@ -63,12 +65,15 @@ function goShop(){ router.push('/Shop') }
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
 .page { max-width: 980px; margin: 0 auto; }
-.center { text-align:center;padding: 40px 0; }
-.panel { margin-top: 20px; }
+.center { text-align:center;padding: 24px 0; }
+.panel { margin: 20px 0; }
 .actions.center{ display:flex; justify-content:center; margin:24px 0 60px; }
 :deep(.el-card__header){
     font-size: $pcFont-H4;
     font-weight: $bold;
     line-height: $lineHeight-p-200;
+}
+:deep(.el-result){
+    gap: 8px;
 }
 </style>

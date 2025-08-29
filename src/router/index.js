@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import Member from './member'//會員中心
 
 
@@ -92,6 +93,10 @@ const frontroutes = [
     path: '/mychallenge',
     component: myChallenge,
   },
+   {
+    path: '/shop/product',
+    redirect: '/shop',
+  },
   {
     path: '/shop',
     alias: '/Shop',          // 兩個都算進來
@@ -112,6 +117,7 @@ const frontroutes = [
     path: '/loginregister',
     name: 'loginregister',
     component:LoginRegister,
+    meta: { requiresGuest: true },  //  requiresGuest，用「訪客頁」標記
     children: [
       { path: '', redirect: { name: 'loginregister-fontrelogin' } },
       { path: 'fontrelogin',name:'loginregister-fontrelogin', component: LoginPage_login },
@@ -156,7 +162,7 @@ const router = createRouter({
   routes
 })
 
-// 登入阻擋
+// 後台登入阻擋
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('auth') === 'true'
   const isLoginPage = to.path === '/login'
@@ -166,6 +172,25 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
+})
+
+// 前置守門員 --> Before Guards
+router.beforeEach((to, from, next) => {
+  const user = useUserStore()
+  const isLoggedIn = localStorage.getItem('Email') //判讀是否有email值
+  console.log(`從 ${from.path} 跳轉到 ${to.path}`)
+  
+  if (to.meta.requiresAuth && !isLoggedIn) {//登入判斷:若頁面標記 requiresAuth，但沒有 email，就導去 /login。
+    alert('請先登入！')
+    next('/loginregister')
+    return
+  }
+  
+  if (to.path === '/Member' && isLoggedIn) {//防止已登入再進登入頁,→ 登入狀態下去 /member，會自動導回會員中心。
+    next({ name: 'member-profile' })
+    return
+  }
+  next()
 })
 
 

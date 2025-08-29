@@ -175,7 +175,7 @@ onMounted(() => {
     
     .edit-btn {
       @include btn(6px);
-      padding: 12px 24px;
+      padding: 8px 16px;
       background-color: $ivory-gray-100;
       color: $black-14;
       font-size: $pcFont-label;
