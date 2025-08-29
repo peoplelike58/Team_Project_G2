@@ -202,4 +202,14 @@ const pagedProducts = computed(() => {
     }
   }
 }
+
+@include mq(750px) {
+  .products_title{
+    @include flexcenter(20px,column);
+    align-items: flex-start;
+  }
+ }
+
+ 
+
 </style>

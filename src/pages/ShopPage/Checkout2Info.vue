@@ -74,8 +74,8 @@ function submitNext(){ formRef.value?.validate?.((ok)=> { if (ok) router.push('/
                     <template v-if="pay.method==='card'">
                     <el-form-item label="Credit Card Number"><el-input v-model="pay.cardNo" placeholder="xxxx xxxx xxxx xxxx" maxlength="19" /></el-form-item>
                     <el-row :gutter="16">
-                        <el-col :span="12"><el-form-item label="MM/YY"><el-input v-model="pay.exp" placeholder="MM/YY" /></el-form-item></el-col>
-                        <el-col :span="12"><el-form-item label="CVC"><el-input v-model="pay.cvc" placeholder="3 digits" /></el-form-item></el-col>
+                        <el-col :span="12"><el-form-item label="MM/YY"><el-input v-model="pay.exp" placeholder="MM/YY" style="min-width: 160px;" /></el-form-item></el-col>
+                        <el-col :span="12"><el-form-item label="CVC"><el-input v-model="pay.cvc" placeholder="3 digits" style="min-width: 160px;"/></el-form-item></el-col>
                     </el-row>
                     </template>
                 </el-form>
@@ -112,6 +112,7 @@ function submitNext(){ formRef.value?.validate?.((ok)=> { if (ok) router.push('/
 <style lang="scss" scoped>
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
+// main{max-width:1200px;padding: 2vh,;}
 
 .page { max-width: 980px; margin: 0 auto; }//文字區塊
 .panel { margin-bottom: 16px; }//每個區塊間隔
@@ -133,5 +134,12 @@ function submitNext(){ formRef.value?.validate?.((ok)=> { if (ok) router.push('/
 .el-card__body:last-child{
     border-top: 1px solid #ccc;
 }
+
+@include mq(980px) {
+    main{
+        padding: 2vh;
+    }
+}
+
 
 </style>

@@ -2,9 +2,23 @@
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
+import { ref } from 'vue'
+
 
 //關閉回到商品頁
 const close = () => router.push('/Shop')
+
+//數量
+const quantity=ref(1)
+const Increase = ()=>{
+  quantity.value++
+}
+const Reduce = ()=>{
+  if(quantity.value > 1){
+    quantity.value--}
+  }
+
+
 
 </script>
 
@@ -65,9 +79,9 @@ const close = () => router.push('/Shop')
           <div class="product_row">
             <div class="product_label">數量</div>
             <div class="product_quality">
-              <button>-</button>
-              <input type="number" value="20" readonly />
-              <button>+</button>
+              <button @click="Reduce">-</button>
+              <input type="number" v-model="quantity" style="width: 100px; text-align: center;" readonly />
+              <button @click="Increase">+</button>
             </div>
           </div>
 
@@ -134,6 +148,7 @@ const close = () => router.push('/Shop')
   box-shadow: 0 20px 60px rgba(0,0,0,.2);
   max-height:80vh; 
   overflow:auto;
+  box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
@@ -226,7 +241,8 @@ const close = () => router.push('/Shop')
   .product_quality {
     @include flexcenter(12px,row);
     padding: 6px 12px 12px;
-    width: 220px;
+    width: 192px;
+    box-sizing: border-box;
     button { 
       width: 32px; 
       height: 32px; 
@@ -305,6 +321,61 @@ const close = () => router.push('/Shop')
   .product_accordion ul { margin: 0 0 0 16px; line-height: 1.8; color: #333; }
 }
 
+@include mq(980px) {
+  .modal_up,.modal_down{
+    @include flexcenter(20px,row);
+  }
+}
+
+
+@include mq(900px) {
+  .modal_up,.modal_down{
+    @include flexcenter(20px,column);
+  }
+  .close{
+    background-color: transparent;
+    
+  }
+  .modal_up{
+    padding: 24px;
+    box-sizing: border-box;
+  }
+}
+
+@include mq(430px) {
+.modal_up{
+  box-sizing: border-box;
+  padding: 24px 0;
+}
+  .product_show{
+    flex: 0 0 300px;
+    .product_image{
+      @include product_card_img(300px,300px,16px);
+      align-self: center;
+    }
+  }
+  .product_info{
+    flex: 0 0 300px;
+    width: 300px;
+  }
+}
+
+.modal_down{
+  margin: 0;
+  padding: 24px 0;;
+  box-sizing: border-box;
+  .product_detail{
+    flex: 0 0 ;
+    width: 300px;
+    h3,p{
+      margin-bottom: 18px;
+    }
+  }
+  .product_accordions{
+    flex: 0 0 ;
+    width: 300px;
+  }
+}
 
 </style>
 

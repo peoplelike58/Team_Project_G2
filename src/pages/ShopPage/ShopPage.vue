@@ -97,8 +97,9 @@ const handlePageChange = (page) => {
 @import '@/assets/styles/othermixins.scss';
 
 .position_shopcar{//購物車icon定位
-    position: sticky;
-    top: 52px;
+    position: fixed;
+    bottom:  52px;
+    right: 0;
     z-index: 20;
 }
 .link_cart {//購物車icon
@@ -151,10 +152,10 @@ main{//頁面內容
  }
 
 @include mq(750px) {
-    main{
-       
+    .products{
+        @include flexcenter(0,column);
     }
- }
+}
 
-
+//此頁的siderbar,全部商品要再加一個收起來和展開
 </style>
