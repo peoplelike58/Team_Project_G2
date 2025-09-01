@@ -1,7 +1,7 @@
 <template>
     <section class="map" id="map">
 		<div class="remind">
-			<p>點擊 <img src="@/assets/images/myChallenge/mountain.png" alt="山icon">即可上傳您的足跡</p>
+			<p>點擊 <img :src="`${BASE}images/myChallenge/mountain.png`" alt="山icon">即可上傳您的足跡</p>
 		</div>
         <l-map
         :zoom="zoom" 
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 // import * as turf from '@turf/turf'
 
 import 'leaflet/dist/leaflet.css'
@@ -31,14 +31,14 @@ import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet'
 import L from "leaflet"
 import "leaflet.markercluster"
 
-const PUBLIC_BASE = import.meta.env.BASE_URL; 
-const ICON_BASE = `${PUBLIC_BASE}images/myChallenge/`;
 
+const BASE = import.meta.env.BASE_URL
+const jsonPath = `${BASE}json/mychallenge/ranks.json`
 
 function getIcon(fileName) {
 	return new Icon({
-		iconUrl: `${ICON_BASE}${fileName}`,
-		iconRetinaUrl: `${ICON_BASE}${fileName}`,
+		iconUrl: `${BASE}images/myChallenge/${fileName}`,
+		iconRetinaUrl: `${BASE}images/myChallenge/${fileName}`,
 		shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 		iconSize: [41, 41],
 		iconAnchor: [16, 32],
@@ -100,7 +100,7 @@ function onMapReady(map) {
 						justify-content: center;"
 						>
 					<img 
-						src="${ICON_BASE}${iconFile}" 
+						src="${BASE}images/myChallenge/${iconFile}" 
 						style="width:${size * 0.6}px; height:${size * 0.6}px;" 
 					/>
 					</div> `,
@@ -119,6 +119,15 @@ function onMapReady(map) {
 		marker.on("click", () => emit("openUploadModal", mountain.name))	// 點擊事件
 		clusterGroup.addLayer(marker)		// 加入群組
 
+		// 加入 tooltip 顯示山名
+		marker.bindTooltip(mountain.name, {
+			permanent: true,        // 永久顯示，不需要滑鼠懸停
+			direction: 'bottom',    // 顯示在下方
+			offset: [5, 5],        // 往下偏移 10px
+			className: 'mountain-name-tooltip'  // 自定義 CSS 類別
+		})
+		
+		clusterGroup.addLayer(marker)
 		markerMap.set(mountain.name, marker)  // ✅ 存入 Map
 	})
 
@@ -170,7 +179,7 @@ function setClimbed(mountainName) {
 								justify-content: center;"
 								>
 							<img 
-								src="${ICON_BASE}${iconFile}" 
+								src="${BASE}images/myChallenge/${iconFile}" 
 								style="width:${size * 0.6}px; height:${size * 0.6}px;" 
 							/>
 							</div> `,
@@ -197,7 +206,35 @@ function setClimbed(mountainName) {
 }
 defineExpose({ setClimbed })
 
+const mapReady = ref(false)
 
+onMounted(() => {
+	setTimeout(() => {
+		mapReady.value = true
+	}, 300)
+})
+
+watch(() => props.mountains, (newMountains) => {
+	if (newMountains && newMountains.length > 0 && mapInstance && clusterGroup) {
+		// 重新初始化地圖標記
+		nextTick(() => {
+			// 清空現有標記
+			clusterGroup.clearLayers()
+			markerMap.clear()
+			
+			// 重新加入標記
+			newMountains.forEach(mountain => {
+				const marker = L.marker([mountain.latitude, mountain.longitude], {
+					icon: getIcon(mountain.icon)
+				})
+				marker.isClimbed = (mountain.icon === "flag.png") 
+				marker.on("click", () => emit("openUploadModal", mountain.name))
+				clusterGroup.addLayer(marker)
+				markerMap.set(mountain.name, marker)
+			})
+		})
+	}
+}, { immediate: true, deep: true })
 
 </script>
 
@@ -264,11 +301,18 @@ defineExpose({ setClimbed })
         }
 	}
 
-	@media screen and (max-width: 430px) {
-		.wrapper{
-			// max-width: 100%;
-            width: 100%;
-            height: 100%;
+	@media screen and (max-width: 650px) {
+		.map{
+			max-width: 650px;
+			max-height: 780px;
         }
 	}
+
+	// @media screen and (max-width: 430px) {
+	// 	.wrapper{
+	// 		// max-width: 100%;
+    //         width: 100%;
+    //         height: 100%;
+    //     }
+	// }
 </style>

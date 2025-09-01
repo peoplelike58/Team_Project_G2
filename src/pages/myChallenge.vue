@@ -65,7 +65,9 @@
     const mountains = ref([])
 
     const openWindows = ref({})
-    
+
+    const BASE = import.meta.env.BASE_URL
+    const jsonPath = `${BASE}json/mychallenge/mountains.json`
 
     function openModal(mountainName) {
         openWindows.value[mountainName] = true
@@ -150,7 +152,7 @@
         
         onMounted(async() => {
             try{
-                const res = await axios.get("/json/mychallenge/mountains.json")
+                const res = await axios.get(jsonPath)
                 mountains.value = res.data
 
                 mountains.value.forEach(mountain => {
@@ -218,7 +220,46 @@
 
     @media screen and (max-width: 1200px) {
 		.wrapper{
-            width: 100%;
+            width: calc(100% - 40px);
+            padding: 20px;
+
+            .mychallengeRank{
+                margin-top: 152px;
+                background-color: $ivory-gray-100;
+                box-sizing: border-box;
+            }
+        }
+	}
+
+    @media screen and (max-width: 650px) {
+		.wrapper{
+            
+            .mychallengeInfo{
+                display: flex;
+                flex-direction: column;
+                height: auto;
+                margin-bottom: 0;
+                box-sizing: border-box;
+                
+                .mychallengeMap{
+                    width: 100%;
+                    height: 600px;
+                }
+                .mychallengeAcheve, .mychallenge-history{
+                    width: 100%;
+                    margin: 40px 0;
+                    margin: 20px 0 20px 0px;
+                }
+                
+            }
+
+            .mychallengeRank{
+                box-sizing: border-box;
+                // max-width: 100%;
+                width: 100%;
+                padding: 32px 16px;
+        
+            }
         }
 	}
 
