@@ -51,6 +51,7 @@ import brandFooter from '@/components/An/footer.vue';
         margin: 32px auto;
         letter-spacing: 1.5px;
         padding: 0 20px;
+        box-sizing: border-box;
         @include m(){
             max-width: 430px;
         }

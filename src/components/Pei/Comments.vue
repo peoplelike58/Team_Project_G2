@@ -84,7 +84,7 @@ function submitComment() {
   const newComment = {
     id: 'cmt-' + Date.now(),
     name: '會員ID',
-    avatarUrl: '../../../public/images/myChallenge/head4.png',
+    avatarUrl: 'images/myChallenge/head4.png',
     time: '剛剛',
     message: newMessageText.value,
     photoUrl: newPhotoPreview.value || '',

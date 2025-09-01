@@ -267,6 +267,7 @@ watch(goPage, (newPage) => {
         max-width: 430px;
         padding: 50px 20px;
         font-size: 14px;
+        box-sizing: border-box;
     }
     
     .btns{/* ul 切換按鈕 */
@@ -297,6 +298,7 @@ watch(goPage, (newPage) => {
                 @include m(){
                    
                     padding: 8px 20px;
+                    box-sizing: border-box;
                 }
 
                 &:focus{
@@ -329,6 +331,7 @@ watch(goPage, (newPage) => {
                 margin-bottom: 40px;
                 font-size: $pcFont-p-m;
                 font-weight: $medium;
+                box-sizing: border-box;
                 
                 gap: 7rem;
 
@@ -360,6 +363,7 @@ watch(goPage, (newPage) => {
 
     .mapPage{ /* 路線地圖的框 */ 
         padding: 50px 20px;
+        box-sizing: border-box;
         
         .mapBox{
             
@@ -503,6 +507,7 @@ watch(goPage, (newPage) => {
 .page{
 
     // outline: 1px solid black;
+    margin: 0 auto;
     margin-top: 32px;
     background-color: white;
     width: 95%;
