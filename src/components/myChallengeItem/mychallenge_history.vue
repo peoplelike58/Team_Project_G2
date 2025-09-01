@@ -232,4 +232,61 @@ import { ref, onMounted } from 'vue'
     
     }
 
+    @media screen and (max-width: 850px) {
+        .mychallengeHistroy{
+        
+            .myhistoryMountain{
+
+                .totalScore{
+                    .total{
+                        p{
+                            span{
+                                font-size: $pcFont-H3;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    @media screen and (max-width: 650px) {
+        .mychallengeHistroy{
+        
+            .myhistoryMountain{
+
+                .totalScore{
+                    .total{
+                        p{
+                            span{
+                                font-size: $pcFont-H1-m;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    @media screen and (max-width: 490px) {
+        .mychallengeHistroy{
+        
+            .myhistoryMountain{
+
+                .totalScore{
+                    .total{
+                        p{
+                            span{
+                                font-size: $pcFont-H3;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
 </style>
