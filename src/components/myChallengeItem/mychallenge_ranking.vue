@@ -2,12 +2,15 @@
     <section v-for="rank in ranks" :key="rank.rank" class="nomb">
         <div class="personInfo" @click="toggle(rank.rank)">
             <div class="personInfoTitle">
-                <img :src="`images/mychallenge/${rank.image}`" alt="" class="head">
+                <img :src="`${BASE}images/myChallenge/${rank.image}`" alt="" class="head">
                 <h4 class="place">{{ rank.rank }}<br />{{ rank.icon }}</h4>
                 <h4>{{ rank.name }}</h4>
             </div>
             <div class="allow">
-                <img src="@/assets/images/mychallenge/down.png" alt="">
+                <img :src="`${BASE}images/myChallenge/down.png`" 
+                alt="allow" 
+                :class="{ 'rotated': openItem === rank.rank }"
+                >
             </div>
         </div>
         <transition name="dropdown">
@@ -52,6 +55,9 @@ import axios from 'axios'
     //     {image:'head4.png', rank:'第四名', icon:'', name: '嘉明', height:6810, kilo:7110, time:395, big:34, small:29 },
     //     {image:'head5.png', rank:'第五名', icon:'', name: 'Pei', height:5013, kilo:4128, time:413, big:23, small:18 },
     // ])
+    
+    const PUBLIC_BASE = import.meta.env.BASE_URL; 
+    const ICON_BASE = `${PUBLIC_BASE}images/myChallenge/`;
 
     // 控制手風琴開關
     const openItem = ref(null)
@@ -64,11 +70,11 @@ import axios from 'axios'
         }
     }
 
-    const ranks = ref({})
+    const ranks = ref([])
 
     onMounted(async() => {
         try{
-            const res = await axios.get("/json/mychallenge/ranks.json")
+            const res = await axios.get(jsonPath)
             ranks.value = res.data
 
         }catch(err){
@@ -138,7 +144,14 @@ import axios from 'axios'
             }
 
             .allow{
+                img{
+                    transition: all 0.3s ease-in-out;
+                    transform-origin: center;
 
+                    &.rotated{
+                        transform: rotate(-180deg);
+                    }
+                }
             }
         }
     
@@ -185,8 +198,16 @@ import axios from 'axios'
         transform: translateY(-20px);
     }
 
-    @media screen and (max-width: 430px) {
+    @media screen and (max-width: 1200px) {
         .nomb{
+            width: calc(100% - 20px);
+        }
+
+    }
+
+    @media screen and (max-width: 650px) {
+        .nomb{
+
             .totalScore{
                 padding: 16px 16px;
 
@@ -199,6 +220,12 @@ import axios from 'axios'
                     }
                 }
             }
+        }
+
+    }
+
+    @media screen and (max-width: 500px) {
+        .nomb{
 
             p{
 

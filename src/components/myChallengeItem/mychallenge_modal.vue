@@ -430,18 +430,32 @@ import { useRecordStore } from "@/stores/recordStore"
         }
     }
 
-
-
-    @media screen and (max-width: 430px) {
+    @media screen and (max-width: 1200px) {
 		.modalOverlay{
             z-index: 20 !important;
             padding: 20px 0;
     
             .mychallengeModal{
                 position: relative;
+            }
+        }
+    }
+
+    @media screen and (max-width: 1000px) {
+		.modalOverlay{
+    
+            .mychallengeModal{
                 max-width: 800px;
                 width: 80%;
                 padding: 20px;
+            }
+        }
+    }
+
+    @media screen and (max-width: 750px) {
+		.modalOverlay{
+    
+            .mychallengeModal{
 
                 .uploadArea{
                 
@@ -458,6 +472,18 @@ import { useRecordStore } from "@/stores/recordStore"
                         }
                     }
                 }
+            }
+        }
+    }
+    
+
+
+    @media screen and (max-width: 430px) {
+		.modalOverlay{
+    
+            .mychallengeModal{
+                max-width: 800px;
+                width: 80%;
             }
         }
     }
