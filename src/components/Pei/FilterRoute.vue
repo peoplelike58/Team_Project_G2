@@ -456,6 +456,7 @@ button{ // 通用按鈕樣式
 
     @include m(){
     padding-left: 20px;
+    box-sizing: border-box;
     }
 
   }

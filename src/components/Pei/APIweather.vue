@@ -199,6 +199,7 @@ onMounted(async () => {
   margin: 0 auto;
   padding: 60px 30px 50px;
   border-radius: 16px;
+  box-sizing: border-box;
 
   @include m(){
     max-width:430px ;

@@ -60,7 +60,7 @@ const toUrl = (p) => `${baseUrl}${p}`
           </li>
         </ul>
 
-                <ul>
+        <ul>
           <li 
             class="activity-card" 
             v-for="trail in trailsTen"
@@ -137,6 +137,8 @@ const toUrl = (p) => `${baseUrl}${p}`
     ul{
         display:flex;
         gap:12px;
+        overflow: hidden;
+        box-sizing: border-box;
         
         // border:1px solid red;
        
