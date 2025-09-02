@@ -1,20 +1,20 @@
 <template>
-    <section v-for="rank in ranks" :key="rank.rank" class="nomb">
-        <div class="personInfo" @click="toggle(rank.rank)">
+    <section v-for="(rank, index) in ranks" :key="index" class="nomb">
+        <div class="personInfo" @click="toggle(index)">
             <div class="personInfoTitle">
                 <img :src="`${BASE}images/myChallenge/${rank.image}`" alt="" class="head">
-                <h4 class="place">{{ rank.rank }}<br />{{ rank.icon }}</h4>
+                <h4 class="place">{{ rankText(index) }}<br />{{ rankIcon(index) }}</h4>
                 <h4>{{ rank.name }}</h4>
             </div>
             <div class="allow">
                 <img :src="`${BASE}images/myChallenge/down.png`" 
                 alt="allow" 
-                :class="{ 'rotated': openItem === rank.rank }"
+                :class="{ 'rotated': openItem === index }"
                 >
             </div>
         </div>
         <transition name="dropdown">
-        <div class="totalScore" v-show="openItem == rank.rank">
+        <div class="totalScore" v-show="openItem == index">
             <div class="nombScore">
                 <article>
                     <p>總累積高度</p>
@@ -81,7 +81,17 @@ import axios from 'axios'
             console.error("讀取失敗:", err)
         }
     })
+
+    const rankText = (index) => {
+        const rankTexts = ['第一名', '第二名', '第三名', '第四名', '第五名']
+        return rankTexts[index]
+    }
     
+    const rankIcon = (index) => {
+        const rankIcons = ['🥇', '🥈', '🥉', '', '']
+        return rankIcons[index]
+    }
+
 </script>
 
 <style scoped lang="scss">
