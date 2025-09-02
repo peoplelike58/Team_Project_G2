@@ -71,6 +71,7 @@ const trail = computed(() => trailsData.find(trail => trail.id === id.value))
         @include m(){
             max-width: 430px;
             padding: 0 20px;
+            box-sizing: border-box;
         }
 
         a{

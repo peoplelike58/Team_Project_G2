@@ -135,12 +135,14 @@ onBeforeUnmount(stopAutoPlay)
     max-width: 430px;
     padding: 20px;
     font-size: 14px;
+    box-sizing: border-box;
   }
 
   h3 {
     font-size: $pcFont-H2;
     font-weight: $semiBold;
     line-height: $lineHeight-title-120;
+
   }
 
   span {
@@ -176,9 +178,11 @@ onBeforeUnmount(stopAutoPlay)
         border-radius: 8px;   // 四個角都圓角
         overflow: hidden;     // 超出裁切掉，圖片才會被套圓角
         position: relative;
+        object-fit: cover;   // 保持比例裁切填滿
+
 
         @include m(){
-          height: 300px;
+          height: 250px;
         }
       }
 
