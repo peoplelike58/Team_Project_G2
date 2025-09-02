@@ -219,7 +219,10 @@ function goPage(p) {
         v-for="trail in pagedTrails" 
         :key="trail.id"
         > <!-- 只渲染當前頁的8張卡片 -->
-          <img :src="toUrl(trail.img)" :alt="trail.name" />
+          <div class="imgBox">
+            <img :src="toUrl(trail.img)" :alt="trail.name" />
+          </div>
+
           <!-- <img :src="trail.img" :alt="trail.name" />  -->
           <div class="meta">
             <h4 class="name">{{ trail.name }}</h4> 
@@ -545,13 +548,27 @@ button{ // 通用按鈕樣式
     
   }
 
-  img{ // 卡片圖片
-    display: block; // 移除底部空隙
-    width: 100%; // 滿寬
-    height: 60%; // 固定高度
-    max-height: 168px;
-    object-fit: cover; // 充滿容器並裁切
+  /* 新增圖片外層容器，負責裁切與固定高度 */
+  .imgBox {
+    flex: 0 0 60%;         // 讓圖片區佔卡片高度 60%
+    max-height: 168px;     // 保持你原本的上限
+    overflow: hidden;      // 關鍵：裁掉放大後超出的部分
   }
+
+  /* 把圖片規則搬到 .imgBox 內，並加上平滑動畫 */
+  .imgBox img {
+    display: block;        // 移除底部空隙
+    width: 100%;           // 滿寬
+    height: 100%;          // 撐滿容器高度（等同你原本的 60%）
+    object-fit: cover;     // 充滿並裁切
+    transition: transform 0.4s ease;  // 放大時平滑
+  }
+
+  /* 改成整張卡片 hover 時，圖片才放大 */
+  &:hover .imgBox img {
+    transform: scale(1.15);
+  }
+
   .meta{ // 文字區
     margin: 8px 8px; // 內距
     white-space: pre-line; // 支援\n讓跨區顯示區域時斷行
