@@ -57,6 +57,7 @@
     // 上方輪播圖
     .cardLoop {
         width: 1200px;
+        max-width: 100%;
         max-height: 389px;
         margin: 0 auto;
         overflow: hidden;
@@ -83,4 +84,16 @@
         }
     }
 
+@media screen and ( max-width:430px ){
+    .cardLoop{
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        max-height: 250px;
+    }
+
+    ul li img{
+        object-position: center;
+    }
+}
 </style>
