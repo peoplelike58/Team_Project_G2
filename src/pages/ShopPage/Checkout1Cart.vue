@@ -4,7 +4,7 @@ import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
 import brandFooter from '@/components/An/footer.vue'
 import { reactive, ref, computed, watch } from 'vue'
 import { ArrowDown } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'  ///是全域訊息（toast）API。
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -54,35 +54,41 @@ function goNext(){ router.push('/Shop/info') }
             <div class="toolbar">
                 <el-checkbox v-model="allChecked" @change="toggleAll">全選</el-checkbox>
                 <el-button link type="info"  @click="removeChecked">全部刪除</el-button>
+                <!-- link 是內建屬性，讓按鈕外觀像文字連結，type="info" 使用內建配色。 -->
             </div>
             <!-- 已加入商品列表 -->
-            <el-table :data="items"  stripe class="cart-table">
-                <el-table-column width="54" align="center">
-                    <template #default="{ row }"><el-checkbox v-model="checkedMap[row.id]" /></template>
+            <el-table :data="items"  stripe class="cart-table"><!-- stripe 開啟斑馬紋列 -->
+                <el-table-column label="" width="54" align="center">
+                    <!-- 這裡的<template>是 Vue 提供的「語法糖 (虛擬容器)」，常用來做： 插槽 (slot) 的佔位，<slot> 是放在子元件裡的，在 el-table-column 裡面定義好了，不需要再寫，只要在template裡面放要放的東西就可以了-->
+                    <template #default="{ row }">
+                        <el-checkbox v-model="checkedMap[row.id]" />
+                    </template>
                 </el-table-column>
 
-                <el-table-column label="" width="140">
+                <el-table-column label="商品圖片" width="140">
                     <template #default="{ row }">
-                    <el-image :src="row.image" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
+                        <el-image :src="row.image" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
                     </template>
                 </el-table-column>
                 
-                <el-table-column prop="name" label="商品" min-width="220"><!-- 商品title -->
+                <el-table-column prop="name" label="商品內容" min-width="220"><!-- 商品title -->
                     <template #default="{ row }">
-                    <div class="name">{{ row.name }}</div><!-- 商品名稱 -->
-                    <div class="sku">尺寸：{{ row.size }}   顏色：{{ row.color }}</div><!-- 各商品規格 -->
+                        <div class="name">{{ row.name }}</div><!-- 商品名稱 -->
+                        <div class="sku">尺寸：{{ row.size }}   顏色：{{ row.color }}</div><!-- 各商品規格 -->
                     </template>
                 </el-table-column>
 
                 <el-table-column label="數量" width="160" align="center"><!-- 數量title -->
-                    <template #default="{ row }"><el-input-number v-model="row.qty" :min="1" /></template><!-- 各商品數量選擇 -->
+                    <template #default="{ row }">
+                        <el-input-number v-model="row.qty" :min="1" />
+                    </template><!-- 各商品數量選擇 -->
                 </el-table-column>
 
                 <el-table-column label="單價" width="120" align="right"><!-- 單價title -->
                     <template #default="{ row }">NT${{ row.price }}</template><!-- 各商品的單價 -->
                 </el-table-column>
 
-                <el-table-column width="64" align="center">
+                <el-table-column label="" width="64" align="center">
                     <template #default="{ row }"><el-button link type="danger" @click="remove(row.id)">✕</el-button></template>
                 </el-table-column>
             </el-table>

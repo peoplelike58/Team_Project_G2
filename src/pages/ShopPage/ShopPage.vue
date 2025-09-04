@@ -71,11 +71,11 @@ const handlePageChange = (page) => {
                     @search="handleSearch" 
                     @gender-filter="handleGenderFilter"
                     @category-filter="handleCategoryFilter" />
-                <!-- 建立事件聆聽接收子層傳來是時間，用handleSearch接收 -->
+                <!-- 建立事件聆聽接收子層傳來的事件，用handleSearch接收 -->
                 <ShopPage_productslist 
                     :filters="filters"
                     :current-page="pagination.currentPage"
-                    :page-size="pagination.pageSize"
+                    :page-size="12"
                     @total-change="handleTotalChange"/>
             </section >
             

@@ -19,7 +19,12 @@ const toggleFavorite = (productId) => {
 /* 點擊出現商品明細卡片 */
 const router = useRouter()
 function Showdetail(product){
-  router.push(`/Shop/product/${product.id}`);
+  // router.push(`/Shop/product/${product.id}`);
+  router.push({
+    name:'ProductDetailRoute',
+    params:{id:product.id}
+  })
+
 }
 
 
@@ -33,8 +38,8 @@ const props = defineProps({
         genders: []                   // 性別篩選預設為空陣列
     })
   },
-  currentPage: { type: Number, default: 1 },
-  pageSize: { type: Number, default: 20 }
+  currentPage: { type: Number, default: 1 },  //當前頁面
+  pageSize: { type: Number, default: 12 }     //每頁數量
 })
 
 //接收到篩選方式後篩選商品
@@ -68,17 +73,18 @@ const filteredProducts = computed(()=>{
   return result;
 })
 
-// 對父層回報篩選後總數，給分頁用
+// 對父層回報篩選後總數，讓父層給分頁用
 const emit = defineEmits(['total-change'])  
 watch(filteredProducts, (arr) => {          
   emit('total-change', arr.length)          
-}, { immediate: true })
+  }, { immediate: true })
+//就把新總數 arr.length 回報給父層。immediate: true 代表第一次掛上監看時就先執行一次（父層就能在元件初載時拿到正確總數）
 
 
 // 計算「當頁資料」
 const pagedProducts = computed(() => {                
-  const page = Number(props.currentPage) || 1
-  const size = Number(props.pageSize) || 20
+  const page = Number(props.currentPage) || 1    //第幾頁
+  const size = Number(props.pageSize) || 12      //每頁幾筆
   const start = (page - 1) * size
   const end   = start + size
   return filteredProducts.value.slice(start, end)

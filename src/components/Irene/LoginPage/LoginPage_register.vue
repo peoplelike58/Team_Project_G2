@@ -144,6 +144,7 @@
 
 <script setup>
 // 目前只是靜態切版，無需任何邏輯
+import member from '@/router/member'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -190,8 +191,27 @@ const switchToLogin = () => {
 }
 
 const GoRegister = () => {
-  //暫時不認證，直接成功
-    router.push({name:'loginregister-registercoupon'})
+  fetch('/tjd102/g2/PHP/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
+  method: 'POST',
+  headers:{'Content-Type':'application/json'},
+  credentials: 'include',
+  body:JSON.stringify({
+    email:formData.value.email,
+    name:formData.value.name,
+    password:formData.value.password,
+    phone:formData.value.phone
+  })  //前端把使用者輸入的資料打包成 JSON，送去後端
+  })
+  .then(resp=>resp.json())
+  .then(register => {
+    const {success,message} = register;
+    alert(message);
+    if(success){
+      //暫時不認證，直接成功,就直接使用這裡
+      router.push({name:'loginregister-registercoupon'})
+    }
+  })
+  
 }
 
 </script>

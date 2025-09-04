@@ -91,26 +91,57 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 // 響應式數據
 const email = ref('')
 const password = ref('')
 const router = useRouter()
+const user = useUserStore()
 
 //立即登入-按鈕
 // 「一般用戶登入」可以把登入資訊放在 localStorage 內，登出時要刪除
-const handleLogin = () => {
-  localStorage.setItem('Email', email.value)
-  localStorage.setItem('PassWord',password.value)
-  console.log('立即登入')
-  //
-  if (email.value && password.value && email.value.includes('@')/*&& 這裡要加上資料庫匹配的條件*/) {
-    alert(`登入成功！歡迎 ${email.value}`)/*這個alert前面要加上判斷資料庫匹配成功的條件 ，在這個位子再加一個if..else*/
-    router.push({ name: 'member-profile' })
-  } else {
-    alert('請填寫完整的登入資訊')
+const handleLogin = async () => {
+  if (email.value && password.value && email.value.includes('@') && password.value.length >= 8 ) {
+    const res = await fetch('/tjd102/g2/PHP/LoginPage_fontlogin.php',{//這是server上測試可用的URL：'/tjd102/g2/PHP/LoginPage_fontlogin.php'；http://localhost/teamproject/LoginPage_fontLogin.php 
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      credentials: 'include' ,              // 查 Session 要帶 cookie
+      body:JSON.stringify({
+          email:email.value,
+          password:password.value
+      })  //前端把使用者輸入的資料打包成 JSON，送去後端
+    })
+    .then(resp=>resp.json())
+    .then(async(member) => {
+      const {success} = member;
+      alert(success)
+      if(success){
+          const sessionResp = await fetch('/tjd102/g2/PHP/CheckLogin.php', {  //http://localhost/teamproject/CheckLogin.php(lOCAL端測試)
+          method: 'POST',
+          headers:{'Content-Type':'application/json'},
+          credentials: 'include',              // Session 一樣要帶 cookie
+        });
+        const sessionData = await sessionResp.json();
+        if (sessionData.isLogin){
+          user.login(sessionData.member.emal,sessionData.member.name)
+          alert(`登入成功！歡迎 ${email.value}`)/*這個alert前面要加上判斷資料庫匹配成功的條件 */
+          router.push({ name: 'member-profile' })
+        }
+        // console.log(member.data);
+        // user.setMemberData(member.data.email,member.data.name)
+        // localStorage.setItem('email', email.value) //把email資訊存到localstorage
+        // localStorage.setItem('password',password.value)//把password的資料存到localstorage，實際操作時不會使用密碼
+        // console.log('立即登入')
+      }else {
+        alert('帳號或密碼錯誤,請重新輸入')
+      }}
+    );
+    } else{
+      alert('請填寫正確的登入資訊')
   }
 }
+
 //忘記密碼-按鈕
 const handleForgotPassword = () => {
   console.log('忘記密碼')
@@ -128,26 +159,7 @@ const handleSocialLogin = (provider) => {
   alert(`使用 ${provider} 登入`)
 }
 
-//
-fetch('/tjd102/g2/PHP/LoginPage_fontlogin.php',{//這是當前路徑的寫法，前面會和目錄一樣，要注意路徑
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({
-      Email:email.value,
-      password:password.value
-    })
-  })
-  .then(resp=>resp.json())
-  .then(member => {
-      const { success} = member;
-      alert(success)
-      // if(success){
-   
-      // }else{
 
-      // }
-
-  });
 
 
 </script>

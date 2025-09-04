@@ -19,7 +19,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="member-coupons">
+  <div class="member-coupons">
     <!-- 頁面標題 -->
     <div class="page-header">
       <h1 class="page-title">我的優惠</h1>
@@ -53,7 +53,12 @@ onMounted(() => {
     <div v-if="coupons.length === 0" class="empty-state">
       <p class="empty-message">目前沒有任何優惠券</p>
     </div>
+    <div class="useBtn">
+      <router-link class="usebtn" to="/shop">立即使用</router-link>
+    </div>
   </div>
+
+
 
 </template>
 
@@ -77,6 +82,7 @@ onMounted(() => {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    // margin-bottom: 40px;
     
     .table-header {
       display: grid;
@@ -190,7 +196,27 @@ onMounted(() => {
   }
 }
 
-// Mobile 專用樣式
+.useBtn{
+  padding: 40px 0 ;
+  display: flex;
+  justify-content: center;
+  .usebtn{
+    @include btn(8px);
+    @include border($ash-olive-400);
+    text-decoration: none;
+    background-color: #F2F2E9;
+    color: $black-14;
+    padding: 12px 24px;
+    font-size: $pcFont-p-s;
+    font-weight: $regular;
+    &:hover {
+      background-color: $ash-olive-400;
+      color: white;
+    }
+  }
+}
+
+// RWD
 @media (max-width: 768px) {
   .coupons-table {
     .table-body {

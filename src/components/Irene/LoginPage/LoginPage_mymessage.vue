@@ -29,10 +29,12 @@ const messages = ref([
   }
 ])
 
-// 編輯留言
-const editMessage = (messageId) => {
-  // 編輯留言功能
-  console.log('編輯留言 ID:', messageId)
+// 刪除留言
+const deleteMessage = (messageId) => {
+  // 刪除留言功能
+  if (confirm('確定要刪除留言嗎？')) {
+    messages.value = messages.value.filter(message => message.id !== messageId)
+  }
 }
 
 onMounted(() => {
@@ -64,7 +66,7 @@ onMounted(() => {
           <div class="body-cell route-name">{{ message.routeName }}</div>
           <div class="body-cell message-content">
             <div class="content-text">{{ message.content }}</div>
-            <button class="edit-btn" @click="editMessage(message.id)">
+            <button class="delete-btn" @click="deleteMessage(message.id)">
               <i class="edit-icon"><svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32zm448-64v-64H416v64zM224 896h576V256H224zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32m192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32"></path></svg></i>
             </button>
           </div>
@@ -174,7 +176,7 @@ onMounted(() => {
               line-height: $lineHeight-p-150;
             }
             
-            .edit-btn {
+            .delete-btn {
               @include btn(4px);
               width: 32px;
               height: 32px;
@@ -182,6 +184,7 @@ onMounted(() => {
               @include flexcenter(0, row);
               flex-shrink: 0;
               transition: background-color 0.3s ease;
+              @include border($ash-olive-400);
               
               &:hover {
                 background-color: $ash-olive-400;
@@ -217,7 +220,7 @@ onMounted(() => {
                 width: 100%;
               }
               
-              .edit-btn {
+              .delete-btn {
                 align-self: flex-end;
               }
             }
