@@ -174,12 +174,12 @@ onMounted(() => {
     }
     
     .edit-btn {
-      @include btn(6px);
+      @include btn(8px);
       padding: 8px 16px;
       background-color: $ivory-gray-100;
       color: $black-14;
       font-size: $pcFont-label;
-      font-weight: $medium;
+      font-weight: $regular;
       @include border($ash-olive-400);
       transition: all 0.3s ease;
       
@@ -223,7 +223,7 @@ onMounted(() => {
           }
           
           .upload-btn {
-            @include btn(6px);
+            @include btn(8px);
             padding: 10px 20px;
             background-color: $bg-gray;
             color: $black-14;
@@ -306,8 +306,8 @@ onMounted(() => {
       padding-top: 24px;
       
       .save-btn {
-        @include btn(6px);
-        padding: 12px 32px;
+        @include btn(8px);
+        padding: 12px 24px;
         background-color: $tag;
         color: white;
         font-size: $pcFont-label;

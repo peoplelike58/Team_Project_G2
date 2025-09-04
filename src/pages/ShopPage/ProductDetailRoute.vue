@@ -1,12 +1,30 @@
 <script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { ref,computed } from 'vue'
+import { useRouter,useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import Products from '@/assets/json/products.json'
 
-import { ref } from 'vue'
+
+const user = useUserStore()
+const router = useRouter()
+const route = useRoute()
+
 
 
 //關閉回到商品頁
 const close = () => router.push('/Shop')
+
+//複製鏈接(使用現代Clipboard 剪貼簿API，回傳promise)
+function copyURL(){
+  const url = window.location.href                           // 取當前商品明細的網址
+  if(navigator.clipboard && navigator.clipboard.writeText){  //偵測這個API是否存在
+    navigator.clipboard.writeText(url)                       //用Clipboard API：把字串寫進剪貼簿，多半要求安全環境（HTTPS 或 localhost）
+    .then(()=>{alert('已複製網址')})
+    .catch(()=>{alert('無法自動複製，請手動複製網址')})
+  }else{
+    alert('此瀏覽器不支援一鍵複製，請手動複製網址')
+  }
+}
 
 //數量
 const quantity=ref(1)
@@ -17,18 +35,47 @@ const Reduce = ()=>{
   if(quantity.value > 1){
     quantity.value--}
   }
+//收藏
+const favorites = ref([])
+const toggleFavorite = (productId) => {
+  const index = favorites.value.indexOf(productId)
+  if (index > -1) {
+    favorites.value.splice(index, 1)
+  } else {
+    favorites.value.push(productId)
+  }
+}
+//選擇顏色和大小
+const selectcolor = ref()  //宣告「選到的顏色」
+const selectsize = ref()   
 
+function selectColor(color){  //點誰就把值寫進去
+  selectcolor.value = color
+}
+
+function selectSize(size){
+  selectsize.value = size
+}
+
+  //讀取路由參數並找到對應商品
+const props = defineProps({ // 用 props.id 來拿商品 id,在router裡有props：true傳遞
+  id: { type: String, required: true }
+})
+const product = computed(() => {                     
+  const id = Number(route.params.id)                 // 參數是字串 → 轉數字
+  return Products.find(p => Number(p.id) === id)     // 找到對應商品,find是
+})
 
 
 </script>
 
 <template>
-    <!-- 遮罩（純切版：只負責背景，不做任何狀態） -->
+    <!-- 遮罩 -->
   <div class="mask" @click="close" ></div>
 
   <!-- 彈窗本體（Teleport 避免受父層影響） -->
   <teleport to="body">
-    <div class="product_modal"  @click.stop> <!-- stop是vue的修飾符，讓遮罩的click事件在這個區域停止 -->
+    <div v-if= "product" class="product_modal"  @click.stop> <!-- stop是vue的修飾符，讓遮罩的click事件在這個區域停止,v-if讓有找到商品才顯示詳情 -->
       <!-- 右上角關閉 -->
       <button  class="close" @click="close" >×</button>
       <!-- 卡片上半區塊 -->
@@ -36,7 +83,8 @@ const Reduce = ()=>{
         <!-- 左：主圖 -->
         <div class="product_show">
             <div class="product_image">
-                <img src="@/assets/images/Products/products/望遠鏡_3.png" alt="折疊雙筒望遠鏡"/>
+                <!-- <img src="@/assets/images/Products/products/望遠鏡_3.png" alt="折疊雙筒望遠鏡"/> -->
+                 <img :src="product.image" :alt="product.name">
             </div> 
           <!-- 標籤 -->
           <div class="product_tags">
@@ -48,31 +96,39 @@ const Reduce = ()=>{
         </div>
         <!-- 右：規格 -->
         <div class="product_info">
-          <h2 class="product_title">折疊雙筒望遠鏡</h2>
+          <h2 class="product_title">{{ product.name }}</h2>
           <!-- 價格&icon -->
           <div class="product_price_icon">
-            <div class="product_price">NT$ 3,200</div>
+            <div class="product_price">NT$ {{product.price}}</div>
             <div class="share-like">
-                <button class="icon_btn">🔗</button>
-                <button class="icon_btn">🤍</button>
+                <button class="icon_btn" @click.stop="copyURL">🔗</button>
+                <button class="icon_btn" @click.stop="toggleFavorite(product.id)">
+                  {{ favorites.includes(product.id) ? '❤️' : '🤍' }}
+                </button>
             </div>
           </div>
-          <!-- 顏色 -->
-          <div class="product_row">
+          <!-- 顏色（若有才可選） -->
+          <div class="product_row" v-if ="product.color?.length" >
             <div class="product_label">顏色</div>
-            <div class="product_options">
-              <button class="opt">黑</button>
+            <div class="product_options" v-for =" color in product.color" :key="color">
+              <!-- <button class="opt">黑</button>
               <button class="opt">白</button>
-              <button class="opt">紅</button>
+              <button class="opt">紅</button> -->
+              <button class="opt" :class="{active:selectcolor == color}" @click="selectColor(color)">{{ color }}</button>
+              <!-- 
+              :class="{ active: 條件 }" 是 Vue 的類名綁定語法：當「條件」為 true 時，幫這個元素加上 active 類名；否則不加。 
+              selectcolor == color「把我目前選到的顏色 selectcolor，和這一顆按鈕代表的顏色 color 做比較」如果一樣（例如都等於 "黑"）
+              ，就回傳 true → 加上 active 類名；不一樣就 false → 不加。-->
             </div>
           </div>
-          <!-- 尺寸 -->
-          <div class="product_row">
+          <!-- 尺寸(若有才可選) -->
+          <div class="product_row" v-if ="product.size?.length">
             <div class="product_label">尺寸</div>
-            <div class="product_options">
-              <button class="opt">S</button>
+            <div class="product_options" v-for =" size in product.size" :key="size">
+              <!-- <button class="opt">S</button>
               <button class="opt">M</button>
-              <button class="opt">L</button>
+              <button class="opt">L</button> -->
+              <button class="opt" :class="{active : selectsize == size }" @click="selectSize(size)">{{ size }}</button>
             </div>
           </div>
           <!-- 數量 -->
@@ -87,8 +143,8 @@ const Reduce = ()=>{
 
           <!-- 行動按鈕 -->
           <div class="product_actions">
-            <button class="btn-addcart">加入購物車</button>
-            <button class="btn-paynow">立即購買</button>
+            <button class="btn-addcart" @click="這是加入購物車的函數">加入購物車</button>
+            <button class="btn-paynow" @click="加入購物車,並跳轉到購物車頁面">立即購買</button>
           </div>
         </div>
       </div>
@@ -97,7 +153,7 @@ const Reduce = ()=>{
           <!-- 詳細資訊（不同商品內容不同） -->
         <div class="product_detail">
             <h3>商品詳情</h3>
-            <p>高透光鍍膜，攜帶方便。</p>
+            <p>{{product.description}}</p>
         </div>
             <!-- 配送資訊（永遠不變） -->
         <div class="product_accordions">
@@ -235,6 +291,10 @@ const Reduce = ()=>{
             padding: 0 14px;
             @include btn(8px);
             @include border(#bbb);
+            &.active{
+              color: white;
+              background-color: $black-14;
+            }
             }
   }
   /* 數量區（底線風格） */
@@ -286,7 +346,7 @@ const Reduce = ()=>{
 /* 下半區塊：左文案、右折疊 */
 .modal_down {
  @include flexcenter(100px,row);
- align-items: self-start;
+ align-items: center;
  margin: 28px;
 }
 .product_detail{
@@ -358,8 +418,6 @@ const Reduce = ()=>{
     flex: 0 0 300px;
     width: 300px;
   }
-}
-
 .modal_down{
   margin: 0;
   padding: 24px 0;;
@@ -376,6 +434,10 @@ const Reduce = ()=>{
     width: 300px;
   }
 }
+
+}
+
+
 
 </style>
 

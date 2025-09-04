@@ -3,9 +3,7 @@ import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
 import brandFooter from '@/components/An/footer.vue'
 import { reactive, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
 
 // 表單
 const formRef = ref()

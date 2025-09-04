@@ -7,7 +7,7 @@
       <section class="member-content">
         <RouterView />
         <div class="logout">
-          <button @click="logout">登出</button>
+          <button @click="handlelogout">登出</button>
         </div>
       </section>
     </div>
@@ -21,14 +21,13 @@ import LoginPage_nav from '@/components/Irene/LoginPage/LoginPage_nav.vue';
 import NavMenu from '@/components/An/navMenu.vue';
 import brandFooter from '@/components/An/footer.vue'
 
-import { computed } from 'vue'
+
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
+const user = useUserStore()
 
-const userRole = computed(() => {
-  return localStorage.getItem('Email') /*|| 'unknown'*/
-})
 
 
 // 組件內的守門員 - 離開前確認,這裡不一定要
@@ -42,11 +41,16 @@ const userRole = computed(() => {
 // })
 
 // 一般會員登出後，移除 storage
-const logout = () => {
+const handlelogout = () => {
   const answer = window.confirm('確定要登出嗎？')
   if (answer) {
-    localStorage.removeItem('Email')
-    localStorage.removeItem('PassWord')
+    // localStorage.removeItem('email')
+    // localStorage.removeItem('password')
+   fetch('/tjd102/g2/PHP/LoginPage_fontLogout.php', {  //http://localhost/teamproject/LoginPage_fontLogout.php（local端測試）
+    method: 'POST',
+    credentials: 'include'
+  })
+    user.logout()
     alert('已登出')
     router.push({name:'loginregister-fontrelogin'})
   }
@@ -76,6 +80,9 @@ main{
   max-width: 1000px;
   box-sizing: border-box;
   padding: 40px 0;
+  position: fixed;
+  bottom:0;
+  right: 40px;
   button{
     @include btn(8px);
     padding: 8px 16px;
@@ -83,6 +90,8 @@ main{
     background-color: $black-14;
     display: block;
     margin: auto;
+    font-size: $pcFont-p-s;
+    font-weight: $medium;
     }}
 }
 
