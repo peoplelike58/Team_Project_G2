@@ -158,5 +158,35 @@ const route = useRouter()
         text-decoration: 1px underline;
         text-underline-offset: 6px;
     }
+
+
+    // RWD
+    @media screen and ( max-width:430px ) {
+        .activity-card{
+            max-width: none;
+            width: 100%;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0;
+        }
+        .top-content{
+            gap: 12px;
+        }
+        .ac-date{
+            font-size: 16px;
+            font-weight: $medium;
+        }
+        .ac-img{
+            border-radius: 6px;
+            aspect-ratio: 16/9;
+        }
+        .ac-title{
+            font-size: 20px;
+            font-weight: $medium;
+            line-height: 1.2;
+            display: -webkit-box;
+        }
+        
+    }
     
 </style>

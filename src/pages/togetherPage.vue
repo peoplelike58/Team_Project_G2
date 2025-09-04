@@ -185,4 +185,9 @@ function onSearchClicked(criteria) {
     }
   }
 }
+
+@media screen and (max-width: 430px) {
+  
+}
+
 </style>
