@@ -52,6 +52,8 @@
   import { ref, onMounted, onUnmounted } from 'vue'
   import { PageFlip } from 'page-flip'
   
+
+
   const props = defineProps({
     mountain: { 
       type: Object, 
@@ -87,9 +89,11 @@
 onUnmounted(() => { 
   if (flip) flip.destroy() 
 })
+
+
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
     @import '@/assets/styles/mixins.scss';
     @import '@/assets/styles/main.scss';
 
@@ -100,7 +104,7 @@ onUnmounted(() => {
 .ebook-overlay{
   position:fixed; 
   inset:0; 
-  background:#262626;
+  background:#2626262f;
   display:flex; 
   align-items:center; 
   justify-content:center; 
@@ -118,6 +122,7 @@ onUnmounted(() => {
   display:flex; 
   align-items:center; 
   justify-content:center; 
+  overflow: hidden; 
 }
 
 .close-btn{
@@ -134,6 +139,7 @@ onUnmounted(() => {
   line-height:40px;
   transition: all 0.2s ease;
 }
+
 
 .close-btn:hover {
   background:#DBCBCB;
@@ -262,7 +268,6 @@ onUnmounted(() => {
     object-fit: cover;
     border-radius: 12px;
   }
-
 }
 
   </style>
