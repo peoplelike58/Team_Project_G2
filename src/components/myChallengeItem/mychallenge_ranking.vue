@@ -1,17 +1,20 @@
 <template>
-    <section v-for="rank in ranks" :key="rank.rank" class="nomb">
-        <div class="personInfo" @click="toggle(rank.rank)">
+    <section v-for="(rank, index) in ranks" :key="index" class="nomb">
+        <div class="personInfo" @click="toggle(index)">
             <div class="personInfoTitle">
-                <img :src="`${ICON_BASE}${rank.image}`" alt="" class="head">
-                <h4 class="place">{{ rank.rank }}<br />{{ rank.icon }}</h4>
+                <img :src="`${BASE}images/myChallenge/${rank.image}`" alt="" class="head">
+                <h4 class="place">{{ rankText(index) }}<br />{{ rankIcon(index) }}</h4>
                 <h4>{{ rank.name }}</h4>
             </div>
             <div class="allow">
-                <img src="@/assets/images/mychallenge/down.png" alt="">
+                <img :src="`${BASE}images/myChallenge/down.png`" 
+                alt="allow" 
+                :class="{ 'rotated': openItem === index }"
+                >
             </div>
         </div>
         <transition name="dropdown">
-        <div class="totalScore" v-show="openItem == rank.rank">
+        <div class="totalScore" v-show="openItem == index">
             <div class="nombScore">
                 <article>
                     <p>總累積高度</p>
@@ -46,15 +49,15 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
     // const ranks = ref([
-    //     {image:'head1.png', rank:'第一名', icon:`🥇`, name: 'Yuki', height:10006, kilo:9687, time:456, big:41, small:58 },
-    //     {image:'head2.png', rank:'第二名', icon:`🥈`, name: '貓山王', height:8187, kilo:7432, time:400, big:40, small:40 },
-    //     {image:'head3.png', rank:'第三名', icon:`🥉`, name: 'JIN', height:6742, kilo:7213, time:420, big:40, small:32 },
-    //     {image:'head4.png', rank:'第四名', icon:'', name: '嘉明', height:6810, kilo:7110, time:395, big:34, small:29 },
-    //     {image:'head5.png', rank:'第五名', icon:'', name: 'Pei', height:5013, kilo:4128, time:413, big:23, small:18 },
+    //     {image:'head1.png', rank:'第一名', icon:`🥇`, name: 'Yuki', height:10006, kilo:9687, time:456, bigMountain:41, smallMountain:58 },
+    //     {image:'head2.png', rank:'第二名', icon:`🥈`, name: '貓山王', height:8187, kilo:7432, time:400, bigMountain:40, smallMountain:40 },
+    //     {image:'head3.png', rank:'第三名', icon:`🥉`, name: 'JIN', height:6742, kilo:7213, time:420, bigMountain:40, smallMountain:32 },
+    //     {image:'head4.png', rank:'第四名', icon:'', name: '嘉明', height:6810, kilo:7110, time:395, bigMountain:34, smallMountain:29 },
+    //     {image:'head5.png', rank:'第五名', icon:'', name: 'Pei', height:5013, kilo:4128, time:413, bigMountain:23, smallMountain:18 },
     // ])
     
-    const PUBLIC_BASE = import.meta.env.BASE_URL; 
-    const ICON_BASE = `${PUBLIC_BASE}images/myChallenge/`;
+    const BASE = import.meta.env.BASE_URL; 
+    const jsonPath = `${BASE}json/mychallenge/ranks.json`;
 
     // 控制手風琴開關
     const openItem = ref(null)
@@ -67,18 +70,28 @@ import axios from 'axios'
         }
     }
 
-    const ranks = ref({})
+    const ranks = ref([])
 
     onMounted(async() => {
         try{
-            const res = await axios.get("/json/mychallenge/ranks.json")
+            const res = await axios.get(jsonPath)
             ranks.value = res.data
 
         }catch(err){
             console.error("讀取失敗:", err)
         }
     })
+
+    const rankText = (index) => {
+        const rankTexts = ['第一名', '第二名', '第三名', '第四名', '第五名']
+        return rankTexts[index]
+    }
     
+    const rankIcon = (index) => {
+        const rankIcons = ['🥇', '🥈', '🥉', '', '']
+        return rankIcons[index]
+    }
+
 </script>
 
 <style scoped lang="scss">
@@ -141,7 +154,14 @@ import axios from 'axios'
             }
 
             .allow{
+                img{
+                    transition: all 0.3s ease-in-out;
+                    transform-origin: center;
 
+                    &.rotated{
+                        transform: rotate(-180deg);
+                    }
+                }
             }
         }
     
@@ -188,8 +208,16 @@ import axios from 'axios'
         transform: translateY(-20px);
     }
 
-    @media screen and (max-width: 430px) {
+    @media screen and (max-width: 1200px) {
         .nomb{
+            width: calc(100% - 20px);
+        }
+
+    }
+
+    @media screen and (max-width: 650px) {
+        .nomb{
+
             .totalScore{
                 padding: 16px 16px;
 
@@ -202,6 +230,12 @@ import axios from 'axios'
                     }
                 }
             }
+        }
+
+    }
+
+    @media screen and (max-width: 500px) {
+        .nomb{
 
             p{
 

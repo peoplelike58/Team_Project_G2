@@ -35,3 +35,8 @@
 @mixin border($color){
     border: 1px solid $color;
 }
+
+@mixin mq($m){ 
+    @media screen and (max-width: $m){
+    @content; } 
+}

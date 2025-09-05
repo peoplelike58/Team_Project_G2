@@ -1,7 +1,7 @@
 <template>
     <section class="mychallengeHistroy">
         <div class="back" @click="closeHistory">
-            <img src="@/assets/images/mychallenge/left.png" alt="">
+            <img :src="`${BASE}images/myChallenge/left.png`" alt="">
             <h4>返回</h4>
         </div>
         <h2>[ 歷史足跡 ]</h2>
@@ -10,13 +10,17 @@
                 <h3 class="mountainName">山名</h3>
                 <h3>上傳日期</h3>
             </div>
-            <article class="myhistoryMountain" v-for="history in histories">
+            <article class="myhistoryMountain" v-for="history in histories" >
                 <div class="mountainTitle">
                     <div class="mountainTitleLeft" @click="toggle(history.name)">
                         <h4 class="mountain">{{ history.name }}</h4>
                         <h4>{{ history.date }}</h4>
                     </div>
-                    <img src="@/assets/images/mychallenge/down.png" alt="">
+                    <img 
+                    :src="`${BASE}images/myChallenge/down.png`"
+                    alt="down"
+                    :class="{ 'rotated': openItem === history.name }"
+                    />
                 </div>
                 <transition name="dropdown">
                     <div class="totalScore"  v-show="openItem == history.name">
@@ -63,11 +67,14 @@ import { ref, onMounted } from 'vue'
     }
 
     // --- 3.載入 Json資料 ---
-    const histories = ref({})
+    const histories = ref([])
+
+    const BASE = import.meta.env.BASE_URL
+    const jsonPath = `${BASE}json/mychallenge/histories.json`
 
     onMounted(async() => {
         try{
-            const res = await fetch("/json/mychallenge/histories.json")
+            const res = await fetch(jsonPath)
             // console.log(res)
             const data = await res.json()
             // console.log(data)
@@ -86,6 +93,11 @@ import { ref, onMounted } from 'vue'
     .mychallengeHistroy{
         height: 100%;
         overflow: auto;
+
+        scrollbar-width: none; /* Firefox */
+        &::-webkit-scrollbar {
+            display: none; /* Chrome/Safari/Opera */
+        }
 
         .back{
             display: flex;
@@ -170,6 +182,13 @@ import { ref, onMounted } from 'vue'
                 img{
                     width: 40px;
                     height: 40px;
+
+                    transition: all 0.3s ease-in-out;
+                    transform-origin: center;
+
+                    &.rotated{
+                        transform: rotate(-180deg);
+                    }
                 }
             }
 
@@ -211,6 +230,63 @@ import { ref, onMounted } from 'vue'
         transform: translateY(-20px);
     }
     
+    }
+
+    @media screen and (max-width: 850px) {
+        .mychallengeHistroy{
+        
+            .myhistoryMountain{
+
+                .totalScore{
+                    .total{
+                        p{
+                            span{
+                                font-size: $pcFont-H3;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    @media screen and (max-width: 650px) {
+        .mychallengeHistroy{
+        
+            .myhistoryMountain{
+
+                .totalScore{
+                    .total{
+                        p{
+                            span{
+                                font-size: $pcFont-H1-m;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    @media screen and (max-width: 490px) {
+        .mychallengeHistroy{
+        
+            .myhistoryMountain{
+
+                .totalScore{
+                    .total{
+                        p{
+                            span{
+                                font-size: $pcFont-H3;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
 </style>

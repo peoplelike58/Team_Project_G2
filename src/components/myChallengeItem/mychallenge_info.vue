@@ -70,4 +70,30 @@
         }
     }
 
+    @media screen and (max-width: 800px) {
+
+        .mychallengeInfomation{
+    
+            .totalInfo{
+                button{
+                    font-size: 14px;
+                }
+            }
+        }
+        
+    }
+
+        @media screen and (max-width: 650px) {
+
+        .mychallengeInfomation{
+    
+            .totalInfo{
+                button{
+                    font-size: $pcFont-H4;
+                }
+            }
+        }
+        
+    }
+
 </style>

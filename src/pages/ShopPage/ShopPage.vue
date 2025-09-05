@@ -71,11 +71,11 @@ const handlePageChange = (page) => {
                     @search="handleSearch" 
                     @gender-filter="handleGenderFilter"
                     @category-filter="handleCategoryFilter" />
-                <!-- 建立事件聆聽接收子層傳來是時間，用handleSearch接收 -->
+                <!-- 建立事件聆聽接收子層傳來的事件，用handleSearch接收 -->
                 <ShopPage_productslist 
                     :filters="filters"
                     :current-page="pagination.currentPage"
-                    :page-size="pagination.pageSize"
+                    :page-size="12"
                     @total-change="handleTotalChange"/>
             </section >
             
@@ -96,12 +96,13 @@ const handlePageChange = (page) => {
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
 
-.position_shopcar{
-    position: sticky;
-    top: 52px;
+.position_shopcar{//購物車icon定位
+    position: fixed;
+    bottom:  52px;
+    right: 0;
     z-index: 20;
 }
-.link_cart {
+.link_cart {//購物車icon
   display: flex;                 // 改成 flex 容器
   justify-content: center;       // 水平置中
   align-items: center;           // 垂直置中
@@ -123,25 +124,38 @@ const handlePageChange = (page) => {
 
 }
 }
-main{
+main{//頁面內容
     background-color: #fff;
     section{
     padding-bottom: 40px;
-    width: 1200px;
+    max-width: 1200px;
     margin: auto;
     
     }
 }
 
-.coupon{
+.coupon{//優惠券
     text-align: center;
 }
 
-.products{
+.products{//商品卡
     @include flexcenter(50px,row);
     align-items: flex-start; /* 避免側欄與清單被垂直置中而高度不齊 */
 }
 
 
 
+@include mq(1199px) {
+    main{
+        padding: 0 2vh;
+    }
+ }
+
+@include mq(750px) {
+    .products{
+        @include flexcenter(0,column);
+    }
+}
+
+//此頁的siderbar,全部商品要再加一個收起來和展開
 </style>

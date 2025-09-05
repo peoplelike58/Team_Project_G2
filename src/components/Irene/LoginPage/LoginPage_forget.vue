@@ -48,15 +48,8 @@ const gochek = () =>{
 </script>
 
 <style lang="scss" scoped>
-// 變數定義
-$primary-color: #000;
-$secondary-color: #6c757d;
-$error-color: #dc3545;
-$success-color: #28a745;
-$border-color: #dee2e6;
-$border-radius: 8px;
-$box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-
+@import '@/assets/styles/main.scss';
+@import '@/assets/styles/othermixins.scss';
 
 .modal-content {
   padding: 40px 32px 32px;
@@ -65,14 +58,14 @@ $box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 .title {
   font-size: 24px;
   font-weight: 700;
-  color: $primary-color;
+  color: $black-14;
   margin: 0 0 8px 0;
   text-align: center;
 }
 
 .subtitle {
   font-size: 14px;
-  color: $secondary-color;
+  color: #6c757d;
   margin: 0 0 32px 0;
   text-align: center;
   line-height: 1.5;
@@ -105,8 +98,8 @@ $box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 .input-field {
   width: 100%;
   padding: 12px 16px 12px 16px;
-  border: 2px solid $border-color;
-  border-radius: $border-radius;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
   font-size: 16px;
   transition: all 0.2s ease;
   outline: none;
@@ -117,7 +110,7 @@ $box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
   
   &:focus {
-    border-color: $primary-color;
+    border-color: $black-14;
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
   }
 }
@@ -151,7 +144,7 @@ $box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 .primary-btn,
 .secondary-btn {
   padding: 12px 24px;
-  border-radius: $border-radius;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -160,7 +153,7 @@ $box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .primary-btn {
-  background: $primary-color;
+  background: $black-14;
   color: white;
   
   &:hover {
@@ -170,8 +163,8 @@ $box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 
 .secondary-btn {
   background: transparent;
-  color: $secondary-color;
-  border: 2px solid $border-color;
+  color: #6c757d;
+  border: 2px solid #dee2e6;
   
   &:hover {
     background: #f8f9fa;

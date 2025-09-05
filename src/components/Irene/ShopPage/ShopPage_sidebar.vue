@@ -60,7 +60,7 @@ onMounted(() => {
     <div class="search">
         <input type="text" v-model="searchKeyword" @input="handleSearch"  placeholder="請輸入你想找的商品" >
         <!-- 監聽input進來的值 -->
-        <button class="icon_search" @click="handleSearch"><img src="/public/Products/icons/icon_search.svg" alt=""></button>
+        <button class="icon_search" @click="handleSearch"><img src="@/assets/images/products/icons/icon_search.svg" alt=""></button>
       </div>
     <div class="classification"><!-- 商品分類 -->
       <div class="all_products">
@@ -74,7 +74,7 @@ onMounted(() => {
         <!-- 加入手風琴切換功能 -->
         <button @click="toggleCategory('hiking');selectCategory('登山健行裝備', 'main')"  
         :class="{ active: openCategories.hiking }">
-          <span>登山健行裝備</span><img src="/public/Products/icons/icon_predown.svg" alt="" 
+          <span>登山健行裝備</span><img src="@/assets/images/products/icons/icon_predown.svg" alt="" 
           :style="{ transform: openCategories.hiking ? 'rotate(180deg)' : 'rotate(0deg)' }">
         </button>
         <!--  根據狀態顯示/隱藏子選單 -->
@@ -88,7 +88,7 @@ onMounted(() => {
       <div class="overnight_equipment"><!-- 過夜裝備 -->
         <button @click="toggleCategory('overnight');selectCategory('登山過夜裝備', 'main')"
                 :class="{ active: openCategories.overnight }">
-          <span>登山過夜裝備</span><img src="/public/Products/icons/icon_predown.svg" alt=""
+          <span>登山過夜裝備</span><img src="@/assets/images/products/icons/icon_predown.svg" alt=""
           :style="{ transform: openCategories.overnight ? 'rotate(180deg)' : 'rotate(0deg)' }">
         </button>
         <ul :class="{ active: openCategories.overnight}">

@@ -1,10 +1,10 @@
 <template>
-    <section class="challengeProgress" v-for="(item, index) in goals">
+    <section class="challengeProgress" v-for="item in goals">
         <div class="title">
             <h3>
                 [{{ item.kind }}]
             </h3>
-            <img src="../../assets/images/mychallenge/goalSet.png"
+            <img :src="`${BASE}images/myChallenge/goalSet.png`"
             alt="目標設定" 
             @click="openSetgoal(item)"
             >
@@ -19,9 +19,9 @@
         </div>
         <p>今年目標已完成  <span>{{ item.done }}</span>  /  {{ item.goal }}  座</p>
         <div class="flagArea">
-            <div class="line">
+            <div class="Progressbar">
             </div>
-            <img src="@/assets/images/myChallenge/flag.png" alt="旗子" 
+            <img :src="`${BASE}images/myChallenge/flag.png`" alt="旗子" 
                 :style="{ transform: imgPosition(item) }">
         </div>
     </section>
@@ -33,6 +33,8 @@ import { storeToRefs } from 'pinia'
 import { useGoalStore } from '@/stores/goalStore'
 
 import mychallenge_setgoal from './mychallenge_setgoal.vue'
+
+const BASE = import.meta.env.BASE_URL
 
 const goalStore = useGoalStore()
 goalStore.initDefault()
@@ -110,7 +112,7 @@ const { goals } = storeToRefs(goalStore)
             position: relative;
             margin-top: 20px;
             
-            .line{
+            .Progressbar{
                 width: 100%;
                 height: 12px;
                 border-radius: 999px;

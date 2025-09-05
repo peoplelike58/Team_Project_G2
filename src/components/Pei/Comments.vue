@@ -1,6 +1,17 @@
 <script setup>
 import { ref, defineProps } from 'vue'
 
+const baseUrl = import.meta.env.BASE_URL
+const toUrl = (p) => {
+  if (!p) return ''
+  const s = String(p).trim()
+  // 已是 http(s)、data:、或 Vite 產生的 /assets/ 就直接用
+  if (/^(?:https?:)?\/\//i.test(s) || s.startsWith('data:') || s.startsWith('/assets/')) return s
+  // 其餘當成 public 下的相對路徑：去掉開頭斜線、做 URL encode，再接 BASE_URL
+  return `${baseUrl}${encodeURI(s.replace(/^\/+/, ''))}`
+}
+
+
 
 //接收父層
 const props = defineProps({
@@ -15,16 +26,16 @@ const messages = ref([
   {
     id: 'cmt-1001',
     name: '今晚上山',
-    avatarUrl: '../../../public/images/myChallenge/head1.png',
+    avatarUrl: 'images/myChallenge/head1.png',
     time: '15分鐘前',
     message: '今天天氣很好，非常適合爬山！',
-    photoUrl: '../../../public/img/trails/1.jpg',
+    photoUrl: 'img/trails/1.jpg',
     canDelete: true
   },
   {
     id: 'cmt-1002',
     name: '明晚下山',
-    avatarUrl: '../../../public/images/myChallenge/head2.png',
+    avatarUrl: 'images/myChallenge/head2.png',
     time: '14小時前',
     message: '爬到腿軟了.....再也不敢去了==',
     photoUrl: '',
@@ -33,10 +44,10 @@ const messages = ref([
   {
     id: 'cmt-1003',
     name: '久久爬一次山',
-    avatarUrl: '../../../public/images/myChallenge/head3.png',
+    avatarUrl: 'images/myChallenge/head3.png',
     time: '3天前',
     message: '差點餓倒在山上，還好路過的阿姨分我吃他的饅頭，又平安度過了一天！^0^',
-    photoUrl: '../../../public/img/trails/2.jpg',
+    photoUrl: 'img/trails/2.jpg',
     canDelete: false
   }
 ])
@@ -73,7 +84,7 @@ function submitComment() {
   const newComment = {
     id: 'cmt-' + Date.now(),
     name: '會員ID',
-    avatarUrl: '../../../public/images/myChallenge/head4.png',
+    avatarUrl: 'images/myChallenge/head4.png',
     time: '剛剛',
     message: newMessageText.value,
     photoUrl: newPhotoPreview.value || '',
@@ -128,7 +139,7 @@ function deleteMessageById(messageId) {
       <li v-for="message in messages" :key="message.id" class="commentCard">
         <div class="member">
           <div class="avatar">
-            <img :src="message.avatarUrl" alt="使用者頭像" />
+            <img :src="toUrl(message.avatarUrl)" alt="使用者頭像" />
           </div>
           <p class="name">{{ message.name }}</p>
         </div>
@@ -141,7 +152,7 @@ function deleteMessageById(messageId) {
           <div class="photo" v-if="message.photoUrl !== ''">
             <!-- 點圖放大 -->
             <img
-              :src="message.photoUrl"
+              :src="toUrl(message.photoUrl)"
               alt="上傳的照片"
               @click="openImageViewer(message.photoUrl)"
             />

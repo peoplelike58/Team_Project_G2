@@ -148,6 +148,20 @@ import { ref, watch } from 'vue'
         }
     }
 
+    @media screen and (max-width: 1000px) {
+        
+        .modalOverlay{
+
+            .goalsetModal{
+                width: 60%;
+                // height: 600px;
+                padding: 60px;
+                
+            }
+        }
+
+    }
+
     @media screen and (max-width: 430px) {
         
         .modalOverlay{
