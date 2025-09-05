@@ -86,13 +86,20 @@
       </div>
     
       <!-- reCAPTCHA -->
-      <div class="captcha-group">
+      <!-- <div class="captcha-group">
         <label class="captcha-checkbox">
           <input type="checkbox" v-model="formData.isNotRobot" required>
           <span class="checkmark"></span>
           我不是機器人
         </label>
+      </div> -->
+
+
+      <!-- 我不是機器人驗證 -->
+      <div class="captcha-wrapper">
+         <div class="g-recaptcha" :data-sitekey="siteKey"></div>
       </div>
+
       
       <!-- 立即註冊按鈕 -->
       <button type="submit" class="submit-btn" :disabled="!isFormValid" @click="GoRegister">
@@ -145,8 +152,14 @@
 <script setup>
 // 目前只是靜態切版，無需任何邏輯
 import member from '@/router/member'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted} from 'vue'
 import { useRouter } from 'vue-router'
+
+
+// Google reCAPTCHA 金鑰(Yuki)
+const siteKey ="6LepsL4rAAAAACyRJsYbyJaL3v4XH-3RBGwhBJd-"
+
+
 
 const router = useRouter()
 
@@ -157,8 +170,14 @@ const formData = ref({
   phone: '',
   password: '',
   confirmPassword: '',
-  isNotRobot: false
+  // isNotRobot: false
 })
+
+//機器人驗證(Yuki)
+const recaptchaToken = ref('')
+const isNotRobot = computed(() => {recaptchaToken.value !==''})
+
+
 
 // 密碼顯示狀態
 const showPassword = ref(false)
@@ -172,8 +191,25 @@ const isFormValid = computed(() => {
          formData.value.password && 
          formData.value.confirmPassword && 
          formData.value.password === formData.value.confirmPassword &&
-         formData.value.isNotRobot
+         isNotRobot.value
 })
+
+//掛載機器人(Yuki)
+onMounted(() => {
+  const interval = setInterval(()=>{
+    if(window.grecaptcha && document.querySelector('.g-recaptcha')){
+      window.grecaptcha.render(document.querySelector('.g-recaptcha'),{
+        sitekey: siteKey,
+        callback: (token) => {
+          recaptchaToken.value = token
+        }
+      })
+      clearInterval(interval)
+    }
+  })
+})
+
+
 
 // 方法
 const togglePassword = () => {
@@ -191,6 +227,11 @@ const switchToLogin = () => {
 }
 
 const GoRegister = () => {
+  //機器人驗證檢查(Yuki)
+  if(!recaptchaToken.value){
+    alert("請先完成驗證！")
+    return;
+  }
   fetch('/tjd102/g2/PHP/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
   method: 'POST',
   headers:{'Content-Type':'application/json'},
@@ -199,7 +240,8 @@ const GoRegister = () => {
     email:formData.value.email,
     name:formData.value.name,
     password:formData.value.password,
-    phone:formData.value.phone
+    phone:formData.value.phone,
+    recaptcha: recaptchaToken.value   // 把 token 傳給後端
   })  //前端把使用者輸入的資料打包成 JSON，送去後端
   })
   .then(resp=>resp.json())
@@ -209,6 +251,9 @@ const GoRegister = () => {
     if(success){
       //暫時不認證，直接成功,就直接使用這裡
       router.push({name:'loginregister-registercoupon'})
+    }else{
+      window.grecaptcha.reset() // 失敗的話要重置機器人驗證(Yuki)
+      recaptchaToken.value = ''
     }
   })
   
@@ -441,5 +486,16 @@ const GoRegister = () => {
   &.line:hover {
     border-color: #00C300;
   }
+}
+</style>
+
+<style lang="scss">
+
+// 機器人驗證(Yuki)
+.captcha-wrapper{
+  display: flex;
+  justify-content: center;
+  min-height: 80px;
+  z-index: 100000;
 }
 </style>

@@ -30,7 +30,7 @@
           type="password"
           placeholder="請輸入密碼"
           show-password
-          blur
+          
         /> 
       </div>
 
@@ -40,6 +40,11 @@
           忘記密碼？
         </button>
       </div>
+
+      <!-- 我不是機器人驗證(Yuki) -->
+       <div class="captcha-wrapper">
+         <div class="g-recaptcha" :data-sitekey="siteKey"></div>
+       </div>
 
       <!-- 登入按鈕 -->
       <button @click="handleLogin" class="login-btn">
@@ -89,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
@@ -99,48 +104,118 @@ const password = ref('')
 const router = useRouter()
 const user = useUserStore()
 
-//立即登入-按鈕
-// 「一般用戶登入」可以把登入資訊放在 localStorage 內，登出時要刪除
-const handleLogin = async () => {
-  if (email.value && password.value && email.value.includes('@') && password.value.length >= 8 ) {
-    const res = await fetch('/tjd102/g2/PHP/LoginPage_fontlogin.php',{//這是server上測試可用的URL：'/tjd102/g2/PHP/LoginPage_fontlogin.php'；http://localhost/teamproject/LoginPage_fontLogin.php 
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      credentials: 'include' ,              // 查 Session 要帶 cookie
-      body:JSON.stringify({
-          email:email.value,
-          password:password.value
-      })  //前端把使用者輸入的資料打包成 JSON，送去後端
+
+// Google reCAPTCHA 金鑰(Yuki)
+const siteKey ="6LepsL4rAAAAACyRJsYbyJaL3v4XH-3RBGwhBJd-"
+
+onMounted(() => {
+  // 延遲渲染 reCAPTCHA，確保腳本已載入
+  setTimeout(() => {
+    if (window.grecaptcha && document.querySelector('.g-recaptcha')) {
+      window.grecaptcha.render(document.querySelector('.g-recaptcha'), {
+        'sitekey': siteKey
+      })
+    }
+  })
+});
+
+//修改加入機器人驗證版本 (Yuki)
+const handleLogin =() => {
+  if(email.value && password.value && email.value.includes('@') && password.value.length >= 8 ){
+    //先檢查reCAPTCHA
+    const token = grecaptcha.getResponse();
+    if(!token){
+      alert("請先完成驗證！")
+      return;
+    }
+
+    fetch('http://localhost/teamproject/LoginPage_fontLogin.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+        recaptcha: token
+      })
     })
-    .then(resp=>resp.json())
-    .then(async(member) => {
-      const {success} = member;
-      alert(success)
-      if(success){
-          const sessionResp = await fetch('/tjd102/g2/PHP/CheckLogin.php', {  //http://localhost/teamproject/CheckLogin.php(lOCAL端測試)
-          method: 'POST',
-          headers:{'Content-Type':'application/json'},
-          credentials: 'include',              // Session 一樣要帶 cookie
-        });
-        const sessionData = await sessionResp.json();
-        if (sessionData.isLogin){
-          user.login(sessionData.member.emal,sessionData.member.name)
-          alert(`登入成功！歡迎 ${email.value}`)/*這個alert前面要加上判斷資料庫匹配成功的條件 */
-          router.push({ name: 'member-profile' })
-        }
-        // console.log(member.data);
-        // user.setMemberData(member.data.email,member.data.name)
-        // localStorage.setItem('email', email.value) //把email資訊存到localstorage
-        // localStorage.setItem('password',password.value)//把password的資料存到localstorage，實際操作時不會使用密碼
-        // console.log('立即登入')
-      }else {
-        alert('帳號或密碼錯誤,請重新輸入')
-      }}
-    );
-    } else{
-      alert('請填寫正確的登入資訊')
+      .then(res => res.json())
+      .then(member =>{
+        const { success } =member;
+        if(success){
+           // 如果登入成功，再去檢查 Session
+           return fetch('http://localhost/teamproject/CheckLogin.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+          })
+          .then(res => res.json())
+          .then(sessionData => {
+            if(sessionData && sessionData.isLogin){
+              user.login(sessionData.member.email,sessionData.member.name)
+              alert(`登入成功！歡迎 ${email.value}`)/*這個alert前面要加上判斷資料庫匹配成功的條件 */
+              router.push({ name: 'member-profile' })
+            }
+          });
+        }else {
+        alert('帳號或密碼錯誤,請重新輸入');
+        grecaptcha.reset(); // 重設 reCAPTCHA
+      }
+    });
+  }else{
+    alert('請填寫正確的登入資訊')
   }
 }
+
+
+
+
+
+
+
+
+//立即登入-按鈕
+// 「一般用戶登入」可以把登入資訊放在 localStorage 內，登出時要刪除
+// const handleLogin = async () => {
+//   if (email.value && password.value && email.value.includes('@') && password.value.length >= 8 ) {
+//     const res = await fetch('/tjd102/g2/PHP/LoginPage_fontlogin.php',{//這是server上測試可用的URL：'/tjd102/g2/PHP/LoginPage_fontlogin.php'；http://localhost/teamproject/LoginPage_fontLogin.php 
+//       method:'POST',
+//       headers:{'Content-Type':'application/json'},
+//       credentials: 'include' ,              // 查 Session 要帶 cookie
+//       body:JSON.stringify({
+//           email:email.value,
+//           password:password.value
+//       })  //前端把使用者輸入的資料打包成 JSON，送去後端
+//     })
+//     .then(resp=>resp.json())
+//     .then(async(member) => {
+//       const {success} = member;
+//       alert(success)
+//       if(success){
+//           const sessionResp = await fetch('/tjd102/g2/PHP/CheckLogin.php', {  //http://localhost/teamproject/CheckLogin.php(lOCAL端測試)
+//           method: 'POST',
+//           headers:{'Content-Type':'application/json'},
+//           credentials: 'include',              // Session 一樣要帶 cookie
+//         });
+//         const sessionData = await sessionResp.json();
+//         if (sessionData.isLogin){
+//           user.login(sessionData.member.emal,sessionData.member.name)
+//           alert(`登入成功！歡迎 ${email.value}`)/*這個alert前面要加上判斷資料庫匹配成功的條件 */
+//           router.push({ name: 'member-profile' })
+//         }
+//         // console.log(member.data);
+//         // user.setMemberData(member.data.email,member.data.name)
+//         // localStorage.setItem('email', email.value) //把email資訊存到localstorage
+//         // localStorage.setItem('password',password.value)//把password的資料存到localstorage，實際操作時不會使用密碼
+//         // console.log('立即登入')
+//       }else {
+//         alert('帳號或密碼錯誤,請重新輸入')
+//       }}
+//     );
+//     } else{
+//       alert('請填寫正確的登入資訊')
+//   }
+// }
 
 //忘記密碼-按鈕
 const handleForgotPassword = () => {
@@ -317,6 +392,8 @@ const handleSocialLogin = (provider) => {
   color: #374151;
 }
 
+
+
 /* 登入按鈕 */
 .login-btn {
   width: 90%;
@@ -423,5 +500,15 @@ const handleSocialLogin = (provider) => {
   .input-group {
     margin-bottom: 24px;
   }
+}
+</style>
+<style lang="scss">
+
+// 機器人驗證
+.captcha-wrapper{
+  display: flex;
+  justify-content: center;
+  min-height: 80px;
+  z-index: 100000;
 }
 </style>
