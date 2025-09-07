@@ -42,8 +42,9 @@
   <div class="qaList">
     <TogetherQnaItem />
   </div>
-
-  <Footer />
+  <div class="footerList">
+    <Footer />
+  </div>
 </template>
 
 <script setup>
@@ -185,9 +186,58 @@ function onSearchClicked(criteria) {
     }
   }
 }
+    .footerList{
+      margin: 150px;
+}
 
 @media screen and (max-width: 430px) {
-  
+  // 卡片區域
+  .cardList{
+    grid-template-columns: repeat(2, minmax(0, 1fr)); // 一行顯示2個卡片
+    gap: 10px;
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .cardWrapper{
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto 40px;
+    padding: 0 5px;
+  }
+  .empty-state{
+    max-width: 100%;
+    margin: 0 15px 40px;
+    padding: 24px 16px;
+    font-size: 16px;
+    border-radius: 1px;
+  }
+  .qaList{
+    width: 100%;
+    max-width: 430px;
+    height: auto;
+    max-height: 400px;
+    margin: 40px auto 0;
+    padding: 0 5px;
+  }
+  .pageItem{
+    margin-bottom: 50px;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 0 15px;
+
+    button{
+      min-width: 32px;
+      height: 32px;
+      padding: 4px 8px;
+      font-size: 14px;
+      border-radius: 4px;
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
 }
 
 </style>
