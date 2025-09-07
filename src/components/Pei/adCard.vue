@@ -265,7 +265,7 @@ const toUrl = (p) => `${baseUrl}${p}`
         }
     }
 
-    /* === 以下是跑馬燈用樣式，完全不動你原本的樣式 === */
+/* === 以下是跑馬燈用樣式，完全不動你原本的樣式 === */
 .marquee-wrapper {
   overflow: hidden; // 裁掉多出來的
 }
@@ -273,7 +273,7 @@ const toUrl = (p) => `${baseUrl}${p}`
 .marquee-track {
   display: flex;
   gap:12px;
-    width: max-content; // 關鍵！內容有多寬就滾多遠
+  width: max-content; // 關鍵！內容有多寬就滾多遠
   animation: scroll 45s linear infinite; // 速度可自行調整秒數
 }
 

@@ -1,27 +1,71 @@
 <script setup>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
-import trailsData from '@/assets/json/trails.json'
+import axios from 'axios';
+
+
+
+//-------------------JSON-------------------------------------
+// import trailsData from '@/assets/json/trails.json'
 
 // 先把 BASE_URL 存成變數，避免在 template 直接寫 import.meta
 // 取得部署子目錄，如 '/tjd102/g2/' 
-const baseUrl = import.meta.env.BASE_URL                              
+// const baseUrl = import.meta.env.BASE_URL                              
 
 // 小工具：把 JSON 裡的相對路徑拼成可用網址
 // 回傳拼好的完整路徑
-const toUrl = (p) => `${baseUrl}${p}`     
+// const toUrl = (p) => `${baseUrl}${p}`  
+//------------------------------------------------------------
+
+
+
+
+
+
 
 // 引導至詳細頁面
 const router = useRouter()  
 const goDetail = id => router.push({name:'trailDetail' , params:{id}})
 
-// 資料讀取狀態
+// 資料讀取狀態,是否正在載入
 const loading = ref(false) 
 // 錯誤訊息
 const error = ref('') 
  // 原始資料
-const trails = ref(trailsData)
+// const trails = ref(trailsData)
+const trails = ref([])
+
+
+
+// ----------------PHP---------------------------
+// API 基本路徑
+const API_URL = 'http://localhost/houShan/filterCard.php'
+
+const fetchTrails = async () => {
+  
+  try {
+    const resp = await axios.get(API_URL)
+    trails.value = resp.data
+    console.log(resp.data);
+    
+    
+
+  } catch (err) {
+    console.log(err.message);
+    
+  }
+}
+
+
+ 
+
+onMounted(() => {                                           
+  fetchTrails()                                           
+}) 
+
+
+
 
 // --------- 篩選條件按鈕資料與目前狀態 ---------
 const regionBtns = ['全部','北部','中部','南部','東部'] // 區域選項
@@ -84,6 +128,7 @@ function goPage(p) {
   if (p < 1 || p > totalPages.value) return
   page.value = p
 }
+
 
 
 </script>
@@ -204,38 +249,41 @@ function goPage(p) {
 
   <div class="result"> <!-- 搜尋結果區塊 -->
     <h2>搜尋結果</h2> <!-- 標題 -->
-    <p>有 {{ finalResults.length }} 筆路線資料</p>
+    <!-- <p>有 {{ finalResults.length }} 筆路線資料</p> -->
     <div class="headLine"></div> <!-- 分隔線 -->
 
     <p v-if="loading">資料載入中…</p> 
     <p v-else-if="error">{{ error }}</p> 
     <div v-else> 
-      <p v-if="finalResults.length === 0" class="noResult">查無符合的路線，<br>換個條件試試吧QQ</p> <!-- 無資料提示 -->
-
-      <ul class="totalCard" v-else> 
+      <!--
+      <p v-if="finalResults.length === 0" class="noResult">查無符合的路線，<br>換個條件試試吧QQ</p> 
+      -->
+      <ul class="totalCard" >  <!--v-else-->
         <li 
         class="card" 
-        @click="goDetail(trail.id)" 
+        @click="goDetail(trail.MOUNTAIN_ID)" 
         v-for="trail in pagedTrails" 
-        :key="trail.id"
+        :key="trail.MOUNTAIN_ID"
         > <!-- 只渲染當前頁的8張卡片 -->
           <div class="imgBox">
-            <img :src="toUrl(trail.img)" :alt="trail.name" />
+            <!-- <img :src="toUrl(trail.img)" :alt="trail.name" /> -->
           </div>
 
           <!-- <img :src="trail.img" :alt="trail.name" />  -->
           <div class="meta">
-            <h4 class="name">{{ trail.name }}</h4> 
-            <span>{{ trail.region }}</span> 
+            <h4 class="name">{{ trail.MOUNTAIN_NAME }}</h4> 
+            <span>{{ trail.REGION }}</span> 
           </div>
           <div class="tags"> 
-            <span >{{ trail.type }}</span> 
-            <span>{{ trail.difficulty }}</span> 
+            <span >{{ trail.TYPE }}</span> 
+            <span>{{ trail.DIFF }}</span> 
           </div> 
         </li> 
       </ul> 
 
-      <div class="pager" v-if="finalResults.length > 0"> <!-- 分頁器（有符合的結果就會出現） -->
+      <!--
+      <div class="pager" v-if="finalResults.length > 0"> 
+      -->
         <button :disabled="page === 1" @click="goPage(page - 1)">上一頁</button> <!-- 上一頁 -->
         <button
           v-for="p in totalPages"
@@ -247,7 +295,9 @@ function goPage(p) {
       </div> <!-- 分頁器結束 -->
     </div> <!-- 正常顯示區結束 -->
   </div> <!-- 搜尋結果區塊結束 -->
+ <!-- 
 </div>
+-->
 
 
 </template>
