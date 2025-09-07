@@ -6,6 +6,17 @@ $member=json_decode(file_get_contents("php://input"), true);//接收前端來的
 include 'toMysql.php';
 
 
+//不是機器人驗證 (YUKI)
+include 'verifyRecaptcha.php';
+if (!verifyRecaptcha($member['recaptcha'])){
+    echo json_encode([
+        "sucess" => false,
+         "message" => "請先通過驗證"
+    ])
+    exit;
+}
+
+
 $statement = $pdo->prepare("select EMAIL from MEMBER where EMAIL = :email");
 $statement->bindValue(":email", $member["email"]);
 $statement->execute();
