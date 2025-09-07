@@ -113,7 +113,7 @@
 
     @media screen and (max-width:430px) {
         .filter-bar {
-            max-width: 100%;
+            max-width: 90%;
             padding: 20px 15px;
             margin: 0 auto 40px;
 
@@ -131,7 +131,9 @@
                         }
                     }
 
-                    input,
+                    input{
+                        width: 95%;
+                    }
                     select {
                         width: 100%;
                         font-size: 16px;

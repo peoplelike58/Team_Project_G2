@@ -6,18 +6,19 @@
             <slot name="date" :item="item" :dateText="dateText" :index="index">
                 <time class="ac-date">{{ dateText }}</time>
             </slot>
-            
+
             <!-- 圖片 -->
             <slot name="image" :item="item" :index="index">
-                <!-- <img class="ac-img" src="@/assets/images/eventCard/cardimg1.jpg" loading="lazy"/> -->
-                <img class="ac-img" :src="item.imageUrl" loading="lazy" />
+                <!-- <img class="ac-img" src="@/assets/images/eventCard/cardimg1.jpg"
+                loading="lazy"/> -->
+                <img class="ac-img" :src="item.imageUrl" loading="lazy"/>
             </slot>
-            
+
             <!-- 標題 -->
             <slot name="title" :item="item" :title="item.title" :index="index">
                 <h3 class="ac-title">{{ item.title }}</h3>
             </slot>
-            
+
             <!-- 標籤 -->
             <slot name="tags" :item="item" :tags="item.tags" :index="index">
                 <ul class="ac-tags" v-if="item.tags?.length">
@@ -25,18 +26,23 @@
                 </ul>
             </slot>
         </div>
-            
-            <router-link v-if="item.ctaUrl" class="ac-cta" :href="item.ctaUrl" @click.stop="handleCtaClick" :to="`together/activities/${item.id}`">
-                查看詳情
-            </router-link>
+
+        <router-link
+            v-if="item.ctaUrl"
+            class="ac-cta"
+            :href="item.ctaUrl"
+            @click.stop="handleCtaClick"
+            :to="`together/activities/${item.id}`">
+            查看詳情
+        </router-link>
     </article>
 </template>
 
-<script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+<script setup="setup">
+    import {computed} from 'vue'
+    import {useRouter} from 'vue-router'
 
-/**
+    /**
  * 預期的資料格式
  * {
  *   id: string|number,
@@ -49,20 +55,29 @@ import { useRouter } from 'vue-router'
  * }
  */
 
-const props = defineProps({
-    item: { type: Object, required: true },
-    index: { type: Number, default: 0 },
-})
+    const props = defineProps({
+        item: {
+            type: Object,
+            required: true
+        },
+        index: {
+            type: Number,
+            default: 0
+        }
+    })
 
-const emit = defineEmits(['cta-click'])
+    const emit = defineEmits(['cta-click'])
 
-const dateText = computed(() => props.item?.date ?? '')
+    const dateText = computed(
+        () => props.item
+            ?.date ?? ''
+    )
 
-function handleCtaClick() {
-  emit('cta-click', props.item)
-}
+    function handleCtaClick() {
+        emit('cta-click', props.item)
+    }
 
-const route = useRouter()
+    const route = useRouter()
 </script>
 
 <style scoped="scoped" lang="scss">
@@ -83,12 +98,12 @@ const route = useRouter()
 
         transition: background-color 0.3s ease, color 0.3s ease;
     }
-    .activity-card:hover{
+    .activity-card:hover {
         background-color: #EBEBDF;
         color: #292C4B;
     }
 
-    .top-content{
+    .top-content {
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -129,7 +144,7 @@ const route = useRouter()
     }
     .tag {
         display: inline-block;
-        padding: 8px 8px;
+        padding: 8px;
         color: #fff;
         font-size: $pcFont-label;
         font-weight: $medium;
@@ -139,7 +154,7 @@ const route = useRouter()
 
         transition: background-color 0.3s ease;
     }
-    .activity-card:hover .tag{
+    .activity-card:hover .tag {
         background-color: #292C4B;
     }
 
@@ -159,34 +174,62 @@ const route = useRouter()
         text-underline-offset: 6px;
     }
 
-
     // RWD
-    @media screen and ( max-width:430px ) {
-        .activity-card{
+    @media screen and (max-width:430px) {
+        .activity-card {
             max-width: none;
-            width: 100%;
+            width: 75%;
             padding: 20px;
             border-radius: 16px;
             margin: 0;
         }
-        .top-content{
+        .top-content {
             gap: 12px;
         }
-        .ac-date{
+        .ac-date {
             font-size: 16px;
             font-weight: $medium;
         }
-        .ac-img{
+        .ac-img {
             border-radius: 6px;
             aspect-ratio: 16/9;
         }
-        .ac-title{
+        .ac-title {
             font-size: 20px;
             font-weight: $medium;
             line-height: 1.2;
             display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        
+        .ac-tags {
+            gap: 6px;
+        }
+        .tag {
+            padding: 4px 6px;
+            font-size: 12px;
+            font-weight: $medium;
+            border-radius: 3px;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ac-cta {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: $semiBold;
+            text-underline-offset: 4px;
+        }
+
+        .activity-card:hover {
+            background-color: #EBEBDF;
+            color: #292C4B;
+        }
+
+        .activity-card:hover .tag {
+            background-color: #292C4B;
+        }
     }
-    
 </style>

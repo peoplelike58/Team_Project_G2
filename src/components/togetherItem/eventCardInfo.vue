@@ -6,10 +6,12 @@
             <div class="topInfoImg">
                 <img src="@/assets/images/eventCard/cardimg1.jpg" alt="">
             </div>
-            
+
             <div class="topInfo">
-                <h1>揪團中</h1>
-            <!-- <div class="closeBtn" @click="goBack">✕</div> -->
+                <div class="status-header">
+                    <h1>揪團中</h1>
+                    <div class="closeBtn" @click="goBack">✕</div>
+                </div>
                 <h2>陽明山緩慢散步之旅</h2>
                 <div class="topInfoP">
                     <p>日期</p>
@@ -22,7 +24,6 @@
             </div>
         </div>
 
-
         <div class="mainInfo">
             <h1>活動簡介</h1>
             <p>這趟陽明山緩慢散步之旅，將帶你遠離城市喧囂，輕輕走進自然懷抱。行程從陽明山遊客服務中心出發，沿途漫步在靜謐的林蔭小徑，欣賞隨季節變換的山景，途中停留於小巧的觀景點，聽導覽老師分享陽明山的花卉故事與地質秘密。最後，我們會在溫泉區短暫休息，啜飲一杯熱茶，讓身心徹底放鬆，帶回一段最緩慢、最純粹的美好時光。</p>
@@ -30,7 +31,8 @@
     </div>
 
     <div class="cardWrapper">
-        <div class="infoCard">
+        <!-- web -->
+        <div class="infoCard desktop-version">
             <div class="infoList">
                 <div>
                     <h1>[集合時間與地點]</h1>
@@ -49,7 +51,7 @@
                     <div class="leftFooter">
                         <p>[花費時間]</p>
                         <span class="lefiMainCH2">約</span><span class="leftMainMM2">4</span><span class="hms">小時</span>
-                </div>
+                    </div>
                 </div>
             </div>
             
@@ -59,301 +61,803 @@
                 <div class="rightInfo">
                     <span class="rightInfoNA">報名人數</span><span class="rightInfoNB">10</span>
                 </div>
+                <div class="deadline-info">
                     <span class="rightInfoBNA">8/13</span><span class="rightInfoBT">12:00</span><span class="rightInfoBBNA">截止</span>
+                </div>
             </div>
         </div>
 
+        <!-- mobal -->
+        <div class="mobile-carousel">
+            <div class="carousel-wrapper" 
+                 @touchstart="handleTouchStart" 
+                 @touchend="handleTouchEnd">
+                
+                <!-- 詳細資訊 -->
+                <div class="carousel-slide" :class="{ active: currentSlide === 0 }">
+                    <div class="infoList mobile-layout">
+                        <div>
+                            <h1>[集合時間與地點]</h1>
+                            <div class="infoListH2">
+                                <h2>8/15</h2> 
+                                <span class="time">9:00</span><span class="ampm">am</span>
+                            </div>
+                            <p class="infoListP">劍潭捷運站 1 號出口</p>
+                        </div>
+                        <div>
+                            <div class="leftMain">
+                                <p>[路程]</p>
+                                <span class="lefiMainCH">約</span><span class="leftMainMM">15</span><span class="mmkm">km</span>
+                                <p>冷水坑 → 七星公園 → 夢幻湖</p>
+                            </div>
+                            <div class="leftFooter">
+                                <p>[花費時間]</p>
+                                <span class="lefiMainCH2">約</span><span class="leftMainMM2">4</span><span class="hms">小時</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 報名資訊 -->
+                <div class="carousel-slide" :class="{ active: currentSlide === 1 }">
+                    <div class="rightInfoCard mobile-layout">
+                        <img src="@/assets/images/eventCard/cardimg1.jpg" alt="">
+                        
+                        <div class="rightInfo">
+                            <span class="rightInfoNA">報名人數</span><span class="rightInfoNB">10</span>
+                        </div>
+                        <div class="deadline-info">
+                            <span class="rightInfoBNA">8/13</span><span class="rightInfoBT">12:00</span><span class="rightInfoBBNA">截止</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 圓點指示器 -->
+            <div class="carousel-dots">
+                <span 
+                    v-for="(_, index) in 2"
+                    :key="index"
+                    :class="['dot', { active: currentSlide === index }]"
+                    @click="goToSlide(index)">
+                </span>
+            </div>
+        </div>
     </div>
-        <div class="wooniInfo">
-            <ul class="wooniUl">注意事項：
-                <li>請穿著輕便衣物與防滑鞋</li>
-                <li>建議攜帶水壺．帽子．防蚊液</li>
-                <li>活動前3日若遇大雨將公告延期</li>
-            </ul>
-        </div>
 
-            <div>
-                <button>報名參加</button>
-            </div>
+    <div class="wooniInfo">
+        <ul class="wooniUl">注意事項：
+            <li>請穿著輕便衣物與防滑鞋</li>
+            <li>建議攜帶水壺．帽子．防蚊液</li>
+            <li>活動前3日若遇大雨將公告延期</li>
+        </ul>
+    </div>
+
+    <div class="button-wrapper">
+        <button class="join-btn">報名參加</button>
+    </div>
 </div>
-<Footer/>
 </template>
 
-        <script setup>
-        import { computed } from 'vue';
-        import { useRoute } from 'vue-router';
-        import activitiesJson from '@/components/togetherItem/activities.json';
-        import NavMenu from '../An/navMenu.vue';
-        import Footer from '../An/footer.vue';
+<script setup>
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import activitiesJson from '@/components/togetherItem/activities.json';
+import NavMenu from '../An/navMenu.vue';
 
-        const route = useRoute()
-        // const json = activitiesJson()
+const route = useRoute()
+const router = useRouter()
 
-        // const id = computed(() => parseInt(route.params.id))
+// 輪播相關狀態
+const currentSlide = ref(0)
+let touchStartX = 0
+let touchEndX = 0
 
-        // const cardId = comp
+// 切換到指定頁面
+const goToSlide = (index) => {
+    currentSlide.value = index
+}
 
-        const goBack = () => {router.back()}
+// 觸控開始
+const handleTouchStart = (e) => {
+    touchStartX = e.touches[0].clientX
+}
+
+// 觸控結束
+const handleTouchEnd = (e) => {
+    touchEndX = e.changedTouches[0].clientX
+    handleSwipe()
+}
+
+// 處理滑動邏輯
+const handleSwipe = () => {
+    const swipeThreshold = 50
+    const diff = touchStartX - touchEndX
     
-        </script>
+    if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0 && currentSlide.value < 1) {
+            // 向左滑 - 下一頁
+            currentSlide.value++
+        } else if (diff < 0 && currentSlide.value > 0) {
+            // 向右滑 - 上一頁
+            currentSlide.value--
+        }
+    }
+}
 
-        <style lang="scss" scoped="scoped">
-            @import '../../assets/styles/main.scss';
-            .wrapper{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                background-color: #fff;
+const goBack = () => {
+    router.back()
+}
+</script>
+
+<style lang="scss" scoped>
+@import '../../assets/styles/main.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+}
+
+
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    width: 100%;
+
+    h1 {
+        display: flex;
+        width: 98px;
+        height: 43px;
+        font-size: 16px;
+        font-weight: bold;
+        justify-content: center;
+        align-items: center;
+        border-radius: 999px;
+        background-color: #01685E;
+        color: #ffffff;
+        margin: 0;
+    }
+
+    .closeBtn {
+        font-size: 28px;
+        font-weight: bold;
+        color: $black-14;
+        cursor: pointer;
+        transition: 0.2s ease;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        
+        &:hover {
+            color: #E13535;
+            transform: scale(1.1);
+            background-color: rgba(225, 53, 53, 0.1);
+        }
+    }
+}
+
+// top資訊區
+.topInfoImg {
+    img {
+        width: 500px;
+        height: 500px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+}
+
+.top {
+    display: flex;
+    margin-bottom: 100px;
+    max-width: 1024px;
+    width: 100%;
+}
+
+.topInfo {
+    margin-left: 80px;
+    flex: 1;
+
+    h2 {
+        width: 420px;
+        height: auto;
+        font-size: 24px;
+        font-weight: bold;
+        color: $black-14;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+}
+
+.topInfoP {
+    width: 260px;
+    height: auto;
+    display: flex;
+    margin: 20px 0;
+    border-top: solid 1px $black-14;
+    
+    p {
+        margin-top: 20px;
+        color: $black-14;
+        font-size: 20px;
+        font-weight: bold;
+        
+        &:last-child {
+            margin-left: 16px;
+        }
+    }
+}
+
+.topInfoP-2 {
+    width: 260px;
+    height: auto;
+    display: flex;
+    border-bottom: solid 1px $black-14;
+    
+    p {
+        margin-bottom: 20px;
+        color: $black-14;
+        font-size: 20px;
+        font-weight: bold;
+        
+        &:last-child {
+            margin-left: 16px;
+        }
+    }
+}
+
+// 中間活動資訊
+.mainInfo {
+    width: 100%;
+    max-width: 1024px;
+    height: auto;
+    padding: 0 20px;
+    
+    h1 {
+        width: 100%;
+        margin-bottom: 15px;
+        font-size: 24px;
+        font-weight: bold;
+        color: $black-14;
+    }
+    
+    p {
+        width: 100%;
+        line-height: 2;
+        font-size: 20px;
+    }
+}
+
+.wrapperTop {
+    margin-bottom: 100px;
+    width: 100%;
+    max-width: 1024px;
+}
+
+.cardWrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    max-width: 1024px;
+    height: 450px;
+    background-color: $ivory-gray-100;
+    border-radius: 16px;
+    margin-bottom: 100px;
+    padding: 0 20px;
+}
+
+// 桌面版顯示，手機版隱藏
+.desktop-version {
+    display: flex;
+}
+
+.mobile-carousel {
+    display: none;
+}
+
+// 下方卡片詳細
+.infoCard {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.infoList {
+    width: 100%;
+    height: 100%;
+    margin-top: 64px;
+    margin-bottom: 71px;
+    margin-left: 80px;
+    
+    h1 {
+        font-size: 20px;
+        font-weight: bold;
+        color: $black-14;
+        margin-bottom: 8px;
+    }
+    
+    .infoListH2 {
+        display: flex;
+        align-items: flex-end;
+
+        h2 {
+            font-size: 36px;
+            margin-right: 16px;
+        }
+        
+        .time {
+            font-size: 36px;
+        }
+        
+        .ampm {
+            font-size: 20px;
+        }
+    }
+}
+
+.infoListP {
+    font-size: 20px;
+    font-weight: bolder;
+    margin-top: 8px;
+    margin-bottom: 80px;
+}
+
+.leftMain {            
+    margin-bottom: 80px;  
+    
+    p {
+        line-height: 1.2;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 8px 0;
+    }
+    
+    .lefiMainCH, .mmkm {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .leftMainMM {
+        font-size: 36px;
+    }
+}
+
+.leftFooter {
+    p {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    
+    .lefiMainCH2, .hms {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .leftMainMM2 {
+        font-size: 36px;
+    }
+}
+
+.rightInfoCard {
+    margin-left: 179px;
+    
+    img {
+        display: block;
+        width: 400px;
+        height: auto;
+        margin-top: 64px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+}
+
+.rightInfo {
+    margin-top: 135px;
+    margin-bottom: 18px;
+    margin-left: 190px;
+    
+    .rightInfoNA, .rightInfoNB {
+        font-size: 24px;
+        font-weight: bold;
+        color: $black-14;
+    }
+    
+    .rightInfoNA {
+        margin-right: 12px;
+    }
+}
+
+.deadline-info {
+    margin-left: 190px;
+}
+
+.rightInfoBNA, .rightInfoBT, .rightInfoBBNA {
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 12px;
+}
+
+.rightInfoBBNA {
+    color: #E13535;
+}
+
+.wooniInfo {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 2;
+    padding: 30px;
+    margin-left: 220px;
+    align-self: flex-start;
+    width: 100%;
+    max-width: 1024px;
+    
+    .wooniUl {
+        list-style: disc inside;
+    }
+}
+
+.button-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.join-btn {
+    width: 342px;
+    height: 56px;
+    background-color: $black-14;
+    border: none;
+    border-radius: 30px;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: darken($black-14, 10%);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .wrapper {
+        padding: 0 15px;
+    }
+
+    .top {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 50px;
+    }
+
+    .topInfoImg {
+        margin-bottom: 30px;
+
+        img {
+            width: 100%;
+            max-width: 350px;
+            height: 250px;
+            border-radius: 8px;
+        }
+    }
+
+    .topInfo {
+        margin-left: 0;
+        width: 100%;
+
+        .status-header {
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+
+            h1 {
+                width: 80px;
+                height: 35px;
+                font-size: 14px;
+                order: 1;
             }
+
             .closeBtn {
-                margin-left: 100px; // 距離 h1 右邊 100px
-                font-size: 28px;
-                font-weight: bold;
-                color: $black-14;
-                cursor: pointer;
-                transition: 0.2s ease;
-            &:hover {
-                color: #E13535;
-                transform: scale(1.1);
-            }
-            }
-            // top資訊區
-            .topInfoImg {
-                img {
-                    width: 500px;
-                    height: 500px;
-                    border-radius: 10px;
-                }
-            }
-
-            .top{
-                display: flex;
-                margin-bottom: 100px;
-                // justify-content: center;
-            }
-
-            .topInfo{
-                margin-left: 80px;
-                h1{
-                    display: flex;
-                    width: 98px;
-                    height: 43px;
-                    font-size: 16px;
-                    font-weight: bold;
-                    justify-content: center;
-                    align-items: center;
-                    margin-bottom: 40px;
-                    border-radius: 999px;
-                    background-color: #01685E;
-                    color: #ffffff;
-                }
-                h2{
-                    width: 420px;
-                    height: 36px;
-                    font-size: 24px;
-                    font-weight: bold;
-                    color: $black-14;
-                    gap: 10px;
-                }
-            }
-
-            .topInfoP{
-                width: 260px;
-                height: auto;
-                display: flex;
-                margin: 20px 0;
-                border-top: solid $black-14;
-                p{
-                    margin-top: 20px;
-                    color: $black-14;
-                    font-size: 20px;
-                    font-weight: bold;
-                    gap: 16px;
-                } 
-                P:last-child{
-                    margin-left: 16px;
-                }
-            }
-
-            .topInfoP-2{
-                width: 260px;
-                height: auto;
-                display: flex;
-                border-bottom: solid $black-14;
-                p{
-                    margin-bottom: 20px;
-                    color: $black-14;
-                    font-size: 20px;
-                    font-weight: bold;
-                    gap: 16px;
-                } 
-                P:last-child{
-                    margin-left: 16px;
-                }
-            }
-            // 中間活動資訊
-            .mainInfo{
-                width: 1024px;
-                height: auto;
-                h1{
-                    width: 1004px;
-                    margin-bottom: 15px;
-                    font-size: 24px;
-                    font-weight: bold;
-                    color: $black-14;
-                }
-                p{
-                    width: 1004px;
-                    line-height: 200%;
-                    font-size: 20px;
-                }
-            }
-
-            .wrapperTop{
-                margin-bottom: 100px;
-            }
-
-            .cardWrapper{
-                // border: 1px solid red;
-                position: relative;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 1024px;
-                height: 632px;
-                background-color: $ivory-gray-100;
-                border-radius: 16px;
-                margin-bottom: 100px;
-            }
-            
-            // 下方卡片詳細
-            .infoCard{
-                display: flex;
-                justify-content: center;
-                align-items: flex-start;
-            }
-
-            .infoList{
-                width: 100%;
-                height: 100%;
-                margin-top: 64px;
-                margin-bottom: 71px;
-                margin-left: 80px;
-                // flex: 1;
-                h1{
-                    font-size: 20px;
-                    font-weight: bold;
-                    color: $black-14;
-                    margin-bottom: 8px;
-                }
-                .infoListH2{
-                    display: flex;
-                    align-items: flex-end;
-
-                    h2{
-                        font-size: 36px;
-                        margin-right: 16px;
-                    }
-                    .time{
-                        font-size: 36px;
-                    }
-                    .ampm{
-                        font-size: 20px;
-                    }
-                }
-            }
-            .infoListP{
-                font-size: 20px;
-                font-weight: bolder;
-                margin-top: 8px;
-                margin-bottom: 80px;
-            }
-
-            .leftMain{            
-                margin-bottom: 80px;  
-                p{
-                    line-height: 120%;
-                    font-size: 20px;
-                    font-weight: bold;
-                    margin: 8px 0;
-                }
-                .lefiMainCH,.mmkm{
-                    font-size: 20px;
-                    font-weight: bold;
-                }
-                .leftMainMM{
-                    font-size: 36px;
-                }
-            }
-            .leftFooter{
-                p{
-                    font-size: 20px;
-                    font-weight: bold;
-                    margin-bottom: 8px;
-                }
-                .lefiMainCH2,.kms{
-                    font-size: 20px;
-                    font-weight: bold;
-                }
-                .leftMainMM2{
-                    font-size: 36px;
-                }
-            }
-
-            .rightInfoCard{
-                margin-left: 179px;
-                img{
-                    display: block;
-                    width: 400px;
-                    height: auto;
-                    margin-top: 64px;
-                }
-            }
-            .rightInfo{
-                margin-top: 135px;
-                margin-bottom: 18px;
-                margin-left: 190px;
-                .rightInfoNA,.rightInfoNB{
-                    font-size: 24px;
-                    font-weight: bold;
-                    color: $black-14;
-                }
-                .rightInfoNA{
-                    margin-right: 12px;
-                }
-            }
-            .rightInfoBNA,.rightInfoBT,.rightInfoBBNA{
+                order: 0;
+                align-self: flex-end;
                 font-size: 24px;
-                font-weight: bold;
+                margin-bottom: 10px;
+            }
+        }
+
+        h2 {
+            font-size: 20px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .topInfoP, .topInfoP-2 {
+            width: 200px;
+            margin: 15px auto;
+            justify-content: space-between;
+
+            p {
+                font-size: 16px;
+
+                &:last-child {
+                    margin-left: 0;
+                }
+            }
+        }
+    }
+
+    // 主要資訊區手機版
+    .mainInfo {
+        padding: 0;
+        text-align: center;
+
+        h1 {
+            font-size: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+    }
+
+    .wrapperTop {
+        margin-bottom: 50px;
+    }
+
+    // 卡片區域 - 顯示輪播，隱藏桌面版
+    .cardWrapper {
+        padding: 20px 15px;
+        min-height: auto;
+        margin-bottom: 50px;
+    }
+
+    .desktop-version {
+        display: none;
+    }
+
+    .mobile-carousel {
+        display: block;
+        width: 100%;
+        position: relative;
+    }
+
+    .carousel-wrapper {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .carousel-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(100%);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+        &.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+            position: relative;
+        }
+    }
+
+    // 手機版資訊列表樣式
+    .infoList.mobile-layout {
+        margin: 0 auto;
+        width: 90%;
+        padding: 20px;
+        line-height: 1.3;
+
+        h1 {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .infoListH2 {
+            justify-content: center;
+            margin-bottom: 10px;
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .time {
+                font-size: 28px;
+            }
+
+            .ampm {
+                font-size: 16px;
+            }
+        }
+
+        .infoListP {
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .leftMain {
+            margin-bottom: 30px;
+            text-align: center;
+
+            p {
+                font-size: 18px;
+                margin: 5px 0;
+            }
+
+            .lefiMainCH, .mmkm {
+                font-size: 16px;
+            }
+
+            .leftMainMM {
+                font-size: 28px;
+            }
+        }
+
+        .leftFooter {
+            text-align: center;
+
+            p {
+                font-size: 18px;
+            }
+
+            .hms, .lefiMainCH2 {
+                font-size: 16px;
+            }
+
+            .leftMainMM2 {
+                font-size: 28px;
+            }
+        }
+    }
+
+    // 手機版右側資訊卡樣式
+    .rightInfoCard.mobile-layout {
+        margin: 0;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+
+        img {
+            width: 100%;
+            max-width: 280px;
+            margin-top: 0;
+            margin-bottom: 120px;
+        }
+
+        .rightInfo {
+            margin: 0 0 18px;
+            text-align: center;
+
+            .rightInfoNA, .rightInfoNB {
+                font-size: 20px;
+            }
+
+            .rightInfoNA {
                 margin-right: 12px;
             }
-            .rightInfoBNA{
-                margin-left: 190px;
+        }
+
+        .deadline-info {
+            margin: 0;
+            text-align: center;
+        }
+
+        .rightInfoBBNA, .rightInfoBNA, .rightInfoBT {
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .rightInfoBBNA {
+            color: #E13535;
+            margin-right: 0;
+        }
+    }
+
+    // 圓點樣式
+    .carousel-dots {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 30px;
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #01685E, #007B6F);
+                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             }
-            .rightInfoBBNA{
-                color: #E13535;
+
+            &:hover {
+                transform: scale(1.1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
             }
-            .wooniInfo{
-                font-size: 20px;
-                font-weight: bold;
-                line-height: 200%;
-                padding: 30px;
-                margin-left: 220px;
-                align-self: flex-start;
-                .wooniUl{
-                    list-style: disc;
+
+            &.active {
+                background: linear-gradient(135deg, #01685E, #007B6F);
+                transform: scale(1.2);
+                box-shadow: 0 4px 12px rgba(1, 104, 94, 0.3);
+
+                &::before {
+                    width: 4px;
+                    height: 4px;
+                    background: rgba(255, 255, 255, 0.9);
                 }
             }
-            button{
-                width: 342px;
-                height: 56px;
-                background-color: $black-14;
-                border-radius: 30px;
-                color: #ffffff;
-                font-size: 24px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-            
+        }
+    }
 
-            </style>
+    // 注意事項手機版
+    .wooniInfo {
+        padding: 20px 0;
+        font-size: 16px;
+        margin-left: 0;
+        text-align: left;
+
+        .wooniUl {
+            padding-left: 15px;
+
+            li {
+                margin-bottom: 8px;
+            }
+        }
+    }
+
+    // 按鈕手機版
+    .join-btn {
+        width: 100%;
+        max-width: 300px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .button-wrapper {
+        margin-bottom: 30px;
+        padding: 0 15px;
+    }
+}
+</style>
