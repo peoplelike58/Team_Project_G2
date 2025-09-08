@@ -15,7 +15,7 @@ const baseUrl = import.meta.env.BASE_URL
 
 // 小工具：把 JSON 裡的相對路徑拼成可用網址
 // 回傳拼好的完整路徑
-const toUrl = (p) => `${baseUrl}${p}`  
+// const toUrl = (p) => `${baseUrl}${p}`  
 //------------------------------------------------------------
 
 
@@ -249,7 +249,7 @@ function goPage(p) {
 
   <div class="result"> <!-- 搜尋結果區塊 -->
     <h2>搜尋結果</h2> <!-- 標題 -->
-    <!-- <p>有 {{ finalResults.length }} 筆路線資料</p> -->
+    <p>有 {{ finalResults.length }} 筆路線資料</p>
     <div class="headLine"></div> <!-- 分隔線 -->
 
     <p v-if="loading">資料載入中…</p> 
@@ -282,23 +282,23 @@ function goPage(p) {
         </li> 
       </ul> 
 
-      <!--
+      
       <div class="pager" v-if="finalResults.length > 0"> 
-      -->
-        <button :disabled="page === 1" @click="goPage(page - 1)">上一頁</button> <!-- 上一頁 -->
+      
+        <button :disabled="page === 1" @click="goPage(page - 1)">上一頁</button> 
         <button
           v-for="p in totalPages"
           :key="p"
           :class="{ active: p === page }"
           @click="goPage(p)"
         >{{ p }}</button> <!-- 頁碼按鈕 -->
-        <button :disabled="page === totalPages" @click="goPage(page + 1)">下一頁</button> <!-- 下一頁 -->
+        <button :disabled="page === totalPages" @click="goPage(page + 1)">下一頁</button> 
       </div> <!-- 分頁器結束 -->
     </div> <!-- 正常顯示區結束 -->
   </div> <!-- 搜尋結果區塊結束 -->
- <!-- 
+
 </div>
--->
+
 
 
 </template>
