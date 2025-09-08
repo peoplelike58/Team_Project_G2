@@ -102,7 +102,7 @@
 
       
       <!-- 立即註冊按鈕 -->
-      <button type="submit" class="submit-btn" :disabled="!isFormValid" @click="GoRegister">
+      <button type="button" class="submit-btn" :disabled="!isFormValid" @click="GoRegister">
         <!-- 暫時沒有認證，直接註冊成功 -->
         立即註冊
       </button>
@@ -175,7 +175,7 @@ const formData = ref({
 
 //機器人驗證(Yuki)
 const recaptchaToken = ref('')
-const isNotRobot = computed(() => {recaptchaToken.value !==''})
+const isNotRobot = computed(() => recaptchaToken.value !=='')
 
 
 
@@ -232,6 +232,12 @@ const GoRegister = () => {
     alert("請先完成驗證！")
     return;
   }
+
+  //YUKI本機端測試
+  // fetch('http://localhost/Mountain_Peak/LoginPage_register.php',{   
+  //＝================================================================
+
+
   fetch('/tjd102/g2/PHP/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
   method: 'POST',
   headers:{'Content-Type':'application/json'},

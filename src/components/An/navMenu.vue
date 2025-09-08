@@ -1,11 +1,12 @@
 <template>
     <header class="site-header">
+        <RouterLink to="/homepage" class="logo-text">山上見</RouterLink>
         <div class="menu-toggle" @click="toggle">
             <span class="menu-text">MENU</span>
             <span class="burger" :class="{ open: isOpen }">
-                <span class="line"></span>
-                <span class="line"></span>
-                <span class="line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
             </span>
         </div>
     </header>
@@ -14,9 +15,9 @@
         <div class="panel-close" @click="close">
             <span class="menu-text">MENU</span>
             <span class="burger" :class="{ open: isOpen }">
-                <span class="line"></span>
-                <span class="line"></span>
-                <span class="line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
             </span>
         </div>
         <div class="menu-content">
@@ -103,9 +104,9 @@ function go(item) {
 @import '@/assets/styles/main.scss';
 
 /* Header */
-.site-header{ 
+.site-header { 
     display: flex; 
-    justify-content: end; 
+    justify-content: space-between; 
     align-items: center;
 
     position: sticky;
@@ -115,7 +116,14 @@ function go(item) {
 
     background: transparent; 
 }
-.menu-toggle{ 
+.logo-text {
+    font-size: 20px;
+    font-weight: $black;
+    letter-spacing: 4px;
+    color: $black-14;
+    text-decoration: none;
+}
+.menu-toggle { 
     display: inline-flex; 
     align-items: center; 
     gap: 16px;
@@ -128,12 +136,12 @@ function go(item) {
 
     cursor: pointer;
 }
-.burger{ 
+.burger { 
     position: relative; 
     width: 64px; 
-    height: 20px; 
+    height: 20px;
 }
-.burger .line{ 
+.burger .burger-line { 
     position: absolute; 
     left: 0; 
     right: 0; 
@@ -142,23 +150,23 @@ function go(item) {
     transform-origin: center; 
     transition: transform 0.3s, opacity 0.3s; 
 }
-.burger .line:nth-child(1){ top: 0; } 
-.burger .line:nth-child(2){ top: 50%; } 
-.burger .line:nth-child(3){ bottom: 0; }
+.burger .burger-line:nth-child(1){ top: 0; } 
+.burger .burger-line:nth-child(2){ top: 50%; } 
+.burger .burger-line:nth-child(3){ bottom: 0; }
 
-.burger.open .line:nth-child(1){ transform: translateY(10px) rotate(20deg); }
-.burger.open .line:nth-child(2){ opacity: 0; }
-.burger.open .line:nth-child(3){ transform: translateY(-9px) rotate(-20deg); }
+.burger.open .burger-line:nth-child(1){ transform: translateY(10px) rotate(20deg); }
+.burger.open .burger-line:nth-child(2){ opacity: 0; }
+.burger.open .burger-line:nth-child(3){ transform: translateY(-9px) rotate(-20deg); }
 
 /* Overlay */
-.overlay{ 
+.overlay { 
     position: fixed; 
     inset: 0;
     z-index: 99999 !important; 
 }
 
 /* Panel */
-.menu-panel{
+.menu-panel {
     display: flex; 
     flex-direction: column;
     
@@ -173,7 +181,7 @@ function go(item) {
 }
 
 /* 右上角 Menu 選單 */
-.panel-close{
+.panel-close {
     display: inline-flex;
     align-items: center;
     gap: 16px;
@@ -191,7 +199,7 @@ function go(item) {
 }
 
 /* 內容 */
-.menu-content{ 
+.menu-content { 
     display: flex; 
     justify-content: space-between; 
     align-items: flex-end; 
@@ -206,13 +214,13 @@ function go(item) {
 }
 
 /* 左右欄 */
-.left-col{ 
+.left-col { 
     display: flex; 
     align-items: center; 
     gap: 64px;
 }
 
-.logo{
+.logo {
     width: 160px;
     height: auto;
 }
@@ -220,22 +228,22 @@ function go(item) {
 .about {
     max-width: 480px;
 }
-.about p{  
+.about p {  
     font-weight: $medium;
     line-height: $lineHeight-p-200;
 }
-.copyright{ 
+.copyright { 
     font-size: 14px;
 }
 
-.right-col{ 
+.right-col { 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 80%;
 }
 
-.menu-list{ 
+.menu-list { 
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -243,7 +251,7 @@ function go(item) {
     list-style: none;
 }
 
-.menu-link{
+.menu-link {
     font-weight: $bold;
     transition: opacity 0.3s ease;
     cursor: pointer;
@@ -252,10 +260,38 @@ function go(item) {
 .menu-link:hover{ opacity: 0.7; }
 
 /* RWD */
-@media (max-width:1024px){
-  .menu-content{ padding-top:80px; flex-direction:column-reverse; gap:32px; }
-  .right-col{ justify-content:flex-start; }
-  .left-col{ gap:16px; }
-  .stamp .seed{ width:78px; height:98px; font-size:11px; }
+@media (max-width: 430px) {
+    .site-header {
+        padding: 20px 24px;
+        background-color: #fffffff5;
+    }
+    .panel-close {
+        top: 20px;
+        right: 24px;
+    }
+    .menu-text {
+        display: none;
+    }
+    .burger {
+        width: 40px;
+    }
+    .menu-content {
+        padding: 0;
+        padding-bottom: 10dvh;
+        justify-content: space-around;
+    }
+    .menu-content .logo {
+        width: 80px;
+        aspect-ratio: 1/1;
+    }
+    .menu-content .about { 
+        display: none;
+    }
+    .left-col { 
+        gap: 16px; 
+    }
+    .right-col { 
+        justify-content: space-between; 
+    }
 }
 </style>

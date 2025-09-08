@@ -9,19 +9,27 @@
             </div>
             <ul class="news-list">
                 <li v-for="(item, index) in newsItems" :key="`news-${index}`" class="news-row">
-                    <time class="news-date">{{ item.date }}</time>
-  
-                    <div class="news-tag">{{ item.tag }}</div>
+                    <div class="date-tag">
+                        <time class="news-date">{{ item.date }}</time>
+                        <div class="news-tag">{{ item.tag }}</div>
+                    </div>
   
                     <a class="news-title" href="#" @click.prevent>
                         {{ item.title }}
                     </a>
                 </li>
             </ul>
-  
-            <a href="#" class="view-all" @click.prevent>
-                查看全部消息
-            </a>
+            <div class="view-box">
+                <a href="#" class="view-all" @click.prevent>
+                    查看全部消息
+                </a>
+                <button class="diag-btn" aria-label="open">
+                    <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="5" y1="19" x2="18" y2="6" class="shaft"/>
+                        <polyline points="8,5 19,5 19,16" class="head"/>
+                    </svg>
+                </button>
+            </div>
         </div>
   
         <!-- Right: circular badge -->
@@ -105,6 +113,11 @@ onMounted(() => {
     max-width: 1000px;
     margin: 0 auto;
     padding: 100px 24px 120px;
+
+      @media (max-width: 980px) {
+      flex-direction: column;
+      align-items: stretch;
+}
 }
 
   
@@ -153,6 +166,17 @@ onMounted(() => {
     gap: 32px;
 }
 
+.date-tag {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    transition: gap 0.4s ease;
+}
+
+.news-row:hover .date-tag {
+    gap: 32px;
+}
+
 .news-date {
     font-size: $pcFont-label;
     font-weight: $semiBold;
@@ -162,6 +186,7 @@ onMounted(() => {
 .news-tag {
     padding: 8px 0;
     width: 100px;
+    min-width: 80px;
     background: $tag;
     color: #fff;
     font-size: 14px;
@@ -178,14 +203,32 @@ onMounted(() => {
     color: $black-14;
     text-decoration: none;
     transition: opacity 0.4s ease;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; 
 }
 .news-row:hover .news-title{
     opacity: 0.7;
 }
-  
-.view-all {
+
+.view-box {
     display: flex;
-    align-items: center;
+    align-items: end;
+    width: fit-content;
+    margin: 0 auto;
+    gap: 8px;
+
+    transition: gap 0.4s ease;
+}
+
+.view-box:hover {
+    gap: 16px;
+}
+  
+.view-box .view-all {
+    display: flex;
+    align-items: end;
     gap: 16px;
     width: fit-content;
     margin: 0 auto;
@@ -195,6 +238,7 @@ onMounted(() => {
     color: $black-14;
     text-decoration: 1px underline;
     text-underline-offset: 8px;
+    line-height: 150%
 }
   
 /* ---- Badge ---- */
@@ -241,21 +285,93 @@ onMounted(() => {
     transform-origin: 50% 50%;
 }
 
-/* ---- RWD ---- */
-  @media (max-width: 980px) {
-    .board-wrap {
-      flex-direction: column;
-      align-items: stretch;
+.view-box .diag-btn{
+    --size: 40px;        /* 按鈕尺寸 */
+    --icon: 24px;        /* 箭頭大小 */
+    --fly: 24px;         /* 飛出距離（右上 / 左下） */
+    --dur: 720ms;        /* 動畫時間 */
+  
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    background-color: $tag;
+    border: 0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+  
+.view-box .arrow{
+    width: var(--icon);
+    height: var(--icon);
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    will-change: transform, opacity;
+}
+  
+.view-box .shaft, .head{
+    stroke: #fff;
+    stroke-width: 2px;
+    stroke-linecap: square;
+    stroke-linejoin: square;
+    fill: none;
+}
+
+.view-box:hover .arrow,
+.view-box:focus-visible .arrow{
+    animation: boomerang45 var(--dur) cubic-bezier(.2,.7,.2,1) 1;
+}
+  
+@keyframes boomerang45 {
+    0% {
+        transform: translate(0, 0);
+        opacity: 1;
     }
-    .badge-column {
-      order: -1; /* 手機先看到徽章 */
-      min-height: 300px;
+    55% {
+        transform: translate(var(--fly), calc(var(--fly) * -1)); /* 右上 */
+        opacity: 0;
+    }
+    56% {
+        transform: translate(calc(var(--fly) * -1), var(--fly));  /* 左下 */
+        opacity: 0;
+    }
+    100% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+}
+
+/* ---- RWD ---- */
+@media (max-width: 430px) {
+    .board-wrap {
+        flex-direction: column;
+        align-items: stretch;
+
+        padding: 64px 24px;
+        box-sizing: border-box;
+    }
+    .news-row {
+        padding: 20px 8px;
+    }
+    .date-tag {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    .news-row:hover .date-tag {
+        gap: 12px;
+    }
+    .news-date {
+        text-align: center;
+    }
+    .news-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        white-space: wrap;
     }
     .badge-wrap {
-      width: 280px;
-      height: 280px;
-      margin: 0 auto;
+        display: none;
     }
-  }
+}
 </style>
   

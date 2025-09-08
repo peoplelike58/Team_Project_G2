@@ -147,5 +147,10 @@ function handleCtaClick() {
         text-decoration: 1px underline;
         text-underline-offset: 6px;
     }
-    
+
+    @media (max-width: 430px) {
+        .activity-card {
+            min-width: 280px;
+        }
+    }
 </style>

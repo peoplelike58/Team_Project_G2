@@ -106,14 +106,20 @@
     cursor: pointer;
 }
   
-  /* RWD */
-  @media (max-width: 768px) {
+/* RWD */
+@media (max-width: 430px) {
     .footer-main {
-      flex-direction: column;
-      gap: 24px;
+        flex-direction: column;
+        gap: 24px;
     }
     .footer-left {
-      justify-content: flex-start;
+        justify-content: flex-start;
     }
-  }
- </style>  
+    .icon-wrapper {
+        display: none;
+    }
+    .footer-note {
+        line-height: $lineHeight-p-150;
+    }
+}
+</style>  
