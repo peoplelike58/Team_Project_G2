@@ -101,8 +101,7 @@
     /* 指示點 */
     .dots {
         position: absolute;
-        left: 0;
-        right: 0;
+        left: 80px;
         bottom: 40px;
         display: flex;
         justify-content: center;
@@ -121,5 +120,11 @@
     }
     
     .dot.active { background: #fff; }
+
+    @media (max-width: 430px) {
+        .dot {
+            display: none;
+        }
+    }
 </style>
   

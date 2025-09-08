@@ -125,6 +125,7 @@
     
     backface-visibility: hidden;
     transform: translateZ(0);
+    overflow: hidden;
 }
 
 .title {
@@ -245,6 +246,58 @@
 .card3 {
     background-color: $ivory-gray-100;
     z-index: 3;
+}
+
+@media (max-width: 430px) {
+    .stack-wrap{
+        height: 100dvh;
+    }
+    .stack-wrap .badge {
+        display: none;
+    }
+    .stack-wrap .card {
+        margin-top: 60px;
+        height: 86%;
+    }
+    .card-inner-1 {
+        flex-direction: column;
+        justify-content: center;
+        gap: 32px;
+
+        padding: 0 24px;
+    }
+    .card1-left-col .title {
+        font-size: $pcFont-bigTitle-m;
+    }
+    .card1-right-col {
+        align-self: flex-start;
+        width: 86%;
+    }
+    .card1-right-col .content-title {
+        display: none;
+    }
+    .card-inner-2 {
+        flex-direction: column;
+        gap: 48px;
+        padding: 0 64px;
+    }
+    .card-inner-2 .vertical-text {
+        writing-mode: horizontal-tb;
+        font-size: $pcFont-H4;
+        letter-spacing: 0.2rem;
+    }
+    .card-inner-2 .polaroid {
+        width: 168px;
+        padding: 8px 8px 48px;
+
+        border-radius: 4px;
+    }
+    .card-inner-2 .polaroid img {
+        height: 192px;
+    }
+    .card-inner-2 .left-tilt {
+        align-self: flex-start;
+    }
 }
 
 </style>

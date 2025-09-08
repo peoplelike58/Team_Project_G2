@@ -4,7 +4,6 @@
             class="reel"
             v-for="(targetNumber, index) in digits"
             :key="index"
-            :style="{ '--height': '64px' }"
             :ref="reelElement => trackRefs[index] = reelElement">
             <div class="track">
                 <!-- 先滾滿 1 圈（0~9） -->
@@ -52,7 +51,8 @@
             const trackElement = reelElement.querySelector('.track')
   
             const loops = 1
-            const height = 64
+            const isMobile = window.matchMedia('(max-width: 430px)').matches
+            const height = isMobile ? 36 : 72
             const duration = 1.7
             const distance = -((loops * 10) + targetNumber) * height
   
@@ -85,7 +85,7 @@
     .reel {
         width: fit-content;
         padding: 0 2px;
-        height: var(--height);
+        height: 80px;
         overflow: hidden;
         display: inline-block;
         text-align: center;
@@ -97,8 +97,18 @@
     }
   
     .digit {
-        height: var(--height);
-        font-size: 64px;
-        line-height: var(--height);
+        height: 72px;
+        font-size: clamp(36px, 6vw, 72px);
+        line-height: 72px;
+    }
+
+    @media (max-width: 430px){
+        .reel {
+            height: 48px;
+        }
+        .digit {
+            height: 36px;
+            line-height: 36px;
+        }
     }
 </style>  
