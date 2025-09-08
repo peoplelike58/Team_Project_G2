@@ -26,7 +26,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div ref="vantaRef" class="wrapper" style="width:100%; height:100vh;">
+    <div ref="vantaRef" class="wrapper">
         <div class="btn-row">
             <RouterLink to="/homepage" class="view-btn has-badge">
                 <span class="label">前台</span>
@@ -75,6 +75,9 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     position: relative;
+
+    width:100%;
+    height:100vh;
 }
 
 .btn-row{
@@ -96,6 +99,7 @@ onBeforeUnmount(() => {
 
 .logo{
     width: 80px;
+    height: 80px;
     aspect-ratio: 1/1;
 }
 
@@ -167,5 +171,28 @@ onBeforeUnmount(() => {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+@media (max-width: 430px) {
+    .wrapper{
+        box-sizing: border-box;
+        align-items: flex-start;
+    }
+    .btn-row{
+        flex-direction: column;
+        gap: 64px;
+        margin-top: 10dvh;
+    }
+    .bot-container {
+        flex-direction: column;
+        gap: 32px;
+        padding: 0 24px;
+    }
+    .copy-right {
+        width: 100%;
+    }
+    .badge-svg {
+        opacity: 1;
+    }
 }
 </style>

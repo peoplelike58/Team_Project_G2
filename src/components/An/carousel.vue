@@ -79,7 +79,7 @@
         grid-template-areas: "canvas";
 
         width: 100%;
-        height: 100dvh;
+        height: calc(100dvh - 52px);
 
         box-sizing: border-box;
     }
@@ -89,8 +89,6 @@
     .hero-bg {
         width: 100%;
         height: 100%;
-        
-        // opacity: 0;
     }
     
     .hero-bg :deep(img) {
@@ -120,7 +118,7 @@
         color: #fff;
     }
   
-    .left {
+    .hero-content .left {
         display: flex;
         flex-direction: column;
         gap: 6px;
@@ -129,13 +127,13 @@
     .badge {
         opacity: 0.9;
         font-weight: $semiBold;
-        font-size: 32px;
+        font-size: clamp(20px, 3vw, 32px);
         text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
 
     .latin {
         opacity: 0.9;
-        font-size: 64px;
+        font-size: clamp(32px, 6vw, 56px);
         font-weight: $bold;
         line-height: $lineHeight-title-120;
         text-shadow: 0 1px 8px rgba(0,0,0,0.25);
@@ -143,7 +141,7 @@
 
     .subtitle {
         opacity: 0.9;
-        font-size: 32px;
+        font-size: clamp(20px, 3vw, 32px);
         font-weight: $semiBold;
         line-height: $lineHeight-title-120;
         text-shadow: 0 1px 8px rgba(0,0,0,0.25);
@@ -165,7 +163,7 @@
         text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
   
-    .right {
+    .hero-content .right {
         display: flex;
         align-items: center;
         gap: 24px;
@@ -176,7 +174,7 @@
         font-weight: 900;
         writing-mode: vertical-rl;
         letter-spacing: 0.5rem;
-        font-size: 160px;
+        font-size: clamp(72px, 16vw, 144px);
         text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
   
@@ -185,20 +183,38 @@
         opacity: 0.9;
         margin: 0;
         font-weight: $bold;
-        font-size: 40px;
+        font-size: clamp(24px, 4vw, 40px);
         text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
 
-    @media (max-width: 1024px) {
-        .hero-content {
-            grid-template-columns: 1fr;
-            align-content: end;
-            gap: 24px;
-            padding: 0 40px;
+    @media (max-width: 430px) {
+        .hero {
+            height: calc(100dvh - 60px);
+            position: relative;
         }
-        .right { justify-items: start; }
-        .zh-vertical {
-            font-size: clamp(56px, 20vw, 140px);
+        .hero-content {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        .hero-content .left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .hero-content .right { 
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .cta{
+            position: absolute;
+            left: 50%;
+            bottom: 40px;
+            transform: translateX(-50%);
+
+            font-size: 20px;
+            text-underline-offset: 8px;
         }
     }
 </style>  

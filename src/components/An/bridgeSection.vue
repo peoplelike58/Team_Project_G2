@@ -20,7 +20,7 @@
         margin-right: 160px;
         width: 100%;
         max-width: 640px;
-        height: 100vh;
+        height: 90vh;
     }
 
     .title {
@@ -34,5 +34,22 @@
     .text {
         font-weight: $semiBold;
         line-height: $lineHeight-p-200;
+    }
+
+    @media (max-width: 430px) {
+        .section-main {
+            height: 80vh;
+            padding: 0 24px;
+            box-sizing: border-box;
+
+            align-items: flex-start;
+        }
+        .title {
+            font-size: $pcFont-H1-l;
+            font-weight: $bold;
+        }
+        .subtitle {
+            line-height: $lineHeight-title-120;
+        }
     }
 </style>

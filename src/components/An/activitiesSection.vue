@@ -24,6 +24,12 @@
             <!-- 底部 CTA -->
             <footer class="section-footer">
                 <RouterLink to="/together" class="view-all">查看活動一覽</RouterLink>
+                <button class="diag-btn" aria-label="open">
+                    <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="5" y1="19" x2="18" y2="6" class="shaft"/>
+                        <polyline points="8,5 19,5 19,16" class="head"/>
+                    </svg>
+                </button>
             </footer>
         </div>
     </section>
@@ -37,22 +43,13 @@ const props = defineProps({
     items: { type: Array, default: () => [] },    // 靜態 JSON 轉來的陣列
     limit: { type: Number, default: 3 },          // 首頁顯示 3 張
 })
-  
-// 取前 limit 筆，並把 imageUrl 轉為可用 URL
-const displayItems = computed(() =>
-    (props.items).slice(0, props.limit).map(item => ({
-        ...item, imageUrl: transformImageUrl(item.imageUrl)
-    }))
-)
-
-// URL 轉址
-const transformImageUrl = (url) => {
-    // '@/assets/...' 轉成 /src/assets/... 再用 new URL 解析（讓 Vite 參與打包）
-    const normalized = url.replace('@/assets/', '/src/assets/')
-    return new URL(normalized, import.meta.url).href
-}
 
 const emit = defineEmits(['view-all', 'cta-click'])  
+
+const displayItems = computed(() => {
+   const list = Array.isArray(props.items) ? props.items : []
+   return props.limit > 0 ? list.slice(0, props.limit) : list
+})
   
 function handleCtaClick(item) {
     emit('cta-click', item)
@@ -91,20 +88,103 @@ function handleCtaClick(item) {
 .card-container {
     display: flex;
     margin: 0 auto;
-    gap: 20px;
+    gap: 24px;
 }
 .section-footer { 
-    display: flex; 
-    justify-content: center;
+    display: flex;
+    align-items: end;
+    width: fit-content;
+    margin: 0 auto;
+    gap: 8px;
+
+    transition: gap 0.4s ease;
 }
-.view-all {  
+.section-footer:hover {
+    gap: 16px;
+}
+.section-footer .view-all {  
     color: $black-14;
     font-size: $pcFont-H3;
     font-weight: $bold;
     text-decoration: 1px underline;
     text-underline-offset: 10px;
+    line-height: 150%;
     cursor: pointer;
 }
 
+.section-footer .diag-btn{
+    --size: 40px;        /* 按鈕尺寸 */
+    --icon: 24px;        /* 箭頭大小 */
+    --fly: 24px;         /* 飛出距離（右上 / 左下） */
+    --dur: 720ms;        /* 動畫時間 */
+  
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    background-color: $tag;
+    border: 0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+  
+.section-footer .arrow{
+    width: var(--icon);
+    height: var(--icon);
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    will-change: transform, opacity;
+}
+  
+.section-footer .shaft, .head{
+    stroke: #fff;
+    stroke-width: 2px;
+    stroke-linecap: square;
+    stroke-linejoin: square;
+    fill: none;
+}
+
+.section-footer:hover .arrow,
+.section-footer:focus-visible .arrow{
+    animation: boomerang45 var(--dur) cubic-bezier(.2,.7,.2,1) 1;
+}
+  
+@keyframes boomerang45 {
+    0% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+    55% {
+        transform: translate(var(--fly), calc(var(--fly) * -1)); /* 右上 */
+        opacity: 0;
+    }
+    56% {
+        transform: translate(calc(var(--fly) * -1), var(--fly));  /* 左下 */
+        opacity: 0;
+    }
+    100% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 430px) {
+    .activity-section .section-header{
+        margin-left: 24px;
+    }
+    .activity-section .view-all{
+        font-size: $pcFont-H4;
+        text-underline-offset: 8px;
+    }
+    .activity-section .card-container{
+        width: 100%;
+        padding: 0 24px;
+        box-sizing: border-box;
+
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+}
 </style>
   
