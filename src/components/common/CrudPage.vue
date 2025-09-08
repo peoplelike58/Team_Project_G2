@@ -70,7 +70,11 @@ const props = defineProps({
   sampleData: { type: Array, default: () => [] }
 })
 
-const data = ref([...props.sampleData])
+//改成用computed更新時自動刷新(YUKI)
+const data = computed(() => props.sampleData)
+//==========================================
+
+// const data = ref([...props.sampleData])
 const keyword = ref('')
 const dialogVisible = ref(false)
 const dialogMode = ref('create')

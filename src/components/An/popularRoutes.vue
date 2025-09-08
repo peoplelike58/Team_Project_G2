@@ -3,7 +3,7 @@
     <section class="popular-routes">
         <header class="section-header">
             <h1 class="section-title"># 熱門路線</h1>
-            <div class="section-subtitle">POPULAR ROUTES</div>
+            <h3 class="section-subtitle">POPULAR ROUTES</h3>
         </header>
 
         <div class="content">
@@ -62,13 +62,26 @@
                             <a class="name" href="#">{{ route.name }}</a>
                         </div>
                         <button class="open">
-                            ↗
+                            <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
+                                <!-- 斜線 -->
+                                <line x1="5" y1="19" x2="18" y2="6" class="shaft"/>
+                                <!-- 箭頭 -->
+                                <polyline points="8,5 19,5 19,16" class="head"/>
+                            </svg>
                         </button>
                     </li>
                 </ul>
             </aside>
         </div>
-        <RouterLink to="/routes" class="cta">規劃你的路線</RouterLink>
+        <div class="cta-box">
+            <RouterLink to="/routes" class="cta">規劃你的路線</RouterLink>
+            <button class="diag-btn" aria-label="open">
+                <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
+                    <line x1="5" y1="19" x2="18" y2="6" class="shaft"/>
+                    <polyline points="8,5 19,5 19,16" class="head"/>
+                </svg>
+            </button>
+        </div>
     </section>
 </template>
 
@@ -329,7 +342,7 @@ onMounted(() => {
     cursor: pointer;
 }
 
-.cta {
+.cta-box .cta {
     display: block;
     width: fit-content;
     margin: 0 auto;
@@ -339,23 +352,139 @@ onMounted(() => {
     font-weight: $extraBold;
     text-decoration: 1px underline;
     text-underline-offset: 10px;
+    line-height: 150%;
     cursor: pointer;
 }
 
+//-------------------- route-item 箭頭 --------------------
+.open{
+    --size: 32px;
+    --shift: 4px; /* hover 時往右上位移量 */
+
+    width: var(--size);
+    height: var(--size);
+    background: $tag;
+    border: none;
+    border-radius: 4px;
+    display: inline-grid;
+    place-items: center;
+    overflow: hidden;
+    transition: transform 0.4s ease;
+
+    position: relative;
+}
+
+.open .arrow{
+    width: 20px;
+    height: 20px;
+    transition: transform 0.4s ease;
+
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+}
+
+.open .shaft, .head{
+    stroke: #fff;
+    stroke-width: 2px;
+    stroke-linecap: square;
+    stroke-linejoin: square;
+    fill: none;
+}
+
+.route-item:hover .open .arrow{
+    transform: translate(var(--shift), calc(var(--shift) * -1)); /* 右上 */
+}
+
+//-------------------- cta 箭頭 --------------------
+
+.cta-box {
+    display: flex;
+    align-items: end;
+    width: fit-content;
+    margin: 0 auto;
+    gap: 8px;
+
+    transition: gap 0.4s ease;
+}
+
+.cta-box:hover {
+    gap: 16px;
+}
+
+.cta-box .diag-btn{
+    --size: 40px;        /* 按鈕尺寸 */
+    --icon: 24px;        /* 箭頭大小 */
+    --fly: 24px;         /* 飛出距離（右上 / 左下） */
+    --dur: 720ms;        /* 動畫時間 */
+  
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    background-color: $tag;
+    border: 0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+  
+.cta-box .arrow{
+    width: var(--icon);
+    height: var(--icon);
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    will-change: transform, opacity;
+}
+  
+.cta-box .shaft, .head{
+    stroke: #fff;
+    stroke-width: 2px;
+    stroke-linecap: square;
+    stroke-linejoin: square;
+    fill: none;
+}
+
+.cta-box:hover .arrow,
+.cta-box:focus-visible .arrow{
+    animation: boomerang45 var(--dur) cubic-bezier(.2,.7,.2,1) 1;
+}
+  
+@keyframes boomerang45 {
+    0% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+    55% {
+        transform: translate(var(--fly), calc(var(--fly) * -1)); /* 右上 */
+        opacity: 0;
+    }
+    56% {
+        transform: translate(calc(var(--fly) * -1), var(--fly));  /* 左下 */
+        opacity: 0;
+    }
+    100% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+}
+
 /* 響應式：直欄疊放 */
-@media (max-width: 960px) {
-  .content {
-    flex-direction: column;
-  }
-  .right {
-    width: 100%;
-    border-left: none;
-    border-top: var(--divider);
-    padding-left: 0;
-    padding-top: var(--gap);
-  }
-  .meta {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 430px) {
+    .popular-routes .left {
+        display: none;
+    }
+    .popular-routes .right {
+        width: 100%;
+        padding: 0 16px;
+        box-sizing: border-box;
+        border-left: none;
+    }
+    .right .route-list {
+        width: 100%;
+    }
+    .cta {
+        font-size: $pcFont-H4;
+        text-underline-offset: 8px;
+    }
 }
 </style>
