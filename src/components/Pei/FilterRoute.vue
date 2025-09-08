@@ -11,11 +11,11 @@ import axios from 'axios';
 
 // 先把 BASE_URL 存成變數，避免在 template 直接寫 import.meta
 // 取得部署子目錄，如 '/tjd102/g2/' 
-// const baseUrl = import.meta.env.BASE_URL                              
+const baseUrl = import.meta.env.BASE_URL                              
 
 // 小工具：把 JSON 裡的相對路徑拼成可用網址
 // 回傳拼好的完整路徑
-// const toUrl = (p) => `${baseUrl}${p}`  
+const toUrl = (p) => `${baseUrl}${p}`  
 //------------------------------------------------------------
 
 
@@ -47,7 +47,7 @@ const fetchTrails = async () => {
   try {
     const resp = await axios.get(API_URL)
     trails.value = resp.data
-    console.log(resp.data);
+    console.log(trails.value);
     
     
 
@@ -58,7 +58,7 @@ const fetchTrails = async () => {
 }
 
 
- 
+
 
 onMounted(() => {                                           
   fetchTrails()                                           
@@ -266,7 +266,8 @@ function goPage(p) {
         :key="trail.MOUNTAIN_ID"
         > <!-- 只渲染當前頁的8張卡片 -->
           <div class="imgBox">
-            <!-- <img :src="toUrl(trail.img)" :alt="trail.name" /> -->
+            <img :src="`${baseUrl}images/Mountain/${trail.MOUNTAIN_ID}/${trail.IMAGE}`" :alt="trail.MOUNTAIN_NAME" />
+          
           </div>
 
           <!-- <img :src="trail.img" :alt="trail.name" />  -->
