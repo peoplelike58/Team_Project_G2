@@ -9,9 +9,9 @@
 
             <!-- 圖片 -->
             <slot name="image" :item="item" :index="index">
-                <!-- <img class="ac-img" src="@/assets/images/eventCard/cardimg1.jpg"
-                loading="lazy"/> -->
-                <img class="ac-img" :src="item.imageUrl" loading="lazy"/>
+                <img class="ac-img" src="@/assets/images/eventCard/cardimg1.jpg"
+                loading="lazy"/>
+                <!-- <img class="ac-img" :src="item.imageUrl" loading="lazy"/> -->
             </slot>
 
             <!-- 標題 -->
@@ -90,7 +90,7 @@
         justify-content: space-between;
 
         width: 100%;
-        max-width: 270px;
+        max-width: 330px;
         padding: 40px;
         border: 1px dashed $black-14;
         border-radius: 16px;

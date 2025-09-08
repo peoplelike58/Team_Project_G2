@@ -105,6 +105,11 @@ onMounted(() => {
     max-width: 1000px;
     margin: 0 auto;
     padding: 100px 24px 120px;
+
+      @media (max-width: 980px) {
+      flex-direction: column;
+      align-items: stretch;
+}
 }
 
   
