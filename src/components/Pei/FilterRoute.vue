@@ -6,6 +6,7 @@ import axios from 'axios';
 
 
 
+
 //-------------------JSON-------------------------------------
 // import trailsData from '@/assets/json/trails.json'
 
@@ -40,7 +41,7 @@ const trails = ref([])
 
 // ----------------PHP---------------------------
 // API 基本路徑
-const API_URL = 'http://localhost/houShan/filterCard.php'
+const API_URL = `${import.meta.env.VITE_AJAX_URL}/filterCard.php`
 
 const fetchTrails = async () => {
   
@@ -68,13 +69,13 @@ onMounted(() => {
 
 
 // --------- 篩選條件按鈕資料與目前狀態 ---------
-const regionBtns = ['全部','北部','中部','南部','東部'] // 區域選項
+const areaBtns = ['全部','北部','中部','南部','東部'] // 區域選項
 const trafficBtns = ['全部','可乘大眾運輸','須開車前往'] // 交通選項
 const timeBtns = ['全部','3小時內','3-6小時','6-12小時','12小時-2天','2天以上'] // 時間選項
 const typeBtns = ['全部','百岳','小百岳','其他山岳','必訪步道'] // 類型選項
 
 //預設一開始篩選吧都為「全部」
-const regionNow = ref(regionBtns[0]) // 當前選取區域
+const areaNow = ref(areaBtns[0]) // 當前選取區域
 const trafficNow = ref(trafficBtns[0]) // 當前選取交通
 const timeNow = ref(timeBtns[0]) // 當前選取時間
 const typeNow = ref(typeBtns[0]) // 當前選取類型
@@ -84,12 +85,12 @@ const typeNow = ref(typeBtns[0]) // 當前選取類型
 // 1 條件過濾
 const filteredTrails = computed(() => {
   return trails.value.filter((trail) => {
-    const matchRegion = regionNow.value === '全部' || trail.filter.includes(regionNow.value)
-    const matchTraffic = trafficNow.value === '全部' || trail.filter.includes(trafficNow.value)
-    const matchTime = timeNow.value === '全部' || trail.filter.includes(timeNow.value)
-    const matchType = typeNow.value === '全部' || trail.type === typeNow.value
+    const matchArea = areaNow.value === '全部' || trail.AREA.includes(areaNow.value)
+    const matchTraffic = trafficNow.value === '全部' || trail.TRAFFIC.includes(trafficNow.value)
+    const matchTime = timeNow.value === '全部' || trail.TIME.includes(timeNow.value)
+    const matchType = typeNow.value === '全部' || trail.TYPE === typeNow.value
 
-    return matchRegion && matchTraffic && matchTime && matchType
+    return matchArea && matchTraffic && matchTime && matchType
   })
 })
 
@@ -101,10 +102,10 @@ const finalResults = computed(() => {
 
   return filteredTrails.value.filter((trail) => {
     return (
-      trail.name.includes(keyword) || 
-      trail.region.includes(keyword) ||
-      trail.type.includes(keyword)||
-      trail.filter.some(tag => tag.includes(keyword))
+      trail.MOUNTAIN_NAME.includes(keyword) || 
+      trail.AREA.includes(keyword) ||
+      trail.TYPE.includes(keyword)
+      
       
     )
   })
@@ -146,12 +147,12 @@ function goPage(p) {
       </span><!-- 區域標籤 -->
       <div class="btnGroup">
         <button 
-        v-for="regionBtn in regionBtns" 
-        :key="regionBtn"
-        :class="{ active : regionNow === regionBtn }"
-        @click="() => { regionNow = regionBtn; page = 1 }"
+        v-for="areaBtn in areaBtns" 
+        :key="areaBtn"
+        :class="{ active : areaNow === areaBtn }"
+        @click="() => { areaNow = areaBtn; page = 1 }"
         >
-          {{ regionBtn }} <!--北/中/南-->
+          {{ areaBtn }} <!--北/中/南-->
 
         </button>
       </div>
