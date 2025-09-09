@@ -218,6 +218,9 @@ onMounted(() => {
           
           .avatar-preview {
             @include product_card_img(100px, 100px, 50%);
+            & > img{
+              height: 100%;
+            }
             flex-shrink: 0;
             background-color: $bg-gray;
           }
