@@ -17,7 +17,7 @@
             style="z-index: 20;
             "/>
         </div>
-        <p>今年目標已完成  <span>{{ item.done }}</span>  /  {{ item.goal }}  座</p>
+        <p>目標已完成  <span>{{ item.done }}</span>  /  {{ item.goal }}  座</p>
         <div class="flagArea">
             <div class="Progressbar">
             </div>
@@ -50,13 +50,13 @@ const { goals } = storeToRefs(goalStore)
     // 即時更新目標值（不關閉彈窗）
     const updateGoal = (item, newGoal) => {
         goalStore.updateGoal(item.kind, newGoal)
+
+        item.openSetgoal = false
     }
 
     // 關閉 <mychallenge_setgoal />
     const closeSetgoal = (item, data) => {
-        if (data && data.goal) {
-            goalStore.updateGoal(item.kind, data.goal)
-        }
+
         item.openSetgoal = false
     }
 

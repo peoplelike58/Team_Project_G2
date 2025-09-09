@@ -1,0 +1,44 @@
+<?php
+    // 若前端在 http://localhost:5173
+    header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    //MySQL相關資訊
+    $db_host = "127.0.0.1";
+    $db_user = "root";
+    $db_pass = "password";
+    $db_select = "hou_Shan";
+
+    //建立資料庫連線物件
+    $dsn = "mysql:host=".$db_host.";dbname=".$db_select.";charset=utf8";
+    $pdo = new PDO($dsn, $db_user, $db_pass);
+
+    //---------------------------------------------------
+
+    //建立SQL語法
+    $sql = "SELECT MB.MEMBER_ID,
+                   MB.NICKNAME                     AS name,
+                   COALESCE(MB.IMAGE, '')          AS image,
+                   COUNT(DISTINCT F.MOUNTAIN_ID)   AS climb_count,
+                   SUM(F.HEIGHT)                   AS height,
+                   SUM(F.DISTANCE)                 AS kilo,
+                   SUM(F.DURATION)                 AS time,
+                   SUM(CASE WHEN MT.TYPE='大百岳'   THEN 1 ELSE 0 END) AS big,
+                   SUM(CASE WHEN MT.TYPE='小百岳' THEN 1 ELSE 0 END) AS small
+                   FROM FOOT F
+                   JOIN MOUNTAIN MT ON MT.MOUNTAIN_ID = F.MOUNTAIN_ID
+                   JOIN MEMBER  MB ON MB.MEMBER_ID    = F.MEMBER_ID
+                   GROUP BY MB.MEMBER_ID
+                   ORDER BY climb_count DESC, height DESC, kilo DESC, time DESC
+                   LIMIT 5;";
+
+    $stmt = $pdo->query($sql);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode($rows);
+
+?>

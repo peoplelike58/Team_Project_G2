@@ -57,7 +57,7 @@ import axios from 'axios'
     // ])
     
     const BASE = import.meta.env.BASE_URL; 
-    const jsonPath = `${BASE}json/mychallenge/ranks.json`;
+    const jsonPath = `http://localhost/php/mychallenge_rank.php`;
 
     // 控制手風琴開關
     const openItem = ref(null)
@@ -185,7 +185,6 @@ import axios from 'axios'
                 margin-left: 128px;
             }
         }
-
         p{
             font-size: $pcFont-p-s;
             font-weight: $bold;
@@ -197,6 +196,7 @@ import axios from 'axios'
                 line-height: $lineHeight-title-120;
             }
         }
+
     }
 
     .dropdown-enter-active{

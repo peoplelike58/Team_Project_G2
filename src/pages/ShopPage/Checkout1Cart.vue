@@ -3,22 +3,43 @@ import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
 import brandFooter from '@/components/An/footer.vue'
 import { reactive, ref, computed, watch } from 'vue'
-import { ArrowDown } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'  ///是全域訊息（toast）API。
+import { ArrowDown } from '@element-plus/icons-vue'//是elementplus圖示元件
+import { ElMessage } from 'element-plus'  ///是全域提示訊息（toast）API。
 import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cart';
 
+const CartStore = useCartStore()
 const router = useRouter()
-const items = reactive([
-  { id: 1, name: '折疊雙節望遠鏡', size: 'S', color: '紅', price: 3200, qty: 1, image: 'https://images.unsplash.com/photo-1516223725307-6f76b9ec8742?w=600&fit=crop' },
-  { id: 2, name: '折疊雙節望遠鏡', size: 'S', color: '紅', price: 3200, qty: 1, image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&fit=crop' },
-])
+// const items = reactive([
+//   { id: 1, name: '折疊雙節望遠鏡', size: 'S', color: '紅', price: 3200, qty: 1, image: 'https://images.unsplash.com/photo-1516223725307-6f76b9ec8742?w=600&fit=crop' },
+//   { id: 2, name: '折疊雙節望遠鏡', size: 'S', color: '紅', price: 3200, qty: 1, image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&fit=crop' },
+// ])
 
 // 勾選
-const checkedMap = reactive(Object.fromEntries(items.map(i => [i.id, true])))
+const checkedMap = reactive(Object.fromEntries(CartStore.cartItems.map(i => [i.id, true])))  
+//.map把一個陣列「逐一」轉換成「另一個陣列」,轉換成[[1,true],[2,true]...],Object.fromEntries(...)把陣列變回物件=> { "1": true, "2": true }，checkedMap變成物件，記錄每個商品的勾選狀態
 const allChecked = ref(true)
-watch(() => Object.values(checkedMap), vals => allChecked.value = vals.every(Boolean), { deep: true })
-function toggleAll(){ Object.keys(checkedMap).forEach(k => (checkedMap[k] = allChecked.value)) }
-function remove(id){ const idx = items.findIndex(i => i.id === id); if (idx>-1){ items.splice(idx,1); delete checkedMap[id] } }
+
+//watch(要監聽的東西, 當改變時要執行的函式, 選項)：監聽資料變化，當資料改變時執行函式
+watch(() =>                     
+    Object.values(checkedMap),           //Object.values(): 取得物件所有的值
+    vals => allChecked.value = vals.every(Boolean),      //vals.every(Boolean): 檢查陣列中是否所有值都為 true，最後把結果賦值給 allChecked.value。
+    { deep: true}                        //deep: true: 物件參數 (options object)，深度監聽物件內部的值的變化，我需要監聽它裡面每個 key 的變動（深層追蹤），不只監聽最外層
+)
+
+
+function toggleAll(){ 
+    Object.keys(checkedMap).forEach(k => (checkedMap[k] = allChecked.value))
+    //Object.keys(): 取得物件的所有key， 
+}
+
+function remove(id){ 
+    const idx = CartStore.cartItems.findIndex(i => i.id === id); 
+    if (idx>-1){ CartStore.cartItems.splice(idx,1); 
+        delete checkedMap[id] } 
+}
+//splice(起始位置, 刪除幾個元素) 是 陣列方法,
+
 function removeChecked(){
   const ids = Object.entries(checkedMap).filter(([,v])=>v).map(([k])=>+k)
   ids.forEach(remove)
@@ -26,15 +47,15 @@ function removeChecked(){
 }
 
 // 優惠券
-const coupons=[{ id:'A', title:'新朋友 $200 折扣', amount:200 }]
-const chosenCoupon=ref(null)
-function applyCoupon(c){ chosenCoupon.value=c }
+// const coupons=[{ id:'A', title:'新朋友 $200 折扣', amount:200 }]
+// const chosenCoupon=ref(null)
+// function applyCoupon(c){ chosenCoupon.value=c }
 
 // 小計
-const subtotal = computed(()=> items.reduce((s,i)=> s + i.price*i.qty, 0))
-const totalQty = computed(()=> items.reduce((s,i)=> s + i.qty, 0))
-const discount = computed(()=> chosenCoupon.value?.amount ?? 0)
-const total = computed(()=> Math.max(subtotal.value - discount.value, 0))
+// const subtotal = computed(()=> items.reduce((s,i)=> s + i.price*i.qty, 0))
+// const totalQty = computed(()=> items.reduce((s,i)=> s + i.qty, 0))
+// const discount = computed(()=> chosenCoupon.value?.amount ?? 0)
+// const total = computed(()=> Math.max(subtotal.value - discount.value, 0))
 
 // 導頁
 function goBack(){ router.push('/Shop') }
@@ -53,11 +74,12 @@ function goNext(){ router.push('/Shop/info') }
             <!-- 全部選擇的按鈕 -->
             <div class="toolbar">
                 <el-checkbox v-model="allChecked" @change="toggleAll">全選</el-checkbox>
+                <!-- @change: 監聽事件，當值改變時執行函式 -->
                 <el-button link type="info"  @click="removeChecked">全部刪除</el-button>
                 <!-- link 是內建屬性，讓按鈕外觀像文字連結，type="info" 使用內建配色。 -->
             </div>
             <!-- 已加入商品列表 -->
-            <el-table :data="items"  stripe class="cart-table"><!-- stripe 開啟斑馬紋列 -->
+            <el-table :data="CartStore.cartItems"  stripe class="cart-table"><!-- stripe 開啟斑馬紋列 -->
                 <el-table-column label="" width="54" align="center">
                     <!-- 這裡的<template>是 Vue 提供的「語法糖 (虛擬容器)」，常用來做： 插槽 (slot) 的佔位，<slot> 是放在子元件裡的，在 el-table-column 裡面定義好了，不需要再寫，只要在template裡面放要放的東西就可以了-->
                     <template #default="{ row }">
@@ -95,31 +117,43 @@ function goNext(){ router.push('/Shop/info') }
             <div class="totaldetail">
                 <!-- 選擇優惠券 -->
                 <div class="coupon">
-                    <el-dropdown @command="applyCoupon">
+                    <el-dropdown @command="CartStore.applyCoupon">
                         <el-button>
                         選擇優惠券
                         <el-icon class="ml-1"><ArrowDown /></el-icon>
                         </el-button>
                         <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item v-for="c in coupons" :key="c.id" :command="c">{{ c.title }}</el-dropdown-item>
+                            <el-dropdown-item v-for="c in CartStore.coupons" :key="c.id" :command="c">{{ c.title }}</el-dropdown-item>
                         </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-                    <span v-if="chosenCoupon" class="coupon-tag">已使用：{{ chosenCoupon.title }}</span>
+                    <span v-if="chosenCoupon" class="coupon-tag">已使用：{{ CartStore.chosenCoupon.title }}</span>
                 </div>
-                <!-- 購物總計 -->
+                <!-- 購物總計,(後期優化時讓每格對齊) -->
                 <el-card shadow="never" class="summary">
-                    <div class="line"><span>共 {{ totalQty }} 件商品</span><span>商品金額</span><strong> $ {{ subtotal.toLocaleString() }}</strong></div>
-                    <div class="line"><span></span><span>活動優惠</span><strong class="discount">- $ {{ discount.toLocaleString() }}</strong></div>
+                    <div class="line">
+                        <span>共 {{ CartStore.totalQty}} 件商品</span>
+                        <span>商品金額</span>
+                        <strong> $ {{ CartStore.totalPrice.toLocaleString() }}</strong>
+                        <!--toLocaleString 是「自動加上地區的格式」。例如：加千分位、貨幣符號、日期格式。 -->
+                    </div>
+                    <div class="line">
+                        <span></span>
+                        <span>活動優惠</span>
+                        <strong class="discount">- $ {{ CartStore.discount.toLocaleString() }}</strong>
+                    </div>
                     <el-divider style="border-top: 1px solid #ccc; padding:0;"/>
-                    <div class="line total"><span></span><span>小計</span><strong>$ {{ total.toLocaleString() }}</strong></div>
+                    <div class="line total">
+                        <span></span>
+                        <span>小計</span>
+                        <strong>$ {{ CartStore.finaltotal.toLocaleString() }}</strong></div>
                 </el-card>
             </div>
             <!-- 按鈕 -->
             <div class="actions">
                 <el-button @click="goBack">上一步</el-button>
-                <el-button color="#141414" :dark="isDark" :disabled="!items.length" @click="goNext">下一步</el-button>
+                <el-button color="#141414" :dark="isDark" :disabled="!CartStore.cartItems.length" @click="goNext">下一步</el-button>
             </div>
         </main>
     </div>

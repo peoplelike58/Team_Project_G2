@@ -67,7 +67,8 @@
     const openWindows = ref({})
 
     const BASE = import.meta.env.BASE_URL
-    const jsonPath = `${BASE}json/mychallenge/mountains.json`
+    // const jsonPath = `${BASE}json/mychallenge/mountains.json`
+    const jsonPath = `http://localhost/php/mychallenge_mountains.php`
 
     function openModal(mountainName) {
         openWindows.value[mountainName] = true
@@ -139,21 +140,31 @@
 
 
         onMounted(() => {
-        const climbed = JSON.parse(localStorage.getItem("climbedMountains") || "[]")
-        mountains.value.forEach(m => {
-            if (climbed.includes(m.name)) {
-            m.icon = "flag.png"   // 重新套旗子
-            }
-        })
-        recordStore.loadAllRecords()
-        goalStore.loadFromStorage()
+            const climbed = JSON.parse(localStorage.getItem("climbedMountains") || "[]")
+            mountains.value.forEach(m => {
+                if (climbed.includes(m.name)) {
+                m.icon = "flag.png"   // 重新套旗子
+                }
+            })
+            recordStore.loadAllRecords()
+            goalStore.loadFromStorage()
         })
 
         
         onMounted(async() => {
             try{
                 const res = await axios.get(jsonPath)
-                mountains.value = res.data
+                mountains.value = res.data.map(mountain => ({
+                    name: mountain.MOUNTAIN_NAME,        // 轉換欄位名稱
+                    kind: mountain.type,                 // 轉換欄位名稱  
+                    latitude: parseFloat(mountain.LATITUDE),   // 確保是數字
+                    longitude: parseFloat(mountain.LONGITUDE), // 確保是數字
+                    icon: 'mountain.png'                 // 預設圖示
+                }))
+
+                // console.log('PHP 回傳的原始資料:', res.data)
+                // console.log('資料型別:', typeof res.data)
+                // console.log('是否為陣列:', Array.isArray(res.data))
 
                 mountains.value.forEach(mountain => {
                 openWindows.value[mountain.name] = false

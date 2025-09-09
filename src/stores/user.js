@@ -15,7 +15,7 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
 
       login(email, name) {                     //   自訂登入行為
         this.email =  email            
-        this.name  =name
+        this.name  = name
         this.isLoggedIn = true
         /* 把狀態寫回 localStorage，刷新不會掉 */            
         // localStorage.setItem('email', email)                           

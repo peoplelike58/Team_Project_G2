@@ -46,8 +46,9 @@ const handlelogout = () => {
   if (answer) {
     // localStorage.removeItem('email')
     // localStorage.removeItem('password')
-   fetch('/tjd102/g2/PHP/LoginPage_fontLogout.php', {  //http://localhost/teamproject/LoginPage_fontLogout.php（local端測試）
+   fetch('http://localhost/teamproject/LoginPage_fontLogout.php', {  //http://localhost/teamproject/LoginPage_fontLogout.php（local端測試）；/tjd102/g2/PHP/LoginPage_fontLogout.php（server端上線用）
     method: 'POST',
+    headers:{'Content-Type':'application/json'},
     credentials: 'include'
   })
     user.logout()

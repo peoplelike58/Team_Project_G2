@@ -136,6 +136,7 @@
     <div class="button-wrapper">
         <button class="join-btn">報名參加</button>
     </div>
+        <Footer />
 </div>
 </template>
 
@@ -144,6 +145,7 @@ import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import activitiesJson from '@/components/togetherItem/activities.json';
 import NavMenu from '../An/navMenu.vue';
+import Footer from '@/components/An/footer.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -200,6 +202,9 @@ const goBack = () => {
     background-color: #fff;
 }
 
+.wrapper > footer{
+    align-self: stretch;
+}
 
 .status-header {
     display: flex;
@@ -345,9 +350,9 @@ const goBack = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 90%;
+    width: 100%;
     max-width: 1024px;
-    height: 450px;
+    height: 500px;
     background-color: $ivory-gray-100;
     border-radius: 16px;
     margin-bottom: 100px;
@@ -382,12 +387,13 @@ const goBack = () => {
         font-size: 20px;
         font-weight: bold;
         color: $black-14;
-        margin-bottom: 8px;
+        margin: 15px 0;
     }
     
     .infoListH2 {
         display: flex;
         align-items: flex-end;
+        margin-bottom: 15px;
 
         h2 {
             font-size: 36px;
@@ -408,17 +414,17 @@ const goBack = () => {
     font-size: 20px;
     font-weight: bolder;
     margin-top: 8px;
-    margin-bottom: 80px;
+    margin-bottom: 60px;
 }
 
 .leftMain {            
-    margin-bottom: 80px;  
+    margin-bottom: 60px;  
     
     p {
         line-height: 1.2;
         font-size: 20px;
         font-weight: bold;
-        margin: 8px 0;
+        margin: 15px 0;
     }
     
     .lefiMainCH, .mmkm {
@@ -435,7 +441,7 @@ const goBack = () => {
     p {
         font-size: 20px;
         font-weight: bold;
-        margin-bottom: 8px;
+        margin-bottom: 15px;
     }
     
     .lefiMainCH2, .hms {
@@ -497,6 +503,7 @@ const goBack = () => {
     line-height: 2;
     padding: 30px;
     margin-left: 220px;
+    margin-bottom: 50px;
     align-self: flex-start;
     width: 100%;
     max-width: 1024px;
@@ -738,7 +745,7 @@ const goBack = () => {
 
     // 手機版右側資訊卡樣式
     .rightInfoCard.mobile-layout {
-        margin: 0;
+        margin: 0 auto;
         width: 90%;
         display: flex;
         flex-direction: column;

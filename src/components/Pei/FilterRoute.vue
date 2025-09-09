@@ -1,8 +1,14 @@
 <script setup>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
-import trailsData from '@/assets/json/trails.json'
+import axios from 'axios';
+
+
+
+
+//-------------------JSON-------------------------------------
+// import trailsData from '@/assets/json/trails.json'
 
 // 先把 BASE_URL 存成變數，避免在 template 直接寫 import.meta
 // 取得部署子目錄，如 '/tjd102/g2/' 
@@ -10,27 +16,66 @@ const baseUrl = import.meta.env.BASE_URL
 
 // 小工具：把 JSON 裡的相對路徑拼成可用網址
 // 回傳拼好的完整路徑
-const toUrl = (p) => `${baseUrl}${p}`     
+// const toUrl = (p) => `${baseUrl}${p}`  
+//------------------------------------------------------------
+
+
+
+
+
+
 
 // 引導至詳細頁面
 const router = useRouter()  
 const goDetail = id => router.push({name:'trailDetail' , params:{id}})
 
-// 資料讀取狀態
+// 資料讀取狀態,是否正在載入
 const loading = ref(false) 
 // 錯誤訊息
 const error = ref('') 
  // 原始資料
-const trails = ref(trailsData)
+// const trails = ref(trailsData)
+const trails = ref([])
+
+
+
+// ----------------PHP---------------------------
+// API 基本路徑
+const API_URL = `${import.meta.env.VITE_AJAX_URL}/filterCard.php`
+
+const fetchTrails = async () => {
+  
+  try {
+    const resp = await axios.get(API_URL)
+    trails.value = resp.data
+    console.log(trails.value);
+    
+    
+
+  } catch (err) {
+    console.log(err.message);
+    
+  }
+}
+
+
+
+
+onMounted(() => {                                           
+  fetchTrails()                                           
+}) 
+
+
+
 
 // --------- 篩選條件按鈕資料與目前狀態 ---------
-const regionBtns = ['全部','北部','中部','南部','東部'] // 區域選項
+const areaBtns = ['全部','北部','中部','南部','東部'] // 區域選項
 const trafficBtns = ['全部','可乘大眾運輸','須開車前往'] // 交通選項
 const timeBtns = ['全部','3小時內','3-6小時','6-12小時','12小時-2天','2天以上'] // 時間選項
 const typeBtns = ['全部','百岳','小百岳','其他山岳','必訪步道'] // 類型選項
 
 //預設一開始篩選吧都為「全部」
-const regionNow = ref(regionBtns[0]) // 當前選取區域
+const areaNow = ref(areaBtns[0]) // 當前選取區域
 const trafficNow = ref(trafficBtns[0]) // 當前選取交通
 const timeNow = ref(timeBtns[0]) // 當前選取時間
 const typeNow = ref(typeBtns[0]) // 當前選取類型
@@ -40,12 +85,12 @@ const typeNow = ref(typeBtns[0]) // 當前選取類型
 // 1 條件過濾
 const filteredTrails = computed(() => {
   return trails.value.filter((trail) => {
-    const matchRegion = regionNow.value === '全部' || trail.filter.includes(regionNow.value)
-    const matchTraffic = trafficNow.value === '全部' || trail.filter.includes(trafficNow.value)
-    const matchTime = timeNow.value === '全部' || trail.filter.includes(timeNow.value)
-    const matchType = typeNow.value === '全部' || trail.type === typeNow.value
+    const matchArea = areaNow.value === '全部' || trail.AREA.includes(areaNow.value)
+    const matchTraffic = trafficNow.value === '全部' || trail.TRAFFIC.includes(trafficNow.value)
+    const matchTime = timeNow.value === '全部' || trail.TIME.includes(timeNow.value)
+    const matchType = typeNow.value === '全部' || trail.TYPE === typeNow.value
 
-    return matchRegion && matchTraffic && matchTime && matchType
+    return matchArea && matchTraffic && matchTime && matchType
   })
 })
 
@@ -57,10 +102,10 @@ const finalResults = computed(() => {
 
   return filteredTrails.value.filter((trail) => {
     return (
-      trail.name.includes(keyword) || 
-      trail.region.includes(keyword) ||
-      trail.type.includes(keyword)||
-      trail.filter.some(tag => tag.includes(keyword))
+      trail.MOUNTAIN_NAME.includes(keyword) || 
+      trail.AREA.includes(keyword) ||
+      trail.TYPE.includes(keyword)
+      
       
     )
   })
@@ -86,6 +131,7 @@ function goPage(p) {
 }
 
 
+
 </script>
 
 
@@ -101,12 +147,12 @@ function goPage(p) {
       </span><!-- 區域標籤 -->
       <div class="btnGroup">
         <button 
-        v-for="regionBtn in regionBtns" 
-        :key="regionBtn"
-        :class="{ active : regionNow === regionBtn }"
-        @click="() => { regionNow = regionBtn; page = 1 }"
+        v-for="areaBtn in areaBtns" 
+        :key="areaBtn"
+        :class="{ active : areaNow === areaBtn }"
+        @click="() => { areaNow = areaBtn; page = 1 }"
         >
-          {{ regionBtn }} <!--北/中/南-->
+          {{ areaBtn }} <!--北/中/南-->
 
         </button>
       </div>
@@ -210,44 +256,50 @@ function goPage(p) {
     <p v-if="loading">資料載入中…</p> 
     <p v-else-if="error">{{ error }}</p> 
     <div v-else> 
-      <p v-if="finalResults.length === 0" class="noResult">查無符合的路線，<br>換個條件試試吧QQ</p> <!-- 無資料提示 -->
-
-      <ul class="totalCard" v-else> 
+      <!--
+      <p v-if="finalResults.length === 0" class="noResult">查無符合的路線，<br>換個條件試試吧QQ</p> 
+      -->
+      <ul class="totalCard" >  <!--v-else-->
         <li 
         class="card" 
-        @click="goDetail(trail.id)" 
+        @click="goDetail(trail.MOUNTAIN_ID)" 
         v-for="trail in pagedTrails" 
-        :key="trail.id"
+        :key="trail.MOUNTAIN_ID"
         > <!-- 只渲染當前頁的8張卡片 -->
           <div class="imgBox">
-            <img :src="toUrl(trail.img)" :alt="trail.name" />
+            <img :src="`${baseUrl}images/Mountain/${trail.MOUNTAIN_ID}/${trail.IMAGE}`" :alt="trail.MOUNTAIN_NAME" />
+          
           </div>
 
           <!-- <img :src="trail.img" :alt="trail.name" />  -->
           <div class="meta">
-            <h4 class="name">{{ trail.name }}</h4> 
-            <span>{{ trail.region }}</span> 
+            <h4 class="name">{{ trail.MOUNTAIN_NAME }}</h4> 
+            <span>{{ trail.REGION }}</span> 
           </div>
           <div class="tags"> 
-            <span >{{ trail.type }}</span> 
-            <span>{{ trail.difficulty }}</span> 
+            <span >{{ trail.TYPE }}</span> 
+            <span>{{ trail.DIFF }}</span> 
           </div> 
         </li> 
       </ul> 
 
-      <div class="pager" v-if="finalResults.length > 0"> <!-- 分頁器（有符合的結果就會出現） -->
-        <button :disabled="page === 1" @click="goPage(page - 1)">上一頁</button> <!-- 上一頁 -->
+      
+      <div class="pager" v-if="finalResults.length > 0"> 
+      
+        <button :disabled="page === 1" @click="goPage(page - 1)">上一頁</button> 
         <button
           v-for="p in totalPages"
           :key="p"
           :class="{ active: p === page }"
           @click="goPage(p)"
         >{{ p }}</button> <!-- 頁碼按鈕 -->
-        <button :disabled="page === totalPages" @click="goPage(page + 1)">下一頁</button> <!-- 下一頁 -->
+        <button :disabled="page === totalPages" @click="goPage(page + 1)">下一頁</button> 
       </div> <!-- 分頁器結束 -->
     </div> <!-- 正常顯示區結束 -->
   </div> <!-- 搜尋結果區塊結束 -->
+
 </div>
+
 
 
 </template>

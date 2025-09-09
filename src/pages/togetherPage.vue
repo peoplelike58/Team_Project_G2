@@ -8,6 +8,23 @@
     @search="onSearchClicked"
   />
 
+  <!-- 載入狀態 -->
+  <div v-if="loading" class="loading-wrapper">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p>載入活動資料中...</p>
+    </div>
+  </div>
+
+  <!-- 錯誤狀態 -->
+  <div v-if="error" class="error-wrapper">
+    <div class="error-content">
+      <h3>載入失敗</h3>
+      <p>{{ error }}</p>
+      <button @click="fetchActivitiesFromDB" class="retry-btn">重新載入</button>
+    </div>
+  </div>
+
   <!-- 活動卡片區塊 -->
   <div class="cardWrapper">
     <div class="cardList" v-if="paginatedActivities.length">
@@ -42,9 +59,7 @@
   <div class="qaList">
     <TogetherQnaItem />
   </div>
-  <div class="footerList">
     <Footer />
-  </div>
 </template>
 
 <script setup>
@@ -53,10 +68,10 @@ import FilterBarItem from '@/components/togetherItem/filterBarItem.vue'
 import CardLoopItem from '@/components/togetherItem/cardLoopItem.vue'
 import EventCard from '@/components/togetherItem/eventCard.vue'
 import TogetherQnaItem from '@/components/togetherItem/togetherQnaItem.vue'
-import activitiesJson from '@/components/togetherItem/activities.json'
 import Footer from '@/components/An/footer.vue'
 
-import { ref, computed } from 'vue'
+import axios from 'axios'
+import { ref, computed, onMounted } from 'vue'
 
 // 分頁
 const itemsPerPage = 6
@@ -154,6 +169,8 @@ function onSearchClicked(criteria) {
   width: 1080px;
   height: 650px;
   margin: 50px auto 0;
+  margin-bottom: 150px;
+
 }
 
 /* 分頁按鈕 */
