@@ -46,6 +46,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
+    const memberId =  ref(1)
+
     // --- 1.控制手風琴開關 ---
     const openItem = ref(null)     // 全關
 
@@ -70,7 +72,7 @@ import { ref, onMounted } from 'vue'
     const histories = ref([])
 
     const BASE = import.meta.env.BASE_URL
-    const jsonPath = `${BASE}json/mychallenge/histories.json`
+    const jsonPath = `http://localhost/php/mychallenge_history.php?member_id=${memberId.value}`
 
     onMounted(async() => {
         try{
@@ -232,7 +234,7 @@ import { ref, onMounted } from 'vue'
     
     }
 
-    @media screen and (max-width: 850px) {
+    @media screen and (max-width: 1200px) {
         .mychallengeHistroy{
         
             .myhistoryMountain{
@@ -251,16 +253,53 @@ import { ref, onMounted } from 'vue'
         }
     }
 
-    @media screen and (max-width: 650px) {
+        @media screen and (max-width: 1000px) {
         .mychallengeHistroy{
         
             .myhistoryMountain{
+                
+                .mountainTitle{
+                    .mountainTitleLeft{
+                        h4:nth-child(2){
+                            font-size: $mbFont-label;
+                        }
+    
+                    }
+                }
 
                 .totalScore{
                     .total{
                         p{
                             span{
-                                font-size: $pcFont-H1-m;
+                                font-size: $pcFont-p-s;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    @media screen and (max-width: 650px) {
+        .mychallengeHistroy{
+        
+            .myhistoryMountain{
+
+                .mountainTitle{
+                    .mountainTitleLeft{
+                        h4:nth-child(2){
+                            font-size: $pcFont-H4;
+                        }
+    
+                    }
+                }
+
+                .totalScore{
+                    .total{
+                        p{
+                            span{
+                                font-size: $pcFont-H2;
                             }
                         }
                     }
