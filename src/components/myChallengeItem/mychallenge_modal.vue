@@ -38,7 +38,7 @@
             </article>
             <article class="think">
                 <h4>想法記錄</h4>
-                <textarea id=""
+                <textarea
                     v-model="thought"
                     maxlength="200"
                     @input="updateCount"
@@ -55,10 +55,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRecordStore } from "@/stores/recordStore"
+import axios from 'axios'
 
-    let height = ref(0)
-    let kilo = ref(0)
-    let time = ref(0)
+    const height = ref(0)
+    const kilo = ref(0)
+    const time = ref(0)
+
+    const memberId = ref(1)
+    const mountainId = ref(null)
 
     // let mountain = ref({name: '玉山', kind: '大百岳'})
 
@@ -220,40 +224,93 @@ import { useRecordStore } from "@/stores/recordStore"
 
     const emit = defineEmits(["closeUploadModal","saveGpx"])
 
-    function saveThought() {
+    async function saveThought() {
         if (!props.mountain.name) {
             alert("沒有山的名稱，無法保存！")
             return
         }
 
-        const key = `gpx-${props.mountain.name}`
-
-        // 建立一個完整紀錄物件 gpxPoint 
-        const record = {
-            thought: thought.value,
-            height: height.value,
-            kilo: kilo.value,
-            time: time.value,
-            fileName: fileName.value
+        // ✅ **檢查必要資料**
+        if (!fileName.value) {
+            alert("請先上傳 GPX 檔案！")
+            return
         }
 
-        // 存 localStorage
-        localStorage.setItem(key, JSON.stringify(record))
+        try {
+            // 準備要發送給 PHP 的資料
+            const formData = new FormData()
+            formData.append('member_id', memberId.value)
+            formData.append('mountain_id', mountainId.value || 1) // 暫時使用 1，需要查詢實際 ID
+            formData.append('height', height.value)
+            formData.append('distance', kilo.value)
+            formData.append('duration', time.value)
+            formData.append('content', thought.value)
 
-        // 存 Pinia
-        const recordStore = useRecordStore()
-        recordStore.saveRecord(props.mountain.name, record)
+            // 發送 POST 請求到 PHP
+            const response = await axios.post('http://localhost/php/mychallenge_modal.php', formData, {
+                withCredentials: true  // ← 讓 session 可以運作
+            })
 
-        alert(`對於 ${props.mountain.name} 的紀錄已保存！`)
+            console.log('儲存成功:', response.data)
+            
+            // ✅ **同時保存到 localStorage（作為備份）**
+            const key = `gpx-${props.mountain.name}`
+            const record = {
+                thought: thought.value,
+                height: height.value,
+                kilo: kilo.value,
+                time: time.value,
+                fileName: fileName.value
+            }
+            localStorage.setItem(key, JSON.stringify(record))
 
-        // 發送資料給父層
-        emit("saveGpx", { mountain: props.mountain.name, coords: gpxCoords.value })
-        emit("closeUploadModal")
+            // ✅ **存 Pinia**
+            const recordStore = useRecordStore()
+            recordStore.saveRecord(props.mountain.name, record)
+
+            alert(`對於 ${props.mountain.name} 的紀錄已保存到資料庫！`)
+
+            // 發送資料給父層
+            emit("saveGpx", {
+                mountain: props.mountain.name,
+                coords: gpxCoords.value
+            })
+            
+            emit("closeUploadModal")
+
+        } catch (error) {
+            console.error('儲存失敗:', error)
+            alert('儲存失敗，請稍後再試！')
+        }
+    }
+
+    // 查詢山峰 ID 的函數**
+    async function getMountainId(mountainName) {
+        try {
+        const response = await axios.get(`http://localhost/php/mountain_id.php?name=${encodeURIComponent(mountainName)}`)
+        
+            if (response.data.success) {
+                return response.data.mountain_id
+            } else {
+                console.error('查詢失敗:', response.data.error)
+                if (response.data.suggestions) {
+                    console.log('建議的山峰:', response.data.suggestions)
+                }
+                return null
+            }
+        } catch (error) {
+            console.error('查詢山峰 ID 失敗:', error)
+            return null
+        }
     }
 
     /* --- 載入已保存紀錄 --- */
-    onMounted(() => {
+    onMounted(async() => {
     if (props.mountain.name) {
+
+        // 查詢山 ID
+        mountainId.value = await getMountainId(props.mountain.name)
+
         const key = `gpx-${props.mountain.name}`
         const saved = localStorage.getItem(key)
         if (saved) {

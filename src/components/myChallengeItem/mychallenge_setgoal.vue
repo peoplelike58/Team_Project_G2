@@ -8,7 +8,7 @@
                 class="goal" id="bidGoal"
                 :placeholder="`輸入今年目標`"
                 v-model="currentGoal"
-                min="1" max="30">
+                min="1" max="100">
                 <div class="buttunWrapper">
                     <button @click="submitGoal">提交</button>
                 </div>
@@ -19,6 +19,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import axios from 'axios'
 
     //接收 <mychallenge_progress /> 傳來的 props
     const props = defineProps({
@@ -51,19 +52,52 @@ import { ref, watch } from 'vue'
 
 
     // 提交目標設定
-    const submitGoal = () => {
+    const submitGoal = async () => {
         const goalValue = parseInt(currentGoal.value)
         
-        if (!goalValue || goalValue < 1 || goalValue > 30) {
-            alert('請輸入 1-30 之間的數字')
+        if (!goalValue || goalValue < 1 || goalValue > 100) {
+            alert('請輸入 1-100 之間的數字')
             return
         }
         
         console.log('提交的目標:', goalValue)
+
+        try{
+            const jsonData = {}
+
+            if (props.item.kind === '大百岳') {
+                jsonData.BIG_TARGET = goalValue
+            } else if (props.item.kind === '小百岳') {
+                jsonData.SMALL_TARGET = goalValue
+            }
+
+            const response = await axios.post(
+                'http://localhost/php/mychallenge_setgoal.php',
+                jsonData,
+                {
+                withCredentials: true,  // ← 讓 session 可以運作
+                headers: {
+                    'Content-Type': 'application/json'  // 重要！
+                }
+                }
+            )
+
+            if (response.data.success) {
+                // 將新的目標值傳給父組件
+                const updatedGoal = props.item.kind === '大百岳' 
+                                    ? response.data.data.big_target 
+                                    : response.data.data.small_targe
+                
+                emit('updateGoal', updatedGoal)
+
+            } else {
+                alert('設定失敗：' + response.data.message)
+            }
+        }catch (error) {
+            console.error('API 錯誤:', error)
+            alert('網路錯誤，請稍後再試')
+        }
         
-        // 將新的目標值傳給父組件
-        emit('updateGoal', goalValue)
-        emit('close')
     }
 
 
