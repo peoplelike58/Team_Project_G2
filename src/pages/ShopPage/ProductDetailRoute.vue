@@ -2,9 +2,10 @@
 import { ref,computed } from 'vue'
 import { useRouter,useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useCartStore } from '@/stores/cart'
 import Products from '@/assets/json/products.json'
 
-
+const CartStore = useCartStore()
 const user = useUserStore()
 const router = useRouter()
 const route = useRoute()
@@ -64,6 +65,25 @@ const props = defineProps({ // 用 props.id 來拿商品 id,在router裡有props
 const product = computed(() => {                     
   const id = Number(route.params.id)                 // 參數是字串 → 轉數字
   return Products.find(p => Number(p.id) === id)     // 找到對應商品,find是
+})
+
+//加入購物車
+const handleAddToCart = async () => {
+  if (product.value.color?.length && !selectcolor.value) {
+    alert('請選擇顏色')
+    return false
+  }
+  if (product.value.size?.length && !selectsize.value) {
+    alert('請選擇尺寸')
+    return false
+  }
+}
+
+
+//加入購物車，並去到購物車界面
+const buyRightnow = (()=>{
+  router.push({name:'Shop-cart'})
+
 })
 
 
@@ -143,8 +163,8 @@ const product = computed(() => {
 
           <!-- 行動按鈕 -->
           <div class="product_actions">
-            <button class="btn-addcart" @click="這是加入購物車的函數">加入購物車</button>
-            <button class="btn-paynow" @click="加入購物車,並跳轉到購物車頁面">立即購買</button>
+            <button class="btn-addcart" @click="CartStore.addToCart">加入購物車</button>
+            <button class="btn-paynow" @click="buyRightnow">立即購買</button><!-- 加入購物車,並跳轉到購物車頁面 -->
           </div>
         </div>
       </div>

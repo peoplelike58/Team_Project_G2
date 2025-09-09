@@ -191,7 +191,7 @@ const switchToLogin = () => {
 }
 
 const GoRegister = () => {
-  fetch('/tjd102/g2/PHP/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
+  fetch('http://localhost/teamproject/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）； /tjd102/g2/PHP/LoginPage_register.php （server測試）
   method: 'POST',
   headers:{'Content-Type':'application/json'},
   credentials: 'include',

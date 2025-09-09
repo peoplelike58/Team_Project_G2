@@ -103,7 +103,7 @@ const user = useUserStore()
 // 「一般用戶登入」可以把登入資訊放在 localStorage 內，登出時要刪除
 const handleLogin = async () => {
   if (email.value && password.value && email.value.includes('@') && password.value.length >= 8 ) {
-    const res = await fetch('/tjd102/g2/PHP/LoginPage_fontlogin.php',{//這是server上測試可用的URL：'/tjd102/g2/PHP/LoginPage_fontlogin.php'；http://localhost/teamproject/LoginPage_fontLogin.php 
+    const res = await fetch('http://localhost/teamproject/LoginPage_fontLogin.php',{//這是server上測試可用的URL：'/tjd102/g2/PHP/LoginPage_fontlogin.php'；http://localhost/teamproject/LoginPage_fontLogin.php （local端測試用）
       method:'POST',
       headers:{'Content-Type':'application/json'},
       credentials: 'include' ,              // 查 Session 要帶 cookie
@@ -117,14 +117,14 @@ const handleLogin = async () => {
       const {success} = member;
       alert(success)
       if(success){
-          const sessionResp = await fetch('/tjd102/g2/PHP/CheckLogin.php', {  //http://localhost/teamproject/CheckLogin.php(lOCAL端測試)
+          const sessionResp = await fetch('http://localhost/teamproject/CheckLogin.php', {  //http://localhost/teamproject/CheckLogin.php(lOCAL端測試);/tjd102/g2/PHP/CheckLogin.php(server上線測試)
           method: 'POST',
           headers:{'Content-Type':'application/json'},
           credentials: 'include',              // Session 一樣要帶 cookie
         });
         const sessionData = await sessionResp.json();
         if (sessionData.isLogin){
-          user.login(sessionData.member.emal,sessionData.member.name)
+          user.login(sessionData.member.email,sessionData.member.name)
           alert(`登入成功！歡迎 ${email.value}`)/*這個alert前面要加上判斷資料庫匹配成功的條件 */
           router.push({ name: 'member-profile' })
         }
