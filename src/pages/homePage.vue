@@ -26,7 +26,7 @@ import activitiesSection from '@/components/An/activitiesSection.vue'
 import hallOfFameCarousel from '@/components/An/hallOfFameCarousel.vue'
 import brandFooter from '@/components/An/footer.vue'
 
-import diagonalLaunchButton from '@/components/An/DiagonalLaunchButton.vue'
+// import diagonalLaunchButton from '@/components/An/diagonalLaunchButton.vue'
 
 //----------------------------------------------------------------------
 

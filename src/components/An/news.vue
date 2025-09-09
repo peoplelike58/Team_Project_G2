@@ -155,6 +155,8 @@ onMounted(() => {
     border-bottom: 1px dashed $tag;
 
     transition: gap 0.4s ease;
+
+    cursor: pointer;
 }
   
 .news-row:hover {
@@ -240,6 +242,7 @@ onMounted(() => {
 .badge-wrap {
     width: 240px;
     aspect-ratio: 1/1;
+    margin-left: 40px;
     position: relative;
 }
 

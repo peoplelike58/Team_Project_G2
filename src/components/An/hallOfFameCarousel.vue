@@ -134,7 +134,7 @@ const scrollDurationSeconds = 20
 }
   
 .carousel-card {
-    flex: 0 0 240px;
+    flex: 0 0 280px;
     display: flex;
     flex-direction: column;
     align-items: center;

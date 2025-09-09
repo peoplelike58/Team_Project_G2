@@ -71,10 +71,12 @@ function handleCtaClick() {
         background: #fff;
 
         transition: background-color 0.3s ease, color 0.3s ease;
+
+        cursor: pointer;
     }
     .activity-card:hover{
-        background-color: #EBEBDF;
-        color: #292C4B;
+        background-color: #214B3D;
+        color: #F7D0D1;
     }
 
     .top-content{
@@ -126,10 +128,11 @@ function handleCtaClick() {
         border-radius: 4px;
         white-space: nowrap;
 
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
     .activity-card:hover .tag{
-        background-color: #292C4B;
+        background-color: #F7D0D1;
+        color: #214B3D;
     }
 
     /* CTA */
@@ -146,6 +149,12 @@ function handleCtaClick() {
         color: $black-14;
         text-decoration: 1px underline;
         text-underline-offset: 6px;
+
+        transition: color 0.3s ease;
+    }
+
+    .activity-card:hover .ac-cta {
+        color: #F7D0D1;
     }
 
     @media (max-width: 430px) {

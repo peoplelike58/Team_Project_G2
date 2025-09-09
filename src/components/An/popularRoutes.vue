@@ -204,6 +204,7 @@ onMounted(() => {
     align-items: center;
     max-width: 1000px;
     margin: 48px auto;
+    padding: 0 40px;
     gap: var(--gap);
 }
 
@@ -288,6 +289,8 @@ onMounted(() => {
     justify-content: space-between;
     padding: 16px 12px;
     border-bottom: 1px dashed $black-14;
+
+    cursor: pointer;
 }
 
 .left-part {

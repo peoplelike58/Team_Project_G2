@@ -62,12 +62,15 @@ function handleCtaClick(item) {
 
 .activity-section {
     background-color: $ivory-gray-100;
+    padding: 0 40px;
+    box-sizing: border-box;
 }
 .content{
     display: flex;
     flex-direction: column;
     gap: 48px;
 
+    width: fit-content;
     max-width: 1200px;
     margin: 0 auto;
     padding: 80px 0;
