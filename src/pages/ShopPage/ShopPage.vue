@@ -57,7 +57,7 @@ const handlePageChange = (page) => {
 <template>
         <NavMenu/>
         <div class="position_shopcar">
-            <RouterLink :to="{name:'Shop-cart'}" class="link_cart"><img src="/public/Products/icons/icon_shopcar.svg" alt=""></RouterLink>
+            <RouterLink :to="{name:'Shop-cart'}" class="link_cart"><img src="/images/Products/icons/icon_shopcar.svg" alt=""></RouterLink>
         </div>
         <main>
             <section class="featured_products">
