@@ -22,7 +22,8 @@
       <el-table-column label="操作" fixed="right" width="180">
         <template #default="{ row, $index }">
           <el-button size="small" @click="openEdit(row, indexOf($index))">編輯</el-button>
-          <el-button size="small" type="danger" @click="remove(indexOf($index))">刪除</el-button>
+          <!-- <el-button size="small" type="danger" @click="remove(indexOf($index))">刪除</el-button> -->  
+          <el-button size="small" type="danger" @click="removeClick(row)">刪除</el-button>   
         </template>
       </el-table-column>
     </el-table>
@@ -78,10 +79,16 @@ const data = computed(() => props.sampleData)
 const keyword = ref('')
 const dialogVisible = ref(false)
 const dialogMode = ref('create')
-const editIndex = ref(-1)
+// const editIndex = ref(-1)    //(不抓index , 改成通知父層處理，用emit傳遞 抓ID)/YUKI
 const form = ref({})
 const pageSize = 10
 let currentPage = ref(1)
+
+//========================= 
+//新增 emit： 通知父層處理(YUKI)
+const emit = defineEmits(['create', 'update','refresh' ,'remove'])
+//=========================
+
 
 const filtered = computed(() => {
   if (!keyword.value) return data.value
@@ -104,23 +111,44 @@ const openCreate = () => {
   form.value = Object.fromEntries(props.columns.map(c => [c.prop, '']))
   dialogVisible.value = true
 }
-const openEdit = (row, index) => {
+//不抓index,  改抓id(YUKI)
+//========================= 
+const openEdit = (row) => {
+//=========================
+
+// const openEdit = (row, index) => {
   dialogMode.value = 'edit'
-  editIndex.value = index
+  // editIndex.value = index
   form.value = JSON.parse(JSON.stringify(row))
   dialogVisible.value = true
 }
 const submit = () => {
   if (dialogMode.value === 'create') {
-    data.value.unshift({ ...form.value, _id: Date.now() })
+    emit('create', {...form.value})  //YUKI
+    // data.value.unshift({ ...form.value, _id: Date.now() })
   } else {
-    data.value.splice(editIndex.value, 1, { ...form.value })
+    emit('update', {...form.value})  //YUKI
+    // data.value.splice(editIndex.value, 1, { ...form.value })
   }
   dialogVisible.value = false
 }
-const indexOf = ($index) => (currentPage.value - 1) * pageSize + $index
-const remove = (absIndex) => data.value.splice(absIndex, 1)
-const resetData = () => { data.value = [...props.sampleData]; keyword.value = ''; currentPage.value = 1 }
+// const indexOf = ($index) => (currentPage.value - 1) * pageSize + $index
+// const remove = (absIndex) => data.value.splice(absIndex, 1)
+// const resetData = () => { data.value = [...props.sampleData]; keyword.value = ''; currentPage.value = 1 }
+
+
+//========================= 
+const removeClick = (row) => {
+  emit('remove', row.NEWS_ID)  //告訴父層要刪除的這一個row, ID是什麼
+}
+const restData = () => {
+  keyword.value=''
+  currentPage.value = 1
+  emit('refresh')
+}
+//=========================
+
+
 </script>
 
 <style scoped lang="scss">
