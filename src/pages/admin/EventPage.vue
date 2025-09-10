@@ -22,7 +22,7 @@ const columns = [
 const sampleData =ref([])
   
   onMounted(()=>{
-    fetch('http://localhost/Mountain_Peak/EventPage.php')
+    fetch(import.meta.env.VITE_AJAX_URL +'/EventPage.php')
       .then(resp => resp.json())
       .then(json =>{
         sampleData.value = json
