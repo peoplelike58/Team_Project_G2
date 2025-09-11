@@ -27,24 +27,54 @@ watch(() =>
     { deep: true}                        //deep: true: 物件參數 (options object)，深度監聽物件內部的值的變化，我需要監聽它裡面每個 key 的變動（深層追蹤），不只監聽最外層
 )
 
-
+//全選勾選
 function toggleAll(){ 
     Object.keys(checkedMap).forEach(k => (checkedMap[k] = allChecked.value))
     //Object.keys(): 取得物件的所有key， 
 }
+// 在 <script setup> 中修改這兩個函數
 
-function remove(id){ 
-    const idx = CartStore.cartItems.findIndex(i => i.id === id); 
-    if (idx>-1){ CartStore.cartItems.splice(idx,1); 
-        delete checkedMap[id] } 
+// 原本的 remove 函數 - 刪除單一商品
+function remove(id) { 
+    // 直接使用 store 的 removeFromCart 方法
+    CartStore.removeFromCart(id)
+    
+    // 同時也要刪除勾選狀態
+    delete checkedMap[id]
 }
-//splice(起始位置, 刪除幾個元素) 是 陣列方法,
 
-function removeChecked(){
-  const ids = Object.entries(checkedMap).filter(([,v])=>v).map(([k])=>+k)
-  ids.forEach(remove)
-  if(!ids.length) ElMessage.info('請先勾選要刪除的商品')
+// 原本的 removeChecked 函數 - 刪除已勾選的商品
+function removeChecked() {
+    // 找出所有被勾選的商品 ID
+    const checkedIds = Object.entries(checkedMap)
+        .filter(([, isChecked]) => isChecked)  // 只取勾選的
+        .map(([id]) => Number(id))  // 轉換成數字 ID
+    
+    if (!checkedIds.length) {
+        ElMessage.info('請先勾選要刪除的商品')
+        return
+    }
+    
+    // 使用 store 的方法逐一刪除
+    checkedIds.forEach(id => {
+        CartStore.removeFromCart(id)
+        delete checkedMap[id]  // 同時清除勾選狀態
+    })
 }
+
+// function remove(id){ 
+//     const idx = CartStore.cartItems.findIndex(i => i.id === id); 
+//     if (idx>-1){ CartStore.cartItems.splice(idx,1); 
+//         delete checkedMap[id]
+//     } 
+// }
+// //splice(起始位置, 刪除幾個元素) 是 列方法,
+
+// function removeChecked(){
+//   const ids = Object.entries(checkedMap).filter(([,v])=>v).map(([k])=>+k)
+//   ids.forEach(remove)
+//   if(!ids.length) ElMessage.info('請先勾選要刪除的商品')
+// }
 
 // 優惠券
 // const coupons=[{ id:'A', title:'新朋友 $200 折扣', amount:200 }]
@@ -75,7 +105,7 @@ function goNext(){ router.push('/Shop/info') }
             <div class="toolbar">
                 <el-checkbox v-model="allChecked" @change="toggleAll">全選</el-checkbox>
                 <!-- @change: 監聽事件，當值改變時執行函式 -->
-                <el-button link type="info"  @click="removeChecked">全部刪除</el-button>
+                <el-button link type="info"  @click="removeChecked">刪除</el-button>
                 <!-- link 是內建屬性，讓按鈕外觀像文字連結，type="info" 使用內建配色。 -->
             </div>
             <!-- 已加入商品列表 -->
@@ -128,9 +158,9 @@ function goNext(){ router.push('/Shop/info') }
                         </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-                    <span v-if="chosenCoupon" class="coupon-tag">已使用：{{ CartStore.chosenCoupon.title }}</span>
+                    <span v-if="CartStore.chosenCoupon" class="coupon-tag">已使用：{{ CartStore.chosenCoupon.title }}</span>
                 </div>
-                <!-- 購物總計,(後期優化時讓每格對齊) -->
+                <!-- 購物總計,(後期優化時讓每格排版對齊) -->
                 <el-card shadow="never" class="summary">
                     <div class="line">
                         <span>共 {{ CartStore.totalQty}} 件商品</span>
