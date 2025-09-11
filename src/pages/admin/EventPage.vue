@@ -22,14 +22,28 @@ const columns = [
 const sampleData =ref([])
   
   onMounted(()=>{
-    fetch('http://localhost/Mountain_Peak/EventPage.php')
+
+    // console.log(import.meta.env.VITE_AJAX_URL);
+
+    // const ajax_url = import.meta.env.VITE_AJAX_URL
+    
+    fetch('http://localhost/Mountain_Peak/public/PHP/EventPage.php')
       .then(resp => resp.json())
       .then(json =>{
         sampleData.value = json
         // console.log(sampleData);
       }) 
 
+      //  fetch(ajax_url + '/Mountain_Peak/EventPage.php')
+      // .then(resp => resp.json())
+      // .then(json =>{
+      //   sampleData.value = json
+      //   // console.log(sampleData);
+      // }) 
+
   })
 
+
+  
 
 </script>
