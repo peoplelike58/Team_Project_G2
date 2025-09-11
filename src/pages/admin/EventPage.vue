@@ -29,7 +29,16 @@ const sampleData =ref([])
         // console.log(sampleData);
       }) 
 
+      //  fetch(ajax_url + '/Mountain_Peak/EventPage.php')
+      // .then(resp => resp.json())
+      // .then(json =>{
+      //   sampleData.value = json
+      //   // console.log(sampleData);
+      // }) 
+
   })
 
+
+  
 
 </script>
