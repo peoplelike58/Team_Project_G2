@@ -64,7 +64,7 @@ function goShop(){ router.push('/Shop') }
 <style lang="scss" scoped>
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/othermixins.scss';
-.page { max-width: 980px; margin: 0 auto; }
+.page { max-width: 980px; margin: 0 auto; background-color: transparent;}
 .center { text-align:center;padding: 24px 0; }
 .panel { margin: 20px 0; }
 .actions.center{ display:flex; justify-content:center; margin:24px 0 60px; }
