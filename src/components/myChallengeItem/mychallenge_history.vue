@@ -45,6 +45,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
     const memberId =  ref(1)
 
@@ -72,16 +73,27 @@ import { ref, onMounted } from 'vue'
     const histories = ref([])
 
     const BASE = import.meta.env.BASE_URL
-    const jsonPath = `http://localhost/php/mychallenge_history.php?member_id=${memberId.value}`
+    // const jsonPath = `http://localhost/php/mychallenge_history.php?member_id=${memberId.value}`
+    const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_history.php`
 
     onMounted(async() => {
         try{
-            const res = await fetch(jsonPath)
-            // console.log(res)
-            const data = await res.json()
-            // console.log(data)
-            // 將資料存入變數
-            histories.value = data
+            const jsonData = {
+                member_id: memberId.value
+            }
+
+            const response = await axios.post(
+            API_URL,
+            jsonData,
+                // {
+                // withCredentials: true,  // ← 讓 session 可以運作
+                // headers: {
+                //     'Content-Type': 'application/json'  // 重要！
+                // }
+                // }
+            )
+
+            histories.value = response.data
         }catch(err){
             console.error("讀取失敗:", err)
         }
