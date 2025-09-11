@@ -8,23 +8,24 @@
             <div class="mychallengeInfo">
                 <div class="mychallengeMap">
                     <mychallenge_map
-                    :mountains="mountains"
-                    @openUploadModal="openModal"
-                    style="z-index: 0;"
-                    ref="mapRef"
+                        :mountains="mountains"
+                        @openUploadModal="openModal"
+                        style="z-index: 0;"
+                        ref="mapRef"
                     />
                 </div>
                 <div class="mychallengeAcheve">
                     <div class="totalAcheve" v-show="!showHistory">
                         <h2>[您的成就]</h2>
                         <mychallenge_info 
-                        v-show="!showHistory" 
-                        @openHistoryComp="showHistory = true"/>
+                            ref="infoRef"
+                            v-show="!showHistory" 
+                            @openHistoryComp="showHistory = true"/>
                         <mychallenge_progress />
                     </div>
                     <mychallenge_history
-                    v-show="showHistory"
-                    @closeHistoryComp="closeHistory"/>
+                        v-show="showHistory"
+                        @closeHistoryComp="closeHistory"/>
                 </div>
             </div>
             <div class="mychallengeRank">
@@ -35,8 +36,9 @@
                 v-for="mountain in mountains"
                 :mountain="mountain"
                 v-show="openWindows[mountain.name]"
-                @closeUploadModal="openWindows[mountain.name] = false"
+                @closeUploadModal="closeModal"
                 @saveGpx="handleGpxSave"
+                @refreshStats="handleRefreshStats"
                 />
         </main>
     </div>
@@ -66,20 +68,37 @@
 
     const openWindows = ref({})
 
+    const infoRef = ref(null)
+
     const BASE = import.meta.env.BASE_URL
     // const jsonPath = `${BASE}json/mychallenge/mountains.json`
-    const jsonPath = `http://localhost/php/mychallenge_mountains.php`
+    // const jsonPath = `http://localhost/php/mychallenge_mountains.php`
+    const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_mountains.php`
 
     function openModal(mountainName) {
         openWindows.value[mountainName] = true
+    }
+
+    function closeModal(mountainName) {
+        if (mountainName) {
+            openWindows.value[mountainName] = false
+        }
     }
 
     function closeHistory() {
         showHistory.value = false
     }
 
-        const goalStore = useGoalStore()
-        const mapRef = ref(null)
+    const handleRefreshStats = async () => {
+    console.log('收到刷新請求，正在重新載入累積數據...')
+    if (infoRef.value && typeof infoRef.value.refreshStats === 'function') {
+        await infoRef.value.refreshStats()
+        console.log('累積數據已刷新')
+    }
+    }
+
+    const goalStore = useGoalStore()
+    const mapRef = ref(null)
 
     function handleGpxSave({ mountain, coords }) {
         console.log("上傳 GPX 給", mountain, coords)
@@ -119,12 +138,12 @@
                 ]
             }
 
-            // ✅ 只在第一次登頂時做以下動作
+            // 只在第一次登頂時做以下動作
             if (!climbedList.includes(mountain)) {
                 climbedList.push(mountain)
                 localStorage.setItem("climbedMountains", JSON.stringify(climbedList))
 
-                // ✅ 更新 Pinia 進度
+                // 更新 Pinia 進度
                 goalStore.addDone(target.kind)
             }
 
@@ -153,7 +172,7 @@
         
         onMounted(async() => {
             try{
-                const res = await axios.get(jsonPath)
+                const res = await axios.post(API_URL)
                 mountains.value = res.data.map(mountain => ({
                     name: mountain.MOUNTAIN_NAME,        // 轉換欄位名稱
                     kind: mountain.type,                 // 轉換欄位名稱  

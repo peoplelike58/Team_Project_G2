@@ -1,5 +1,6 @@
 <?php
     session_start();
+    $MEMBER_ID = $_SESSION["memberID"] = "1";
 
     // 若前端在 http://localhost:5173
     header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
@@ -9,21 +10,10 @@
 
     header('Content-Type: application/json; charset=utf-8');
 
-    //MySQL相關資訊
-    $db_host = "127.0.0.1";
-    $db_user = "root";
-    $db_pass = "password";
-    $db_select = "hou_Shan";
-
-    //建立資料庫連線物件
-    $dsn = "mysql:host=".$db_host.";dbname=".$db_select.";charset=utf8";
-    $pdo = new PDO($dsn, $db_user, $db_pass);
+    // 導入資料庫連線的資料檔
+    include 'conn.php'; 
 
     //---------------------------------------------------
-
-
-    // 取得會員ID
-    $MEMBER_ID = $_SESSION["memberID"] = "1";
 
     //建立SQL語法
     $sql = "SELECT M.MOUNTAIN_NAME as name,
@@ -40,7 +30,7 @@
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$MEMBER_ID]);
 
-    $rows = $stmt->fetchAll();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode($rows, JSON_UNESCAPED_UNICODE);
 

@@ -217,12 +217,14 @@ import axios from 'axios'
 
     const thought = ref("")
     const textCount = ref(0)
+    const API_URL_1 = `${import.meta.env.VITE_AJAX_URL}/mychallenge_modal_1.php`
+    const API_URL_2 = `${import.meta.env.VITE_AJAX_URL}/mychallenge_modal_2.php`
 
     function updateCount() {
         textCount.value = thought.value.length
     }
 
-    const emit = defineEmits(["closeUploadModal","saveGpx"])
+    const emit = defineEmits(["closeUploadModal", "saveGpx", "refreshStats"])
 
     async function saveThought() {
         if (!props.mountain.name) {
@@ -247,9 +249,13 @@ import axios from 'axios'
             formData.append('content', thought.value)
 
             // 發送 POST 請求到 PHP
-            const response = await axios.post('http://localhost/php/mychallenge_modal.php', formData, {
-                withCredentials: true  // ← 讓 session 可以運作
-            })
+            const response = await axios.post(
+            API_URL_1,
+            formData,
+            // {
+            //     withCredentials: true  // ← 讓 session 可以運作
+            // }
+            )
 
             console.log('儲存成功:', response.data)
             
@@ -276,6 +282,7 @@ import axios from 'axios'
                 coords: gpxCoords.value
             })
             
+            emit("refreshStats")
             emit("closeUploadModal")
 
         } catch (error) {
@@ -287,7 +294,7 @@ import axios from 'axios'
     // 查詢山峰 ID 的函數**
     async function getMountainId(mountainName) {
         try {
-        const response = await axios.get(`http://localhost/php/mountain_id.php?name=${encodeURIComponent(mountainName)}`)
+        const response = await axios.get(`${ API_URL_2 }?name=${encodeURIComponent(mountainName)}`)
         
             if (response.data.success) {
                 return response.data.mountain_id
