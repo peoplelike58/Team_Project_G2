@@ -1,195 +1,340 @@
 <template>
-<NavMenu/>
-<div class="wrapper">
-    <div class="wrapperTop">
-        <div class="top">
-            <div class="topInfoImg">
-                <img src="@/assets/images/eventCard/cardimg1.jpg" alt="">
-            </div>
-
-            <div class="topInfo">
-                <div class="status-header">
-                    <h1>揪團中</h1>
-                    <div class="closeBtn" @click="goBack">✕</div>
-                </div>
-                <h2>陽明山緩慢散步之旅</h2>
-                <div class="topInfoP">
-                    <p>日期</p>
-                    <p>8/5</p>
-                </div>
-                <div class="topInfoP-2">
-                    <p>時間</p>
-                    <p>09:00 - 17:00</p>
-                </div>
-            </div>
+  <NavMenu/>
+  <div class="wrapper">
+    <!-- Loading 狀態 -->
+    <div v-if="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>載入中...</p>
+    </div>
+    
+    <!-- 錯誤訊息 -->
+    <div v-else-if="error" class="error-message">
+      <p>{{ error }}</p>
+      <button @click="fetchEventData">重試</button>
+    </div>
+    
+    <!-- 主要內容 - 只在資料載入完成後顯示 -->
+    <div v-else-if="eventData && !isLoading" class="wrapperTop">
+      <div class="top">
+        <div class="topInfoImg">
+          <img :src="eventData.imageUrl || '/images/eventCard/cardimg1.jpg'" 
+               :alt="eventData.title || '活動圖片'">
         </div>
 
-        <div class="mainInfo">
-            <h1>活動簡介</h1>
-            <p>這趟陽明山緩慢散步之旅，將帶你遠離城市喧囂，輕輕走進自然懷抱。行程從陽明山遊客服務中心出發，沿途漫步在靜謐的林蔭小徑，欣賞隨季節變換的山景，途中停留於小巧的觀景點，聽導覽老師分享陽明山的花卉故事與地質秘密。最後，我們會在溫泉區短暫休息，啜飲一杯熱茶，讓身心徹底放鬆，帶回一段最緩慢、最純粹的美好時光。</p>
+        <div class="topInfo">
+          <div class="status-header">
+            <h1>{{ eventData.status }}</h1>
+            <div class="closeBtn" @click="goBack">✕</div>
+          </div>
+          <h2>{{ eventData.title || '活動標題' }}</h2>
+          <div class="topInfoP">
+            <p>日期</p>
+            <p>{{ eventData.date }}</p>
+          </div>
+          <div class="topInfoP-2">
+            <p>時間</p>
+            <p>{{ eventData.time }}</p>
+          </div>
         </div>
+      </div>
+
+      <div class="mainInfo">
+        <h1>活動簡介</h1>
+        <p>{{ eventData.content }}</p>
+      </div>
     </div>
 
-    <div class="cardWrapper">
-        <!-- web -->
-        <div class="infoCard desktop-version">
-            <div class="infoList">
+    <!-- 卡片區域  -->
+    <div class="cardWrapper" v-if="eventData && !isLoading && !error">
+      <!-- 桌面版 -->
+      <div class="infoCard desktop-version">
+        <div class="infoList">
+          <div>
+            <h1>[集合時間與地點]</h1>
+            <div class="infoListH2">
+              <h2>{{ formatDate(eventData.startDate)}}</h2> 
+              <span class="time">{{ formatTime(eventData.startTime) }}</span>
+            </div>
+            <p class="infoListP">{{ eventData.meetingPlace }}</p>
+          </div>
+          <div>
+            <div class="leftMain">
+              <p>[路程]</p>
+              <span class="leftMaiMM">{{ eventData.distance }}</span>
+            </div>
+            <div class="leftFooter">
+              <p>[花費時間]</p>
+              <span class="lefiMainCH2">約</span>
+              <span class="leftMainMM2">{{ eventData.duration }}</span>
+              <span class="hms">小時</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="rightInfoCard">
+          <img :src="eventData.imageUrl || '/images/eventCard/cardimg1.jpg'" 
+               :alt="eventData.title || '活動圖片'">
+          
+          <div class="rightInfo">
+            <span class="rightInfoNA">報名人數</span>
+            <span class="rightInfoNB">{{ eventData.joinQty || 0 }}</span>
+          </div>
+          <div class="deadline-info">
+            <span class="rightInfoBNA">{{ formatDate(eventData.registrationDeadlineDate) || '8/13' }}</span>
+            <span class="rightInfoBT">{{ formatTime(eventData.registrationDeadlineTime) || '12:00' }}</span>
+            <span class="rightInfoBBNA">截止</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 手機版輪播 -->
+<div class="mobile-carousel">
+    <div class="carousel-wrapper" 
+         @touchstart="handleTouchStart" 
+         @touchend="handleTouchEnd">
+        
+        <!-- 詳細資訊（第一頁） -->
+        <div class="carousel-slide" :class="{ active: currentSlide === 0 }">
+            <div class="infoList mobile-layout">
                 <div>
                     <h1>[集合時間與地點]</h1>
                     <div class="infoListH2">
-                        <h2>8/15</h2> 
-                        <span class="time">9:00</span><span class="ampm">am</span>
+                        <h2>{{ formatDate(eventData.startDate) }}</h2> 
+                        <span class="time">{{ formatTime(eventData.startTime) }}</span>
+                        <span class="ampm">{{ eventData.startTime ? (parseInt(eventData.startTime.split(':')[0]) >= 12 ? 'pm' : 'am') : 'am' }}</span>
                     </div>
-                    <p class="infoListP">劍潭捷運站 1 號出口</p>
+                    <p class="infoListP">{{ eventData.meetingPlace }}</p>
                 </div>
                 <div>
                     <div class="leftMain">
                         <p>[路程]</p>
-                        <span class="lefiMainCH">約</span><span class="leftMainMM">15</span><span class="mmkm">km</span>
-                        <p>冷水坑 → 七星公園 → 夢幻湖</p>
+                        <span class="leftMainMM">{{ eventData.distance }}</span>
                     </div>
                     <div class="leftFooter">
                         <p>[花費時間]</p>
-                        <span class="lefiMainCH2">約</span><span class="leftMainMM2">4</span><span class="hms">小時</span>
+                        <span class="lefiMainCH2">約</span>
+                        <span class="leftMainMM2">{{ eventData.duration }}</span>
+                        <span class="hms">小時</span>
                     </div>
                 </div>
             </div>
-            
-            <div class="rightInfoCard">
-                <img src="@/assets/images/eventCard/cardimg1.jpg" alt="">
+        </div>
+
+        <!-- 報名資訊（第二頁） -->
+        <div class="carousel-slide" :class="{ active: currentSlide === 1 }">
+            <div class="rightInfoCard mobile-layout">
+                <img :src="eventData.imageUrl || '/images/eventCard/cardimg1.jpg'" 
+                     :alt="eventData.title ">
                 
                 <div class="rightInfo">
-                    <span class="rightInfoNA">報名人數</span><span class="rightInfoNB">10</span>
+                    <span class="rightInfoNA">報名人數</span>
+                    <span class="rightInfoNB">{{ eventData.joinQty }}</span>
                 </div>
                 <div class="deadline-info">
-                    <span class="rightInfoBNA">8/13</span><span class="rightInfoBT">12:00</span><span class="rightInfoBBNA">截止</span>
+                    <span class="rightInfoBNA">{{ formatDate(eventData.registrationDeadlineDate) }}</span>
+                    <span class="rightInfoBT">{{ formatTime(eventData.registrationDeadlineTime) }}</span>
+                    <span class="rightInfoBBNA">截止</span>
                 </div>
             </div>
         </div>
-
-        <!-- mobal -->
-        <div class="mobile-carousel">
-            <div class="carousel-wrapper" 
-                 @touchstart="handleTouchStart" 
-                 @touchend="handleTouchEnd">
-                
-                <!-- 詳細資訊 -->
-                <div class="carousel-slide" :class="{ active: currentSlide === 0 }">
-                    <div class="infoList mobile-layout">
-                        <div>
-                            <h1>[集合時間與地點]</h1>
-                            <div class="infoListH2">
-                                <h2>8/15</h2> 
-                                <span class="time">9:00</span><span class="ampm">am</span>
-                            </div>
-                            <p class="infoListP">劍潭捷運站 1 號出口</p>
-                        </div>
-                        <div>
-                            <div class="leftMain">
-                                <p>[路程]</p>
-                                <span class="lefiMainCH">約</span><span class="leftMainMM">15</span><span class="mmkm">km</span>
-                                <p>冷水坑 → 七星公園 → 夢幻湖</p>
-                            </div>
-                            <div class="leftFooter">
-                                <p>[花費時間]</p>
-                                <span class="lefiMainCH2">約</span><span class="leftMainMM2">4</span><span class="hms">小時</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 報名資訊 -->
-                <div class="carousel-slide" :class="{ active: currentSlide === 1 }">
-                    <div class="rightInfoCard mobile-layout">
-                        <img src="@/assets/images/eventCard/cardimg1.jpg" alt="">
-                        
-                        <div class="rightInfo">
-                            <span class="rightInfoNA">報名人數</span><span class="rightInfoNB">10</span>
-                        </div>
-                        <div class="deadline-info">
-                            <span class="rightInfoBNA">8/13</span><span class="rightInfoBT">12:00</span><span class="rightInfoBBNA">截止</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 圓點指示器 -->
-            <div class="carousel-dots">
-                <span 
-                    v-for="(_, index) in 2"
-                    :key="index"
-                    :class="['dot', { active: currentSlide === index }]"
-                    @click="goToSlide(index)">
-                </span>
-            </div>
-        </div>
     </div>
 
-    <div class="wooniInfo">
-        <ul class="wooniUl">注意事項：
-            <li>請穿著輕便衣物與防滑鞋</li>
-            <li>建議攜帶水壺．帽子．防蚊液</li>
-            <li>活動前3日若遇大雨將公告延期</li>
-        </ul>
+    <!-- 圓點指示器 -->
+    <div class="carousel-dots">
+        <span 
+            v-for="(_, index) in 2"
+            :key="index"
+            :class="['dot', { active: currentSlide === index }]"
+            @click="goToSlide(index)">
+        </span>
     </div>
-
-    <div class="button-wrapper">
-        <button class="join-btn">報名參加</button>
-    </div>
-        <Footer />
 </div>
+    </div>
+
+    <!-- 注意事項 -->
+    <div class="wooniInfo" v-if="eventData && eventData.notes">
+      <ul class="wooniUl">注意事項：
+        <li v-for="(note, index) in parseNotes(eventData.notes)" :key="index">
+          {{ note }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- 按鈕區域 -->
+    <div class="button-wrapper" v-if="!isLoading && !error">
+      <button class="join-btn" @click="handleJoin" 
+              :disabled="eventData.status === '已截止'">
+        {{ eventData.status === '已截止' ? '報名已截止' : '報名參加' }}
+      </button>
+    </div>
+    
+    <Footer />
+  </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import activitiesJson from '@/components/togetherItem/activities.json';
+import axios from 'axios';
 import NavMenu from '../An/navMenu.vue';
-import Footer from '@/components/An/footer.vue'
+import Footer from '@/components/An/footer.vue';
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
-// 輪播相關狀態
-const currentSlide = ref(0)
-let touchStartX = 0
-let touchEndX = 0
+const eventData = ref({
+  id: '',
+  title: '載入中...',
+  date: '',
+  time: '',
+  startDate: '',
+  startTime: '',
+  joinQty: 0,
+  meetingPlace: '',
+  distance: 0,
+  route: '',
+  duration: 0,
+  content: '',
+  notes: '',
+  imageUrl: '/assets/images/eventCard/cardimg1.jpg', // 預設圖片
+  registrationDeadlineDate: '',
+  registrationDeadlineTime: '',
+  status: '揪團中'
+});
 
-// 切換到指定頁面
+const isLoading = ref(true);
+const error = ref(null);
+const currentSlide = ref(0);
+
+// API 設定
+const API_BASE_URL = 'http://localhost/team-projcetG2/eventCardInfo.php';
+
+// 取得活動資料
+const fetchEventData = async () => {
+    try {
+        isLoading.value = true;
+        error.value = null;
+        
+        const eventId = route.params.id || 1;
+        console.log('正在載入活動 ID:', eventId);
+        
+        const response = await axios.get(API_BASE_URL, {
+            params: { id: eventId },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log('API 回應:', response.data);
+        
+        if (response.data.success) {
+            // ⭐ 合併資料，保留預設值
+            eventData.value = {
+                ...eventData.value,  // 保留預設值
+                ...response.data.data  // 覆蓋新資料
+            };
+            console.log('活動資料載入成功:', eventData.value);
+        } else {
+            throw new Error(response.data.message || '載入失敗');
+        }
+        
+    } catch (err) {
+        console.error('載入活動資料失敗:', err);
+        
+        if (err.response) {
+            error.value = `伺服器錯誤: ${err.response.data?.message || '未知錯誤'}`;
+        } else if (err.request) {
+            error.value = '無法連接到伺服器，請檢查網路連線';
+        } else {
+            error.value = err.message;
+        }
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+// 格式化日期
+const formatDate = (dateString) => {
+    if (!dateString) return '';
+    try {
+        const date = new Date(dateString);
+        return `${date.getMonth() + 1}/${date.getDate()}`;
+    } catch (e) {
+        return dateString;
+    }
+};
+
+// 格式化時間
+const formatTime = (timeString) => {
+    if (!timeString) return '';
+    try {
+        const [hours, minutes] = timeString.split(':');
+        const hour = parseInt(hours);
+        const period = hour >= 12 ? 'pm' : 'am';
+        const displayHour = hour > 12 ? hour - 12 : hour;
+        return `${displayHour}:${minutes} ${period}`;
+    } catch (e) {
+        return timeString;
+    }
+};
+
+// 解析注意事項
+const parseNotes = (notesString) => {
+    if (!notesString) return [];
+    return notesString.split(/[;\\n]/).filter(note => note.trim());
+};
+
+// 報名處理
+const handleJoin = async () => {
+    if (eventData.value.status === '已截止') {
+        alert('報名已截止');
+        return;
+    }
+    
+    alert('報名功能開發中...');
+    // TODO: 實作報名功能
+};
+
+// 返回上一頁
+const goBack = () => {
+    router.back();
+};
+
+// 輪播控制
+let touchStartX = 0;
+let touchEndX = 0;
+
 const goToSlide = (index) => {
-    currentSlide.value = index
-}
+    currentSlide.value = index;
+};
 
-// 觸控開始
 const handleTouchStart = (e) => {
-    touchStartX = e.touches[0].clientX
-}
+    touchStartX = e.touches[0].clientX;
+};
 
-// 觸控結束
 const handleTouchEnd = (e) => {
-    touchEndX = e.changedTouches[0].clientX
-    handleSwipe()
-}
+    touchEndX = e.changedTouches[0].clientX;
+    handleSwipe();
+};
 
-// 處理滑動邏輯
 const handleSwipe = () => {
-    const swipeThreshold = 50
-    const diff = touchStartX - touchEndX
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
     
     if (Math.abs(diff) > swipeThreshold) {
         if (diff > 0 && currentSlide.value < 1) {
-            // 向左滑 - 下一頁
-            currentSlide.value++
+            currentSlide.value++;
         } else if (diff < 0 && currentSlide.value > 0) {
-            // 向右滑 - 上一頁
-            currentSlide.value--
+            currentSlide.value--;
         }
     }
-}
+};
 
-const goBack = () => {
-    router.back()
-}
+// 元件載入時取得資料
+onMounted(() => {
+    fetchEventData();
+});
+
 </script>
 
 <style lang="scss" scoped>
@@ -427,13 +572,10 @@ const goBack = () => {
         margin: 15px 0;
     }
     
-    .lefiMainCH, .mmkm {
-        font-size: 20px;
+    .leftMaiMM {
+        line-height: 1.2;
         font-weight: bold;
-    }
-    
-    .leftMainMM {
-        font-size: 36px;
+        font-size: 20px;
     }
 }
 
@@ -470,7 +612,7 @@ const goBack = () => {
 .rightInfo {
     margin-top: 135px;
     margin-bottom: 18px;
-    margin-left: 190px;
+    margin-left: 150px;
     
     .rightInfoNA, .rightInfoNB {
         font-size: 24px;
@@ -484,7 +626,9 @@ const goBack = () => {
 }
 
 .deadline-info {
-    margin-left: 190px;
+    margin-left: 150px;
+    margin-right: 80px;
+    width: 250px;
 }
 
 .rightInfoBNA, .rightInfoBT, .rightInfoBBNA {
