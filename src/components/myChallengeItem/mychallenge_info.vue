@@ -37,26 +37,34 @@
 
 
     const loadTotalStats = async () => {
-    
-        const response = await axios.post(API_URL,{}, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        
-        if (response.data.success) {
-            heightTotal.value = response.data.heightTotal
-            kiloTotal.value = response.data.kiloTotal
-            timeTotal.value = response.data.timeTotal
-            console.log('累積數據載入成功:', response.data)
-        } else {
-            throw new Error(response.data.error || '載入失敗')
-        }
 
+        try{
+            const response = await axios.post(API_URL,{}, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (response.data.success) {
+                heightTotal.value = response.data.heightTotal
+                kiloTotal.value = response.data.kiloTotal
+                timeTotal.value = response.data.timeTotal
+                console.log('累積數據載入成功:', response.data)
+            } else {
+                throw new Error(response.data.error || '載入失敗')
+            }
+
+        }catch(err){
+            console.error('載入數據失敗:', err)
+            // 發生錯誤時保持預設值
+            heightTotal.value = '0.00'
+            kiloTotal.value = '0.00'
+            timeTotal.value = '0.00'
+        }
     }
 
-    // 🔧 新增：重新載入數據的方法（給父組件調用）
+    // 重新載入數據的方法（給父組件調用）
     const refreshStats = async () => {
         await loadTotalStats()
     }

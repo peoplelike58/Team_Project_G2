@@ -47,8 +47,6 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
-    const memberId =  ref(1)
-
     // --- 1.控制手風琴開關 ---
     const openItem = ref(null)     // 全關
 
@@ -69,33 +67,49 @@ import axios from 'axios'
         emit('closeHistoryComp')  // 告訴父組件要關閉 history
     }
 
-    // --- 3.載入 Json資料 ---
+    // --- 3.載入資料 ---
     const histories = ref([])
 
     const BASE = import.meta.env.BASE_URL
     // const jsonPath = `http://localhost/php/mychallenge_history.php?member_id=${memberId.value}`
     const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_history.php`
 
-    onMounted(async() => {
-        try{
-            const jsonData = {
-                member_id: memberId.value
+    // 載入歷史資料
+    const loadHistories = async () => {
+        // 如果未登入，不載入資料
+        if (!userStore.isLoggedIn || !userStore.memberId) {
+            histories.value = []
+            return
+        }
+
+        isLoading.value = true
+        
+        try {
+            const response = await axios.post(API_URL, {}, {
+                withCredentials: true,  // ← 讓 session 可以運作
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (response.data.success) {
+                histories.value = response.data.data || []
+                console.log('歷史資料載入成功:', response.data)
+            } else {
+                console.error('載入失敗:', response.data.error || response.data.message)
+                histories.value = []
             }
-
-            const response = await axios.post(
-            API_URL,
-            jsonData,
-                // {
-                // withCredentials: true,  // ← 讓 session 可以運作
-                // headers: {
-                //     'Content-Type': 'application/json'  // 重要！
-                // }
-                // }
-            )
-
-            histories.value = response.data
-        }catch(err){
+            
+        } catch (err) {
             console.error("讀取失敗:", err)
+            histories.value = []
+        }
+    }
+    
+    onMounted(async() => {
+        // 如果已經登入，載入資料
+        if (userStore.isLoggedIn && userStore.memberId) {
+            loadHistories()
         }
     
     })

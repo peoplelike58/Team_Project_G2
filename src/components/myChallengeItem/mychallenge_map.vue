@@ -23,7 +23,8 @@
 
 <script setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
-// import * as turf from '@turf/turf'
+import { useUserStore } from '@/stores/user.js' // 導入 user store
+import { useRouter } from 'vue-router'
 
 import 'leaflet/dist/leaflet.css'
 import { Icon } from 'leaflet'
@@ -31,6 +32,8 @@ import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet'
 import L from "leaflet"
 import "leaflet.markercluster"
 
+const userStore = useUserStore()
+const router = useRouter()
 
 const BASE = import.meta.env.BASE_URL
 const jsonPath = `${BASE}json/mychallenge/ranks.json`
@@ -68,6 +71,23 @@ const emit = defineEmits(["openUploadModal"])
 const markerMap = new Map()
 let clusterGroup = null
 let mapInstance = null
+
+function handleMarkerClick(mountainName) {
+	console.log('點擊山峰:', mountainName) // 測試用 log
+	console.log('登入狀態:', userStore.isLoggedIn) // 測試用 log
+	console.log('用戶資料:', userStore.email, userStore.name) // 測試用 log
+
+	// 檢查是否已登入
+	if (!userStore.isLoggedIn) {
+		// 未登入時顯示提示訊息
+		alert('請先登入才能上傳 GPX 檔案！')
+		router.push('/loginregister/fontrelogin')
+		return
+	}
+	
+	// 已登入則正常開啟上傳彈窗
+	emit('openUploadModal', mountainName)
+}
 
 // --- 建立地圖和icon ---
 function onMapReady(map) {
@@ -116,7 +136,7 @@ function onMapReady(map) {
 			icon: getIcon(mountain.icon)	// 單一 marker 的 icon (小旗子 / 山 icon)
 		})
 		marker.isClimbed = (mountain.icon === "flag.png") 
-		marker.on("click", () => emit("openUploadModal", mountain.name))	// 點擊事件
+		marker.on("click", () => handleMarkerClick(mountain.name))
 		clusterGroup.addLayer(marker)		// 加入群組
 
 		// 加入 tooltip 顯示山名
@@ -195,6 +215,11 @@ function setClimbed(mountainName) {
 				if (mountainsMarker) {
 					mountainsMarker.isClimbed = (mount.icon === "flag.png")
 					mountainsMarker.setIcon(getIcon(mount.icon))
+
+					// 重新綁定點擊事件（包含登入檢查）
+					mountainsMarker.off('click') // 先移除舊的事件監聽
+					mountainsMarker.on('click', () => handleMarkerClick(mount.name))
+
 					clusterGroup.addLayer(mountainsMarker)
 				}
 			})
@@ -228,7 +253,10 @@ watch(() => props.mountains, (newMountains) => {
 					icon: getIcon(mountain.icon)
 				})
 				marker.isClimbed = (mountain.icon === "flag.png") 
-				marker.on("click", () => emit("openUploadModal", mountain.name))
+				
+				// 檢查登入
+				marker.on("click", () => handleMarkerClick(mountain.name))
+
 				clusterGroup.addLayer(marker)
 				markerMap.set(mountain.name, marker)
 			})

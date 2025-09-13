@@ -36,7 +36,7 @@
                 v-for="mountain in mountains"
                 :mountain="mountain"
                 v-show="openWindows[mountain.name]"
-                @closeUploadModal="closeModal"
+                @closeUploadModal="() => closeModal(mountain.name)"
                 @saveGpx="handleGpxSave"
                 @refreshStats="handleRefreshStats"
                 />
@@ -65,14 +65,11 @@
 
     const showHistory = ref(false)
     const mountains = ref([])
-
     const openWindows = ref({})
-
     const infoRef = ref(null)
+    const mapRef = ref(null)
 
     const BASE = import.meta.env.BASE_URL
-    // const jsonPath = `${BASE}json/mychallenge/mountains.json`
-    // const jsonPath = `http://localhost/php/mychallenge_mountains.php`
     const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_mountains.php`
 
     function openModal(mountainName) {
@@ -98,7 +95,6 @@
     }
 
     const goalStore = useGoalStore()
-    const mapRef = ref(null)
 
     function handleGpxSave({ mountain, coords }) {
         console.log("上傳 GPX 給", mountain, coords)
@@ -171,27 +167,59 @@
 
         
         onMounted(async() => {
+
             try{
-                const res = await axios.post(API_URL)
-                mountains.value = res.data.map(mountain => ({
-                    name: mountain.MOUNTAIN_NAME,        // 轉換欄位名稱
-                    kind: mountain.type,                 // 轉換欄位名稱  
-                    latitude: parseFloat(mountain.LATITUDE),   // 確保是數字
-                    longitude: parseFloat(mountain.LONGITUDE), // 確保是數字
-                    icon: 'mountain.png'                 // 預設圖示
+                // 使用新的 API，直接包含攀登狀態
+                const res2 = await axios.get(API_URL, {}, 
+                // {
+                //     withCredentials: true,
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     }
+                // }
+                )
+                
+                // 正確解析PHP返回的資料結構
+                const { mountains: mountainsData, climbed: climbedIds } = res2.data
+
+                // 設定所有山峰資料
+                mountains.value = mountainsData.map(mountain => ({
+                    name: mountain.MOUNTAIN_NAME,
+                    kind: mountain.type,
+                    latitude: parseFloat(mountain.LATITUDE),
+                    longitude: parseFloat(mountain.LONGITUDE),
+                    icon: 'mountain.png' // 預設圖示
                 }))
-
-                // console.log('PHP 回傳的原始資料:', res.data)
-                // console.log('資料型別:', typeof res.data)
-                // console.log('是否為陣列:', Array.isArray(res.data))
-
+                
+                // 標記已攀登的山峰
                 mountains.value.forEach(mountain => {
-                openWindows.value[mountain.name] = false
-                })   
+                    // 檢查這座山是否在已攀登列表中
+                    if (climbedIds.includes(mountain.name)) {
+                        mountain.icon = 'flag.png'
+                    }
+                })
+
+                // 載入本地已攀登資料
+                const climbed = JSON.parse(localStorage.getItem("climbedMountains") || "[]")
+                mountains.value.forEach(m => {
+                    if (climbed.includes(m.name)) {
+                        m.icon = "flag.png"
+                    }
+                })
+
+                // 初始化視窗狀態
+                mountains.value.forEach(mountain => {
+                    openWindows.value[mountain.name] = false
+                })
+
+                // 載入 store 資料
+                recordStore.loadAllRecords()
+                goalStore.loadFromStorage()
             }catch(err){
                 console.error("讀取失敗:", err)
             }
         })
+
 
 </script>
 

@@ -1,18 +1,13 @@
 <?php
     session_start();
-    $_SESSION["memberID"] = "1";
-
-    // 若前端在 http://localhost:5173
-    header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
-    header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Allow-Headers: Content-Type');
-    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-
 
     // 導入資料庫連線的資料檔
     include 'conn.php'; 
 
     //---------------------------------------------------
+
+    $_SESSION["memberID"] = "1";
+
 
     $mountain_id = $_POST['mountain_id'];
     $height = $_POST['height'];

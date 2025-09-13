@@ -1,7 +1,7 @@
 <template>
-    <div class="modalOverlay" @click.self="$emit('closeUploadModal')">
+    <div class="modalOverlay" @click.self="$emit('closeUploadModal', props.mountain.name)">
         <section class="mychallengeModal">
-            <button class="closeBtn" @click="$emit('closeUploadModal')">x</button>
+            <button class="closeBtn" @click="$emit('closeUploadModal', props.mountain.name)">x</button>
             <article class="gpx">
                 <div class="mountainInfo">
                     <h2>{{ mountain.name }}</h2>
@@ -283,7 +283,7 @@ import axios from 'axios'
             })
             
             emit("refreshStats")
-            emit("closeUploadModal")
+            emit("closeUploadModal", props.mountain.name)
 
         } catch (error) {
             console.error('儲存失敗:', error)

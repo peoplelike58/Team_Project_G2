@@ -1,13 +1,4 @@
 <?php
-
-    // 若前端在 http://localhost:5173
-    header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
-    header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Allow-Headers: Content-Type');
-    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-
-    header('Content-Type: application/json; charset=utf-8');
-
     // 導入資料庫連線的資料檔
     include 'conn.php'; 
 
