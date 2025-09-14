@@ -3,7 +3,7 @@
 $member=json_decode(file_get_contents("php://input"), true);//接收前端來的東西，做json檔的解碼，file_get_contents("php://input") → 抓到整個 JSON 字串，json_decode(..., true) → 把 JSON 轉成 關聯陣列 (associative array)
 
 
-include 'toMysql.php';
+include 'conn.php';
 
 
 //不是機器人驗證 (YUKI)
@@ -12,7 +12,7 @@ if (!verifyRecaptcha($member['recaptcha'])){
     echo json_encode([
         "sucess" => false,
          "message" => "請先通過驗證"
-    ])
+    ]);
     exit;
 }
 
@@ -27,8 +27,8 @@ if($checkEmail){
     $respBody['message'] = '此email已註冊過,註冊失敗!' ;
 }else{
     $sql = "
-    insert into MEMBER(EMAIL,NAME,PW,PHONE,CREATED_AT)
-    values(:email,:username ,:password ,:phone,now())
+    insert into MEMBER(EMAIL,NAME,PW,PHONE,CREATED_AT,STATUS)
+    values(:email,:username ,:password ,:phone,now(),'normal')
     ";
 
     $pstmt = $pdo->prepare($sql);

@@ -22,7 +22,8 @@
       <el-table-column label="操作" fixed="right" width="180">
         <template #default="{ row, $index }">
           <el-button size="small" @click="openEdit(row, indexOf($index))">編輯</el-button>
-          <el-button size="small" type="danger" @click="remove(indexOf($index))">刪除</el-button>
+          <!-- <el-button size="small" type="danger" @click="remove(indexOf($index))">刪除</el-button> -->  
+          <el-button size="small" type="danger" @click="removeClick(row)">刪除</el-button>   
         </template>
       </el-table-column>
     </el-table>
@@ -123,10 +124,17 @@ const openEdit = (row) => {
 }
 const submit = () => {
   if (dialogMode.value === 'create') {
+<<<<<<< HEAD
     emit('create', {...from.value})  //YUKI
     // data.value.unshift({ ...form.value, _id: Date.now() })
   } else {
     emit('update', {...from.value})  //YUKI
+=======
+    emit('create', {...form.value})  //YUKI
+    // data.value.unshift({ ...form.value, _id: Date.now() })
+  } else {
+    emit('update', {...form.value})  //YUKI
+>>>>>>> acd5a57708a21593887604b3565f3eb53108461a
     // data.value.splice(editIndex.value, 1, { ...form.value })
   }
   dialogVisible.value = false
@@ -145,7 +153,10 @@ const restData = () => {
   currentPage.value = 1
   emit('refresh')
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> acd5a57708a21593887604b3565f3eb53108461a
 //=========================
 
 

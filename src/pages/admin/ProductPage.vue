@@ -21,7 +21,7 @@ const columns = [
 const sampleData =ref([])
   
   onMounted(()=>{
-    fetch('http://localhost/Mountain_Peak/ProductPage.php')
+    fetch(import.meta.env.VITE_AJAX_URL +'/ProductPage.php')
       .then(resp => resp.json())
       .then(json =>{
         sampleData.value = json

@@ -150,8 +150,7 @@
 </template>
 
 <script setup>
-// 目前只是靜態切版，無需任何邏輯
-import member from '@/router/member'
+// import member from '@/router/member'
 import { ref, computed, onMounted} from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -233,12 +232,9 @@ const GoRegister = () => {
     return;
   }
 
-  //YUKI本機端測試
-  // fetch('http://localhost/Mountain_Peak/LoginPage_register.php',{   
-  //＝================================================================
 
 
-  fetch('/tjd102/g2/PHP/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
+  fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
   method: 'POST',
   headers:{'Content-Type':'application/json'},
   credentials: 'include',

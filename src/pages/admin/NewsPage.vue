@@ -40,8 +40,13 @@ const columns = [
 
 const fetchList = () =>{
   //改相對路徑
+<<<<<<< HEAD
   // fetch(import.meta.env.VITE_AJAX_URL + 'http://localhost/Mountain_Peak/NewsPage.php')
   fetch('http://localhost/Mountain_Peak/NewsPage.php')
+=======
+  fetch(import.meta.env.VITE_AJAX_URL + '/NewsPage.php')
+  // fetch('http://localhost/Mountain_Peak/NewsPage.php')
+>>>>>>> acd5a57708a21593887604b3565f3eb53108461a
     .then(resp => resp.json())
     .then(json =>{
       rows.value = json
@@ -49,7 +54,11 @@ const fetchList = () =>{
 }
 
 const deleteNews = (id) => {
+<<<<<<< HEAD
   fetch('http://localhost/Mountain_Peak/NewsDelete.php',{
+=======
+  fetch(import.meta.env.VITE_AJAX_URL +'/NewsDelete.php',{
+>>>>>>> acd5a57708a21593887604b3565f3eb53108461a
     method:'POST',
     headers:{
       'Content-Type': 'application/json'
@@ -65,6 +74,26 @@ const deleteNews = (id) => {
       }
     })
 }
+<<<<<<< HEAD
+=======
+const createNews = (payload) => {
+  fetch(import.meta.env.VITE_AJAX_URL +'/NewsCreat.php',{
+    method:'POST',
+    headers:{
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success){
+        fetchList()
+      }else{
+        alert('新增失敗')
+      }
+    })
+}
+>>>>>>> acd5a57708a21593887604b3565f3eb53108461a
 
 //當頁面載入時執行
 onMounted(()=>{

@@ -1,7 +1,8 @@
+```vue
 <template>
 <NavMenu/>
   <div class="wrapper">
-    <!-- 遊戲 -->
+    <!-- 遊戲 手機版隱藏 -->
     <div class="game">
       <br>
       <p>Comming Soon!!!</p>
@@ -9,25 +10,38 @@
       <p>遊戲難產中</p>
     </div>
 
-    <!-- 按鈕列表，由 tabs 做陣列動態產生 -->
+    <!-- 按鈕列表  -->
     <div class="iconList">
       <button
         v-for="tab in tabs"
         :key="tab.key"
-        :class="{ active: tab.key === activeTab }"
-        @click="selectTab(tab.key)"
-        aria-pressed="tab.key === activeTab"
+        :class="{ 
+          'active': tab.key === currentSelectedIcon && !isMobileView,
+          'icon-hidden': tab.key === currentSelectedIcon && isMobileView
+        }"
+        @click="handleIconClick(tab.key)"
+        aria-pressed="tab.key === currentSelectedIcon"
       >
         <img :src="tab.icon" :alt="tab.label" />
         <p>{{ tab.label }}</p>
       </button>
     </div>
 
-    <!-- 下方內容區 -->
+    <!-- RWD狀態下被選中的icon區域 -->
+    <div v-if="isMobileView && currentSelectedIcon" class="selected-icon-area">
+      <button 
+        class="selected-icon"
+        @click="handleIconClick(currentSelectedIcon)"
+      >
+        <img :src="getSelectedIconData.icon" :alt="getSelectedIconData.label" />
+        <p>{{ getSelectedIconData.label }}</p>
+      </button>
+    </div>
+
+    <!-- 內容區域 -->
     <div class="content">
-      <!-- 使用v-if 有陣列才顯示 -->
-      <ul v-if="activeTabData.length">
-        <li v-for="(line, index) in activeTabData" :key="index">
+      <ul v-if="currentIconContent && currentIconContent.length > 0">
+        <li v-for="(line, index) in currentIconContent" :key="index">
           {{ line }}
         </li>
       </ul>
@@ -37,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Woni   from '@/assets/images/peaceCard/woniPhotoroom.png'
 import Back   from '@/assets/images/peaceCard/back.png'
 import People from '@/assets/images/peaceCard/people.png'
@@ -45,7 +59,6 @@ import Info   from '@/assets/images/peaceCard/info.png'
 import NavMenu from '@/components/An/navMenu.vue'
 import Footer from '@/components/An/footer.vue'
 
-// 1. 定義 tabs 時直接把 content 變陣列，每項都是一句
 const tabs = [
   {
     key: 'woni',
@@ -117,19 +130,46 @@ const tabs = [
   },
 ]
 
-// 預設為第一筆 key
-const activeTab = ref(tabs[0]?.key || '')
+// 當前選中的圖標key值
+const currentSelectedIcon = ref(tabs[0]?.key || '')
 
-// 用 computed 直接回傳 content 陣列，如果找不到則回空陣列
-const activeTabData = computed(() => {
-  const tab = tabs.find(t => t.key === activeTab.value)
-  return Array.isArray(tab?.content) ? tab.content : []
+const isMobileView = ref(false)
+
+const currentIconContent = computed(() => {
+  // 如果沒有選中的圖標，返回空陣列
+  if (!currentSelectedIcon.value) return []
+  
+  // 尋找對應的標籤頁
+  const selectedTab = tabs.find(tab => tab.key === currentSelectedIcon.value)
+  
+  return selectedTab?.content && Array.isArray(selectedTab.content) 
+    ? selectedTab.content 
+    : []
 })
 
-// 切換 tab
-function selectTab(key) {
-  activeTab.value = key
+const getSelectedIconData = computed(() => {
+  const selectedTab = tabs.find(tab => tab.key === currentSelectedIcon.value)
+  return selectedTab || { icon: '', label: '' }
+})
+
+// 處理icon點擊事件
+function handleIconClick(clickedIconKey) {
+  // 切換到新icon
+  currentSelectedIcon.value = clickedIconKey
 }
+
+function checkScreenSize() {
+  isMobileView.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  checkScreenSize()
+  window.addEventListener('resize', checkScreenSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScreenSize)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -139,68 +179,201 @@ function selectTab(key) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 20px;
 }
 
+// 遊戲區塊樣式
 .game {
-  width: 1400px;
+  width: 100%;
+  max-width: 1400px; 
   height: 550px;
-  border: 1px solid red;
+  // border: 1px solid red;
   text-align: center;
   font-size: 100px;
   margin-bottom: 90px;
+  
+  @media (max-width: 1200px) {
+    display: none;
+  }
 }
 
+// icon列表
 .iconList {
   display: flex;
-
+  justify-content: center;
+  gap: 90px;
+  width: 100%;
+  
   button {
     border: none;
-    margin-left: 30px;
     cursor: pointer;
     background: transparent;
-
-    &:first-child {
-      margin-left: 0;
-    }
-
+    transition: all 0.3s ease; 
+    
     img {
       width: 142px;
       height: 142px;
       object-fit: cover;
       margin-bottom: 17px;
+      transition: all 0.3s ease;
     }
-
+    
     p {
       font-size: 24px;
+      transition: color 0.3s ease; 
     }
-
+    
     &.active {
       transform: scale(1.05);
+      
       p {
         color: #007bff;
       }
     }
+  
+    
+    // 在手機版時，被選中的icon隱藏
+    &.icon-hidden {
+      @media (max-width: 768px) {
+        opacity: 0;
+        visibility: hidden;
+        width: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      img {
+        width: 80px;
+        height: 80px;
+      }
+      
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    gap: 15px;
+    padding: 0 10px;
   }
 }
 
-.content {
-  margin-top: 40px;
+// RWD狀態下被選中的圖標區域
+.selected-icon-area {
+  display: none;
+  width: 100%;
+  justify-content: center;
+  margin: 30px 0;
+  animation: slideDown 0.3s ease;
+  
+  @media (max-width: 768px) {
+    display: flex;
+  }
+  
+  .selected-icon {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transform: scale(1.3);
+    animation: scaleUp 0.3s ease;
+    
+    img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      margin-bottom: 10px;
+      // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+    
+    p {
+      font-size: 20px;
+      color: #007bff;
+      font-weight: bold;
+    }
+  }
+}
 
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.3);
+  }
+}
+
+// 內容樣式
+.content {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 1200px;
+  text-align: center;
+  
   ul {
     list-style: inside decimal;
-    padding: 0;
-    margin-top: 60px;
-
+    padding: 0 20px; // 添加內邊距
+    margin-top: 20px;
+    
     li {
       margin-bottom: 0.5rem;
       line-height: 1.6;
       font-size: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      
+      // 768px斷點調整字體大小
+      @media (max-width: 768px) {
+        font-size: 16px;
+        line-height: 1.8;
+      }
     }
   }
-
+  
   p {
     font-size: 20px;
     color: #888;
+    
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
+  }
+  
+  @media (max-width: 1200px) {
+    margin-top: 60px;
+  }
+  
+  @media (max-width: 768px) {
+    margin-top: 0;
   }
 }
+.selected-icon-fade-enter-active,
+.selected-icon-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.selected-icon-fade-enter-from {
+  opacity: 0;
+}
+
+.selected-icon-fade-leave-to {
+  opacity: 0;
+}
 </style>
+```

@@ -57,7 +57,8 @@ import axios from 'axios'
     // ])
     
     const BASE = import.meta.env.BASE_URL; 
-    const jsonPath = `http://localhost/php/mychallenge_rank.php`;
+    // const jsonPath = `http://localhost/php/mychallenge_rank.php`;
+    const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_rank.php`
 
     // 控制手風琴開關
     const openItem = ref(null)
@@ -74,7 +75,7 @@ import axios from 'axios'
 
     onMounted(async() => {
         try{
-            const res = await axios.get(jsonPath)
+            const res = await axios.get(API_URL)
             ranks.value = res.data
 
         }catch(err){

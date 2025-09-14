@@ -1,7 +1,7 @@
 <?php
 $member=json_decode(file_get_contents("php://input"), true);//接收前端來的東西，做json檔的解碼
 
-include 'toMysql.php';
+include 'conn.php';
 
 //不是機器人驗證 (YUKI)
 include 'verifyRecaptcha.php';
@@ -9,12 +9,12 @@ if (!verifyRecaptcha($member['recaptcha'])){
     echo json_encode([
         "sucess" => false, 
         "message" => "請先通過驗證"
-    ])
+    ]);
     exit;
 }
 
 $sql = "
-select EMAIL,NAME from MEMBER where EMAIL = :email and PW = :password 
+select MEMBER_ID,EMAIL,NAME from MEMBER where EMAIL = :email and PW = :password 
 ";
 
 $pstmt = $pdo->prepare($sql);
@@ -29,7 +29,8 @@ if ($respBody['success']) {
     // $_SESSION['member'] = $member;
     $_SESSION['member'] = [
     "email" => $member[0]["EMAIL"],     // 左邊 是存進session的 key: 你自己命名,右邊 table 的欄位名是 EMAIL
-    "name"  => $member[0]["NAME"]     
+    "name"  => $member[0]["NAME"],
+    "id"  => $member[0]["MEMBER_ID"],
     ];
 
 }

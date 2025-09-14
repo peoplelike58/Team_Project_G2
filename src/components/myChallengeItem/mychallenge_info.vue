@@ -17,8 +17,16 @@
 </template>
 
 <script setup>
-    import { useRecordStore } from "@/stores/recordStore"
-    import { storeToRefs } from "pinia"
+    import { ref, onMounted } from 'vue'
+    import axios from 'axios'
+    // import { useRecordStore } from "@/stores/recordStore"
+    // import { storeToRefs } from "pinia"
+
+    const heightTotal = ref('0.00')
+    const kiloTotal = ref('0.00')
+    const timeTotal = ref('0.00')
+
+    const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_info.php`
 
     // --- 1.emit 傳遞事件 ---
     const emit = defineEmits(['openHistoryComp'])
@@ -28,9 +36,51 @@
     }
 
 
+    const loadTotalStats = async () => {
+
+        try{
+            const response = await axios.post(API_URL,{}, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (response.data.success) {
+                heightTotal.value = response.data.heightTotal
+                kiloTotal.value = response.data.kiloTotal
+                timeTotal.value = response.data.timeTotal
+                console.log('累積數據載入成功:', response.data)
+            } else {
+                throw new Error(response.data.error || '載入失敗')
+            }
+
+        }catch(err){
+            console.error('載入數據失敗:', err)
+            // 發生錯誤時保持預設值
+            heightTotal.value = '0.00'
+            kiloTotal.value = '0.00'
+            timeTotal.value = '0.00'
+        }
+    }
+
+    // 重新載入數據的方法（給父組件調用）
+    const refreshStats = async () => {
+        await loadTotalStats()
+    }
+
+    // 🔧 對外暴露方法
+    defineExpose({
+        refreshStats
+    })
+
+    // 🔧 組件載入時取得數據
+    onMounted(() => {
+        loadTotalStats()
+    })
     // --- 2.利用 Pinia+解構賦值，把store裡的state轉乘ref
-    const recordStore = useRecordStore()
-    const { heightTotal, kiloTotal, timeTotal } = storeToRefs(recordStore)
+    // const recordStore = useRecordStore()
+    // const { heightTotal, kiloTotal, timeTotal } = storeToRefs(recordStore)
 
 </script>
 

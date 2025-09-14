@@ -50,6 +50,7 @@ import axios from 'axios'
         }
     }, { immediate: true })
 
+    const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_setgoal.php`
 
     // 提交目標設定
     const submitGoal = async () => {
@@ -72,21 +73,21 @@ import axios from 'axios'
             }
 
             const response = await axios.post(
-                'http://localhost/php/mychallenge_setgoal.php',
+                API_URL,
                 jsonData,
-                {
-                withCredentials: true,  // ← 讓 session 可以運作
-                headers: {
-                    'Content-Type': 'application/json'  // 重要！
-                }
-                }
+                // {
+                // withCredentials: true,  // ← 讓 session 可以運作
+                // headers: {
+                //     'Content-Type': 'application/json'  // 重要！
+                // }
+                // }
             )
 
             if (response.data.success) {
                 // 將新的目標值傳給父組件
                 const updatedGoal = props.item.kind === '大百岳' 
                                     ? response.data.data.big_target 
-                                    : response.data.data.small_targe
+                                    : response.data.data.small_target
                 
                 emit('updateGoal', updatedGoal)
 

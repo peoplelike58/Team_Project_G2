@@ -3,6 +3,7 @@ import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
 import brandFooter from '@/components/An/footer.vue'
 import { reactive, ref, computed } from 'vue'
+import { useRouter } from 'vue-router';
 
 
 // 表單
@@ -34,6 +35,7 @@ const canSubmit = computed(() => {
     : basicOk
 })
 
+const router = useRouter();
 function goBack(){ router.push('/Shop/cart') }
 function submitNext(){ formRef.value?.validate?.((ok)=> { if (ok) router.push('/Shop/success') }) }
 
@@ -112,7 +114,7 @@ function submitNext(){ formRef.value?.validate?.((ok)=> { if (ok) router.push('/
 @import '@/assets/styles/othermixins.scss';
 // main{max-width:1200px;padding: 2vh,;}
 
-.page { max-width: 980px; margin: 0 auto; }//文字區塊
+.page { max-width: 980px; margin: 0 auto; background-color: transparent; }//文字區塊
 .panel { margin-bottom: 16px; }//每個區塊間隔
 .ship { display:block; }//配送點選按鈕
 .ship-row { display:grid; grid-template-columns: 1fr auto auto; align-items:center; gap:12px; padding:8px 0; }
