@@ -1,5 +1,13 @@
 <template>
-  <CrudPage title="消息管理" :columns="columns" :sampleData="sampleData" />
+  <CrudPage title="消息管理" 
+            :columns="columns" 
+            :sampleData="rows" 
+            @create="createNews" 
+            @update="updateNews" 
+            @remove="deleteNews"
+            @refresh="fetchList"
+            />
+<!-- @ 新/刪/修/重整 by YUKI -->
 </template>
 
 <script setup>
@@ -17,18 +25,51 @@ const columns = [
 //   { postId: 'N-001', publishDate: '2025-07-10', category: '安全小知識', title: '夏季補水要點', status: '上架', updatedAt: '2025-07-12' }
 // ]
 
-  const sampleData =ref([])
+  const rows =ref([])
+  // const sampleData =ref([])
   
-  onMounted(()=>{
-    fetch('http://localhost/Mountain_Peak/NewsPage.php')
-      .then(resp => resp.json())
-      .then(json =>{
-        sampleData.value = json
-        // console.log(sampleData);
-      }) 
+  // onMounted(()=>{
+  //   fetch('http://localhost/Mountain_Peak/NewsPage.php')
+  //     .then(resp => resp.json())
+  //     .then(json =>{
+  //       sampleData.value = json
+  //       // console.log(sampleData);
+  //     }) 
 
+  // })
+
+const fetchList = () =>{
+  //改相對路徑
+  // fetch(import.meta.env.VITE_AJAX_URL + 'http://localhost/Mountain_Peak/NewsPage.php')
+  fetch('http://localhost/Mountain_Peak/NewsPage.php')
+    .then(resp => resp.json())
+    .then(json =>{
+      rows.value = json
+    })
+}
+
+const deleteNews = (id) => {
+  fetch('http://localhost/Mountain_Peak/NewsDelete.php',{
+    method:'POST',
+    headers:{
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id })
   })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success){
+        rows.value = rows.value.filter(item=>item.NEWS_ID !==id)
+      }else{
+        alert('刪除失敗')
+      }
+    })
+}
 
+//當頁面載入時執行
+onMounted(()=>{
+  fetchList()
+})
 
 
 </script>
