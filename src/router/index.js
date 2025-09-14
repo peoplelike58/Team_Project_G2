@@ -70,7 +70,7 @@ const frontroutes = [
   },
 //------- 詳細頁面 -----------
   {
-    path:'/routes/:id',
+    path:'/routes/:MOUNTAIN_ID',
     name:'trailDetail',
     component: trailDetail,
     props: true
