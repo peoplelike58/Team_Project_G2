@@ -18,12 +18,18 @@ include 'conn.php';
 
 $sql = "
 
-select m.MOUNTAIN_ID, m.MOUNTAIN_NAME, m.REGION, m.DIFF, m.TYPE, m.DISTANCE, img.IMAGE,
-	m.TRAFFIC, m.TIME
-from mountain m
-	join mountain_image img
-    on m.MOUNTAIN_ID = img.MOUNTAIN_ID
-where img.IMAGE_TYPE = 'main'
+SELECT
+  m.MOUNTAIN_ID,                                         
+  m.MOUNTAIN_NAME, m.INTRO, m.REGION, m.TOWN,           
+  m.LEVEL, m.TRAFFIC, m.DISTANCE,                        
+  JSON_ARRAYAGG(img.IMAGE) AS imgDetail
+FROM mountain  m                                      
+LEFT JOIN mountain_image img                         
+  ON m.MOUNTAIN_ID = img.MOUNTAIN_ID                      
+GROUP BY
+  m.MOUNTAIN_ID, m.MOUNTAIN_NAME, m.INTRO, m.REGION,    
+  m.TOWN, m.LEVEL, m.TRAFFIC, m.DISTANCE;
+
    
 ";
 

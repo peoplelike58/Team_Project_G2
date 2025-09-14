@@ -27,7 +27,7 @@ const baseUrl = import.meta.env.BASE_URL
 
 // 引導至詳細頁面
 const router = useRouter()  
-const goDetail = id => router.push({name:'trailDetail' , params:{id}})
+const goDetail = MOUNTAIN_ID => router.push({name:'trailDetail' , params:{MOUNTAIN_ID}})
 
 // 資料讀取狀態,是否正在載入
 const loading = ref(false) 
@@ -48,7 +48,7 @@ const fetchTrails = async () => {
   try {
     const resp = await axios.get(API_URL)
     trails.value = resp.data
-    console.log(trails.value);
+    // console.log(trails.value);
     
     
 
@@ -62,7 +62,8 @@ const fetchTrails = async () => {
 
 
 onMounted(() => {                                           
-  fetchTrails()                                           
+  fetchTrails()       
+  
 }) 
 
 
@@ -72,13 +73,15 @@ onMounted(() => {
 const areaBtns = ['全部','北部','中部','南部','東部'] // 區域選項
 const trafficBtns = ['全部','可乘大眾運輸','須開車前往'] // 交通選項
 const timeBtns = ['全部','3小時內','3-6小時','6-12小時','12小時-2天','2天以上'] // 時間選項
-const typeBtns = ['全部','百岳','小百岳','其他山岳','必訪步道'] // 類型選項
+const typeBtns = ['全部','大百岳','小百岳','其他山岳','必訪步道'] // 類型選項
 
 //預設一開始篩選吧都為「全部」
 const areaNow = ref(areaBtns[0]) // 當前選取區域
 const trafficNow = ref(trafficBtns[0]) // 當前選取交通
 const timeNow = ref(timeBtns[0]) // 當前選取時間
 const typeNow = ref(typeBtns[0]) // 當前選取類型
+
+
 
 
 
@@ -103,7 +106,7 @@ const finalResults = computed(() => {
   return filteredTrails.value.filter((trail) => {
     return (
       trail.MOUNTAIN_NAME.includes(keyword) || 
-      trail.AREA.includes(keyword) ||
+      // trail.AREA.includes(keyword) ||
       trail.TYPE.includes(keyword)
       
       
@@ -256,9 +259,9 @@ function goPage(p) {
     <p v-if="loading">資料載入中…</p> 
     <p v-else-if="error">{{ error }}</p> 
     <div v-else> 
-      <!--
+      
       <p v-if="finalResults.length === 0" class="noResult">查無符合的路線，<br>換個條件試試吧QQ</p> 
-      -->
+      
       <ul class="totalCard" >  <!--v-else-->
         <li 
         class="card" 
@@ -590,7 +593,7 @@ button{ // 通用按鈕樣式
   cursor: pointer;
 
   &:hover{
-    border: 2px dashed $mountain-green;
+    border: 1px dashed #ddd;
   }
 
   @include m(){

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, defineProps } from "vue"
+import { ref, onMounted, watch, defineProps, computed } from "vue"
 import { useRouter } from 'vue-router';
 
 import L from "leaflet"
@@ -23,12 +23,16 @@ const props = defineProps({
     // required: true
   }
 })
+console.log(props.trail.MOUNTAIN_NAME);
+
 //設定leaflet經緯度
-const latitude = props.trail.latitude
-// console.log(props.trail.latitude);
-const longitude = props.trail.longitude
-// console.log(props.trail.longitude);
-const name = props.trail.name
+
+const latitude = computed(() => Number(props.trail?.LATITUDE))
+console.log(latitude.value);
+// const longitude = props.trail.LONGITUDE
+const longitude = computed(() => Number(props.trail?.LONGITUDE))
+console.log(longitude.value);
+const name = props.trail.MOUNTAIN_NAME
 
 let map // 宣告在外面，讓後面可以存取
 
@@ -82,7 +86,7 @@ watch(goPage, (newPage) => {
             <ul class="detail">
                 <li>
                     <span>地區</span>
-                    <p>{{ trail.region }}</p> <!-- 要串接 trail.region -->
+                    <p>{{ props.trail.REGION }}</p> <!-- 要串接 trail.region -->
                 </li>
 
                 <li>
@@ -97,20 +101,20 @@ watch(goPage, (newPage) => {
                         />
                         
                     </span>
-                    <p>{{ trail.level }}</p> <!-- 要串接 trail.level -->
+                    <p>{{ props.trail.LEVEL }}</p> <!-- 要串接 trail.level -->
                 </li>
 
                 <li>
                     <span>交通</span>
-                    <p>{{ trail.traffic }}</p> <!-- 要串接 trail.traffic -->
+                    <p>{{ props.trail.TRAFFIC }}</p> <!-- 要串接 trail.traffic -->
                 </li>
                 <li>
                     <span>里程</span>
-                    <p>{{ trail.long }}</p> <!-- 要串接 trail.long -->
+                    <p>{{ props.trail.DISTANCE }}</p> <!-- 要串接 trail.long -->
                 </li>
                 <li>
                     <span>建議時間</span>
-                    <p>{{ trail.time }}</p> <!-- 要串接 trail.time -->
+                    <p>{{ props.trail.TIME }}</p> <!-- 要串接 trail.time -->
                 </li>
             </ul>
 
@@ -174,7 +178,7 @@ watch(goPage, (newPage) => {
                     <div>
                         <!--到時候會放商品圖-->
                         <img
-                        src="../../../public/img/equipment/登山鞋.png" 
+                        src="../../../public/images/Equipment/登山鞋.png" 
                         alt="登山鞋圖片">
                     </div>
                     <span>登山鞋</span>
@@ -182,7 +186,7 @@ watch(goPage, (newPage) => {
                 <li>
                     <div>
                         <img 
-                        src="../../../public/img/equipment/登山杖.png" 
+                        src="../../../public/images/Equipment/登山杖.png" 
                         alt="登山杖圖片">
                         <!--到時候會放商品圖-->
                     </div>
@@ -191,23 +195,23 @@ watch(goPage, (newPage) => {
                 <li>
                     <div>
                         <img 
-                        src="../../../public/img/equipment/手套.png" 
+                        src="../../../public/images/Equipment/手套.png" 
                         alt="手套圖片"
-                        :class="{ grayImg: ('易').includes(trail.level) }">
-                        <!--到時候會放商品圖-->
+                        :class="{ grayImg: ('易').includes(props.trail.LEVEL) }">
+                       
                     </div>
-                    <span :class="{ graySpan: ('易').includes(trail.level) }">
+                    <span :class="{ graySpan: ('易').includes(props.trail.LEVEL) }">
                         手套
                     </span>
                 </li>
                 <li>
                     <div>
                         <img
-                        src="../../../public/img/equipment/頭燈.png"
+                        src="../../../public/images/Equipment/頭燈.png"
                         alt="頭燈圖片"
-                        :class="{ grayImg: ('易').includes(trail.level) }">
+                        :class="{ grayImg: ('易').includes(props.trail.LEVEL) }">
                     </div>
-                    <span :class="{ graySpan: ('易').includes(trail.level) }">
+                    <span :class="{ graySpan: ('易').includes(props.trail.LEVEL) }">
                         頭燈
                     </span>
                 </li>
@@ -215,12 +219,12 @@ watch(goPage, (newPage) => {
                     <div>
                         <!--到時候會放商品圖-->
                         <img
-                        src="../../../public/img/equipment/爐具.png"
+                        src="../../../public/images/Equipment/爐具.png"
                         alt="登山爐具圖片"
-                        :class="{ grayImg: ['中', '易'].includes(trail.level) }">
+                        :class="{ grayImg: ['中', '易'].includes(props.trail.LEVEL) }">
 
                     </div>
-                    <span :class="{ graySpan: ['中', '易'].includes(trail.level) }">
+                    <span :class="{ graySpan: ['中', '易'].includes(props.trail.LEVEL) }">
                         登山爐具
                     </span>
                 </li>
@@ -228,12 +232,12 @@ watch(goPage, (newPage) => {
                     <div>
                         <!--到時候會放商品圖-->
                         <img
-                        src="../../../public/img/equipment/帳篷.png"
+                        src="../../../public/images/Equipment/帳篷.png"
                         alt="帳篷圖片"
-                        :class="{ grayImg: ['中', '易'].includes(trail.level) }">
+                        :class="{ grayImg: ['中', '易'].includes(props.trail.LEVEL) }">
 
                     </div>
-                    <span :class="{ graySpan: ['中', '易'].includes(trail.level) }">
+                    <span :class="{ graySpan: ['中', '易'].includes(props.trail.LEVEL) }">
                         睡袋&帳篷
                     </span>
                 </li>
