@@ -5,7 +5,7 @@
             @create="createNews" 
             @update="updateNews" 
             @remove="deleteNews"
-            @refresh="fetchList"
+            @refresh="fetchNews"
             />
 <!-- @ 新/刪/修/重整 by YUKI -->
 </template>
@@ -38,7 +38,7 @@ const columns = [
 
   // })
 
-const fetchList = () =>{
+const fetchNews = () =>{
   //改相對路徑
 <<<<<<< HEAD
   // fetch(import.meta.env.VITE_AJAX_URL + 'http://localhost/Mountain_Peak/NewsPage.php')
@@ -77,7 +77,7 @@ const deleteNews = (id) => {
 <<<<<<< HEAD
 =======
 const createNews = (payload) => {
-  fetch(import.meta.env.VITE_AJAX_URL +'/NewsCreat.php',{
+  fetch(import.meta.env.VITE_AJAX_URL +'/NewsCreate.php',{
     method:'POST',
     headers:{
       'Content-Type': 'application/json'
@@ -87,7 +87,7 @@ const createNews = (payload) => {
     .then(res => res.json())
     .then(data => {
       if (data.success){
-        fetchList()
+        fetchNews()
       }else{
         alert('新增失敗')
       }
@@ -95,9 +95,28 @@ const createNews = (payload) => {
 }
 >>>>>>> acd5a57708a21593887604b3565f3eb53108461a
 
+const updateNews = (payload) => {
+  fetch(import.meta.env.VITE_AJAX_URL +'/NewsUpdate.php', {
+    method:'POST',
+    headers:{
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res =>res.json())
+  .then(data =>{
+    if (data.success){
+        fetchNews()
+      }else{
+        alert('修改失敗')
+      }
+  })
+}
+
+
 //當頁面載入時執行
 onMounted(()=>{
-  fetchList()
+  fetchNews()
 })
 
 

@@ -12,13 +12,13 @@
     const heroSubTitle = "翻開台灣百岳，插旗每座山峰！"
     // Images
     const images = {
-        hero: '/images/PeaksOfTaiwan/Yushan/Yushan_main01.jpg',
-        intro: '/images/PeaksOfTaiwan/Yushan/Yushan_main02.png',
-        about1: '/images/PeaksOfTaiwan/Yushan/Yushan_main03.png',
-        guide1: '/images/PeaksOfTaiwan/Yushan/Yushan_main05.png',
-        about2: '/images/PeaksOfTaiwan/Yushan/Yushan_main04.png',
-        guide2: '/images/PeaksOfTaiwan/Yushan/Yushan_main06.png',
-        guide3: '/images/PeaksOfTaiwan/Yushan/Yushan_main07.jpg'
+        hero: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main01.jpg`,
+        intro: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main02.png`,
+        about1: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main03.png`,
+        guide1: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main05.png`,
+        about2: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main04.png`,
+        guide2: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main06.png`,
+        guide3: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main07.jpg`
 }
     // Content
     const content ={

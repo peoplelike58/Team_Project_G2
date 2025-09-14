@@ -21,7 +21,8 @@
       />
       <el-table-column label="操作" fixed="right" width="180">
         <template #default="{ row, $index }">
-          <el-button size="small" @click="openEdit(row, indexOf($index))">編輯</el-button>
+          <!-- <el-button size="small" @click="openEdit(row, indexOf($index))">編輯</el-button> -->
+          <el-button size="small" type="success" @click="openEdit(row)">編輯</el-button>
           <!-- <el-button size="small" type="danger" @click="remove(indexOf($index))">刪除</el-button> -->  
           <el-button size="small" type="danger" @click="removeClick(row)">刪除</el-button>   
         </template>
@@ -40,7 +41,45 @@
     <el-dialog v-model="dialogVisible" :title="dialogMode==='create' ? `新增${title}` : `編輯${title}`" width="600">
       <el-form :model="form" label-width="120px">
         <template v-for="col in columns" :key="col.prop">
+          <!-- 新增圖片上傳欄位的判斷式（YUKI） -->
           <el-form-item :label="col.label">
+            <!-- 圖片上傳欄位 -->
+             <template v-if="col.type ==='file'">
+              <el-upload
+                  class="upload-img"
+                  action="http://localhost/TeamProject/public/PHP/uploadimg.php"
+                  name="file"
+                  :show-file-list="false"
+                  :on-success="(res) => { 
+                    if(res?.success){ 
+                      form[col.prop] = res.path 
+                    } else {
+                       alert(res?.message || '上傳失敗') }}"
+                  :on-change="(uploadFile) => imagePreview(uploadFile, col.prop)"
+                  >
+           
+                  <el-button type="primary">上傳圖片</el-button>
+                  <!-- 預覽縮圖 -->
+                </el-upload>
+                <img v-if="form[col.prop]" :src="form[col.prop]" style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
+             </template>
+
+             <template v-else>
+                <component
+                :is="resolveInput(col)"
+                v-model="form[col.prop]"
+                :type="col.type === 'datetime' ? 'datetime' : col.type === 'date' ? 'date' : undefined"
+                :placeholder="`請輸入${col.label}`"
+                :options="col.options"
+                :value-format="col.valueFormat || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
+                :format="col.format || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
+                style="width:100%"
+              />
+             </template>
+          </el-form-item>
+
+
+          <!-- <el-form-item :label="col.label">
             <component
               :is="resolveInput(col)"
               v-model="form[col.prop]"
@@ -51,7 +90,7 @@
               :format="col.format || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
               style="width:100%"
             />
-          </el-form-item>
+          </el-form-item> -->
         </template>
       </el-form>
       <template #footer>
@@ -63,7 +102,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+
+const imagePreview = (uploadFile, propName) => {
+  if (uploadFile && uploadFile.raw) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      form[propName] = e.target.result
+    }
+    reader.readAsDataURL(uploadFile.raw)
+  }
+}
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -87,6 +136,10 @@ let currentPage = ref(1)
 //========================= 
 //新增 emit： 通知父層處理(YUKI)
 const emit = defineEmits(['create', 'update','refresh' ,'remove'])
+
+//預設抓第一個欄位"id"
+const idKey = computed(() => props.columns[0]?.prop ||'id')
+
 //=========================
 
 
@@ -124,17 +177,10 @@ const openEdit = (row) => {
 }
 const submit = () => {
   if (dialogMode.value === 'create') {
-<<<<<<< HEAD
-    emit('create', {...from.value})  //YUKI
-    // data.value.unshift({ ...form.value, _id: Date.now() })
-  } else {
-    emit('update', {...from.value})  //YUKI
-=======
     emit('create', {...form.value})  //YUKI
     // data.value.unshift({ ...form.value, _id: Date.now() })
   } else {
     emit('update', {...form.value})  //YUKI
->>>>>>> acd5a57708a21593887604b3565f3eb53108461a
     // data.value.splice(editIndex.value, 1, { ...form.value })
   }
   dialogVisible.value = false
@@ -146,17 +192,28 @@ const submit = () => {
 
 //========================= 
 const removeClick = (row) => {
-  emit('remove', row.NEWS_ID)  //告訴父層要刪除的這一個row, ID是什麼
+  emit('remove', row[idKey.value])  //告訴父層要刪除的這一個欄位
 }
-const restData = () => {
+const resetData = () => {
   keyword.value=''
   currentPage.value = 1
   emit('refresh')
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> acd5a57708a21593887604b3565f3eb53108461a
+//=========================
+
+
+//========================= 監聽對話框關閉
+watch(dialogVisible, (isOpen)=>{
+  if(!isOpen){
+    //對話框關閉時，清空圖片
+    props.columns.forEach(col=>{
+      if(col.type === 'file'){
+        form[col.prop] = ''
+      }
+    })
+  }
+})
 //=========================
 
 
@@ -174,4 +231,14 @@ const restData = () => {
 }
 .title { margin: 0; }
 .right { display: flex; gap: 8px; }
+
+//限制每一個欄位的寬高，多的隱藏（YUKI）
+:deep(.el-table .cell) {
+  max-width: 150px;
+  max-height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 </style>
