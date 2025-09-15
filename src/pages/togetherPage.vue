@@ -398,6 +398,10 @@ onMounted(async () => {
     max-height: 400px;
     margin: 40px auto 500px;
     padding: 0 5px;
+
+    @media screen and (max-width:430px) {
+      margin: 40px auto 250px;
+    }
   }
   
   .pageItem{
