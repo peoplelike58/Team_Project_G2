@@ -49,12 +49,13 @@ const isOpen = ref(false)
 const panelRef = ref(null)
 const overlayRef = ref(null)
 function routerTo(item){ 
-  router.push(`/${item.path}`);
+    router.push(`/${item.path}`);
 }
 
 const menuItems = [
     { label: '首頁', path: 'homepage' },
     { label: '百岳之書', path: 'peaks' },
+    { label: '最新消息', path: 'allnewspage' },
     { label: '揪上山', path: 'together' },
     { label: '揪安心', path: 'peace' },
     { label: '路線規劃', path: 'routes' },
@@ -240,7 +241,7 @@ function go(item) {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 80%;
+    height: 84%;
 }
 
 .menu-list { 
@@ -291,7 +292,7 @@ function go(item) {
         gap: 16px; 
     }
     .right-col { 
-        justify-content: space-between; 
+        justify-content: space-between;
     }
 }
 </style>

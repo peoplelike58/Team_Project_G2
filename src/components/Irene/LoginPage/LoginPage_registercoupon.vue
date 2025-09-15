@@ -10,7 +10,7 @@
 
       <!-- 恭喜圖標和橫幅 -->
       <div class="congratulations-section">
-        <div class="congratulations_pic"><img src="/public/Products/congratulation_img.png" alt=""></div>
+        <div class="congratulations_pic"><img src="/images/Products/congratulation_img.png" alt=""></div>
           <div class="congratulations-text">註冊成功！</div>
       </div>
 

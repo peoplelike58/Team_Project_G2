@@ -9,7 +9,7 @@ const props = defineProps({
 })
 
 // trail.detailUrl轉址
-const baseUrl = import.meta.env.BASE_URL                                     // 取得部署子目錄（例如 '/tjd102/g2/'） // 繁中註解
+const baseUrl = import.meta.env.BASE_URL                                    // 取得部署子目錄（例如 '/tjd102/g2/'） // 繁中註解
 
 const toUrl = (p) => {                                                        // 將字串路徑轉為可用網址的工具函式 // 繁中註解
   if (!p) return ''                                                           // 空值直接回空字串 // 繁中註解
