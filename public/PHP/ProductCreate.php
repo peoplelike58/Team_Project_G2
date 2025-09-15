@@ -29,7 +29,7 @@ $pstmt->bindValue(":gender", $addproduct['GENDER']);
 $pstmt->bindValue(":desc", $addproduct['DESCRIPTION']);
 $pstmt->bindValue(":ptype", $addproduct['PRODUCT_TYPE']);
 $pstmt->bindValue(":pstatus", $addproduct['PRODUCT_STATUS']);
-$pstmt->bindValue(":image", !empty($addproduct['PRODUCT_STATUS'])? $addproduct['IMAGE'] : null);
+$pstmt->bindValue(":image", !empty($addproduct['IMAGE'])? $addproduct['IMAGE'] : null);
 
 $ok = $pstmt->execute();
 

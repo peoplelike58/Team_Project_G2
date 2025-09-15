@@ -14,7 +14,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import CrudPage from '@/components/common/CrudPage.vue'
-const porducttypeOption =[
+const porductType =[
 { label: '睡袋', value: '睡袋' },
 { label: '登山杖', value: '登山杖' },
 { label: '水瓶', value: '水瓶' },
@@ -52,13 +52,13 @@ const productSize =[
 ]
 
 const columns = [
-  { prop: 'PRODUCT_ID', label: '商品編號' },
+  { prop: 'PRODUCT_ID', label: '商品編號' ,disabled: true },
   { prop: 'PRODUCT_NAME', label: '名稱' },
   { prop: 'PRICE', label: '售價' ,type: 'number'},
   { prop: 'IMAGE', label: '商品圖片', type: 'file'},
   { prop: 'GENDER', label: '性別', type: 'select', options:[{label:'男女皆宜',value:'unisex'},{label:'男性',value:'male'},{label:'女性',value:'female'}]},
   { prop: 'DESCRIPTION', label: '商品說明' },
-  { prop: 'PRODUCT_TYPE', label: '商品類別' ,type:'select', options: porducttypeOption },
+  { prop: 'PRODUCT_TYPE', label: '商品類別' ,type:'select', options: porductType },
   { prop: 'COLORS', label: '顏色', type: 'select' ,options: productColor },   
   { prop: 'SIZES', label: '尺寸', type: 'select' , options: productSize },  
   { prop: 'PRODUCT_STATUS', label: '上下架', type: 'select', options:[{label:'上架',value:'上架'},{label:'下架',value:'下架'}] }
