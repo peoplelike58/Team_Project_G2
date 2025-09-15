@@ -45,7 +45,7 @@ const mountainOptions = [
 
 
 const columns = [
-  { prop: 'EVENT_ID', label: '活動編號' },
+  { prop: 'EVENT_ID', label: '活動編號' ,disabled: true },
   { prop: 'EVENT_NAME', label: '活動名稱' },
   { prop: 'JOIN_QTY', label: '報名人數' },
   { prop: 'EVENT_DATE', label: '活動日期' ,type:"date"},

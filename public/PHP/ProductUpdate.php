@@ -51,13 +51,13 @@ $spstmt->execute();
 $sizes = explode(',', $updatproduct['SIZES']);
 $sqlsize = "INSERT INTO PRODUCT_SIZE(PRODUCT_ID, SIZE)
             VALUES(:id, :size)";
-$spstmt = $pdo->prepare($sqlsize);
-foreach($sizes as $size)
-$spstmt->execute([
+$sstmt = $pdo->prepare($sqlsize);
+foreach($sizes as $size){
+$sstmt->execute([
     ':id' =>$id,
     ':size' =>trim($size)
 ]);
-
+}
 
 
 //更新顏色
@@ -69,13 +69,13 @@ $cpstmt->execute();
 $colors = explode(',', $updatproduct['COLORS']);
 $sqlcolor = "INSERT INTO PRODUCT_COLOR(PRODUCT_ID, COLOR)
             VALUES(:id, :color)";
-$cpstmt  = $pdo->prepare($sqlcolor);
-foreach($colors as $color)
-$cpstmt ->execute([
+$cstmt  = $pdo->prepare($sqlcolor);
+foreach($colors as $color){
+$cstmt ->execute([
     ':id' =>$id,
     ':color' =>trim($color)
 ]);
-
+}
 
 
 

@@ -14,7 +14,7 @@
 import { ref, onMounted } from "vue";
 import CrudPage from '@/components/common/CrudPage.vue'
 const columns = [
-  { prop: 'NEWS_ID', label: '文章編號' },
+  { prop: 'NEWS_ID', label: '文章編號' , disabled: true },
   { prop: 'UPLOAD_AT', label: '上架日期' ,type:"date"},
   { prop: 'TYPE', label: '分類' },
   { prop: 'TITLE', label: '標題' },
@@ -40,13 +40,10 @@ const columns = [
 
 const fetchNews = () =>{
   //改相對路徑
-<<<<<<< HEAD
   // fetch(import.meta.env.VITE_AJAX_URL + 'http://localhost/Mountain_Peak/NewsPage.php')
-  fetch('http://localhost/Mountain_Peak/NewsPage.php')
-=======
+  // fetch('http://localhost/Mountain_Peak/NewsPage.php')
   fetch(import.meta.env.VITE_AJAX_URL + '/NewsPage.php')
   // fetch('http://localhost/Mountain_Peak/NewsPage.php')
->>>>>>> acd5a57708a21593887604b3565f3eb53108461a
     .then(resp => resp.json())
     .then(json =>{
       rows.value = json
@@ -54,11 +51,8 @@ const fetchNews = () =>{
 }
 
 const deleteNews = (id) => {
-<<<<<<< HEAD
-  fetch('http://localhost/Mountain_Peak/NewsDelete.php',{
-=======
+  // fetch('http://localhost/Mountain_Peak/NewsDelete.php',{
   fetch(import.meta.env.VITE_AJAX_URL +'/NewsDelete.php',{
->>>>>>> acd5a57708a21593887604b3565f3eb53108461a
     method:'POST',
     headers:{
       'Content-Type': 'application/json'
@@ -74,8 +68,6 @@ const deleteNews = (id) => {
       }
     })
 }
-<<<<<<< HEAD
-=======
 const createNews = (payload) => {
   fetch(import.meta.env.VITE_AJAX_URL +'/NewsCreate.php',{
     method:'POST',
@@ -93,7 +85,6 @@ const createNews = (payload) => {
       }
     })
 }
->>>>>>> acd5a57708a21593887604b3565f3eb53108461a
 
 const updateNews = (payload) => {
   fetch(import.meta.env.VITE_AJAX_URL +'/NewsUpdate.php', {
