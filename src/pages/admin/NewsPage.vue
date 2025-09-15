@@ -14,7 +14,7 @@
 import { ref, onMounted } from "vue";
 import CrudPage from '@/components/common/CrudPage.vue'
 const columns = [
-  { prop: 'NEWS_ID', label: '文章編號' },
+  { prop: 'NEWS_ID', label: '文章編號' , disabled: true },
   { prop: 'UPLOAD_AT', label: '上架日期' ,type:"date"},
   { prop: 'TYPE', label: '分類' },
   { prop: 'TITLE', label: '標題' },
