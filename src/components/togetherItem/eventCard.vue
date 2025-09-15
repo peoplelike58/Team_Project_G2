@@ -175,10 +175,10 @@
     }
 
     // RWD
-    @media screen and (max-width:430px) {
+    @media screen and (max-width:768px) {
         .activity-card {
             max-width: none;
-            width: 75%;
+            width: 100%;
             padding: 20px;
             border-radius: 16px;
             margin: 0;

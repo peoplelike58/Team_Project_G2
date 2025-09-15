@@ -8,23 +8,24 @@
             <div class="mychallengeInfo">
                 <div class="mychallengeMap">
                     <mychallenge_map
-                    :mountains="mountains"
-                    @openUploadModal="openModal"
-                    style="z-index: 0;"
-                    ref="mapRef"
+                        :mountains="mountains"
+                        @openUploadModal="openModal"
+                        style="z-index: 0;"
+                        ref="mapRef"
                     />
                 </div>
                 <div class="mychallengeAcheve">
                     <div class="totalAcheve" v-show="!showHistory">
                         <h2>[您的成就]</h2>
                         <mychallenge_info 
-                        v-show="!showHistory" 
-                        @openHistoryComp="showHistory = true"/>
+                            ref="infoRef"
+                            v-show="!showHistory" 
+                            @openHistoryComp="showHistory = true"/>
                         <mychallenge_progress />
                     </div>
                     <mychallenge_history
-                    v-show="showHistory"
-                    @closeHistoryComp="closeHistory"/>
+                        v-show="showHistory"
+                        @closeHistoryComp="closeHistory"/>
                 </div>
             </div>
             <div class="mychallengeRank">
@@ -35,8 +36,9 @@
                 v-for="mountain in mountains"
                 :mountain="mountain"
                 v-show="openWindows[mountain.name]"
-                @closeUploadModal="openWindows[mountain.name] = false"
+                @closeUploadModal="() => closeModal(mountain.name)"
                 @saveGpx="handleGpxSave"
+                @refreshStats="handleRefreshStats"
                 />
         </main>
     </div>
@@ -63,23 +65,36 @@
 
     const showHistory = ref(false)
     const mountains = ref([])
-
     const openWindows = ref({})
+    const infoRef = ref(null)
+    const mapRef = ref(null)
 
     const BASE = import.meta.env.BASE_URL
-    // const jsonPath = `${BASE}json/mychallenge/mountains.json`
-    const jsonPath = `http://localhost/php/mychallenge_mountains.php`
+    const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_mountains.php`
 
     function openModal(mountainName) {
         openWindows.value[mountainName] = true
+    }
+
+    function closeModal(mountainName) {
+        if (mountainName) {
+            openWindows.value[mountainName] = false
+        }
     }
 
     function closeHistory() {
         showHistory.value = false
     }
 
-        const goalStore = useGoalStore()
-        const mapRef = ref(null)
+    const handleRefreshStats = async () => {
+    console.log('收到刷新請求，正在重新載入累積數據...')
+    if (infoRef.value && typeof infoRef.value.refreshStats === 'function') {
+        await infoRef.value.refreshStats()
+        console.log('累積數據已刷新')
+    }
+    }
+
+    const goalStore = useGoalStore()
 
     function handleGpxSave({ mountain, coords }) {
         console.log("上傳 GPX 給", mountain, coords)
@@ -119,12 +134,12 @@
                 ]
             }
 
-            // ✅ 只在第一次登頂時做以下動作
+            // 只在第一次登頂時做以下動作
             if (!climbedList.includes(mountain)) {
                 climbedList.push(mountain)
                 localStorage.setItem("climbedMountains", JSON.stringify(climbedList))
 
-                // ✅ 更新 Pinia 進度
+                // 更新 Pinia 進度
                 goalStore.addDone(target.kind)
             }
 
@@ -152,27 +167,59 @@
 
         
         onMounted(async() => {
+
             try{
-                const res = await axios.get(jsonPath)
-                mountains.value = res.data.map(mountain => ({
-                    name: mountain.MOUNTAIN_NAME,        // 轉換欄位名稱
-                    kind: mountain.type,                 // 轉換欄位名稱  
-                    latitude: parseFloat(mountain.LATITUDE),   // 確保是數字
-                    longitude: parseFloat(mountain.LONGITUDE), // 確保是數字
-                    icon: 'mountain.png'                 // 預設圖示
+                // 使用新的 API，直接包含攀登狀態
+                const res2 = await axios.get(API_URL, {}, 
+                // {
+                //     withCredentials: true,
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     }
+                // }
+                )
+                
+                // 正確解析PHP返回的資料結構
+                const { mountains: mountainsData, climbed: climbedIds } = res2.data
+
+                // 設定所有山峰資料
+                mountains.value = mountainsData.map(mountain => ({
+                    name: mountain.MOUNTAIN_NAME,
+                    kind: mountain.type,
+                    latitude: parseFloat(mountain.LATITUDE),
+                    longitude: parseFloat(mountain.LONGITUDE),
+                    icon: 'mountain.png' // 預設圖示
                 }))
-
-                // console.log('PHP 回傳的原始資料:', res.data)
-                // console.log('資料型別:', typeof res.data)
-                // console.log('是否為陣列:', Array.isArray(res.data))
-
+                
+                // 標記已攀登的山峰
                 mountains.value.forEach(mountain => {
-                openWindows.value[mountain.name] = false
-                })   
+                    // 檢查這座山是否在已攀登列表中
+                    if (climbedIds.includes(mountain.name)) {
+                        mountain.icon = 'flag.png'
+                    }
+                })
+
+                // 載入本地已攀登資料
+                const climbed = JSON.parse(localStorage.getItem("climbedMountains") || "[]")
+                mountains.value.forEach(m => {
+                    if (climbed.includes(m.name)) {
+                        m.icon = "flag.png"
+                    }
+                })
+
+                // 初始化視窗狀態
+                mountains.value.forEach(mountain => {
+                    openWindows.value[mountain.name] = false
+                })
+
+                // 載入 store 資料
+                recordStore.loadAllRecords()
+                goalStore.loadFromStorage()
             }catch(err){
                 console.error("讀取失敗:", err)
             }
         })
+
 
 </script>
 

@@ -1,45 +1,38 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount,defineProps,computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount, defineProps, computed } from 'vue'
 
 const props = defineProps({
-  trail: {
-    type: Object,
-    // required: true
-  }
+  trail: { type: Object }
 })
 
-// trail.detailUrl轉址
-const baseUrl = import.meta.env.BASE_URL                                    // 取得部署子目錄（例如 '/tjd102/g2/'） // 繁中註解
+const baseUrl = import.meta.env.BASE_URL
 
-const toUrl = (p) => {                                                        // 將字串路徑轉為可用網址的工具函式 // 繁中註解
-  if (!p) return ''                                                           // 空值直接回空字串 // 繁中註解
-  if (p.startsWith('http') || p.startsWith('data:') || p.startsWith('/assets/')) return p // 已是完整/打包資產就原樣回傳 // 繁中註解
-  return `${baseUrl}${String(p).replace(/^\/+/, '')}`                         // 其他情況加上 base 並移除開頭斜線 // 繁中註解
-}
+// 只吃 trail.imgDetail（字串 JSON），直接拚固定路徑
+const images = computed(() =>
+  JSON.parse(props.trail?.imgDetail || '[]').map((fileName) =>
+    `${baseUrl}images/Mountain/${props.trail.MOUNTAIN_ID}/${fileName}`
+  )
+)
 
-const images = computed(() => {                                               // 計算屬性：把 detailUrl 全部轉成完整網址 // 繁中註解
-  const list = Array.isArray(props.trail?.detailUrl) ? props.trail.detailUrl : [] // 取得字串陣列或空陣列 // 繁中註解
-  return list.map(toUrl)                                                      // 逐一轉換成可用網址 // 繁中註解
-})
-
-
-// 做輪播,當前圖片索引
+// 輪播狀態
 const current = ref(0)
 const intervalTime = 5000
 let timer = null
 
 function next() {
-  if (!props.trail.detailUrl?.length) return
-  current.value = (current.value + 1) % props.trail.detailUrl.length
+  if (images.value.length <= 1) return
+  current.value = (current.value + 1) % images.value.length
 }
 
 function goTo(index) {
-  current.value = index
+  if (index >= 0 && index < images.value.length) {
+    current.value = index
+  }
 }
 
 function startAutoPlay() {
   stopAutoPlay()
-  if (props.trail.detailUrl?.length > 1) {
+  if (images.value.length > 1) {
     timer = setInterval(next, intervalTime)
   }
 }
@@ -51,7 +44,7 @@ function stopAutoPlay() {
   }
 }
 
-// 滑鼠拖曳邏輯
+// 拖曳
 let startX = 0
 let isDragging = false
 
@@ -67,9 +60,9 @@ function handleEnd(e) {
   const deltaX = endX - startX
 
   if (deltaX > 50) {
-    current.value = (current.value - 1 + props.trail.detailUrl.length) % props.trail.detailUrl.length
+    current.value = (current.value - 1 + images.value.length) % images.value.length
   } else if (deltaX < -50) {
-    current.value = (current.value + 1) % props.trail.detailUrl.length
+    current.value = (current.value + 1) % images.value.length
   }
 
   isDragging = false
@@ -78,12 +71,13 @@ function handleEnd(e) {
 
 onMounted(startAutoPlay)
 onBeforeUnmount(stopAutoPlay)
+
 </script>
 
 <template>
   <div class="routeContent">
-    <h3>{{ props.trail.name }}</h3>
-    <span>{{ props.trail.region }}</span>
+    <h3>{{ props.trail.MOUNTAIN_NAME }}</h3>
+    <span>{{ props.trail.REGION }}</span>
 
     <div class="mainContent">
       <div
@@ -105,18 +99,17 @@ onBeforeUnmount(stopAutoPlay)
         </div>
 
         <!-- 下方圓點 -->
-        <div class="dots">
-          <span
-            v-for="(img, index) in props.trail.detailUrl"
-            :key="'dot-' + index"
-            class="dot"
-            :class="{ active: current === index }"
-            @click="goTo(index)"
-          ></span>
+        <div class="dots" v-if="images.length > 1">
+          <span 
+            v-for="(_, i) in images.length"
+            :key="i" class="dot"
+            :class="{ active: current === i }" 
+            @click="goTo(i)">
+          </span>
         </div>
       </div>
 
-      <p v-html="props.trail.introduce"></p>
+      <p v-html="props.trail.INTRO"></p>
     </div>
   </div>
 </template>
@@ -236,7 +229,7 @@ onBeforeUnmount(stopAutoPlay)
       width: 52%;
       max-width: 632px;
       
-      padding: 40px 0;
+      padding: 50px 0 40px;
       box-sizing: border-box;
       font-weight: $regular;
       line-height: $lineHeight-p-200;

@@ -1,29 +1,24 @@
 <?php
     session_start();
 
-    // 若前端在 http://localhost:5173
-    header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
-    header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Allow-Headers: Content-Type');
-    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-
-    header('Content-Type: application/json; charset=utf-8');
-
-    //MySQL相關資訊
-    $db_host = "127.0.0.1";
-    $db_user = "root";
-    $db_pass = "password";
-    $db_select = "hou_Shan";
-
-    //建立資料庫連線物件
-    $dsn = "mysql:host=".$db_host.";dbname=".$db_select.";charset=utf8";
-    $pdo = new PDO($dsn, $db_user, $db_pass);
+    // 導入資料庫連線的資料檔
+    include 'conn.php'; 
 
     //---------------------------------------------------
+    // 檢查是否已登入
+    if (!isset($_SESSION["memberID"]) || empty($_SESSION["memberID"])) {
+        $response = [
+            'success' => false,
+            'isLoggedIn' => false,
+            'message' => '請先登入',
+            'data' => []
+        ];
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 
 
-    // 取得會員ID
-    $MEMBER_ID = $_SESSION["memberID"] = "1";
+    $MEMBER_ID = $_SESSION["memberID"];
 
     //建立SQL語法
     $sql = "SELECT M.MOUNTAIN_NAME as name,
@@ -40,7 +35,14 @@
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$MEMBER_ID]);
 
-    $rows = $stmt->fetchAll();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $response = [
+        'success' => true,
+        'isLoggedIn' => true,
+        'member_id' => $MEMBER_ID,
+        'data' => $rows,
+    ];
 
     echo json_encode($rows, JSON_UNESCAPED_UNICODE);
 

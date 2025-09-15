@@ -1,21 +1,42 @@
 <?php
+    session_start();
 
-       include 'toMysql.php';
+    // 導入資料庫連線的資料檔
+    include 'conn.php'; 
 
-       //---------------------------------------------------
+    //---------------------------------------------------
+    if (!isset($_SESSION["memberID"])) {
+        $_SESSION["memberID"] = 1;  // 測試用的固定用戶ID
+    }
 
-       //建立SQL語法
-       $sql = "SELECT MOUNTAIN_NAME, type, LATITUDE, LONGITUDE
-                FROM MOUNTAIN
-                WHERE type IN ('大百岳', '小百岳')";
+    $MEMBER_ID = $_SESSION["memberID"];
 
-       //執行並查詢，會回傳查詢結果的物件，必須使用fetch、fetchAll...等方式取得資料
-       $statement = $pdo->query($sql);
+    // // 1. 取得所有山峰的基本資料
+    $sql = "SELECT MOUNTAIN_ID, MOUNTAIN_NAME, type, LATITUDE, LONGITUDE
+            FROM MOUNTAIN
+            WHERE type IN ('大百岳', '小百岳')
+            ORDER BY MOUNTAIN_NAME";
+        
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $allMountains = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    // 2. 取得該用戶已攀登的山峰
+    $climbedSql = "SELECT DISTINCT M.MOUNTAIN_ID, M.MOUNTAIN_NAME 
+                   FROM MOUNTAIN M 
+                   JOIN FOOT F ON M.MOUNTAIN_ID = F.MOUNTAIN_ID 
+                   WHERE F.MEMBER_ID = ?";
+    
+    $climbedStmt = $pdo->prepare($climbedSql);
+    $climbedStmt->execute([$MEMBER_ID]);
+    $climbed = $climbedStmt->fetchAll(PDO::FETCH_COLUMN);
 
-       //抓出全部且依照順序封裝成一個二維陣列
-       $data = $statement->fetchAll();
-
-       echo json_encode($data, JSON_UNESCAPED_UNICODE);
-    //    print_r($data);
+    // 3. 組合結果
+    $result = [
+        'mountains' => $allMountains,
+        'climbed' => $climbed
+    ];
+    
+    echo json_encode($result, JSON_UNESCAPED_UNICODE);
 
 ?>

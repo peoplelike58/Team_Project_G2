@@ -1,123 +1,170 @@
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, onMounted, watch, computed } from 'vue'
+import axios from 'axios'
 
+// ===== 路徑工具（保留你的寫法） =====
 const baseUrl = import.meta.env.BASE_URL
 const toUrl = (p) => {
   if (!p) return ''
   const s = String(p).trim()
-  // 已是 http(s)、data:、或 Vite 產生的 /assets/ 就直接用
   if (/^(?:https?:)?\/\//i.test(s) || s.startsWith('data:') || s.startsWith('/assets/')) return s
-  // 其餘當成 public 下的相對路徑：去掉開頭斜線、做 URL encode，再接 BASE_URL
   return `${baseUrl}${encodeURI(s.replace(/^\/+/, ''))}`
 }
 
-
-
-//接收父層
+// ===== 父層傳入的山別（MOUNTAIN_ID） =====
 const props = defineProps({
-  id: {
-    type: Number,
-  }
+  id: { type: Number, required: true }
 })
 
-
-//留言假資料
-const messages = ref([
-  {
-    id: 'cmt-1001',
-    name: '今晚上山',
-    avatarUrl: 'images/myChallenge/head1.png',
-    time: '15分鐘前',
-    message: '今天天氣很好，非常適合爬山！',
-    photoUrl: 'img/trails/1.jpg',
-    canDelete: true
-  },
-  {
-    id: 'cmt-1002',
-    name: '明晚下山',
-    avatarUrl: 'images/myChallenge/head2.png',
-    time: '14小時前',
-    message: '爬到腿軟了.....再也不敢去了==',
-    photoUrl: '',
-    canDelete: false
-  },
-  {
-    id: 'cmt-1003',
-    name: '久久爬一次山',
-    avatarUrl: 'images/myChallenge/head3.png',
-    time: '3天前',
-    message: '差點餓倒在山上，還好路過的阿姨分我吃他的饅頭，又平安度過了一天！^0^',
-    photoUrl: 'img/trails/2.jpg',
-    canDelete: false
-  }
-])
-
-// 撰寫彈窗邏輯
+// ===== UI 狀態 =====
+const messages = ref([])
 const showPopup = ref(false)
 const newMessageText = ref('')
 const newPhotoFile = ref(null)
 const newPhotoPreview = ref('')
 
-// 撰寫留言按鈕彈窗
-function openPopup() {
-  showPopup.value = true
+const isImageViewerVisible = ref(false)
+const imageViewerUrl = ref('')
+
+
+// 只打你自己的 PHP 根路徑，例如 http://localhost/TeamProject/public/PHP
+const API_BASE = import.meta.env.VITE_AJAX_URL
+
+// 不帶 Cookie（公開用）
+const apiPublic = axios.create({
+  baseURL: API_BASE,
+  withCredentials: false,
+})
+
+// 需要 Cookie / Session（會員操作用）
+const apiAuth = axios.create({
+  baseURL: API_BASE,
+  withCredentials: true,
+})
+
+// ===== API 路徑（交給 baseURL 幫你接）=====
+const API_GET_COMMENTS = '/CommentsGet.php'
+const API_ADD_COMMENT  = '/CommentsAdd.php'
+const API_DEL_COMMENT  = '/CommentsDelete.php'
+
+// ===== 上傳檔案對外 URL 基底：把 /PHP 拿掉 → 變成 /public =====
+const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'')
+const UPLOADS_BASE = `${API_ROOT}/uploads`
+
+// ===== 從後端一列資料 → 轉成前端需要的物件 =====
+function mapRowToMessage(r){
+  // 後端可能用別名：MESSAGE_IMAGE / MEMBER_IMAGE
+  const msgImageKey = r.MESSAGE_IMAGE ?? r.IMAGE ?? null
+  const avatarKey   = r.MEMBER_IMAGE ?? null
+
+  return {
+    id: r.MESSAGE_ID,
+    name: r.NICKNAME || r.MEMBER_NAME || `會員#${r.MEMBER_ID}`,
+    avatarUrl: avatarKey ? `${UPLOADS_BASE}/${avatarKey}` : 'images/myChallenge/head4.png',
+    time: r.CREATED_AT || r.CREATE_AT || r.CREATE_TIME || '',
+    message: r.CONTENT || '',
+    photoUrl: msgImageKey ? `${UPLOADS_BASE}/${msgImageKey}` : '',
+    canDelete: true
+  }
 }
-function closePopup() {
+
+// ===== 讀留言：GET /CommentsGet.php?MOUNTAIN_ID=... =====
+async function fetchComments(){
+  try{
+    const resp = await apiPublic.get('/CommentsGet.php', {
+      params: { MOUNTAIN_ID: props.id }
+    })
+    const body = resp.data
+
+    // 讓兩種格式都能吃
+    const rows = Array.isArray(body) ? body
+               : (body && Array.isArray(body.data)) ? body.data
+               : null
+
+    if (!rows) {
+      console.error('CommentsGet 回傳非預期：', body)
+      throw new Error(body?.message || '取得留言失敗')
+    }
+
+    messages.value = rows.map(mapRowToMessage)
+  }catch(err){
+    console.error('fetchComments error:', err)
+    messages.value = []
+  }
+}
+
+
+// ===== 新增留言：POST /CommentsAdd.php（multipart） =====
+async function submitComment(){
+  const txt = (newMessageText?.value || '').trim()
+  if (!txt) return
+
+  const form = new FormData()
+  form.append('MOUNTAIN_ID', String(props.id))
+  form.append('CONTENT', txt)
+  if (newPhotoFile.value) form.append('image', newPhotoFile.value)
+
+  try{
+    const { data } = await apiAuth.post('/CommentsAdd.php', form, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    if (data?.success) {
+      // 有回單筆就塞進列表，否則重撈
+      if (data.data) messages.value.unshift(mapRowToMessage(data.data))
+      else await fetchComments()
+      closePopup()
+    } else {
+      alert(data?.message || '留言失敗')
+    }
+  }catch(err){
+    alert(err.message || '留言時發生錯誤')
+  }
+}
+
+// ===== 刪除留言：POST /CommentsDelete.php（JSON） =====
+async function deleteMessageById(id){
+  if (!id) return
+  if (!confirm('確定要刪除此留言嗎？')) return
+  try{
+    const { data } = await apiAuth.post('/CommentsDelete.php', { MESSAGE_ID: id }, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    if (data?.success){
+      const i = messages.value.findIndex(m => m.id === id)
+      if (i > -1) messages.value.splice(i, 1)
+    }else{
+      alert(data?.message || '刪除失敗')
+    }
+  }catch(err){
+    alert(err.message || '刪除時發生錯誤')
+  }
+}
+// ===== UI：彈窗 / 圖片上傳 / 圖片放大 =====
+function openPopup(){ showPopup.value = true }
+function closePopup(){
   showPopup.value = false
   newMessageText.value = ''
   newPhotoFile.value = null
   newPhotoPreview.value = ''
 }
-
-// 新增照片功能
-function handleImageUpload(event) {
-  const file = event.target.files[0]
-  if (file) {
-    newPhotoFile.value = file
-    newPhotoPreview.value = URL.createObjectURL(file)
-  }
+function handleImageUpload(event){
+  const file = event?.target?.files?.[0]
+  if (!file) return
+  newPhotoFile.value = file
+  newPhotoPreview.value = URL.createObjectURL(file)
 }
-
-// 送出留言功能 (假資料)
-function submitComment() {
-  if (!newMessageText.value.trim()) return
-  const newComment = {
-    id: 'cmt-' + Date.now(),
-    name: '會員ID',
-    avatarUrl: 'images/myChallenge/head4.png',
-    time: '剛剛',
-    message: newMessageText.value,
-    photoUrl: newPhotoPreview.value || '',
-    canDelete: true
-  }
-  messages.value.unshift(newComment)
-  closePopup()
-}
-
-// 照片放大檢視
-const isImageViewerVisible = ref(false)
-const imageViewerUrl = ref('')
-
-function openImageViewer(photoUrl) {
+function openImageViewer(photoUrl){
   imageViewerUrl.value = photoUrl
   isImageViewerVisible.value = true
 }
-function closeImageViewer() {
+function closeImageViewer(){
   isImageViewerVisible.value = false
   imageViewerUrl.value = ''
 }
 
-// 會員刪除留言功能
-function deleteMessageById(messageId) {
-  // 這裡先加個保護：確認後再刪
-  const isConfirmed = window.confirm('確定要刪除這則留言嗎？')
-  if (!isConfirmed) return
-
-  const targetIndex = messages.value.findIndex(item => item.id === messageId)
-  if (targetIndex !== -1) {
-    messages.value.splice(targetIndex, 1)
-  }
-}
+// ===== 掛載／山別變動 → 從後端撈資料（取代 localStorage 版） =====
+onMounted(fetchComments)
+watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
 </script>
 
 <template>
@@ -150,7 +197,6 @@ function deleteMessageById(messageId) {
 
         <div class="listBottom">
           <div class="photo" v-if="message.photoUrl !== ''">
-            <!-- 點圖放大 -->
             <img
               :src="toUrl(message.photoUrl)"
               alt="上傳的照片"
@@ -246,8 +292,8 @@ function deleteMessageById(messageId) {
 @import '@/assets/styles/main.scss';
 @import '@/assets/styles/mixins';
 
+/* 以下樣式保留你的原始版本 */
 .comments {
-  // border: 1px solid rgb(144, 0, 255);
   width: 100%;
   max-width: 1200px;
   margin: 48px auto;
@@ -291,7 +337,6 @@ function deleteMessageById(messageId) {
     @include m(){
       width: 220px;
     }
-    
   }
 
   .noRude {
@@ -314,10 +359,8 @@ function deleteMessageById(messageId) {
     max-width: 1140px;
     margin-top: 40px;
     box-sizing: border-box;
-    // border: 1px solid red;
     @include m(){
       width: 100%;
-
     }
 
     .noComment {
@@ -362,8 +405,7 @@ function deleteMessageById(messageId) {
           }
         }
 
-        .name {
-        }
+        .name { }
       }
 
       .time {
@@ -402,7 +444,7 @@ function deleteMessageById(messageId) {
             object-fit: cover;
             object-position: center;
             display: block;
-            cursor: zoom-in; /* 提示可放大 */
+            cursor: zoom-in;
           }
         }
 
@@ -444,7 +486,7 @@ function deleteMessageById(messageId) {
   overflow-y: auto;
 
   @include m(){
-  max-width: 430px;  
+    max-width: 430px;
   }
 
   .showPopup {
@@ -461,7 +503,6 @@ function deleteMessageById(messageId) {
     gap: 20px;
 
     @include m(){
-      // border: 1px solid red;
       width: 350px
     }
 
@@ -533,18 +574,15 @@ function deleteMessageById(messageId) {
       font-size: 14px;
       width: 35%;
       text-align: center;
-      
+
       @include m(){
         width: 200px;
-        
       }
     }
 
     .hasphotoUploadBtn {
       background-color: $tag;
       color: white;
-
-     
     }
 
     .previewBox {
@@ -590,6 +628,7 @@ function deleteMessageById(messageId) {
       border: none;
       border-radius: 8px;
       cursor: pointer;
+
       @include m(){
         width: 200px;
       }
@@ -603,7 +642,6 @@ function deleteMessageById(messageId) {
 
 /* 照片放大檢視樣式 */
 .imageViewerMask {
-  
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.7);
@@ -639,8 +677,6 @@ function deleteMessageById(messageId) {
 
       &:hover{
         background: rgba(255, 255, 255, 0.8);
-
-
       }
     }
   }

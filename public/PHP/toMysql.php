@@ -13,6 +13,5 @@ $dsn = "mysql:host=".$db_host.";dbname=".$db_select.";charset=utf8";
 //建立PDO物件，並放入指定的相關資料
 $pdo = new PDO($dsn, $db_user, $db_pass);
 
-// include_once 'toMysql.php'
-// 複製這段到每一只php裡面引用
+
 ?>

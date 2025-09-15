@@ -120,7 +120,7 @@ onMounted(() => {
 });
 
 //修改加入機器人驗證版本 (Yuki)
-const handleLogin =() => {
+const  handleLogin = async () => {
   if(email.value && password.value && email.value.includes('@') && password.value.length >= 8 ){
     //先檢查reCAPTCHA
     const token = grecaptcha.getResponse();
@@ -129,7 +129,7 @@ const handleLogin =() => {
       return;
     }
 
-    fetch('http://localhost/teamproject/LoginPage_fontLogin.php', {
+    await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_fontLogin.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -140,11 +140,11 @@ const handleLogin =() => {
       })
     })
       .then(res => res.json())
-      .then(member =>{
+      .then(async(member) =>{
         const { success } =member;
         if(success){
            // 如果登入成功，再去檢查 Session
-           return fetch('http://localhost/teamproject/CheckLogin.php', {
+           return fetch(import.meta.env.VITE_AJAX_URL + '/CheckLogin.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'

@@ -66,12 +66,12 @@ function resolveIconPathByWx(weatherText) {
 
   let name = 'cloudy'
   if (isThunder || isRain) name = 'rain'
-  else if (isSnow)         name = 'rain'   // 若日後有 snow.svg 改成 'snow'
+  else if (isSnow)         name = 'rain'   
   else if (isWindy)        name = 'windy'
   else if (isCloudy)       name = 'cloudy'
   else if (isSunny)        name = 'sunny'
 
-  return `${baseUrl}img/weather/${name}.svg`
+  return `${baseUrl}images/Weather/${name}.svg`
 }
 
 // ====== 主流程：抓氣象署 7 日資料 ======

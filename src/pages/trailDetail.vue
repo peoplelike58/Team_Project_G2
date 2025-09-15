@@ -1,8 +1,9 @@
 <script setup>
-import { computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
+import axios from 'axios';
 
-import trailsData from '@/assets/json/trails.json';
+// import trailsData from '@/assets/json/trails.json';
 
 import navMenu from '@/components/An/navMenu.vue';
 import CarouselPic from '@/components/Pei/CarouselPic.vue';
@@ -11,19 +12,55 @@ import btnPage from '@/components/Pei/btnPage.vue';
 import Comments from '@/components/Pei/Comments.vue';
 import brandFooter from '@/components/An/footer.vue';
 
+
+
+
+// ----------------PHP---------------------------
+// API 基本路徑
+const trails = ref([])
+const API_URL = `${import.meta.env.VITE_AJAX_URL}/trailDetail.php`
+const fetchTrails = async () => {
+  
+  try {
+    const resp = await axios.get(API_URL)
+    trails.value = resp.data
+    // console.log(trails.value);
+
+  } catch (err) {
+    console.log(err.message);
+    
+  }
+}
+
+
+onMounted(() => {                                           
+  fetchTrails()       
+  
+}) 
+
+
 const route = useRoute()
 
 // ===== baseUrl 與路徑轉換工具 =====
 const baseUrl = import.meta.env.BASE_URL   
-const toUrl = (p) => (p ? `${baseUrl}${String(p).replace(/^\/+/, '')}` : '')
+// const toUrl = (p) => (p ? `${baseUrl}${String(p).replace(/^\/+/, '')}` : '')
 
 // 取得 URL 上的 id 將其轉成數字 int
-const id = computed(() => parseInt(route.params.id)) 
+const id = computed(() => parseInt(route.params.MOUNTAIN_ID)) 
+
+// 只有在經緯度是「有效數字」時才渲染地圖
+const hasLatLng = computed(() => {
+  const lat = Number(trail.value?.LATITUDE)
+  const lng = Number(trail.value?.LONGITUDE)
+  return Number.isFinite(lat) && Number.isFinite(lng)
+})
 
 // 找出對應的山資料
-const trail = computed(() => trailsData.find(trail => trail.id === id.value))
-// console.log(thisTrail.value);
-
+// const trail = computed(() => trails.value.find(trail => trail.MOUNTAIN_ID === id.value))
+// console.log(trails.value);
+const trail = computed(() =>                                                          // 依 ID 找資料   // 繁中字註解
+  trails.value.find(trail => Number(trail.MOUNTAIN_ID) === id.value)                          // ✅ 轉數字比對  // 繁中字註解
+)   
 </script>
 
 
@@ -38,15 +75,23 @@ const trail = computed(() => trailsData.find(trail => trail.id === id.value))
         <span> &gt; </span>
         <router-link to="/routes">路線規劃</router-link>  
         <span> &gt; </span>
-        <span calss="current">{{ trail.name }}</span>  
+        <span class="current">{{ trail.MOUNTAIN_NAME }}</span>  
 
 
     </nav>
 
     <CarouselPic :trail="trail" />
-    <APIweather :town="trail.town"/>
-    <btnPage :trail="trail"/>
-    <Comments :id="trail.id"/>
+
+    <APIweather 
+    
+    :town="trail.TOWN"/>
+
+    <btnPage 
+    v-if="hasLatLng"
+    :trail="trail"/><!--只有經緯度是有效數字才渲染-->
+
+    <Comments :id="trail.MOUNTAIN_ID"/>
+
     <brandFooter/>
     </div>
 

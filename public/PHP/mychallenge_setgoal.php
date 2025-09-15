@@ -1,28 +1,12 @@
 <?php
     session_start();
+
+    // 導入資料庫連線的資料檔
+    include 'conn.php'; 
+    //---------------------------------------------------
+
     $MEMBER_ID = $_SESSION["memberID"] = "1";
 
-    // 若前端在 http://localhost:5173
-    header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
-    header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Allow-Headers: Content-Type');
-    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-
-    header('Content-Type: application/json; charset=utf-8');
-
-    $input = json_decode(file_get_contents("php://input"), true);
-
-    //MySQL相關資訊
-    $db_host = "127.0.0.1";
-    $db_user = "root";
-    $db_pass = "password";
-    $db_select = "hou_Shan";
-
-    //建立資料庫連線物件
-    $dsn = "mysql:host=".$db_host.";dbname=".$db_select.";charset=utf8";
-    $pdo = new PDO($dsn, $db_user, $db_pass);
-
-    //---------------------------------------------------
 
     if (isset($input['BIG_TARGET']) || isset($input['SMALL_TARGET'])) {
         

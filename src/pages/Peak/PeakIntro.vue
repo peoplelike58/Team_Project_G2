@@ -1,23 +1,24 @@
 <script setup>
-    import hero from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main01.jpg'
-    import intro from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main02.png'
-    import about1 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main03.png'
-    import guide1 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main05.png'
-    import about2 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main04.png'
-    import guide2 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main06.png'
-    import guide3 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main07.jpg'
+    // import hero from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main01.jpg'
+    // import intro from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main02.png'
+    // import about1 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main03.png'
+    // import guide1 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main05.png'
+    // import about2 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main04.png'
+    // import guide2 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main06.png'
+    // import guide3 from '@/assets/images/PeaksOfTaiwan/Yushan/Yushan_main07.jpg'
+    
     // Hero Title
     const heroTitle = "百岳之書"
     const heroSubTitle = "翻開台灣百岳，插旗每座山峰！"
     // Images
     const images = {
-        hero,
-        intro,
-        about1,
-        guide1,
-        about2,
-        guide2,
-        guide3
+        hero: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main01.jpg`,
+        intro: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main02.png`,
+        about1: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main03.png`,
+        guide1: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main05.png`,
+        about2: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main04.png`,
+        guide2: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main06.png`,
+        guide3: `${import.meta.env.BASE_URL}images/PeaksOfTaiwan/Yushan/Yushan_main07.jpg`
 }
     // Content
     const content ={

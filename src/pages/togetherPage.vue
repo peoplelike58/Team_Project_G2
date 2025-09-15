@@ -26,7 +26,7 @@
   </div>
 
   <!-- 活動卡片區塊 -->
-  <div class="cardWrapper">
+  <div v-if="!loading && !error" class="cardWrapper">
     <div class="cardList" v-if="paginatedActivities.length">
       <EventCard
         v-for="(activity, idx) in paginatedActivities"
@@ -43,7 +43,7 @@
   </div>
 
   <!-- 頁碼 -->
-  <div class="pageItem">
+  <div v-if="!loading && !error" class="pageItem">
     <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">&lt;</button>
     <button
       v-for="page in totalPages"
@@ -59,7 +59,7 @@
   <div class="qaList">
     <TogetherQnaItem />
   </div>
-    <Footer />
+  <Footer />
 </template>
 
 <script setup>
@@ -73,17 +73,83 @@ import Footer from '@/components/An/footer.vue'
 import axios from 'axios'
 import { ref, computed, onMounted } from 'vue'
 
-// 分頁
+// ===== API 設定 =====
+const API_URL = 'http://localhost/team-projcetG2/eventCard.php'
+
+const loading = ref(false)
+const error = ref('')
+
 const itemsPerPage = 6
 const currentPage = ref(1)
 
-// 資料：原始清單 & 篩選後清單
-const originalActivities = activitiesJson
-const filteredActivities = ref([...originalActivities])
+const originalActivities = ref([])        // 原始活動列表
+const filteredActivities = ref([])        // 篩選後活動列表
+
+async function fetchActivitiesFromDB() {
+  loading.value = true
+  error.value = ''
+  
+  try {    
+    const response = await axios.get(API_URL)
+    
+    if (response.data.success) {
+      // 檢查回傳資料是否為陣列
+      if (!Array.isArray(response.data.data)) {
+        throw new Error('API 回傳的資料格式不正確')
+      }
+      
+      // 將資料庫資料轉換為原本 JSON 的格式
+      const dbActivities = response.data.data.map(event => ({
+        //JSON 的欄位結構
+        id: event.id,
+        title: event.title,
+        date: event.date,
+        imageUrl: event.imageUrl,
+        tags: event.tags || ['活動'],
+        ctaUrl: event.ctaUrl,
+        location: event.meetingPlace || '台北', // 使用集合地點作為 location
+        joinQty: event.joinQty,
+        eventTime: event.eventTime,
+        content: event.content,
+        distance: event.distance
+      }))
+      
+      // 確保轉換後的資料是陣列
+      if (!Array.isArray(dbActivities)) {
+        throw new Error('不是陣列格式')
+      }
+      
+      originalActivities.value = dbActivities
+      filteredActivities.value = [...dbActivities]
+      
+      // console.log(`${dbActivities.length} 筆活動資料`)
+      
+    } else {
+      throw new Error(response.data.message || '載入活動資料失敗')
+    }
+    
+  } catch (err) {
+    console.error('載入活動資料失敗:', err)
+    
+    // 發生錯誤時確保資料是空陣列
+    originalActivities.value = []
+    filteredActivities.value = []
+    
+    if (err.response) {
+      error.value = `伺服器錯誤 (${err.response.status}): ${err.response.data?.message || err.message}`
+    } else if (err.request) {
+      error.value = '網路連線失敗，請檢查網路連線'
+    } else {
+      error.value = err.message || '載入活動資料時發生未知錯誤'
+    }
+  } finally {
+    loading.value = false
+  }
+}
 
 // 由資料動態產生地點選單
 const locationOptions = computed(() => {
-  const set = new Set(originalActivities.map(a => a.location).filter(Boolean))
+  const set = new Set(originalActivities.value.map(a => a.location).filter(Boolean))
   return Array.from(set).sort()
 })
 
@@ -130,17 +196,99 @@ function matchesKeyword(activity, criteria) {
 
 // 按下按鈕後才套用篩選
 function onSearchClicked(criteria) {
-  filteredActivities.value = originalActivities.filter(activity =>
+  filteredActivities.value = originalActivities.value.filter(activity =>
     matchesLocation(activity, criteria) &&
     matchesDate(activity, criteria) &&
     matchesKeyword(activity, criteria)
   )
   currentPage.value = 1
 }
+
+onMounted(async () => {
+  console.log('TogetherPage 啟用')
+  await fetchActivitiesFromDB()
+})
 </script>
 
 <style lang="scss" scoped>
 @import '../assets/styles/main.scss';
+
+/* ===== 新增：載入和錯誤狀態樣式 ===== */
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  margin: 50px 0;
+}
+
+.loading-content {
+  text-align: center;
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+  
+  p {
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  margin: 50px 0;
+}
+
+.error-content {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  max-width: 500px;
+  
+  h3 {
+    color: #c33;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    color: #a33;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  
+  .retry-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    
+    &:hover {
+      background: #c0392b;
+    }
+  }
+}
+
 
 /* 活動卡片區塊 */
 .cardList {
@@ -170,7 +318,6 @@ function onSearchClicked(criteria) {
   height: 650px;
   margin: 50px auto 0;
   margin-bottom: 150px;
-
 }
 
 /* 分頁按鈕 */
@@ -203,14 +350,27 @@ function onSearchClicked(criteria) {
     }
   }
 }
-    .footerList{
-      margin: 150px;
+
+.footerList{
+  margin: 150px;
 }
 
-@media screen and (max-width: 430px) {
+@media screen and (max-width: 768px) {
+  // 載入和錯誤狀態
+  .loading-wrapper,
+  .error-wrapper {
+    margin: 30px 15px;
+    min-height: 200px;
+  }
+  
+  .error-content {
+    padding: 20px;
+    margin: 0 15px;
+  }
+
   // 卡片區域
   .cardList{
-    grid-template-columns: repeat(2, minmax(0, 1fr)); // 一行顯示2個卡片
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     max-width: 100%;
     padding: 10px;
@@ -222,6 +382,7 @@ function onSearchClicked(criteria) {
     margin: 0 auto 40px;
     padding: 0 5px;
   }
+  
   .empty-state{
     max-width: 100%;
     margin: 0 15px 40px;
@@ -229,14 +390,16 @@ function onSearchClicked(criteria) {
     font-size: 16px;
     border-radius: 1px;
   }
+  
   .qaList{
     width: 100%;
     max-width: 430px;
     height: auto;
     max-height: 400px;
-    margin: 40px auto 0;
+    margin: 40px auto 500px;
     padding: 0 5px;
   }
+  
   .pageItem{
     margin-bottom: 50px;
     gap: 6px;
@@ -256,5 +419,4 @@ function onSearchClicked(criteria) {
     }
   }
 }
-
 </style>

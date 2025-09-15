@@ -1,12 +1,10 @@
 <script setup>
 import { ref,computed } from 'vue'
 import { useRouter,useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/user'
 import { useCartStore } from '@/stores/cart'
 import Products from '@/assets/json/products.json'
 
 const CartStore = useCartStore()
-const user = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -36,6 +34,7 @@ const Reduce = ()=>{
   if(quantity.value > 1){
     quantity.value--}
   }
+
 //收藏
 const favorites = ref([])
 const toggleFavorite = (productId) => {
@@ -77,14 +76,47 @@ const handleAddToCart = async () => {
     alert('請選擇尺寸')
     return false
   }
+  // 呼叫 CartStore 的 addToCart 方法，傳入完整商品資訊
+  const success = await CartStore.addToCart(
+    product.value,           // 商品物件
+    selectsize.value || '',  // 選擇的尺寸（如果沒有尺寸選項則為空字串）
+    selectcolor.value || '', // 選擇的顏色（如果沒有顏色選項則為空字串）
+    quantity.value           // 數量
+  )
+  
+  // 如果成功加入購物車，可以選擇是否關閉彈窗或其他動作
+  if (success) {
+    close()
+    console.log('商品已成功加入購物車')
+  }
 }
+  
 
 
-//加入購物車，並去到購物車界面
-const buyRightnow = (()=>{
-  router.push({name:'Shop-cart'})
-
-})
+// 立即購買功能（加入購物車後跳轉到購物車頁面）
+const buyRightnow = async () => {
+  // 先執行加入購物車
+    if (product.value.color?.length && !selectcolor.value) {
+    alert('請選擇顏色')
+    return false
+  }
+  if (product.value.size?.length && !selectsize.value) {
+    alert('請選擇尺寸')
+    return false
+  }
+  // 呼叫 CartStore 的 addToCart 方法，傳入完整商品資訊
+  const success = await CartStore.addToCart(
+    product.value,           // 商品物件
+    selectsize.value || '',  // 選擇的尺寸（如果沒有尺寸選項則為空字串）
+    selectcolor.value || '', // 選擇的顏色（如果沒有顏色選項則為空字串）
+    quantity.value           // 數量
+  )
+  
+  // 如果成功加入，才跳轉到購物車頁面
+  if (success) {
+    router.push({name:'Shop-cart'})
+  }
+}
 
 
 </script>
@@ -163,7 +195,7 @@ const buyRightnow = (()=>{
 
           <!-- 行動按鈕 -->
           <div class="product_actions">
-            <button class="btn-addcart" @click="CartStore.addToCart">加入購物車</button>
+            <button class="btn-addcart" @click="handleAddToCart">加入購物車</button>
             <button class="btn-paynow" @click="buyRightnow">立即購買</button><!-- 加入購物車,並跳轉到購物車頁面 -->
           </div>
         </div>
