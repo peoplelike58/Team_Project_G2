@@ -165,7 +165,19 @@ const routes=[
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
+
+  //切頁後，頁面回到置頂
+  scrollBehavior(to, from, savedPosition) {
+    // 1) 瀏覽器返回/前進：恢復先前滾動位置
+    if (savedPosition) return savedPosition
+
+    // 2) 有錨點：捲到對應元素
+    if (to.hash) return { el: to.hash, top: 0 }
+
+    // 3) 一般導頁：回到最上方
+    return { left: 0, top: 0 }
+  }
 })
 
 // 後台登入阻擋
