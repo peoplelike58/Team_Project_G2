@@ -9,16 +9,11 @@ $response = ['ok' => false, 'data' => [], 'error' => null];   // 預設回傳
 include 'conn.php'; 
 
 
-$sql = "
-
-select m.MOUNTAIN_ID, m.MOUNTAIN_NAME, m.REGION, m.DIFF, m.TYPE, img.IMAGE,
-	m.TRAFFIC, m.TIME
-from mountain m
-	join mountain_image img
-    on m.MOUNTAIN_ID = img.MOUNTAIN_ID
-where img.IMAGE_TYPE = 'main'
-   
-";
+$sql = "SELECT m.MOUNTAIN_ID, m.MOUNTAIN_NAME, m.REGION, m.DIFF, m.TYPE, img.IMAGE,m.TRAFFIC, m.TIME
+FROM MOUNTAIN m
+	JOIN MOUNTAIN_IMAGE img
+    ON m.MOUNTAIN_ID = img.MOUNTAIN_ID
+WHERE img.IMAGE_TYPE = 'main'";
 
 $pstmt = $pdo->prepare($sql);
 $pstmt->execute();
