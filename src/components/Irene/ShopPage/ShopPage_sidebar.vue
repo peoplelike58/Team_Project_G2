@@ -60,7 +60,7 @@ onMounted(() => {
     <div class="search">
         <input type="text" v-model="searchKeyword" @input="handleSearch"  placeholder="請輸入你想找的商品" >
         <!-- 監聽input進來的值 -->
-        <button class="icon_search" @click="handleSearch"><img src="@/assets/images/products/icons/icon_search.svg" alt=""></button>
+        <button class="icon_search" @click="handleSearch"><img src="/images/Products/icons/icon_search.svg" alt=""></button>
       </div>
     <div class="classification"><!-- 商品分類 -->
       <div class="all_products">
@@ -74,7 +74,7 @@ onMounted(() => {
         <!-- 加入手風琴切換功能 -->
         <button @click="toggleCategory('hiking');selectCategory('登山健行裝備', 'main')"  
         :class="{ active: openCategories.hiking }">
-          <span>登山健行裝備</span><img src="@/assets/images/products/icons/icon_predown.svg" alt="" 
+          <span>登山健行裝備</span><img src="/images/Products/icons/icon_predown.svg" alt="" 
           :style="{ transform: openCategories.hiking ? 'rotate(180deg)' : 'rotate(0deg)' }">
         </button>
         <!--  根據狀態顯示/隱藏子選單 -->
@@ -83,12 +83,13 @@ onMounted(() => {
             <li><button @click="selectCategory('水瓶', 'sub')">水瓶</button></li>
             <li><button @click="selectCategory('望遠鏡', 'sub')">望遠鏡</button></li>
             <li><button @click="selectCategory('手電筒', 'sub')">手電筒</button></li>
+            <li><button @click="selectCategory('登山包', 'sub')">登山包</button></li>
         </ul>
       </div>
       <div class="overnight_equipment"><!-- 過夜裝備 -->
         <button @click="toggleCategory('overnight');selectCategory('登山過夜裝備', 'main')"
                 :class="{ active: openCategories.overnight }">
-          <span>登山過夜裝備</span><img src="@/assets/images/products/icons/icon_predown.svg" alt=""
+          <span>登山過夜裝備</span><img src="/images/Products/icons/icon_predown.svg" alt=""
           :style="{ transform: openCategories.overnight ? 'rotate(180deg)' : 'rotate(0deg)' }">
         </button>
         <ul :class="{ active: openCategories.overnight}">
@@ -104,7 +105,7 @@ onMounted(() => {
         <button @click="selectCategory('登山鞋', 'single')">登山鞋</button>
       </div>
       <div class="backpack">
-        <button @click="selectCategory('登山包', 'single')">登山包</button>
+        <button @click="selectCategory('登山配件', 'single')">登山配件</button>
       </div>
     </div>
     <!-- 性別篩選 -->
@@ -220,7 +221,7 @@ aside{
 
       
       &.active {
-        max-height: 200px;
+        max-height: 240px;
         // border: 1px solid #e0e0e0;
       }
       

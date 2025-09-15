@@ -16,7 +16,7 @@
           <label class="form-label">頭像</label>
           <div class="avatar-upload">
             <div class="avatar-preview">
-              <img :src="profileData.avatar || '/Products/default-avatar.jpg'" alt="頭像" />
+              <img :src="profileData.avatar || '/images/Products/default-avatar.jpg'" alt="頭像" />
             </div>
             <button 
               v-if="isEditing" 

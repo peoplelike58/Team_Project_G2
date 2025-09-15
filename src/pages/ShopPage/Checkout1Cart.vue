@@ -2,65 +2,110 @@
 import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
 import brandFooter from '@/components/An/footer.vue'
-import { reactive, ref, computed, watch } from 'vue'
+import { ref, watch,onMounted } from 'vue'
 import { ArrowDown } from '@element-plus/icons-vue'//是elementplus圖示元件
 import { ElMessage } from 'element-plus'  ///是全域提示訊息（toast）API。
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart';
 
+
 const CartStore = useCartStore()
 const router = useRouter()
-// const items = reactive([
-//   { id: 1, name: '折疊雙節望遠鏡', size: 'S', color: '紅', price: 3200, qty: 1, image: 'https://images.unsplash.com/photo-1516223725307-6f76b9ec8742?w=600&fit=crop' },
-//   { id: 2, name: '折疊雙節望遠鏡', size: 'S', color: '紅', price: 3200, qty: 1, image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&fit=crop' },
-// ])
+const allChecked = ref(true)    // 從 store 取得全選狀態，不需要自己維護
 
-// 勾選
-const checkedMap = reactive(Object.fromEntries(CartStore.cartItems.map(i => [i.id, true])))  
+
+// const checkedMap = reactive(Object.fromEntries(CartStore.cartItems.map(i => [i.id, true])))  
 //.map把一個陣列「逐一」轉換成「另一個陣列」,轉換成[[1,true],[2,true]...],Object.fromEntries(...)把陣列變回物件=> { "1": true, "2": true }，checkedMap變成物件，記錄每個商品的勾選狀態
-const allChecked = ref(true)
 
-//watch(要監聽的東西, 當改變時要執行的函式, 選項)：監聽資料變化，當資料改變時執行函式
-watch(() =>                     
-    Object.values(checkedMap),           //Object.values(): 取得物件所有的值
-    vals => allChecked.value = vals.every(Boolean),      //vals.every(Boolean): 檢查陣列中是否所有值都為 true，最後把結果賦值給 allChecked.value。
-    { deep: true}                        //deep: true: 物件參數 (options object)，深度監聽物件內部的值的變化，我需要監聽它裡面每個 key 的變動（深層追蹤），不只監聽最外層
-)
+// 監聽 store 的全選狀態，同步到本地 ref
+watch(() => CartStore.isAllChecked, (newValue) => {
+  allChecked.value = newValue
+})
+
+// 頁面載入時從後端載入購物車資料
+onMounted(async () => {
+  try {
+    await CartStore.loadCartFromBackend()
+    console.log('購物車載入完成')
+  } catch (error) {
+    console.error('載入購物車失敗:', error)
+    ElMessage.error('載入購物車失敗，請重新整理頁面')
+  }
+})
+
+// 全選/取消全選功能
+function toggleAll() { 
+  CartStore.toggleAllChecked(allChecked.value)
+}
+
+// 刪除單一商品
+function remove(id) { 
+  console.log('準備刪除商品 ID:', id)
+  CartStore.removeFromCart(id)
+}
+
+// 刪除已勾選的商品
+function removeChecked() {
+  CartStore.removeCheckedItems()
+}
+
+
+// 監聽購物車商品變化，自動更新勾選狀態
+// watch(要監聽的東西, 當改變時要執行的函式, 選項)：監聽資料變化，當資料改變時執行函式
+// watch(() => CartStore.cartItems, (newItems) => {
+//     // 當購物車商品變化時，也要更新勾選狀態
+//     newItems.forEach(item => {
+//         if (!(item.id in CartStore.checkedMap)) {
+//             CartStore.checkedMap[item.id] = true
+//         }
+//         //「如果這個商品在勾選清單中不存在」，就把這個商品設為true-已勾選
+//     })
+    
+    // 移除已不存在商品的勾選狀態
+//     Object.keys(checkedMap).forEach(id => {
+//         const exists = newItems.some(item => item.id.toString() === id)
+//         if (!exists) {
+//             delete checkedMap[id]
+//         }
+//     })
+// }, { deep: true })
 
 //全選勾選
-function toggleAll(){ 
-    Object.keys(checkedMap).forEach(k => (checkedMap[k] = allChecked.value))
-    //Object.keys(): 取得物件的所有key， 
-}
-// 在 <script setup> 中修改這兩個函數
+// function toggleAll(){ 
+//     Object.keys(CartStore.checkedMap).forEach(k => (CartStore.checkedMap[k] = allChecked.value))
+//     //Object.keys(): 取得物件的所有key， 當使用者點擊「全選」按鈕時執行，把所有商品的勾選狀態都設定成跟全選按鈕一樣
+// }
+//前端監聽全選的狀態
+// watch(() =>                     
+//     Object.values(CartStore.checkedMap),           //Object.values(): 取得物件所有的值
+//     vals => allChecked.value = vals.every(Boolean),      //vals.every(Boolean): 檢查陣列中是否所有值都為 true，最後把結果賦值給 allChecked.value。
+//     { deep: true}                        //deep: true: 物件參數 (options object)，深度監聽物件內部的值的變化，我需要監聽它裡面每個 key 的變動（深層追蹤），不只監聽最外層
+// )
+
 
 // 原本的 remove 函數 - 刪除單一商品
-function remove(id) { 
-    // 直接使用 store 的 removeFromCart 方法
-    CartStore.removeFromCart(id)
-    
-    // 同時也要刪除勾選狀態
-    delete checkedMap[id]
-}
+// function remove(id) { 
+//     console.log('購物車項目',id)
+//     // 直接使用 store 的 removeFromCart 方法
+//     CartStore.removeFromCart(id)
+//     console.log('後端要刪除的removeFromCart購物車項目',id)
+//     // 同時也要刪除勾選狀態
+//     delete CartStore.checkedMap[id]
+// }
 
 // 原本的 removeChecked 函數 - 刪除已勾選的商品
-function removeChecked() {
-    // 找出所有被勾選的商品 ID
-    const checkedIds = Object.entries(checkedMap)
-        .filter(([, isChecked]) => isChecked)  // 只取勾選的
-        .map(([id]) => Number(id))  // 轉換成數字 ID
+// function removeChecked() {
+//     if (!CartStore.checkedIds.value.length) {
+//         ElMessage.info('請先勾選要刪除的商品')
+//         return
+//     }
     
-    if (!checkedIds.length) {
-        ElMessage.info('請先勾選要刪除的商品')
-        return
-    }
-    
-    // 使用 store 的方法逐一刪除
-    checkedIds.forEach(id => {
-        CartStore.removeFromCart(id)
-        delete checkedMap[id]  // 同時清除勾選狀態
-    })
-}
+//     // 使用 store 的方法逐一刪除
+//     CartStore.checkedIds.value.forEach(id => {
+//         CartStore.removeFromCart(id)
+//         delete CartStore.checkedMap[id]  // 同時清除勾選狀態
+//     })
+// }
 
 // function remove(id){ 
 //     const idx = CartStore.cartItems.findIndex(i => i.id === id); 
@@ -88,8 +133,17 @@ function removeChecked() {
 // const total = computed(()=> Math.max(subtotal.value - discount.value, 0))
 
 // 導頁
+
+
 function goBack(){ router.push('/Shop') }
-function goNext(){ router.push('/Shop/info') }
+function goNext(){ 
+    //檢查是否有勾選商品才能進入下一步
+    if (CartStore.checkedIds.length === 0) {
+        ElMessage.warning('請先勾選要結帳的商品')
+        return
+    }
+    router.push('/Shop/info') 
+}
 
 </script>
 
@@ -113,13 +167,13 @@ function goNext(){ router.push('/Shop/info') }
                 <el-table-column label="" width="54" align="center">
                     <!-- 這裡的<template>是 Vue 提供的「語法糖 (虛擬容器)」，常用來做： 插槽 (slot) 的佔位，<slot> 是放在子元件裡的，在 el-table-column 裡面定義好了，不需要再寫，只要在template裡面放要放的東西就可以了-->
                     <template #default="{ row }">
-                        <el-checkbox v-model="checkedMap[row.id]" />
+                        <el-checkbox v-model="CartStore.checkedMap[row.id]" />
                     </template>
                 </el-table-column>
 
                 <el-table-column label="商品圖片" width="140">
                     <template #default="{ row }">
-                        <el-image :src="row.image" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
+                        <el-image :src="`/images/Products/products/${row.image}`" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
                     </template>
                 </el-table-column>
                 
@@ -132,7 +186,7 @@ function goNext(){ router.push('/Shop/info') }
 
                 <el-table-column label="數量" width="160" align="center"><!-- 數量title -->
                     <template #default="{ row }">
-                        <el-input-number v-model="row.qty" :min="1" />
+                        <el-input-number v-model="row.qty" :min="1" @change="(value) => CartStore.updateQty(row.id, value)"/>
                     </template><!-- 各商品數量選擇 -->
                 </el-table-column>
 
@@ -150,7 +204,7 @@ function goNext(){ router.push('/Shop/info') }
                     <el-dropdown @command="CartStore.applyCoupon">
                         <el-button>
                         選擇優惠券
-                        <el-icon class="ml-1"><ArrowDown /></el-icon>
+                        <el-icon class="ml-1"><ArrowDown/></el-icon>
                         </el-button>
                         <template #dropdown>
                         <el-dropdown-menu>
@@ -163,9 +217,9 @@ function goNext(){ router.push('/Shop/info') }
                 <!-- 購物總計,(後期優化時讓每格排版對齊) -->
                 <el-card shadow="never" class="summary">
                     <div class="line">
-                        <span>共 {{ CartStore.totalQty}} 件商品</span>
+                        <span>共 {{CartStore.checkedTotalQty }} 件商品</span>
                         <span>商品金額</span>
-                        <strong> $ {{ CartStore.totalPrice.toLocaleString() }}</strong>
+                        <strong> $ {{ CartStore.checkedTotalPrice.toLocaleString() }}</strong>
                         <!--toLocaleString 是「自動加上地區的格式」。例如：加千分位、貨幣符號、日期格式。 -->
                     </div>
                     <div class="line">
@@ -177,7 +231,7 @@ function goNext(){ router.push('/Shop/info') }
                     <div class="line total">
                         <span></span>
                         <span>小計</span>
-                        <strong>$ {{ CartStore.finaltotal.toLocaleString() }}</strong></div>
+                        <strong>$ {{ CartStore.checkedFinalTotal.toLocaleString() }}</strong></div>
                 </el-card>
             </div>
             <!-- 按鈕 -->

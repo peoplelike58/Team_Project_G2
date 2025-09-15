@@ -7,6 +7,6 @@ $_SESSION['member'] = [];
 session_unset();
 session_destroy();
 
-echo json_encode(['success' => true, 'msg' => '已登出']);
+echo json_encode(['success' => true, 'msg' => '已登出'],JSON_UNESCAPED_UNICODE);
 
 ?>
