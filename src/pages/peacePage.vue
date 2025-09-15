@@ -1,16 +1,13 @@
-```vue
 <template>
-<NavMenu/>
+  <NavMenu/>
+
   <div class="wrapper">
-    <!-- 遊戲 手機版隱藏 -->
+    <!-- 遊戲區塊 -->
     <div class="game">
-      <br>
-      <p>Comming Soon!!!</p>
-      <br>
-      <p>遊戲難產中</p>
+      <GamePage @fail="handleGameFail" />
     </div>
 
-    <!-- 按鈕列表  -->
+    <!-- 按鈕列表 -->
     <div class="iconList">
       <button
         v-for="tab in tabs"
@@ -27,7 +24,7 @@
       </button>
     </div>
 
-    <!-- RWD狀態下被選中的icon區域 -->
+    <!-- 手機版被選中的 icon -->
     <div v-if="isMobileView && currentSelectedIcon" class="selected-icon-area">
       <button 
         class="selected-icon"
@@ -38,27 +35,30 @@
       </button>
     </div>
 
-    <!-- 內容區域 -->
+    <!-- 內容區塊 -->
     <div class="content">
-      <ul v-if="currentIconContent && currentIconContent.length > 0">
+      <ul v-if="currentIconContent.length">
         <li v-for="(line, index) in currentIconContent" :key="index">
           {{ line }}
         </li>
       </ul>
     </div>
   </div>
-<Footer/>
+
+  <Footer/>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import Woni   from '@/assets/images/peaceCard/woniPhotoroom.png'
-import Back   from '@/assets/images/peaceCard/back.png'
-import People from '@/assets/images/peaceCard/people.png'
-import Info   from '@/assets/images/peaceCard/info.png'
-import NavMenu from '@/components/An/navMenu.vue'
-import Footer from '@/components/An/footer.vue'
+import NavMenu  from '@/components/An/navMenu.vue'
+import Footer   from '@/components/An/footer.vue'
+import GamePage from './gamePage.vue'
+import Woni     from '@/assets/images/peaceCard/woniPhotoroom.png'
+import People   from '@/assets/images/peaceCard/people.png'
+import Info     from '@/assets/images/peaceCard/info.png'
+import Back     from '@/assets/images/peaceCard/back.png'
 
+// 四個 tab，content 填入原始資料
 const tabs = [
   {
     key: 'woni',
@@ -127,36 +127,33 @@ const tabs = [
       '登山口、林道施工封閉資訊（如能高越嶺道）',
       '政府發布山區限時封閉公告彙整（如防疫、災後重建）'
     ]
-  },
+  }
 ]
 
-// 當前選中的圖標key值
-const currentSelectedIcon = ref(tabs[0]?.key || '')
-
+const currentSelectedIcon = ref(tabs[0].key)
 const isMobileView = ref(false)
 
+function handleIconClick(key) {
+  currentSelectedIcon.value = key
+}
+
+function handleGameFail(level) {
+  const idx = level - 1
+  if (idx >= 0 && idx < tabs.length) {
+    currentSelectedIcon.value = tabs[idx].key
+    const el = document.querySelector('.content')
+    el && el.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
 const currentIconContent = computed(() => {
-  // 如果沒有選中的圖標，返回空陣列
-  if (!currentSelectedIcon.value) return []
-  
-  // 尋找對應的標籤頁
-  const selectedTab = tabs.find(tab => tab.key === currentSelectedIcon.value)
-  
-  return selectedTab?.content && Array.isArray(selectedTab.content) 
-    ? selectedTab.content 
-    : []
+  const tab = tabs.find(t => t.key === currentSelectedIcon.value)
+  return tab ? tab.content : []
 })
 
 const getSelectedIconData = computed(() => {
-  const selectedTab = tabs.find(tab => tab.key === currentSelectedIcon.value)
-  return selectedTab || { icon: '', label: '' }
+  return tabs.find(t => t.key === currentSelectedIcon.value) || {}
 })
-
-// 處理icon點擊事件
-function handleIconClick(clickedIconKey) {
-  // 切換到新icon
-  currentSelectedIcon.value = clickedIconKey
-}
 
 function checkScreenSize() {
   isMobileView.value = window.innerWidth <= 768
@@ -182,57 +179,50 @@ onUnmounted(() => {
   padding: 0 20px;
 }
 
-// 遊戲區塊樣式
 .game {
   width: 100%;
-  max-width: 1400px; 
-  height: 550px;
-  // border: 1px solid red;
+  max-width: 1000px;
+  height: 400px;
   text-align: center;
-  font-size: 100px;
-  margin-bottom: 90px;
-  
+  margin-bottom: 250px;
+
   @media (max-width: 1200px) {
     display: none;
   }
 }
 
-// icon列表
 .iconList {
   display: flex;
   justify-content: center;
   gap: 90px;
   width: 100%;
-  
+
   button {
     border: none;
-    cursor: pointer;
     background: transparent;
-    transition: all 0.3s ease; 
-    
+    cursor: pointer;
+    transition: all 0.3s ease;
+
     img {
       width: 142px;
       height: 142px;
-      object-fit: cover;
       margin-bottom: 17px;
       transition: all 0.3s ease;
     }
-    
+
     p {
       font-size: 24px;
-      transition: color 0.3s ease; 
+      transition: color 0.3s ease;
     }
-    
+
     &.active {
       transform: scale(1.05);
-      
+
       p {
         color: #007bff;
       }
     }
-  
-    
-    // 在手機版時，被選中的icon隱藏
+
     &.icon-hidden {
       @media (max-width: 768px) {
         opacity: 0;
@@ -241,56 +231,52 @@ onUnmounted(() => {
         margin: 0;
         padding: 0;
         overflow: hidden;
-        transition: all 0.3s ease;
       }
     }
-    
+
     @media (max-width: 768px) {
       img {
         width: 80px;
         height: 80px;
       }
-      
+
       p {
         font-size: 14px;
       }
     }
   }
-  
+
   @media (max-width: 768px) {
     gap: 15px;
     padding: 0 10px;
   }
 }
 
-// RWD狀態下被選中的圖標區域
 .selected-icon-area {
   display: none;
   width: 100%;
   justify-content: center;
   margin: 30px 0;
   animation: slideDown 0.3s ease;
-  
+
   @media (max-width: 768px) {
     display: flex;
   }
-  
+
   .selected-icon {
     border: none;
     background: transparent;
     cursor: pointer;
     transform: scale(1.3);
     animation: scaleUp 0.3s ease;
-    
+
     img {
       width: 120px;
       height: 120px;
-      object-fit: cover;
       margin-bottom: 10px;
-      // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       border-radius: 10px;
     }
-    
+
     p {
       font-size: 20px;
       color: #007bff;
@@ -319,61 +305,36 @@ onUnmounted(() => {
   }
 }
 
-// 內容樣式
 .content {
   margin-top: 20px;
   width: 100%;
   max-width: 1200px;
   text-align: center;
-  
+
   ul {
     list-style: inside decimal;
-    padding: 0 20px; // 添加內邊距
+    padding: 0 20px;
     margin-top: 20px;
-    
+
     li {
       margin-bottom: 0.5rem;
       line-height: 1.6;
       font-size: 20px;
-      word-wrap: break-word;
       overflow-wrap: break-word;
-      
-      // 768px斷點調整字體大小
+
       @media (max-width: 768px) {
         font-size: 16px;
         line-height: 1.8;
       }
     }
   }
-  
-  p {
-    font-size: 20px;
-    color: #888;
-    
-    @media (max-width: 768px) {
-      font-size: 16px;
-    }
-  }
-  
+
   @media (max-width: 1200px) {
     margin-top: 60px;
   }
-  
+
   @media (max-width: 768px) {
     margin-top: 0;
   }
 }
-.selected-icon-fade-enter-active,
-.selected-icon-fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.selected-icon-fade-enter-from {
-  opacity: 0;
-}
-
-.selected-icon-fade-leave-to {
-  opacity: 0;
-}
 </style>
-```

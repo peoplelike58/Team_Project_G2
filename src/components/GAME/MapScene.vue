@@ -1,6 +1,6 @@
 <template>
   <div class="map-container">
-    <img src="/images/eventCard/cardimg1.jpg" alt="Map" class="map-image" />
+    <img src="/images/map.png" alt="Map" class="map-image" />
 
     <!-- 四個閃點 -->
     <div 
@@ -9,7 +9,7 @@
       :class="['point', 'p' + n]" 
       @click="$emit('startLevel', n)"
     >
-      <span class="arrow"><img src="@/assets/arrow.svg" alt="arrow" /></span>
+      <span class="arrow"><img src="/images/arrow.svg" alt="arrow" width="50px" height="50px" /></span>
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@
 .map-container {
   position: relative;
   width: 100%;
-  max-width: 800px;
+  max-width: 90%;
   margin: 0 auto;
 }
 
@@ -38,13 +38,13 @@
   height: 20px;
   background: rgba(255,255,0,0.8);
   border-radius: 50%;
-  animation: blink 1s infinite;
+  animation: blink 1.5s infinite;
   cursor: pointer;
 
   .arrow {
     position: absolute;
-    top: -24px;
-    left: -6px;
+    top: -95px;
+    left: -15px;
     opacity: 0;
     transition: opacity 0.2s;
   }
@@ -58,7 +58,6 @@
   50%      { opacity: 0.3; }
 }
 
-/* 手動調整四點位置 */
 .p1 { top: 20%;  left: 30%; }
 .p2 { top: 40%;  left: 70%; }
 .p3 { top: 65%;  left: 25%; }
