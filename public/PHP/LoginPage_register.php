@@ -43,4 +43,4 @@ if($checkEmail){
 }
 
 
-echo json_encode( $respBody ) ;
+echo json_encode( $respBody ,JSON_UNESCAPED_UNICODE) ;

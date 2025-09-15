@@ -1,9 +1,35 @@
 <script setup>
-import { ref,computed,watch } from 'vue'
+import { ref,computed,watch,onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import Products from '@/assets/json/products.json'// 從json引入
+// import Products from '/json/products/products.json'// 從json引入
+// const products = Products;
 
-const products = Products;
+
+
+// 響應式變數，存放商品資料
+const products = ref([])
+
+// 🟢 載入資料的函式
+const loadProducts = async () => {
+  try {
+    // [修改] fetch 從 public/products.json 抓資料
+    const res = await fetch('/json/products/products.json')
+    if (!res.ok) throw new Error('載入失敗')
+
+    // [修改] 將 JSON 字串轉成 JS 物件
+    const data = await res.json()
+    console.log(data)
+    products.value = data
+  } catch (err) {
+    console.error('讀取商品資料錯誤:', err)
+  }
+}
+
+// 🟢 元件掛載完成後自動執行
+onMounted(() => {
+  loadProducts()
+  console.log(products)
+})
 
 /*點擊收藏*/
 const favorites = ref([])
@@ -45,7 +71,7 @@ const props = defineProps({
 //接收到篩選方式後篩選商品
 const sortOrder = ref('')//排序
 const filteredProducts = computed(()=>{
-  let result = products ;//原本的顯示結果是所有的商品
+  let result = products.value ;//原本的顯示結果是所有的商品,products要是個陣列
 
   //排序功能 (要在所有篩選之前，不然篩選後才能排序，- 無論有沒有分類都要執行排序)
   if (sortOrder.value === 'price-low') {
@@ -112,7 +138,7 @@ const pagedProducts = computed(() => {
     <div class="products_content">
       <div class="product_card" v-for="product in pagedProducts" :key="product.id" @click="Showdetail(product)">
           <div class="product_image">
-            <img :src="product.image" :alt="product.name">
+            <img :src="`/images/Products/products/${product.image}`" :alt="product.name">
             <button class="favorite-btn" @click.stop="toggleFavorite(product.id)">
               {{ favorites.includes(product.id) ? '❤️' : '🤍' }}
             </button>
@@ -181,6 +207,7 @@ const pagedProducts = computed(() => {
 
       img {
         @include img;
+        height: 100%;
       }
 
       .favorite-btn {
@@ -190,7 +217,7 @@ const pagedProducts = computed(() => {
         right: 12px;
         background: transparent;
         font-size: 16px;
-        z-index: 20;
+        z-index: 5;
       }
     }
 

@@ -1,8 +1,8 @@
 <!-- 優惠券 -->
 <template>
-    <button class="coupon_btn" @click="ToRegister">
-        <img src="@/assets/images/Products/ProductPage_coupon_pc.png" alt="">
-    </button>
+  <button class="coupon_btn" @click="ToRegister">
+    <img src="/images/Products/ProductPage_coupon_pc.png" alt="">
+  </button>
 </template>
 <script setup>
 import { useRouter } from 'vue-router';
