@@ -52,16 +52,17 @@
                   :show-file-list="false"
                   :on-success="(res) => { 
                     if(res?.success){ 
-                      form[col.prop] = res.path 
+                      form[col.prop] = res.filename  //只存檔名
+                      // console.log('完整圖片路徑:', form[col.prop]);
+                      // const imgUrl = getImageUrl();
                     } else {
                        alert(res?.message || '上傳失敗') }}"
-                  :on-change="(uploadFile) => imagePreview(uploadFile, col.prop)"
                   >
            
                   <el-button type="primary">上傳圖片</el-button>
                   <!-- 預覽縮圖 -->
                 </el-upload>
-                <img v-if="form[col.prop]" :src="form[col.prop]" style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
+                <img v-if="form[col.prop]" :src="getImageUrl() + '/images/Products/' + form[col.prop]"style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
              </template>
 
              <template v-else>
@@ -69,7 +70,9 @@
                 :is="resolveInput(col)"
                 v-model="form[col.prop]"
                 :type="col.type === 'datetime' ? 'datetime' : col.type === 'date' ? 'date' : undefined"
+                :show-password="col.type === 'password'"
                 :placeholder="`請輸入${col.label}`"
+                :disabled="col.disabled"  
                 :options="col.options"
                 :value-format="col.valueFormat || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
                 :format="col.format || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
@@ -104,15 +107,25 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
-const imagePreview = (uploadFile, propName) => {
-  if (uploadFile && uploadFile.raw) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      form[propName] = e.target.result
-    }
-    reader.readAsDataURL(uploadFile.raw)
-  }
-}
+
+// const imagePreviewUrl = computed(()=>{
+//   if(form.IMAGE){
+//     const imgUrl = this.getImageUrl();
+//       return `${imgUrl}/images/Products/${this.form.IMAGE}`;
+//   }
+//   return null;
+// })
+
+
+// const imagePreview = (uploadFile, propName) => {
+//   if (uploadFile && uploadFile.raw) {
+//     const reader = new FileReader()
+//     reader.onload = (e) => {
+//       form[propName] = e.target.result
+//     }
+//     reader.readAsDataURL(uploadFile.raw)
+//   }
+// }
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -142,6 +155,17 @@ const idKey = computed(() => props.columns[0]?.prop ||'id')
 
 //=========================
 
+const getImageUrl = () => {
+  console.log('當前端口:', window.location.port);
+  if (window.location.port === '5173') {
+    // console.log('開發環境，返回後端路徑');  
+    return 'http://localhost/TeamProject/public';
+  } else {
+    // console.log('正式環境，使用當前域名');
+    return `${window.location.protocol}//${window.location.host}/TeamProject`;
+  }
+}
+
 
 const filtered = computed(() => {
   if (!keyword.value) return data.value
@@ -156,6 +180,7 @@ const pagedData = computed(() => {
 const resolveInput = (col) => {
   if (col.type === 'select') return 'el-select'
   if (col.type === 'date' || col.type === 'datetime') return 'el-date-picker'
+  if (col.type === 'password') return 'el-input'   // 密碼用 
   return 'el-input'
 }
 
@@ -199,8 +224,8 @@ const resetData = () => {
   currentPage.value = 1
   emit('refresh')
 }
-
 //=========================
+
 
 
 //========================= 監聽對話框關閉
