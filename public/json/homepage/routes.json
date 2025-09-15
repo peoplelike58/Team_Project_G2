@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "name": "象山親山步道",
+    "distance": 2.5,
+    "time": { "hour": 1, "minute": 40 },
+    "difficulty": "低",
+    "imageUrl": "images/routesImg/Xiangshan.png"
+  },
+  {
+    "id": "2",
+    "name": "七星山主峰、東峰步道",
+    "distance": 4.8,
+    "time": { "hour": 3, "minute": 0 },
+    "difficulty": "中",
+    "imageUrl": "images/routesImg/Qixing.png"
+  },
+  {
+    "id": "3",
+    "name": "草嶺古道",
+    "distance": 8.5,
+    "time": { "hour": 4, "minute": 30 },
+    "difficulty": "中",
+    "imageUrl": "images/routesImg/Caoling.png"
+  },
+  {
+    "id": "4",
+    "name": "擎天崗環形步道",
+    "distance": 2.3,
+    "time": { "hour": 1, "minute": 10 },
+    "difficulty": "低",
+    "imageUrl": "images/routesImg/Qingtiangang.png"
+  },
+  {
+    "id": "5",
+    "name": "忘憂谷步道",
+    "distance": 1.6,
+    "time": { "hour": 0, "minute": 50 },
+    "difficulty": "低",
+    "imageUrl": "images/routesImg/Wangyou.png"
+  },
+  {
+    "id": "6",
+    "name": "合歡山北峰步道",
+    "distance": 3.2,
+    "time": { "hour": 3, "minute": 20 },
+    "difficulty": "高",
+    "imageUrl": "images/routesImg/Hehuan.png"
+  }
+]

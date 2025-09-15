@@ -12,11 +12,10 @@
                     <template
                         v-for="(activity, activityIndex) in displayItems"
                         :key="activity.id ?? activityIndex">
-                            <activityCard
-                                :item="activity"
-                                :index="activityIndex"
-                                @cta-click="handleCtaClick"
-                            />
+                        <activityCard
+                            :item="activity"
+                            :index="activityIndex"
+                        />
                     </template>
                 </template>
             </div>
@@ -44,16 +43,10 @@ const props = defineProps({
     limit: { type: Number, default: 3 },          // 首頁顯示 3 張
 })
 
-const emit = defineEmits(['view-all', 'cta-click'])  
-
 const displayItems = computed(() => {
    const list = Array.isArray(props.items) ? props.items : []
    return props.limit > 0 ? list.slice(0, props.limit) : list
 })
-  
-function handleCtaClick(item) {
-    emit('cta-click', item)
-}
 
 </script>
   
@@ -70,7 +63,7 @@ function handleCtaClick(item) {
     flex-direction: column;
     gap: 48px;
 
-    width: fit-content;
+    // width: fit-content;
     max-width: 1200px;
     margin: 0 auto;
     padding: 80px 0;
@@ -172,6 +165,9 @@ function handleCtaClick(item) {
 }
 
 @media (max-width: 430px) {
+    .activity-section{
+        padding: 0;
+    }
     .activity-section .section-header{
         margin-left: 24px;
     }

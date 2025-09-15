@@ -3,7 +3,7 @@
         "id": 1,
         "date": "2025.08.20",
         "title": "2025 微笑山線大縱走尋寶集章任務",
-        "imageUrl": "/images/activities/SmileTrails.png",
+        "imageUrl": "images/activities/SmileTrails.png",
         "tags": [
             "登山健行", "集章挑戰"
         ],
@@ -13,7 +13,7 @@
         "id": 2,
         "date": "2025.08.15",
         "title": "淡蘭古道尋寶任務",
-        "imageUrl": "/images/activities/Tamlan.png",
+        "imageUrl": "images/activities/Tamlan.png",
         "tags": [
             "古道探訪", "尋寶任務"
         ],
@@ -23,7 +23,7 @@
         "id": 3,
         "date": "2025.08.01",
         "title": "狀態很好健行趣！玉山國家公園尋寶任務",
-        "imageUrl": "/images/activities/Yu.png",
+        "imageUrl": "images/activities/Yu.png",
         "tags": [
             "國家公園", "健行活動"
         ],
@@ -33,7 +33,7 @@
         "id": 4,
         "date": "2025.07.20",
         "title": "小百岳集起來",
-        "imageUrl": "/images/activities/Tamlan.png",
+        "imageUrl": "images/activities/Tamlan.png",
         "tags": [
             "小百岳", "集點任務"
         ],
