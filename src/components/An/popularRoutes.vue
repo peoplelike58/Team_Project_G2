@@ -57,7 +57,7 @@
                         :class="{ 'is-hovered': hoveredRoute && hoveredRoute.id === route.id }"
                     >
                         <div class="left-part">
-                            <img :src="route.thumb" alt="" class="avatar" />
+                            <img :src="route.imageUrl" alt="" class="avatar" />
                             <div class="divider"></div>
                             <a class="name" href="#">{{ route.name }}</a>
                         </div>
@@ -87,87 +87,53 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import Xiangshan from '@/assets/images/routesImg/Xiangshan.png'
-import Qixing    from '@/assets/images/routesImg/Qixing.png'
-import Caoling   from '@/assets/images/routesImg/Caoling.png'
-import Qingtiangang   from '@/assets/images/routesImg/Qingtiangang.png'
-import Wangyou   from '@/assets/images/routesImg/Wangyou.png'
-import Hehuan   from '@/assets/images/routesImg/Hehuan.png'
+import axios from 'axios'
 
-const MAX_ITEMS = 6 // 最大顯示筆數
+const MAX_ITEMS = 6
 
 const routes = ref([])
+const hoveredRoute = ref(null)
 const featured = ref({
     id: '',
-    name: ' 載入中... ',
+    name: '載入中...',
     distance: 0,
     time: { hour: 0, minute: 0 },
     difficulty: '',
 })
 
-const hoveredRoute = ref(null) // 目前滑入的項目
-const activeRoute = computed(() => hoveredRoute.value || featured.value) // 資料渲染到左側
-
+// 👉 用滑入項目，否則 fallback 到精選
+const activeRoute = computed(() => hoveredRoute.value || featured.value)
 function onHoverEnter(route) { hoveredRoute.value = route }
 
-const limitedRoutes = computed(() => routes.value.slice(0, MAX_ITEMS))
+const USE_FAKE = true
+const API_ENDPOINT = USE_FAKE
+    ? import.meta.env.BASE_URL + 'json/homepage/routes.json'
+    : 'api/routes'
 
-onMounted(() => {
+const loading = ref(false)
+const error = ref('')
 
-    // 假資料（之後改成 API 取回）
-    const mock = [
-        {
-            id: '1',
-            name: '象山親山步道',
-            distance: 2.5,
-            time: { hour: 1, minute: 40 },
-            difficulty: '低',
-            thumb: Xiangshan,
-        },
-        {
-            id: '2',
-            name: '七星山主峰、東峰步道',
-            distance: 4.8,
-            time: { hour: 3, minute: 0 },
-            difficulty: '中',
-            thumb: Qixing,
-        },
-        {
-            id: '3',
-            name: '草嶺古道',
-            distance: 8.5,
-            time: { hour: 4, minute: 30 },
-            difficulty: '中',
-            thumb: Caoling,
-        },
-        {
-            id: '4',
-            name: '擎天崗環形步道',
-            distance: 2.3,
-            time: { hour: 1, minute: 10 },
-            difficulty: '低',
-            thumb: Qingtiangang,
-        },
-        {
-            id: '5',
-            name: '忘憂谷步道',
-            distance: 1.6,
-            time: { hour: 0, minute: 50 },
-            difficulty: '低',
-            thumb: Wangyou,
-        },
-        {
-            id: '6',
-            name: '合歡山北峰步道',
-            distance: 3.2,
-            time: { hour: 3, minute: 20 },
-            difficulty: '高',
-            thumb: Hehuan,
-        },
-    ]
+async function fetchRoutes() {
+    loading.value = true
+    error.value = ''
+    try {
+        const { data } = await axios.get(API_ENDPOINT)
+        const arr = Array.isArray(data) ? data : (data.items ?? [])
 
-    routes.value = mock
-    featured.value = mock[0]
+        routes.value = arr.slice(0, MAX_ITEMS)
+
+        if (routes.value.length) {
+        featured.value = routes.value[0]
+        }
+    } catch (e) {
+        error.value = e?.message ?? '載入失敗'
+    } finally {
+        loading.value = false
+    }
+}
+
+onMounted(() => { 
+    fetchRoutes() 
 })
 </script>
 
@@ -334,17 +300,6 @@ onMounted(() => {
     text-decoration: none;
 }
 
-.open {
-    display: block;
-    width: 32px;
-    aspect-ratio: 1/1;
-    border: none;
-    background-color: $tag;
-    border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-}
-
 .cta-box .cta {
     display: block;
     width: fit-content;
@@ -473,17 +428,23 @@ onMounted(() => {
 
 /* 響應式：直欄疊放 */
 @media (max-width: 430px) {
-    .popular-routes .left {
+    .content{
+        padding: 0;
+    }
+    .left {
         display: none;
     }
-    .popular-routes .right {
+    .right {
         width: 100%;
-        padding: 0 16px;
+        padding: 0 24px;
         box-sizing: border-box;
         border-left: none;
     }
     .right .route-list {
         width: 100%;
+    }
+    .open {
+        display: none;
     }
     .cta {
         font-size: $pcFont-H4;

@@ -159,7 +159,7 @@ function handleCtaClick() {
 
     @media (max-width: 430px) {
         .activity-card {
-            min-width: 280px;
+            min-width: 360px;
         }
     }
 </style>
