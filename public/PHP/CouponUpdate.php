@@ -17,6 +17,7 @@ $updatcoupon = json_decode(file_get_contents("php://input"), true);
 $sql= "UPDATE COUPON 
         SET STATUS=COALESCE(:status, STATUS),
             COUPON_TITLE=COALESCE(:ctitle, COUPON_TITLE),
+            DISCOUNT=COALESCE(:dis, DISCOUNT),
             END_AT=COALESCE(:exp, END_AT)
         WHERE COUPON_ID = :id";
 
@@ -24,6 +25,7 @@ $sql= "UPDATE COUPON
 $pstmt = $pdo->prepare($sql);
 $pstmt->bindValue(":status", $updatcoupon["STATUS"] !=='' ? $updatcoupon['STATUS'] : null);
 $pstmt->bindValue(":ctitle", $updatcoupon['COUPON_TITLE'] !=='' ? $updatcoupon['COUPON_TITLE'] : null);
+$pstmt->bindValue(":dis", $updatcoupon['DISCOUNT'] !=='' ? $updatcoupon['DISCOUNT'] : null);
 $pstmt->bindValue(":exp", $updatcoupon['END_AT']!=='' ? $updatcoupon['END_AT'] : null);
 $pstmt->bindValue(":id", $updatcoupon["COUPON_ID"]);
 $ok = $pstmt->execute();

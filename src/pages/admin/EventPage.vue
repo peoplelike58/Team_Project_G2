@@ -54,7 +54,7 @@ const columns = [
   { prop: 'START_TIME', label: '報名開始時間' ,type:"time"},
   { prop: 'END_DATETIME', label: '報名結束時間' ,type:"datetime"},
   { prop: 'STATUS', label: '狀態', type:'select', options:[{label:'報名中',value:'報名中'},{label:'已結束',value:'已結束'}] },
-  { prop: 'CREATED_AT', label: '創建時間' ,type:"datetime"},
+  { prop: 'CREATED_AT', label: '創建時間' ,type:"datetime" ,disabled: true},
   { prop: 'CONTENT', label: '活動簡介' },
   { prop: 'MEETING_PLACE', label: '集合地點' },
   { prop: 'DISTANCE', label: '路程 ' },

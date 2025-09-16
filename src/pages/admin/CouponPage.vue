@@ -15,6 +15,7 @@ const columns = [
   { prop: 'COUPON_ID', label: '折價券編號'  ,disabled: true},
   { prop: 'UPLOAD_DATE', label: '上架日期' ,type:"date"},
   { prop: 'COUPON_TITLE', label: '標題' },
+  { prop: 'DISCOUNT', label: '折回金額' },
   { prop: 'END_AT', label: '到期日' ,type:"date"},
   { prop: 'STATUS', label: '上下架', type: 'select', options:[{label:'上架',value:'上架'},{label:'下架',value:'下架'}] }
 

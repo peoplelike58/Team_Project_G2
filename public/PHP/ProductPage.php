@@ -1,7 +1,6 @@
 <?php
 
 include __DIR__ . '/conn.php';
-header("Access-Control-Allow-Origin: *");
 
 
     //建立SQL語法
