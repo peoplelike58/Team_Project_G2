@@ -6,7 +6,7 @@
       </div>
       <div class="right">
         <el-input v-model="keyword" placeholder="關鍵字搜尋" clearable style="max-width: 240px" />
-        <el-button type="primary" @click="openCreate">新增</el-button>
+        <el-button v-if="props.showCreate" type="primary" @click="openCreate">新增</el-button>
         <el-button @click="resetData">重置</el-button>
       </div>
     </div>
@@ -22,9 +22,9 @@
       <el-table-column label="操作" fixed="right" width="180">
         <template #default="{ row, $index }">
           <!-- <el-button size="small" @click="openEdit(row, indexOf($index))">編輯</el-button> -->
-          <el-button size="small" type="success" @click="openEdit(row)">編輯</el-button>
+          <el-button v-if="props.showUpdate" size="small" type="success" @click="openEdit(row)">編輯</el-button>
           <!-- <el-button size="small" type="danger" @click="remove(indexOf($index))">刪除</el-button> -->  
-          <el-button size="small" type="danger" @click="removeClick(row)">刪除</el-button>   
+          <el-button v-if="props.showDelete" size="small" type="danger" @click="removeClick(row)">刪除</el-button>   
         </template>
       </el-table-column>
     </el-table>
@@ -47,13 +47,13 @@
              <template v-if="col.type ==='file'">
               <el-upload
                   class="upload-img"
-                  action="http://localhost/TeamProject/public/PHP/uploadimg.php"
+                  :action="uploadUrl"
                   name="file"
                   :show-file-list="false"
                   :on-success="(res) => { 
                     if(res?.success){ 
                       form[col.prop] = res.filename  //只存檔名
-                      // console.log('完整圖片路徑:', form[col.prop]);
+                      console.log('上傳成功，檔名：', res.filename);
                       // const imgUrl = getImageUrl();
                     } else {
                        alert(res?.message || '上傳失敗') }}"
@@ -130,7 +130,13 @@ import { ref, computed, watch } from 'vue'
 const props = defineProps({
   title: { type: String, required: true },
   columns: { type: Array, required: true }, // [{prop,label,type?,options?}]
-  sampleData: { type: Array, default: () => [] }
+  sampleData: { type: Array, default: () => [] },
+
+  //控制 新增 & 刪除 & 編輯 Button
+  showCreate: {type: Boolean, default: true},
+  showDelete: {type: Boolean, default: true},
+  showUpdate: {type: Boolean, default: true}
+
 })
 
 //改成用computed更新時自動刷新(YUKI)
@@ -155,6 +161,8 @@ const idKey = computed(() => props.columns[0]?.prop ||'id')
 
 //=========================
 
+const uploadUrl = import.meta.env.VITE_AJAX_URL + '/uploadimg.php'
+
 const getImageUrl = () => {
   console.log('當前端口:', window.location.port);
   if (window.location.port === '5173') {
@@ -165,7 +173,6 @@ const getImageUrl = () => {
     return `${window.location.protocol}//${window.location.host}/TeamProject`;
   }
 }
-
 
 const filtered = computed(() => {
   if (!keyword.value) return data.value

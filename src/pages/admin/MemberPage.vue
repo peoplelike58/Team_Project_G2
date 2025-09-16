@@ -3,7 +3,8 @@
   :columns="columns" 
   :sampleData="rows" 
   @update="updateMember"
-  
+  :showCreate="false"
+  :showDelete="false"
   />
 </template>
 
@@ -16,9 +17,10 @@ const columns = [
   { prop: 'PW', label: '密碼' , type: 'password',disabled: true},
   { prop: 'NICKNAME', label: '暱稱' ,disabled: true},
   { prop: 'NAME', label: '姓名' ,disabled: true},
-  { prop: 'BIRTHDAY', label: '生日' ,disabled: true},
+  { prop: 'BIRTHDAY', label: '生日' ,disabled: true}, 
   { prop: 'PHONE', label: '電話',disabled: true },
   { prop: 'ADDRESS', label: '地址' ,disabled: true},
+  { prop: 'ABOUT_ME', label: '關於我' ,disabled: true},
   { prop: 'CREATED_AT', label: '創建時間' ,type:"date",disabled: true},
   { prop: 'STATUS', label: '帳號狀態', type: 'select', options: [{label:'啟用',value:'啟用'},{label:'停用',value:'停用'}] },
 ]
