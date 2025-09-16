@@ -121,7 +121,7 @@
     
     .dot.active { background: #fff; }
 
-    @media (max-width: 430px) {
+    @media (max-width: 768px) {
         .dot {
             display: none;
         }

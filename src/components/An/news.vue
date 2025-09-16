@@ -148,7 +148,7 @@ onDeactivated(() => {
 </script>
   
 <style scoped lang="scss">
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
 
 /* ---- Layout ---- */
 .board-wrap {
@@ -305,7 +305,7 @@ onDeactivated(() => {
 }
   
 .badge-text {
-    font: $black 32px 'Inter';
+    font: $bold 32px 'Inter';
     letter-spacing: 0.24rem;
     text-transform: uppercase;
     fill: #24936E;
@@ -391,13 +391,16 @@ onDeactivated(() => {
 }
 
 /* ---- RWD ---- */
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .board-wrap {
         flex-direction: column;
         align-items: stretch;
 
         padding: 64px 24px;
         box-sizing: border-box;
+    }
+    .list-column {
+        max-width: none;
     }
     .news-row {
         padding: 20px 8px;

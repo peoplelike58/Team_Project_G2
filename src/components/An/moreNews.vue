@@ -115,7 +115,7 @@ onMounted(() => {
 </script>
   
 <style scoped lang="scss">
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
 
 /* ---- Layout ---- */
 .board-wrap {
@@ -125,14 +125,8 @@ onMounted(() => {
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
-    padding: 100px 24px 120px;
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: stretch;
+    padding: 40px 24px 120px;
 }
-}
-
   
 .list-column {
     flex: 1 0 auto;
@@ -226,14 +220,36 @@ onMounted(() => {
 .news-row:hover .news-title{
     opacity: 0.7;
 }
+.load-more-btn {
+    display: block;
+    width: 160px;
+    margin: 0 auto;
+    padding: 8px 0;
+    background-color: $black-14;
+    border: none;
+    border-radius: 4px;
+    font-weight: $bold;
+    font-size: 16px;
+    color: #fff;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+.load-more-btn:hover {
+    background-color: rgba(20, 20, 20, 0.8);
+}
+.load-text{
+    font-size: $pcFont-p-s;
+    color: #5F6368;
+    text-align: center;
+}
 
 /* ---- RWD ---- */
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .board-wrap {
         flex-direction: column;
         align-items: stretch;
 
-        padding: 64px 24px;
+        padding: 40px 24px;
         box-sizing: border-box;
     }
     .news-row {

@@ -28,7 +28,7 @@ const loading = ref(false)
 const error = ref('')
 
 // API 設定
-const API_URL = 'http://localhost/team-projcetG2/eventCard.php' 
+const API_URL = 'http://localhost/team-projcetG2/eventCard.php'
 
 // 獲取活動資料
 async function fetchEvents() {

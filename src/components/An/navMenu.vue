@@ -119,7 +119,7 @@ function go(item) {
 }
 .logo-text {
     font-size: 20px;
-    font-weight: $black;
+    font-weight: $bold;
     letter-spacing: 4px;
     color: $black-14;
     text-decoration: none;
@@ -261,7 +261,7 @@ function go(item) {
 .menu-link:hover{ opacity: 0.7; }
 
 /* RWD */
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .site-header {
         padding: 20px 24px;
         background-color: #fffffff5;
@@ -277,9 +277,8 @@ function go(item) {
         width: 40px;
     }
     .menu-content {
-        padding: 0;
+        padding: 0 72px;
         padding-bottom: 10dvh;
-        justify-content: space-around;
     }
     .menu-content .logo {
         width: 80px;
@@ -293,6 +292,13 @@ function go(item) {
     }
     .right-col { 
         justify-content: space-between;
+    }
+}
+@media (max-width: 430px) {
+    .menu-content {
+        padding: 0;
+        padding-bottom: 8dvh;
+        justify-content: space-around;
     }
 }
 </style>
