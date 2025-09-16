@@ -63,7 +63,7 @@ const displayItems = computed(() => {
     flex-direction: column;
     gap: 48px;
 
-    // width: fit-content;
+    width: fit-content;
     max-width: 1200px;
     margin: 0 auto;
     padding: 80px 0;
@@ -71,11 +71,12 @@ const displayItems = computed(() => {
 .section-header { 
     display: flex;
     flex-direction: column; 
-    gap: 12px; 
+    gap: 12px;
 }
 .section-title{
     font-size: $pcFont-H1-l;
     font-weight: $bold;
+
 }
 .section-subtitle{
     font-size: $pcFont-H3;
@@ -164,9 +165,12 @@ const displayItems = computed(() => {
     }
 }
 
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .activity-section{
         padding: 0;
+    }
+    .activity-section .content{
+        width: auto;
     }
     .activity-section .section-header{
         margin-left: 24px;

@@ -130,7 +130,7 @@
 
 .title {
     font-size: $pcFont-bigTitle-l;
-    font-weight: $black;
+    font-weight: $bold;
 }
 
 .subtitle {
@@ -248,8 +248,9 @@
     z-index: 3;
 }
 
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .stack-wrap{
+        box-shadow: none;
         height: 100dvh;
     }
     .stack-wrap .badge {
@@ -257,7 +258,6 @@
     }
     .stack-wrap .card {
         margin-top: 60px;
-        height: 86%;
     }
     .card-inner-1 {
         flex-direction: column;
@@ -279,7 +279,8 @@
     .card-inner-2 {
         flex-direction: column;
         gap: 48px;
-        padding: 0 64px;
+        width: 80%;
+        padding: 0 64px 0 24px;
     }
     .card-inner-2 .vertical-text {
         writing-mode: horizontal-tb;
@@ -298,6 +299,13 @@
     .card-inner-2 .left-tilt {
         align-self: flex-start;
     }
+    .card-inner-2 .right-tilt {
+        align-self: flex-end;
+    }
 }
-
+@media (max-width: 430px) {
+    .stack-wrap .card {
+        height: 86%;
+    }
+}
 </style>

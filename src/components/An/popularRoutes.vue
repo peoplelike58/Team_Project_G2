@@ -138,7 +138,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
 
 .popular-routes {
     padding: 80px 0;
@@ -427,7 +427,7 @@ onMounted(() => {
 }
 
 /* 響應式：直欄疊放 */
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .content{
         padding: 0;
     }
@@ -443,12 +443,15 @@ onMounted(() => {
     .right .route-list {
         width: 100%;
     }
-    .open {
-        display: none;
-    }
     .cta {
         font-size: $pcFont-H4;
         text-underline-offset: 8px;
+    }
+}
+
+@media (max-width: 430px) {
+    .open {
+        display: none;
     }
 }
 </style>

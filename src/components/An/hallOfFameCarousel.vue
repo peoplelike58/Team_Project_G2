@@ -70,8 +70,7 @@ onMounted(async () => {
         console.error('載入 JSON 發生錯誤:', error)
     }
 })
-  
-// 複製兩份資料，讓動畫能無縫循環
+
 const duplicatedDataList = computed(() => [...originalDataList.value])
   
 // 動畫秒數
@@ -176,7 +175,7 @@ const scrollDurationSeconds = 20
     opacity: 0.3;
 }
   
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .carousel-card { 
         flex: 0 0 280px;
     }

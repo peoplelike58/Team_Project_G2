@@ -156,7 +156,7 @@
         color: #fff;
         opacity: 0.9;
         font-size: 24px;
-        font-weight: 900;
+        font-weight: $bold;
 
         text-decoration: 1px underline;
         text-underline-offset: 10px;
@@ -171,7 +171,7 @@
   
     .title-vertical {
         opacity: 0.9;
-        font-weight: 900;
+        font-weight: $bold;
         writing-mode: vertical-rl;
         letter-spacing: 0.5rem;
         font-size: clamp(72px, 16vw, 144px);
@@ -187,7 +187,7 @@
         text-shadow: 0 1px 8px rgba(0,0,0,0.25);
     }
 
-    @media (max-width: 430px) {
+    @media (max-width: 768px) {
         .hero {
             height: calc(100dvh - 60px);
             position: relative;

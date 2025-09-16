@@ -107,13 +107,16 @@
 }
   
 /* RWD */
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .footer-main {
         flex-direction: column;
         gap: 24px;
     }
     .footer-left {
         justify-content: flex-start;
+    }
+    .footer-right {
+        max-width: none;
     }
     .icon-wrapper {
         display: none;
@@ -122,4 +125,15 @@
         line-height: $lineHeight-p-150;
     }
 }
-</style>  
+@media (max-width: 430px) {
+    .footer-main {
+        padding: 64px 40px;
+    }
+    .footer-note {
+        padding: 20px 40px;
+    }
+    .logo {
+        width: 80px;
+    }
+}
+</style>

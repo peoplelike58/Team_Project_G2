@@ -27,8 +27,6 @@ import activitiesSection from '@/components/An/activitiesSection.vue'
 import hallOfFameCarousel from '@/components/An/hallOfFameCarousel.vue'
 import brandFooter from '@/components/An/footer.vue'
 
-// import diagonalLaunchButton from '@/components/An/diagonalLaunchButton.vue'
-
 //----------------------------------------------------------------------
 
 const activities = ref([])
@@ -42,7 +40,7 @@ onMounted(async () => {
         // 假資料為純陣列；若後端回 {items,total} 則用 data.items ?? []
         activities.value = Array.isArray(data) ? data : (data.items ?? [])
     } catch (e) {
-        error.value = e?.message ?? '載入失敗'
+        error.value = e?.message ?? '載入失敗😓'
     } finally {
         loading.value = false
     }
