@@ -1,4 +1,4 @@
-<?php
+<?php  /* 更新載入購物車php */
 
 include 'conn.php';
 

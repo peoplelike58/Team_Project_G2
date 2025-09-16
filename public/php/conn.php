@@ -27,30 +27,29 @@
       
       
       //若前端在 http://localhost:5173
-      // header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
-      // header('Access-Control-Allow-Credentials: true');
-      // header('Access-Control-Allow-Headers: Content-Type');
-      // header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-      // header('Content-Type: application/json; charset=utf-8');
+      // header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 * 會無法使用 Cookie/Session（瀏覽器限制）， 精確匹配，告訴瀏覽器允許這個來源存取資源
+      // header('Access-Control-Allow-Credentials: true');             // ！允許發送 Cookie/Session - 登入需要它，是必須的
+      // header('Access-Control-Allow-Headers: Content-Type');         // 允許前端發送 Content-Type header
+      // header('Access-Control-Allow-Methods: GET, POST, OPTIONS');   // 允許的 HTTP 方法
+      // header('Content-Type: application/json; charset=utf-8');      // application/json：內容是 JSON 格式，charset=utf-8：使用 UTF-8 編碼（支援中文）
 
       // ============== 新的 CORS 設定（支援本地+正式機）==============
-      $allowed = [
+      $allowed = [                          // 允許的來源域名白名單
           'http://localhost:5173',          // 本地開發
-      //     'http://127.0.0.1:5173',          // 本地開發（另一種）
-          'https://tibamef2e.com/tjd102/g2'              // 👈 改成你真正的網域
+          'https://tibamef2e.com'           // 正式環境
       ];
       
-      $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+      $origin = $_SERVER['HTTP_ORIGIN'] ?? '';          // 取得請求來源
       
       if (in_array($origin, $allowed, true)) {
-          header("Access-Control-Allow-Origin: $origin"); // 精確匹配
+          header("Access-Control-Allow-Origin: $origin");                
           header('Access-Control-Allow-Credentials: true');
           header('Access-Control-Allow-Headers: Content-Type');
           header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
       }
       header('Content-Type: application/json; charset=utf-8');
       
-      // 處理預檢請求
+      // 處理瀏覽器的預檢請求（某些情況下瀏覽器會先發 OPTIONS 請求確認權限）
       if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
           http_response_code(204);
           exit;

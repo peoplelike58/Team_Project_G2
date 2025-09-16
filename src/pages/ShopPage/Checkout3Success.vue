@@ -3,6 +3,9 @@ import NavMenu from '@/components/An/navMenu.vue';
 import Checkout_stepup from '@/components/Irene/ShopPage/Checkout_stepup.vue';
 import brandFooter from '@/components/An/footer.vue'
 import { useRouter } from 'vue-router'
+import { useCheckoutStore } from '@/stores/ordercheckout';
+
+const CheckoutStore =useCheckoutStore()
 const router = useRouter()
 function goShop(){ router.push('/Shop') }
 
@@ -17,7 +20,10 @@ function goShop(){ router.push('/Shop') }
 
         <div class="page">
             <el-card class="center" shadow="never">
-            <el-result icon="success" title="付款完成" sub-title="您的訂單編號為:1233588,稍後可在〈會員中心〉查詢詳細資訊" />
+            <el-result 
+                icon="success" 
+                title="付款完成" 
+                :sub-title="`您的訂單編號為：${CheckoutStore.orderResult?.finalOrderId || '載入中...'}，稍後可在〈會員中心〉查詢詳細資訊`" />
             <!-- 這裡的訂單編號要改成動態的 -->
             </el-card>
 
