@@ -2,17 +2,17 @@
 // 共用 連線資料庫
 
       //MySQL相關資訊（本機端測試）
-      // $db_host = "127.0.0.1";
-      // $db_user = "root";
-      // $db_pass = "password";
-      // $db_select = "hou_shan";
+      $db_host = "127.0.0.1";
+      $db_user = "root";
+      $db_pass = "password";
+      $db_select = "hou_shan";
 
       //=====================================重要
       // 上傳上傳到TibaMe伺服器時改成如下
-      $db_host = "127.0.0.1";
-      $db_user = "tibamefe_since2021";
-      $db_pass = "vwRBSb.j&K#E";
-      $db_select = "tibamefe_tjd102g2";
+    //   $db_host = "127.0.0.1";
+    //   $db_user = "tibamefe_since2021";
+    //   $db_pass = "vwRBSb.j&K#E";
+    //   $db_select = "tibamefe_tjd102g2";
 
 
       //建立資料庫連線物件
@@ -22,39 +22,39 @@
       $pdo = new PDO($dsn, $db_user, $db_pass);
 
       //Fetch API with CORS （共用設定） 這樣其它頁面就不用寫
-      header("Access-Control-Allow-Origin: *");
+    //   header("Access-Control-Allow-Origin: *");
 
       
       
       //若前端在 http://localhost:5173
-      // header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
-      // header('Access-Control-Allow-Credentials: true');
-      // header('Access-Control-Allow-Headers: Content-Type');
-      // header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-      // header('Content-Type: application/json; charset=utf-8');
+      header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
+      header('Access-Control-Allow-Credentials: true');
+      header('Access-Control-Allow-Headers: Content-Type');
+      header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+      header('Content-Type: application/json; charset=utf-8');
 
       // ============== 新的 CORS 設定（支援本地+正式機）==============
-      $allowed = [
-          'http://localhost:5173',          // 本地開發
-      //     'http://127.0.0.1:5173',          // 本地開發（另一種）
-          'https://tibamef2e.com/tjd102/g2'              // 👈 改成你真正的網域
-      ];
+    //   $allowed = [
+    //       'http://localhost:5173',          // 本地開發
+    //   //     'http://127.0.0.1:5173',          // 本地開發（另一種）
+    //       'https://tibamef2e.com/tjd102/g2'              // 👈 改成你真正的網域
+    //   ];
       
-      $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    //   $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
       
-      if (in_array($origin, $allowed, true)) {
-          header("Access-Control-Allow-Origin: $origin"); // 精確匹配
-          header('Access-Control-Allow-Credentials: true');
-          header('Access-Control-Allow-Headers: Content-Type');
-          header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-      }
-      header('Content-Type: application/json; charset=utf-8');
+    //   if (in_array($origin, $allowed, true)) {
+    //       header("Access-Control-Allow-Origin: $origin"); // 精確匹配
+    //       header('Access-Control-Allow-Credentials: true');
+    //       header('Access-Control-Allow-Headers: Content-Type');
+    //       header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    //   }
+    //   header('Content-Type: application/json; charset=utf-8');
       
-      // 處理預檢請求
-      if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-          http_response_code(204);
-          exit;
-      }
+    //   // 處理預檢請求
+    //   if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+    //       http_response_code(204);
+    //       exit;
+    //   }
 
 
 

@@ -1,9 +1,9 @@
 <?php
-    // 設定跨域請求以及一些讓axios可以正確解析的設定
-    header('Content-Type: application/json; charset=utf-8');
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
+    // // 設定跨域請求以及一些讓axios可以正確解析的設定
+    // header('Content-Type: application/json; charset=utf-8');
+    // header('Access-Control-Allow-Origin: *');
+    // header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    // header('Access-Control-Allow-Headers: Content-Type');
 
     // 導入資料庫連線的資料檔
     include 'conn.php'; 
