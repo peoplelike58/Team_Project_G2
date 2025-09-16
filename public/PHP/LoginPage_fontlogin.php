@@ -8,7 +8,7 @@ include 'verifyRecaptcha.php';
 
 if (!verifyRecaptcha($member['recaptcha'])){
     echo json_encode([
-        "sucess" => false, 
+        "success" => false, 
         "message" => "請先通過驗證"
     ],JSON_UNESCAPED_UNICODE);
     exit;
