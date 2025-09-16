@@ -1,5 +1,5 @@
 <?php
-// 若前端在 http://localhost:5173ㄍ
+// 若前端在 http://localhost:5173
 // header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
 // header('Access-Control-Allow-Credentials: true');
 // header('Access-Control-Allow-Headers: Content-Type');
@@ -19,7 +19,7 @@ include 'conn.php';
 $sql = "SELECT
   m.MOUNTAIN_ID,                                         
   m.MOUNTAIN_NAME, m.INTRO, m.REGION, m.TOWN,           
-  m.LEVEL, m.TRAFFIC, m.DISTANCE,                        
+  m.LEVEL, m.TRAFFIC, m.DISTANCE, m.TIME, m.LATITUDE ,m.LONGITUDE,                    
   JSON_ARRAYAGG(img.IMAGE) AS imgDetail
 FROM MOUNTAIN  m                                      
 LEFT JOIN MOUNTAIN_IMAGE img                         

@@ -139,7 +139,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
         // 準備訂單資料
         const orderData = {
             // 基本資訊
-            orderId: generateOrderId(),
+            orderCode: generateOrderId(),
             memberId: userStore.id,  // 會員ID
             
             // 收件人資訊
@@ -186,6 +186,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
             orderResult.value = {
             success: true,
             orderId: result.orderId,
+            finalOrderId:result.finalOrderId,
             message: '訂單建立成功！',
             orderData: orderData
             }

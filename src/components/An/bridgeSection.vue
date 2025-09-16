@@ -36,7 +36,7 @@
         line-height: $lineHeight-p-200;
     }
 
-    @media (max-width: 430px) {
+    @media (max-width: 768px) {
         .section-main {
             height: 80vh;
             padding: 0 24px;

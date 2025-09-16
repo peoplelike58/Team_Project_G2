@@ -5,11 +5,28 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
   'user',                                     // 這個 store 的唯一 id（字串）；之後 DevTools/插件會用到
   {
     state: () => ({                           // state：集中放「可響應的資料狀態」
+      // 基本登入資訊
       email: null,           //   例如登入 email（未登入就是 null）
       name:null,
       id:null,
-      isLoggedIn:false
+      isLoggedIn:false,
+
+      // 個人資料
+      profile: {
+        nickname: null,
+        birthday: null,
+        phone: null,
+        address: null,
+        aboutme: null
+      },
+    
+      // 載入狀態
+      loading: {
+        profile: false,
+        updating: false
+      }
     }),
+
     actions: {                                 // actions：放「改變 state 的方法」（可含非同步)    
       // hydrateFromLocalStorage(){               //localStorage 方法：
       // localStorage 方法：每次導航前呼叫：把 localStorage 值「灌回」到 Pinia
@@ -19,8 +36,8 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
         this.email =  email            
         this.name  = name
         this.id = id
-        console.log(this.id)
         this.isLoggedIn = true
+        console.log('登入成功，用戶ID:', this.id)
         /* 把狀態寫回 localStorage，刷新不會掉 */            
         // localStorage.setItem('email', email)                           
         // localStorage.setItem('userRole', role)                         
@@ -30,6 +47,7 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
         this.name = null
         this.id = null
         this.isLoggedIn = false
+        this.clearProfile()
         /* 同步清掉 localStorage */                           
         // localStorage.removeItem('email')                                
         // localStorage.removeItem('userRole')                             

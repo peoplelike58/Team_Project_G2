@@ -23,26 +23,27 @@ const props = defineProps({
     // required: true
   }
 })
-console.log(props.trail.MOUNTAIN_NAME);
 
-//設定leaflet經緯度
 
+// ======= 設定leaflet經緯度 =======
+// console.log('LATITUDE raw =', props.trail?.LATITUDE, 'type=', typeof props.trail?.LATITUDE)
 const latitude = computed(() => Number(props.trail?.LATITUDE))
-console.log(latitude.value);
-// const longitude = props.trail.LONGITUDE
+// console.log(latitude.value);
+
 const longitude = computed(() => Number(props.trail?.LONGITUDE))
-console.log(longitude.value);
+// console.log(longitude.value);
+
 const name = props.trail.MOUNTAIN_NAME
 
 let map // 宣告在外面，讓後面可以存取
 
 onMounted(() => {
   // 初始化地圖
-  map = L.map(mapBox.value).setView([latitude, longitude], 15) // 要串接trail.longitude 和 trail.latitude
+  map = L.map(mapBox.value).setView([latitude.value, longitude.value], 15) // 要串接trail.longitude 和 trail.latitude
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap"
   }).addTo(map)
-  L.marker([latitude, longitude]).addTo(map).bindPopup(`${name}`)
+  L.marker([latitude.value, longitude.value]).addTo(map).bindPopup(`${name}`)
 })
 
 // 監聽 goPage 切換，防止map用v-show切換到路線地圖分頁時抓不到高度
@@ -94,7 +95,7 @@ watch(goPage, (newPage) => {
                         難易度
                         
                         <img 
-                            src="../../../public/img/icons/difficulty.svg" 
+                            src="../../../public/images/icon/difficulty.svg" 
                             alt="問號icon"
                             @click="showPopup = !showPopup"
                             style="cursor: pointer"

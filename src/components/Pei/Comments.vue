@@ -1,6 +1,8 @@
 <script setup>
 import { ref, defineProps, onMounted, watch, computed } from 'vue'
 import axios from 'axios'
+import { useRouter } from "vue-router"
+import { useUserStore } from "@/stores/user";
 
 // ===== 路徑工具（保留你的寫法） =====
 const baseUrl = import.meta.env.BASE_URL
@@ -11,10 +13,16 @@ const toUrl = (p) => {
   return `${baseUrl}${encodeURI(s.replace(/^\/+/, ''))}`
 }
 
-// ===== 父層傳入的山別（MOUNTAIN_ID） =====
+// ===== 父層傳入 MOUNTAIN_ID、MOUNTAIN_NAME =====
 const props = defineProps({
-  id: { type: Number, required: true }
+  id: { type: Number, required: true },
+  mountainName: { type: Object }
 })
+
+// ===== 路由與使用者狀態 =====
+const router = useRouter()
+const user = useUserStore() // 含 (isLoggedIn/name/email）
+
 
 // ===== UI 狀態 =====
 const messages = ref([])
@@ -42,6 +50,7 @@ const apiAuth = axios.create({
   withCredentials: true,
 })
 
+
 // ===== API 路徑（交給 baseURL 幫你接）=====
 const API_GET_COMMENTS = '/CommentsGet.php'
 const API_ADD_COMMENT  = '/CommentsAdd.php'
@@ -52,18 +61,19 @@ const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'')
 const UPLOADS_BASE = `${API_ROOT}/uploads`
 
 // ===== 從後端一列資料 → 轉成前端需要的物件 =====
-function mapRowToMessage(r){
+function mapRowToMessage(row){
   // 後端可能用別名：MESSAGE_IMAGE / MEMBER_IMAGE
-  const msgImageKey = r.MESSAGE_IMAGE ?? r.IMAGE ?? null
-  const avatarKey   = r.MEMBER_IMAGE ?? null
+  const msgImageKey = row.MESSAGE_IMAGE ?? null
+  const avatarKey   = row.MEMBER_IMAGE ?? null
 
   return {
-    id: r.MESSAGE_ID,
-    name: r.NICKNAME || r.MEMBER_NAME || `會員#${r.MEMBER_ID}`,
-    avatarUrl: avatarKey ? `${UPLOADS_BASE}/${avatarKey}` : 'images/myChallenge/head4.png',
-    time: r.CREATED_AT || r.CREATE_AT || r.CREATE_TIME || '',
-    message: r.CONTENT || '',
-    photoUrl: msgImageKey ? `${UPLOADS_BASE}/${msgImageKey}` : '',
+    msgId: row.MESSAGE_ID,
+    name: row.NICKNAME || row.MEMBER_NAME || `會員#${row.MEMBER_ID}`,
+    mountain: row.MOUNTAIN_NAME || '',
+    avatar: avatarKey ? `${UPLOADS_BASE}/${avatarKey}` : 'images/myChallenge/head4.png',
+    time: row.CREATED_AT || row.CREATE_AT || row.CREATE_TIME || '',
+    message: row.CONTENT || '',
+    photo: msgImageKey ? `${UPLOADS_BASE}/${msgImageKey}` : '',
     canDelete: true
   }
 }
@@ -139,24 +149,46 @@ async function deleteMessageById(id){
     alert(err.message || '刪除時發生錯誤')
   }
 }
+
+
+// ==== 點擊「撰寫評論」按鈕時，先用 pinia 檢查登入狀態，再決定導頁或彈窗 ====
+function checkLogin(){
+
+  // 若未登入，導入會員登入頁面
+  if (!user.isLoggedIn){
+    alert('請先登入會員唷！')
+    router.push('/loginregister')
+    return
+  } else {
+    openPopup()
+  }
+}
+
+
 // ===== UI：彈窗 / 圖片上傳 / 圖片放大 =====
-function openPopup(){ showPopup.value = true }
+function openPopup(){ 
+  showPopup.value = true 
+}
+
 function closePopup(){
   showPopup.value = false
   newMessageText.value = ''
   newPhotoFile.value = null
   newPhotoPreview.value = ''
 }
+
 function handleImageUpload(event){
   const file = event?.target?.files?.[0]
   if (!file) return
   newPhotoFile.value = file
   newPhotoPreview.value = URL.createObjectURL(file)
 }
+
 function openImageViewer(photoUrl){
   imageViewerUrl.value = photoUrl
   isImageViewerVisible.value = true
 }
+
 function closeImageViewer(){
   isImageViewerVisible.value = false
   imageViewerUrl.value = ''
@@ -172,35 +204,35 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
     <h1>留言板</h1>
     <span class="h1Tag">Comments</span>
 
-    <button class="writeBtn" @click="openPopup">撰寫評論</button>
+    <button class="writeBtn" @click="checkLogin">撰寫評論</button>
     <span class="noRude">
-      <img src="../../../public/img/icons/alert.svg" alt="警示icon" />
+      <img src="../../../public/images/icon/alert.svg" alt="警示icon" />
       禁止輸入不雅字眼
     </span>
 
     <ul class="commentList">
       <li class="noComment" v-if="messages.length === 0">
-        還沒有人留言喔～～～快來成為第一個留下足跡的人吧！！！
+        目前還沒有人留言喔～～～快來成為第一個留下足跡的人吧^_<;;
       </li>
 
       <li v-for="message in messages" :key="message.id" class="commentCard">
         <div class="member">
           <div class="avatar">
-            <img :src="toUrl(message.avatarUrl)" alt="使用者頭像" />
+            <img :src="toUrl(message.avatar)" alt="使用者頭像" />
           </div>
           <p class="name">{{ message.name }}</p>
         </div>
 
         <span class="time">{{ message.time }}</span>
 
-        <p class="message">{{ message.message }}</p>
+        <p class="message">{{ message.content }}</p>
 
         <div class="listBottom">
-          <div class="photo" v-if="message.photoUrl !== ''">
+          <div class="photo" v-if="message.photo !== ''">
             <img
-              :src="toUrl(message.photoUrl)"
+              :src="toUrl(message.photo)"
               alt="上傳的照片"
-              @click="openImageViewer(message.photoUrl)"
+              @click="openImageViewer(message.photo)"
             />
           </div>
 
@@ -242,13 +274,13 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
     <div class="showPopup">
       <button class="closeBtn" @click="closePopup">×</button>
 
-      <h2 class="popupTitle">大霸尖山</h2>
+      <h2 class="popupTitle">{{ props.mountainName }}</h2>
 
       <div class="popupUser">
         <div class="popupAvatar">
           <img src="../../../public/images/myChallenge/head4.png" alt="使用者頭像" />
         </div>
-        <p class="popupName">會員ID</p>
+        <p class="popupName">{{ user.name || '尊爵不凡會員' }}</p>
       </div>
 
       <textarea
@@ -367,6 +399,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
       text-align: center;
       font-size: $pcFont-H3;
       font-weight: $medium;
+      line-height: 1.2;
       color: #ccc;
       margin: 50px auto 200px;
     }

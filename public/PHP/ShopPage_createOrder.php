@@ -1,4 +1,4 @@
-<?php
+<?php  /* 結賬新增訂單php */
 
 include 'conn.php';
 
@@ -31,18 +31,18 @@ try{
     // 1. 新增主訂單 (ORDER_LIST 表)
     $orderSql = "
         INSERT INTO ORDER_LIST (
-            ORDER_ID, MEMBER_ID, ORDER_AT, PAY_STATUS, DEL_STATUS,
+            ORDER_CODE, MEMBER_ID, ORDER_AT, PAY_STATUS, DEL_STATUS,
             MEMBER_NAME, MEMBER_PHONE, MEMBER_ADDRESS, PAYMENT, DELIVERY,
-            SHIPFEE, PRODUCTPRICE, DISCOUNT, FINALPRICE, ORDER_STATUS, CREATED_AT
+            SHIPPINGFEE, SUBTTL, DISCOUNT, TTL_AMT, ORDER_STATUS
         ) VALUES (
-            :orderId, :memberId, NOW(), '未付款', '備貨中',
+            :orderCode, :memberId, NOW(), '未付款', '備貨中',
             :memberName, :memberPhone, :memberAddress, :payment, :delivery,
-            :shipfee, :productprice, :discount, :finalprice, 'PENDING', CURRENT_TIMESTAMP
+            :shipfee, :productprice, :discount, :finalprice, '已下單'
         )
     ";
 
     $orderStmt = $pdo->prepare($orderSql);
-    $orderStmt->bindValue(':orderId', $input['orderId']);
+    $orderStmt->bindValue(':orderCode', $input['orderCode']);
     $orderStmt->bindValue(':memberId', $memberId);
     $orderStmt->bindValue(':memberName', $input['recipientName']);
     $orderStmt->bindValue(':memberPhone', $input['recipientPhone']);
@@ -54,6 +54,22 @@ try{
     $orderStmt->bindValue(':payment', $input['paymentMethod']);
     $orderStmt->bindValue(':delivery', $input['shippingMethod']);
     $orderStmt->execute();
+
+    /*從資料庫抓取最終訂單編號*/
+
+    //1- 獲取剛插入的訂單ID（自動遞增的主鍵）
+    $insertedOrderId = $pdo->lastInsertId();
+
+    // 2-完整的訂單資訊，用SELECT查詢
+    $selectSql = "SELECT ORDER_ID, ORDER_CODE FROM ORDER_LIST WHERE ORDER_ID = :orderId";
+    $selectStmt = $pdo->prepare($selectSql);
+    $selectStmt->bindValue(':orderId', $insertedOrderId);
+    $selectStmt->execute();
+    $orderData = $selectStmt->fetch(PDO::FETCH_ASSOC);
+
+    // 組合最終訂單編號
+    $finalOrderId = $orderData['ORDER_CODE'] . $orderData['ORDER_ID'];
+
 
     // 2. 新增訂單商品明細 (ORDER_DETAIL 表) 
     $itemSql = "
@@ -67,7 +83,7 @@ try{
     $itemStmt = $pdo->prepare($itemSql);
 
     foreach ($input['items'] as $item) {
-        $itemStmt->bindValue(':orderId', $input['orderId']);
+        $itemStmt->bindValue(':orderId', $insertedOrderId);
         $itemStmt->bindValue(':productId', $item['productId']);
         $itemStmt->bindValue(':qty', $item['quantity']);
         $itemStmt->bindValue(':size', $item['size']);
@@ -94,23 +110,26 @@ try{
         error_log("已刪除 {$deletedCount} 個購物車項目");
     }
 
+    
+
     // 提交交易， 全部生效
     $pdo->commit();
 
     // 記錄成功日誌
-    error_log("訂單建立成功 - 訂單ID: {$input['orderId']}, 會員ID: {$memberId}");
+    error_log("訂單建立成功 - 訂單ID: {$input['orderCode']}, 會員ID: {$memberId}");
 
     // 回傳成功結果
     echo json_encode([
         'success' => true,
         'message' => '訂單建立成功',
-        'orderId' => $input['orderId'],
+        'orderId' => $insertedOrderId,
+        'finalOrderId' => $finalOrderId,
         'orderData' => [
-            'orderId' => $input['orderId'],
+            'orderId' => $orderData['ORDER_CODE'],
             'finalTotal' => $input['finalTotal'],
             'itemCount' => count($input['items']),
             'paymentMethod' => $input['paymentMethod'],
-            'shippingMethod' => $input['shippingMethod']
+            'shippingMethod' => $input['shippingMethod'],
         ]
     ]);
 

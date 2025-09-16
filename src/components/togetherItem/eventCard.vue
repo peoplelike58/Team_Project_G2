@@ -9,7 +9,7 @@
 
             <!-- 圖片 -->
             <slot name="image" :item="item" :index="index">
-                <img class="ac-img" src="@/assets/images/eventCard/cardimg1.jpg"
+                <img class="ac-img" src="/images/eventCard/cardimg1.jpg"
                 loading="lazy"/>
                 <!-- <img class="ac-img" :src="item.imageUrl" loading="lazy"/> -->
             </slot>

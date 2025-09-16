@@ -86,11 +86,14 @@ const trail = computed(() =>                                                    
     
     :town="trail.TOWN"/>
 
+    <!-- v-if="hasLatLng" -->
+    <!--只有經緯度是有效數字才渲染-->
     <btnPage 
-    v-if="hasLatLng"
-    :trail="trail"/><!--只有經緯度是有效數字才渲染-->
+    :trail="trail"/>
 
-    <Comments :id="trail.MOUNTAIN_ID"/>
+    <Comments 
+    :id="trail.MOUNTAIN_ID"
+    :mountainName="trail.MOUNTAIN_NAME"/>
 
     <brandFooter/>
     </div>
