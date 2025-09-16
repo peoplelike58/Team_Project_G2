@@ -207,7 +207,7 @@ const error = ref(null);
 const currentSlide = ref(0);
 
 // API 設定
-const API_BASE_URL = 'http://localhost/team-projcetG2/eventCardInfo.php';
+const API_BASE_URL = `${import.meta.env.VITE_AJAX_URL}/eventCardInfo.php`;
 
 // 取得活動資料
 const fetchEventData = async () => {

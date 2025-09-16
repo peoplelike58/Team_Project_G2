@@ -74,7 +74,7 @@ import axios from 'axios'
 import { ref, computed, onMounted } from 'vue'
 
 // ===== API 設定 =====
-const API_URL = 'http://localhost/team-projcetG2/eventCard.php'
+const API_URL = `${import.meta.env.VITE_AJAX_URL}/eventCard.php`
 
 const loading = ref(false)
 const error = ref('')
