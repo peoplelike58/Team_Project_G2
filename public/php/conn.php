@@ -22,11 +22,11 @@
       $pdo = new PDO($dsn, $db_user, $db_pass);
 
       //Fetch API with CORS （共用設定） 這樣其它頁面就不用寫
-    //   header("Access-Control-Allow-Origin: *");
+      // header("Access-Control-Allow-Origin: *");
 
       
       
-      //若前端在 http://localhost:5173
+      // 若前端在 http://localhost:5173
       // header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 * 會無法使用 Cookie/Session（瀏覽器限制）， 精確匹配，告訴瀏覽器允許這個來源存取資源
       // header('Access-Control-Allow-Credentials: true');             // ！允許發送 Cookie/Session - 登入需要它，是必須的
       // header('Access-Control-Allow-Headers: Content-Type');         // 允許前端發送 Content-Type header
@@ -54,6 +54,7 @@
           http_response_code(204);
           exit;
       }
+
 
 
 

@@ -27,8 +27,7 @@ if ($mountainId <= 0) {
 require __DIR__ . '/conn.php';
 
 // 撈資料（欄位大寫，並為圖片取別名）
-$sql = "
-  SELECT 
+$sql = "SELECT 
     msg.MESSAGE_ID,
     msg.MOUNTAIN_ID,
     msg.CONTENT,
