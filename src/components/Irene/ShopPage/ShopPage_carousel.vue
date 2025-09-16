@@ -116,7 +116,8 @@ h2{
             .item_pic{
                 @include product_card_img(240px,240px,10px);
                 img{
-                    @include img
+                    @include img;
+                    height: 100%;
                 }
             }
             p{

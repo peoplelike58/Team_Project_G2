@@ -193,13 +193,20 @@ router.beforeEach((to, from, next) => {
 })
 
 // 前置守門員(這邊要修改isLoggedIn的條件和async 函數-因為 hydrateFromSession() 會去呼叫後端的 CheckLogin.php 裡面有非同步操作)
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   const user = useUserStore()
-  // user.hydrateFromSession()
-  // hydrateFromSession() 需在 store 裡實作，呼叫 CheckLogin.php 後把 email/name 寫回 state
-  const isLoggedIn = user.isLoggedIn// 取得最新登入狀態（回傳 boolean）
-  // const isLoggedIn = localStorage.getItem('email') //判讀是否有email值,改成從使用pinia作為登入的條件
   console.log(`從 ${from.path} 跳轉到 ${to.path}`)
+
+  // hydrateFromSession() 需在 store 裡實作，呼叫 CheckLogin.php 後把 email/name 寫回 state
+  // const isLoggedIn = localStorage.getItem('email') //判讀是否有email值,改成從使用pinia作為登入的條件
+  
+  // 如果本地沒有登入狀態，且沒在檢查中，就先檢查伺服器
+  if (!user.isLoggedIn && !user.loading.loginChecking) {
+    console.log('檢查伺服器登入狀態...')
+    await user.hydrateFromSession()  // 等待檢查完成
+  }
+  const isLoggedIn = user.isLoggedIn// 取得最新登入狀態（回傳 boolean）
+  
 
   
   if (to.meta.requiresAuth && !isLoggedIn) {//登入判斷:若頁面標記 requiresAuth，但沒有 email，就導去 /login。

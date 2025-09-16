@@ -41,12 +41,12 @@ const user = useUserStore()
 // })
 
 // 一般會員登出後，移除 storage
-const handlelogout = () => {
+const handlelogout = async () => {
   const answer = window.confirm('確定要登出嗎？')
   if (answer) {
     // localStorage.removeItem('email')
     // localStorage.removeItem('password')
-   fetch('http://localhost/teamproject/LoginPage_fontLogout.php', {  //http://localhost/teamproject/LoginPage_fontLogout.php（local端測試）；/tjd102/g2/PHP/LoginPage_fontLogout.php（server端上線用）
+   await fetch(import.meta.env.VITE_AJAX_URL +'/LoginPage_fontLogout.php', {  //http://localhost/teamproject/LoginPage_fontLogout.php（local端測試）；/tjd102/g2/PHP/LoginPage_fontLogout.php（server端上線用）
     method: 'POST',
     headers:{'Content-Type':'application/json'},
     credentials: 'include'
