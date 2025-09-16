@@ -19,11 +19,12 @@ if (empty($addcoupon)) {
 }
 
 
-$sql= "INSERT INTO COUPON (UPLOAD_DATE, COUPON_TITLE, END_AT, STATUS)
-        VALUES( NOW(), :ctitle, :exp ,:status)";
+$sql= "INSERT INTO COUPON (UPLOAD_DATE, COUPON_TITLE, DISCOUNT ,END_AT, STATUS)
+        VALUES( NOW(), :ctitle,:dis , :exp ,:status)";
     
 $pstmt = $pdo->prepare($sql);
 $pstmt->bindValue(":ctitle", $addcoupon['COUPON_TITLE']);
+$pstmt->bindValue(":dis", $addcoupon['DISCOUNT']);
 $pstmt->bindValue(":exp", $addcoupon['END_AT']);
 $pstmt->bindValue(":status", $addcoupon['STATUS']);
 $ok = $pstmt->execute();
