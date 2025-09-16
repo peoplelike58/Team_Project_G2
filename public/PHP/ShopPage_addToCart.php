@@ -1,4 +1,4 @@
-<?php
+<?php /* 加入購物車php */
 
 session_start();
 include 'conn.php';

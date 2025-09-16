@@ -28,7 +28,7 @@ if($checkEmail){
 }else{
     $sql = "
     insert into MEMBER(EMAIL,NAME,PW,PHONE,CREATED_AT,STATUS)
-    values(:email,:username ,:password ,:phone,now(),'normal')
+    values(:email,:username ,:password ,:phone,now(),'啟用')
     ";
 
     $pstmt = $pdo->prepare($sql);

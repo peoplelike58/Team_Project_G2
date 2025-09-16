@@ -9,19 +9,44 @@ const router = useRouter()
 const route = useRoute()
 
 // 響應式變數，存放商品資料
+// const products = ref([])
+
+
+// // 載入資料的函式
+// const loadProducts = async () => {
+//   try {
+//     // [修改] fetch 從 public/products.json 抓資料
+//     const res = await fetch('/json/products/products.json')
+//     if (!res.ok) throw new Error('載入失敗')
+
+//     // [修改] 將 JSON 字串轉成 JS 物件
+//     const data = await res.json()
+//     products.value = data
+//   } catch (err) {
+//     console.error('讀取商品資料錯誤:', err)
+//   }
+// }
+
 const products = ref([])
 
-
-// 載入資料的函式
+// 🟢 載入資料的函式
 const loadProducts = async () => {
   try {
-    // [修改] fetch 從 public/products.json 抓資料
-    const res = await fetch('/json/products/products.json')
+    // [修改] fetch 從 public/products.json 抓資料改成實際的API端點
+    const res = await fetch(import.meta.env.VITE_AJAX_URL + '/ShopPage_getProducts.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({})
+    })
+    // const res = await fetch('/json/products/products.json')
     if (!res.ok) throw new Error('載入失敗')
+    // throw new Error(`HTTP error! status: ${res.status}`)
 
     // [修改] 將 JSON 字串轉成 JS 物件
     const data = await res.json()
-    products.value = data
+    console.log(data)
+    products.value = data.products
   } catch (err) {
     console.error('讀取商品資料錯誤:', err)
   }
