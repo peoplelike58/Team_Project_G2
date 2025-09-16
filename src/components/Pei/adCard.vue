@@ -193,7 +193,7 @@ onMounted(() => {
         justify-content: space-between;
 
         width: 100%;
-        max-width: 275px;
+        max-width: 290px;
         
         padding: 20px;
         border: 1px dashed $black-14;
