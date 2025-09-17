@@ -1,32 +1,32 @@
 <template>
   <NavMenu/>
+
   <div class="wrapper">
-    <!-- Loading 狀態 -->
+    <!-- 載入中 -->
     <div v-if="isLoading" class="loading">
       <div class="spinner"></div>
       <p>載入中...</p>
     </div>
-    
+
     <!-- 錯誤訊息 -->
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
       <button @click="fetchEventData">重試</button>
     </div>
-    
-    <!-- 主要內容 - 只在資料載入完成後顯示 -->
-    <div v-else-if="eventData && !isLoading" class="wrapperTop">
+
+    <!-- 主要內容 -->
+    <div v-else class="wrapperTop">
       <div class="top">
         <div class="topInfoImg">
-          <img :src="eventData.imageUrl || '/images/eventCard/cardimg1.jpg'" 
-               :alt="eventData.title || '活動圖片'">
+          <!-- 用 computed 的 imgSrc -->
+          <img :src="imgSrc" :alt="eventData.title" />
         </div>
-
         <div class="topInfo">
           <div class="status-header">
             <h1>{{ eventData.status }}</h1>
             <div class="closeBtn" @click="goBack">✕</div>
           </div>
-          <h2>{{ eventData.title || '活動標題' }}</h2>
+          <h2>{{ eventData.title }}</h2>
           <div class="topInfoP">
             <p>日期</p>
             <p>{{ eventData.date }}</p>
@@ -44,15 +44,14 @@
       </div>
     </div>
 
-    <!-- 卡片區域  -->
-    <div class="cardWrapper" v-if="eventData && !isLoading && !error">
-      <!-- 桌面版 -->
+    <!-- 桌面版卡片 -->
+    <div class="cardWrapper" v-if="!isLoading && !error">
       <div class="infoCard desktop-version">
         <div class="infoList">
           <div>
             <h1>[集合時間與地點]</h1>
             <div class="infoListH2">
-              <h2>{{ formatDate(eventData.startDate)}}</h2> 
+              <h2>{{ formatDate(eventData.startDate) }}</h2>
               <span class="time">{{ formatTime(eventData.startTime) }}</span>
             </div>
             <p class="infoListP">{{ eventData.meetingPlace }}</p>
@@ -70,89 +69,94 @@
             </div>
           </div>
         </div>
-        
+
         <div class="rightInfoCard">
-          <img :src="eventData.imageUrl || '/images/eventCard/cardimg1.jpg'" 
-               :alt="eventData.title || '活動圖片'">
-          
+          <img :src="imgSrc" :alt="eventData.title" />
           <div class="rightInfo">
             <span class="rightInfoNA">報名人數</span>
-            <span class="rightInfoNB">{{ eventData.joinQty || 0 }}</span>
+            <span class="rightInfoNB">{{ eventData.joinQty }}</span>
           </div>
           <div class="deadline-info">
-            <span class="rightInfoBNA">{{ formatDate(eventData.registrationDeadlineDate) || '8/13' }}</span>
-            <span class="rightInfoBT">{{ formatTime(eventData.registrationDeadlineTime) || '12:00' }}</span>
+            <span class="rightInfoBNA">{{ formatDate(eventData.registrationDeadlineDate) }}</span>
+            <span class="rightInfoBT">{{ formatTime(eventData.registrationDeadlineTime) }}</span>
             <span class="rightInfoBBNA">截止</span>
           </div>
         </div>
       </div>
 
       <!-- 手機版輪播 -->
-<div class="mobile-carousel">
-    <div class="carousel-wrapper" 
-         @touchstart="handleTouchStart" 
-         @touchend="handleTouchEnd">
-        
-        <!-- 詳細資訊（第一頁） -->
-        <div class="carousel-slide" :class="{ active: currentSlide === 0 }">
+      <div class="mobile-carousel">
+        <div
+          class="carousel-wrapper"
+          @touchstart="handleTouchStart"
+          @touchend="handleTouchEnd"
+        >
+          <!-- 第一頁：集合資訊 -->
+          <div class="carousel-slide" :class="{ active: currentSlide === 0 }">
             <div class="infoList mobile-layout">
-                <div>
-                    <h1>[集合時間與地點]</h1>
-                    <div class="infoListH2">
-                        <h2>{{ formatDate(eventData.startDate) }}</h2> 
-                        <span class="time">{{ formatTime(eventData.startTime) }}</span>
-                        <span class="ampm">{{ eventData.startTime ? (parseInt(eventData.startTime.split(':')[0]) >= 12 ? 'pm' : 'am') : 'am' }}</span>
-                    </div>
-                    <p class="infoListP">{{ eventData.meetingPlace }}</p>
+              <div>
+                <h1>[集合時間與地點]</h1>
+                <div class="infoListH2">
+                  <h2>{{ formatDate(eventData.startDate) }}</h2>
+                  <span class="time">{{ formatTime(eventData.startTime) }}</span>
+                  <span class="ampm">
+                    {{
+                      eventData.startTime
+                        ? (parseInt(eventData.startTime.split(':')[0]) >= 12
+                            ? 'pm'
+                            : 'am')
+                        : 'am'
+                    }}
+                  </span>
                 </div>
-                <div>
-                    <div class="leftMain">
-                        <p>[路程]</p>
-                        <span class="leftMainMM">{{ eventData.distance }}</span>
-                    </div>
-                    <div class="leftFooter">
-                        <p>[花費時間]</p>
-                        <span class="lefiMainCH2">約</span>
-                        <span class="leftMainMM2">{{ eventData.duration }}</span>
-                        <span class="hms">小時</span>
-                    </div>
+                <p class="infoListP">{{ eventData.meetingPlace }}</p>
+              </div>
+              <div>
+                <div class="leftMain">
+                  <p>[路程]</p>
+                  <span class="leftMainMM">{{ eventData.distance }}</span>
                 </div>
+                <div class="leftFooter">
+                  <p>[花費時間]</p>
+                  <span class="lefiMainCH2">約</span>
+                  <span class="leftMainMM2">{{ eventData.duration }}</span>
+                  <span class="hms">小時</span>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <!-- 報名資訊（第二頁） -->
-        <div class="carousel-slide" :class="{ active: currentSlide === 1 }">
+          <!-- 第二頁：報名資訊 -->
+          <div class="carousel-slide" :class="{ active: currentSlide === 1 }">
             <div class="rightInfoCard mobile-layout">
-                <img :src="eventData.imageUrl || '/images/eventCard/cardimg1.jpg'" 
-                     :alt="eventData.title ">
-                
-                <div class="rightInfo">
-                    <span class="rightInfoNA">報名人數</span>
-                    <span class="rightInfoNB">{{ eventData.joinQty }}</span>
-                </div>
-                <div class="deadline-info">
-                    <span class="rightInfoBNA">{{ formatDate(eventData.registrationDeadlineDate) }}</span>
-                    <span class="rightInfoBT">{{ formatTime(eventData.registrationDeadlineTime) }}</span>
-                    <span class="rightInfoBBNA">截止</span>
-                </div>
+              <img :src="imgSrc" :alt="eventData.title" />
+              <div class="rightInfo">
+                <span class="rightInfoNA">報名人數</span>
+                <span class="rightInfoNB">{{ eventData.joinQty }}</span>
+              </div>
+              <div class="deadline-info">
+                <span class="rightInfoBNA">{{ formatDate(eventData.registrationDeadlineDate) }}</span>
+                <span class="rightInfoBT">{{ formatTime(eventData.registrationDeadlineTime) }}</span>
+                <span class="rightInfoBBNA">截止</span>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
 
-    <!-- 圓點指示器 -->
-    <div class="carousel-dots">
-        <span 
+        <!-- 圓點指示器 -->
+        <div class="carousel-dots">
+          <span
             v-for="(_, index) in 2"
             :key="index"
             :class="['dot', { active: currentSlide === index }]"
-            @click="goToSlide(index)">
-        </span>
-    </div>
-</div>
+            @click="goToSlide(index)"
+          ></span>
+        </div>
+      </div>
     </div>
 
     <!-- 注意事項 -->
-    <div class="wooniInfo" v-if="eventData && eventData.notes">
+    <div class="wooniInfo" v-if="eventData.notes">
       <ul class="wooniUl">注意事項：
         <li v-for="(note, index) in parseNotes(eventData.notes)" :key="index">
           {{ note }}
@@ -160,20 +164,23 @@
       </ul>
     </div>
 
-    <!-- 按鈕區域 -->
+    <!-- 報名按鈕 -->
     <div class="button-wrapper" v-if="!isLoading && !error">
-      <button class="join-btn" @click="handleJoin" 
-              :disabled="eventData.status === '已截止'">
+      <button
+        class="join-btn"
+        @click="handleJoin"
+        :disabled="eventData.status === '已截止'"
+      >
         {{ eventData.status === '已截止' ? '報名已截止' : '報名參加' }}
       </button>
     </div>
-    
-    <Footer />
+
+    <Footer/>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import NavMenu from '../An/navMenu.vue';
@@ -182,9 +189,12 @@ import Footer from '@/components/An/footer.vue';
 const route = useRoute();
 const router = useRouter();
 
+// 1. 初始資料結構
 const eventData = ref({
+  mountainId: null,
+  imageName: null,
   id: '',
-  title: '載入中...',
+  title: '載入中…',
   date: '',
   time: '',
   startDate: '',
@@ -192,147 +202,120 @@ const eventData = ref({
   joinQty: 0,
   meetingPlace: '',
   distance: 0,
-  route: '',
   duration: 0,
   content: '',
   notes: '',
-  imageUrl: '/images/eventCard/cardimg1.jpg', // 預設圖片
   registrationDeadlineDate: '',
   registrationDeadlineTime: '',
   status: '揪團中'
 });
-
+const imageMap = ref({});
 const isLoading = ref(true);
 const error = ref(null);
 const currentSlide = ref(0);
 
-// API 設定
-const API_BASE_URL = `${import.meta.env.VITE_AJAX_URL}/eventCardInfo.php`
+const AJAX_URL = import.meta.env.VITE_AJAX_URL; 
+const BASE_URL = AJAX_URL.replace(/\/PHP$/, '/');
 
-// 取得活動資料
-const fetchEventData = async () => {
-    try {
-        isLoading.value = true;
-        error.value = null;
-        
-        const eventId = route.params.id || 1;
-        
-        const response = await axios.get(API_BASE_URL, {
-            params: { id: eventId },
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-                
-        if (response.data.success) {
-            // ⭐ 合併資料，保留預設值
-            eventData.value = {
-                ...eventData.value,  // 保留預設值
-                ...response.data.data  // 覆蓋新資料
-            };
-            // console.log('活動資料載入成功:', eventData.value);
-        } else {
-            throw new Error(response.data.message || '載入失敗');
-        }
-        
-    } catch (err) {
-        // console.error('載入活動資料失敗:', err);
-        
-        if (err.response) {
-            error.value = `伺服器錯誤: ${err.response.data?.message || '未知錯誤'}`;
-        } else if (err.request) {
-            error.value = '無法連接到伺服器，請檢查網路連線';
-        } else {
-            error.value = err.message;
-        }
-    } finally {
-        isLoading.value = false;
-    }
-};
-
-// 格式化日期
-const formatDate = (dateString) => {
-    if (!dateString) return '';
-    try {
-        const date = new Date(dateString);
-        return `${date.getMonth() + 1}/${date.getDate()}`;
-    } catch (e) {
-        return dateString;
-    }
-};
-
-// 格式化時間
-const formatTime = (timeString) => {
-    if (!timeString) return '';
-    try {
-        const [hours, minutes] = timeString.split(':');
-        const hour = parseInt(hours);
-        const period = hour >= 12 ? 'pm' : 'am';
-        const displayHour = hour > 12 ? hour - 12 : hour;
-        return `${displayHour}:${minutes} ${period}`;
-    } catch (e) {
-        return timeString;
-    }
-};
-
-// 解析注意事項
-const parseNotes = (notesString) => {
-    if (!notesString) return [];
-    return notesString.split(/[;\\n]/).filter(note => note.trim());
-};
-
-// 報名處理
-const handleJoin = async () => {
-    if (eventData.value.status === '已截止') {
-        alert('報名已截止');
-        return;
-    }
-    
-    alert('報名功能開發中...');
-    // TODO: 實作報名功能
-};
-
-// 返回上一頁
-const goBack = () => {
-    router.back();
-};
-
-// 輪播控制
-let touchStartX = 0;
-let touchEndX = 0;
-
-const goToSlide = (index) => {
-    currentSlide.value = index;
-};
-
-const handleTouchStart = (e) => {
-    touchStartX = e.touches[0].clientX;
-};
-
-const handleTouchEnd = (e) => {
-    touchEndX = e.changedTouches[0].clientX;
-    handleSwipe();
-};
-
-const handleSwipe = () => {
-    const swipeThreshold = 50;
-    const diff = touchStartX - touchEndX;
-    
-    if (Math.abs(diff) > swipeThreshold) {
-        if (diff > 0 && currentSlide.value < 1) {
-            currentSlide.value++;
-        } else if (diff < 0 && currentSlide.value > 0) {
-            currentSlide.value--;
-        }
-    }
-};
-
-// 元件載入時取得資料
-onMounted(() => {
-    fetchEventData();
+// 4. 計算最終 img src
+const imgSrc = computed(() => {
+  const mid  = eventData.value.mountainId;
+  const name = eventData.value.imageName;
+  if (mid && name) {
+    return `${BASE_URL}images/Mountain/${mid}/${name}`;
+  }
+  // fallback 圖
+  return `${BASE_URL}images/eventCard/cardimg1.jpg`;
 });
 
+// 5. 並行呼叫兩支 API：文字 & 圖片
+const fetchEventData = async () => {
+  isLoading.value = true;
+  error.value = null;
+
+  try {
+    const eventId = route.params.id || 1;
+
+    const [resInfo, resImg] = await Promise.all([
+      axios.get(`${AJAX_URL}/eventCardInfo.php`, { params: { id: eventId } }),
+      axios.get(`${AJAX_URL}/eventCardImg.php`)
+    ]);
+
+    // 處理活動文字資料
+    if (resInfo.data.success) {
+      Object.assign(eventData.value, resInfo.data.data);
+    } else {
+      throw new Error(resInfo.data.message || '活動資料載入失敗');
+    }
+
+    // 處理圖片資料映射
+    if (resImg.data.success) {
+      imageMap.value = resImg.data.data;
+      const mid = eventData.value.mountainId;
+      if (imageMap.value[mid]) {
+        eventData.value.imageName = imageMap.value[mid].imageName;
+      }
+    } else {
+      throw new Error(resImg.data.message || '圖片資料載入失敗');
+    }
+
+  } catch (err) {
+    if (err.response) {
+      error.value = `伺服器錯誤：${err.response.data?.message}`;
+    } else if (err.request) {
+      error.value = '無法連線至伺服器，請檢查網路';
+    } else {
+      error.value = err.message;
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 6. 返回上一頁
+const goBack = () => router.back();
+
+// 7. 輪播邏輯
+let touchStartX = 0;
+const handleTouchStart = (e) => (touchStartX = e.touches[0].clientX);
+const handleTouchEnd = (e) => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) {
+    currentSlide.value = diff > 0
+      ? Math.min(currentSlide.value + 1, 1)
+      : Math.max(currentSlide.value - 1, 0);
+  }
+};
+const goToSlide = (idx) => (currentSlide.value = idx);
+
+// 8. 格式化日期、時間、notes、報名
+const formatDate = (s) => {
+  if (!s) return '';
+  const d = new Date(s);
+  return `${d.getMonth()+1}/${d.getDate()}`;
+};
+const formatTime = (t) => {
+  if (!t) return '';
+  const [h,m] = t.split(':');
+  const hh = parseInt(h);
+  const period = hh >= 12 ? 'pm' : 'am';
+  const disp = hh > 12 ? hh - 12 : hh;
+  return `${disp}:${m} ${period}`;
+};
+const parseNotes = (str) => str ? str.split(/[;\\n]/).filter(n => n.trim()) : [];
+const handleJoin = () => {
+  if (eventData.value.status === '已截止') {
+    alert('報名已截止');
+  } else {
+    alert('報名功能開發中...');
+  }
+};
+
+// 9. 元件掛載後執行
+onMounted(fetchEventData);
 </script>
+
+
 
 <style lang="scss" scoped>
 @import '../../assets/styles/main.scss';

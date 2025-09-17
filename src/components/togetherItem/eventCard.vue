@@ -89,10 +89,6 @@ const imageDataMap = ref({})
 const isLoading = ref(false)
 const loadError = ref(null)
 
-/**
- * 取得圖片資料的函數
- * 從 eventCardImg.php API 取得所有圖片資料
- */
 const fetchImageData = async () => {
     try {
         isLoading.value = true
@@ -106,7 +102,6 @@ const fetchImageData = async () => {
         // 檢查回應是否成功
         if (response.data.success) {
             // 將圖片資料存入 map
-            // response.data.data 應該是以 MOUNTAIN_ID 為 key 的物件
             imageDataMap.value = response.data.data
             // console.log('圖片資料載入成功:', imageDataMap.value)
         } else {
@@ -131,10 +126,7 @@ onMounted(() => {
     }
 })
 
-/**
- * 監聽 item.mountainId 的變化
- * 如果 mountainId 改變且沒有對應的圖片資料，重新載入
- */
+
 watch(() => props.item.mountainId, (newId) => {
     if (newId && !imageDataMap.value[newId] && !isLoading.value) {
         fetchImageData()
@@ -188,7 +180,6 @@ function handleImageError(event) {
 // 取得路由實例
 const router = useRouter()
 
-// 公開方法給父組件使用（可選）
 defineExpose({
     fetchImageData,
     imageDataMap
