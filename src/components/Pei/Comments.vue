@@ -16,7 +16,7 @@ const toUrl = (p) => {
 // ===== 父層傳入 MOUNTAIN_ID、MOUNTAIN_NAME =====
 const props = defineProps({
   id: { type: Number, required: true },
-  mountainName: { type: Object }
+  mountainName: { type: String }
 })
 
 // ===== 路由與使用者狀態 =====
@@ -67,14 +67,18 @@ function mapRowToMessage(row){
   const avatarKey   = row.MEMBER_IMAGE ?? null
 
   return {
+    msgId:Number(row.MESSAGE_ID),       
+    memId:Number(row.MEMBER_ID),         
+    mountainId:Number(row.MOUNTAIN_ID),
     msgId: row.MESSAGE_ID,
     name: row.NICKNAME || row.MEMBER_NAME || `會員#${row.MEMBER_ID}`,
     mountain: row.MOUNTAIN_NAME || '',
     avatar: avatarKey ? `${UPLOADS_BASE}/${avatarKey}` : 'images/myChallenge/head4.png',
     time: row.CREATED_AT || row.CREATE_AT || row.CREATE_TIME || '',
-    message: row.CONTENT || '',
+    content: row.CONTENT || '',
     photo: msgImageKey ? `${UPLOADS_BASE}/${msgImageKey}` : '',
-    canDelete: true
+    canDelete : user.isLoggedIn && user.id === row.MEMBER_ID
+    
   }
 }
 
@@ -132,37 +136,42 @@ async function submitComment(){
 }
 
 // ===== 刪除留言：POST /CommentsDelete.php（JSON） =====
-async function deleteMessageById(id){
-  if (!id) return
+// 刪除留言：POST /CommentsDelete.php（JSON）
+async function deleteMessageById(msgId){
+  if (!msgId) return
   if (!confirm('確定要刪除此留言嗎？')) return
+
   try{
-    const { data } = await apiAuth.post('/CommentsDelete.php', { MESSAGE_ID: id }, {
-      headers: { 'Content-Type': 'application/json' }
-    })
+    const { data } = await apiAuth.post('/CommentsDelete.php', { MESSAGE_ID: msgId })
     if (data?.success){
-      const i = messages.value.findIndex(m => m.id === id)
+      const i = messages.value.findIndex(m => m.msgId === msgId)
       if (i > -1) messages.value.splice(i, 1)
     }else{
       alert(data?.message || '刪除失敗')
     }
   }catch(err){
-    alert(err.message || '刪除時發生錯誤')
+    const msg =
+      err?.response?.data?.message ||
+      (typeof err?.response?.data === 'string' ? err.response.data : '') ||
+      err?.message || '刪除時發生錯誤'
+    alert(msg)
   }
 }
 
 
 // ==== 點擊「撰寫評論」按鈕時，先用 pinia 檢查登入狀態，再決定導頁或彈窗 ====
-function checkLogin(){
-
-  // 若未登入，導入會員登入頁面
-  if (!user.isLoggedIn){
+async function checkLogin () {
+  if (!user.isLoggedIn) {
+    try { await user.hydrateFromSession() } catch {}
+  }
+  if (!user.isLoggedIn) {
     alert('請先登入會員唷！')
     router.push('/loginregister')
     return
-  } else {
-    openPopup()
   }
+  openPopup()
 }
+
 
 
 // ===== UI：彈窗 / 圖片上傳 / 圖片放大 =====
@@ -195,7 +204,13 @@ function closeImageViewer(){
 }
 
 // ===== 掛載／山別變動 → 從後端撈資料（取代 localStorage 版） =====
-onMounted(fetchComments)
+onMounted(
+  fetchComments
+)
+
+
+
+
 watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
 </script>
 
@@ -215,7 +230,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
         目前還沒有人留言喔～～～快來成為第一個留下足跡的人吧^_<;;
       </li>
 
-      <li v-for="message in messages" :key="message.id" class="commentCard">
+      <li v-for="message in messages" :key="message.msgid" class="commentCard">
         <div class="member">
           <div class="avatar">
             <img :src="toUrl(message.avatar)" alt="使用者頭像" />
@@ -239,7 +254,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
           <button
             class="trashBtn"
             v-if="message.canDelete"
-            @click="deleteMessageById(message.id)"
+            @click="deleteMessageById(message.msgId)"
             title="刪除留言"
             aria-label="刪除留言"
           >

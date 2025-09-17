@@ -41,8 +41,18 @@ pids
 *.pid.lock
 
 # Uploads
-uploads/
+
 temp/
+
+# (Pei)忽略 public/uploads 裡的所有檔案與子目錄
+# 僅推接收讓會員上傳頭貼avatars與留言照片comments的空資料夾
+/public/uploads/*  
+/public/uploads/**/*         
+!/public/uploads/**/         
+!/public/uploads/**/.gitkeep 
+!/public/uploads/.gitkeep    
+
+
 
 # Database
 *.sql.backup
