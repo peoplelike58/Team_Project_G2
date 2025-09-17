@@ -1,5 +1,7 @@
 <?php
 
+include 'conn.php';
+
 session_start();
 
 // 清掉 session

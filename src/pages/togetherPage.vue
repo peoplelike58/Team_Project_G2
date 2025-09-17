@@ -90,6 +90,7 @@ async function fetchActivitiesFromDB() {
   error.value = ''
   
   try {    
+    // console.log('開始載入活動資料，API URL:', API_URL)
     const response = await axios.get(API_URL)
     
     if (response.data.success) {
@@ -98,38 +99,66 @@ async function fetchActivitiesFromDB() {
         throw new Error('API 回傳的資料格式不正確')
       }
       
-      // 將資料庫資料轉換為原本 JSON 的格式
-      const dbActivities = response.data.data.map(event => ({
-        //JSON 的欄位結構
-        id: event.id,
-        title: event.title,
-        date: event.date,
-        imageUrl: event.imageUrl,
-        tags: event.tags || ['活動'],
-        ctaUrl: event.ctaUrl,
-        location: event.meetingPlace || '台北', // 使用集合地點作為 location
-        joinQty: event.joinQty,
-        eventTime: event.eventTime,
-        content: event.content,
-        distance: event.distance
-      }))
+      // 將資料庫資料轉換為正確的格式
+      // 保留 mountainId 和 imageName 欄位給 EventCard
+      const dbActivities = response.data.data.map(event => {
+        // 建立活動物件，保留所有必要欄位
+        const activity = {
+          // 基本欄位
+          id: event.id,
+          title: event.title,
+          date: event.date,
+          mountainId: event.mountainId,      // 山岳編號
+          imageName: event.imageName,        // 圖片檔名
+          imageType: event.imageType,        // 圖片類型
+          
+          // 其他欄位
+          tags: event.tags || ['活動'],
+          ctaUrl: event.ctaUrl,
+          location: event.meetingPlace || '台北',
+          joinQty: event.joinQty,
+          eventTime: event.eventTime,
+          content: event.content,
+          distance: event.distance,
+          meetingPlace: event.meetingPlace,
+          status: event.status
+        }
+        
+        if (!activity.mountainId) {
+          // console.warn(`活動 ${activity.id} (${activity.title}) 沒有 mountainId`)
+        } else if (!activity.imageName) {
+          // console.warn(`活動 ${activity.id} (${activity.title}) 有 mountainId=${activity.mountainId} 但沒有 imageName`)
+        } else {
+          console.log(`活動 ${activity.id} 圖片資訊:`, {
+            mountainId: activity.mountainId,
+            imageName: activity.imageName
+          })
+        }
+        
+        return activity
+      })
       
       // 確保轉換後的資料是陣列
       if (!Array.isArray(dbActivities)) {
-        throw new Error('不是陣列格式')
+        throw new Error('資料轉換失敗：不是陣列格式')
       }
       
       originalActivities.value = dbActivities
       filteredActivities.value = [...dbActivities]
       
-      // console.log(`${dbActivities.length} 筆活動資料`)
+      // console.log(`成功載入 ${dbActivities.length} 筆活動資料`)
+      
+      // 統計圖片資訊
+      const withImage = dbActivities.filter(a => a.mountainId && a.imageName).length
+      const withoutImage = dbActivities.length - withImage
+      // console.log(`圖片統計: ${withImage} 筆有圖片, ${withoutImage} 筆使用預設圖片`)
       
     } else {
       throw new Error(response.data.message || '載入活動資料失敗')
     }
     
   } catch (err) {
-    console.error('載入活動資料失敗:', err)
+    // console.error('載入活動資料失敗:', err)
     
     // 發生錯誤時確保資料是空陣列
     originalActivities.value = []
@@ -196,16 +225,20 @@ function matchesKeyword(activity, criteria) {
 
 // 按下按鈕後才套用篩選
 function onSearchClicked(criteria) {
+  console.log('套用篩選條件:', criteria)
+  
   filteredActivities.value = originalActivities.value.filter(activity =>
     matchesLocation(activity, criteria) &&
     matchesDate(activity, criteria) &&
     matchesKeyword(activity, criteria)
   )
+  
+  console.log(`篩選結果: ${filteredActivities.value.length} 筆符合條件`)
   currentPage.value = 1
 }
 
 onMounted(async () => {
-  console.log('TogetherPage 啟用')
+  // console.log('TogetherPage 組件已掛載')
   await fetchActivitiesFromDB()
 })
 </script>
@@ -213,7 +246,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @import '../assets/styles/main.scss';
 
-/* ===== 新增：載入和錯誤狀態樣式 ===== */
+/* ===== 載入和錯誤狀態樣式 ===== */
 .loading-wrapper {
   display: flex;
   justify-content: center;
@@ -288,7 +321,6 @@ onMounted(async () => {
     }
   }
 }
-
 
 /* 活動卡片區塊 */
 .cardList {

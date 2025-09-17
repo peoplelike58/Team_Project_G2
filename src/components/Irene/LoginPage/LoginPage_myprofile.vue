@@ -103,7 +103,7 @@ const profileData = reactive({
   avatar: '',
   nickname: '',
   about: '',
-  birthday: '2025/08/03',
+  birthday: '',
   phone: '',
   address: ''
 })
@@ -112,7 +112,6 @@ const profileData = reactive({
 const toggleEditMode = () => {
   isEditing.value = !isEditing.value
 }
-
 // 處理頭像上傳
 const handleAvatarUpload = () => {
   // 創建文件輸入元素
@@ -137,23 +136,79 @@ const handleAvatarUpload = () => {
 
 // 儲存個人資料
 const saveProfile = async () => {
+  console.log('準備儲存的資料:', profileData) // 調試用
   try {
     // API 呼叫儲存資料
-    console.log('儲存個人資料:', profileData)
+    const res = await fetch (import.meta.env.VITE_AJAX_URL + '/LoginPage_updateProfile.php',{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(profileData)
+    })
+    // 檢查 HTTP 狀態
+    if (!res.ok) {
+      throw new Error(`HTTP 錯誤: ${res.status}`)
+    }
+    const data = await res.json()
+
     
     // 模擬 API 請求
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    isEditing.value = false
-    alert('個人資料更新成功！')
+    // await new Promise(resolve => setTimeout(resolve, 1000))
+    if(data.success){
+      console.log('儲存個人資料:', profileData)
+      isEditing.value = false      // 關閉編輯模式
+      alert('個人資料更新成功！')
+    }else {
+      // 處理伺服器回傳的錯誤訊息
+      console.error('伺服器錯誤:', data.message)
+      alert(data.message || '儲存失敗')
+    }
   } catch (error) {
     console.error('儲存失敗:', error)
     alert('儲存失敗，請重試')
   }
 }
+// 取得個人資料 
+const getProfile = async () => {
+  console.log('開始取得個人資料...') // 調試用
+  try {
+    // API 呼叫儲存資料
+    const res = await fetch (import.meta.env.VITE_AJAX_URL + '/LoginPage_getProfile.php',{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({})
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP 錯誤: ${res.status}`)
+    }
+    
+    const data = await res.json()
+    
+    if(data.success && data.profileData && data.profileData.length > 0){
+      const profile = data.profileData[0]  // 取第一筆資料
+       console.log('解析的個人資料:', profile) // 調試用
+      // 將 PHP 回傳的欄位名稱對應到前端
+      profileData.nickname = profile.NICKNAME || ''
+      profileData.birthday = profile.BIRTHDAY || ''
+      profileData.phone = profile.PHONE || ''
+      profileData.address = profile.ADDRESS || ''
+      profileData.about = profile.ABOUT_ME || ''  // PHP 是 ABOUTME
+      console.log('成功取得的儲存個人資料:', profileData)
+      isEditing.value = false
+    }else {
+      console.error('取得資料失敗:', data.message)
+      alert(data.message || '無法取得個人資料')
+    }
+  } catch (error) {
+    console.error('儲存失敗:', error)
+    alert('儲存失敗，請重試')
+  }}
 
 onMounted(() => {
+  console.log('元件已載入，開始取得個人資料') // 調試用
   // 載入個人資料的API呼叫
+  getProfile()
 })
 </script>
 

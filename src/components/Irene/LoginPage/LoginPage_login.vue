@@ -146,7 +146,7 @@ const  handleLogin = async () => {
            // 如果登入成功，再去檢查 Session
            return fetch(import.meta.env.VITE_AJAX_URL + '/CheckLogin.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' ,'Accept': 'application/json'},
             credentials: 'include'
           })
           .then(res => res.json())

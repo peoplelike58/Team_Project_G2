@@ -1,9 +1,6 @@
 <?php
 // CORS 設定 - 確保這些沒有被註解
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
 
 // 處理 OPTIONS 預檢請求
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -26,7 +23,7 @@ try {
     // 查詢實際存在的欄位
     $sql = "SELECT EVENT_ID, EVENT_NAME, JOIN_QTY, EVENT_DATE, EVENT_TIME,
             START_DATE, START_TIME, END_DATETIME, STATUS, CONTENT, 
-            MEETING_PLACE, DISTANCE 
+            MEETING_PLACE, DISTANCE, MOUNTAIN_ID 
             FROM EVENT 
             WHERE EVENT_ID = :eventId";
     
@@ -55,7 +52,7 @@ try {
             // 'route' => '冷水坑 → 七星公園 → 夢幻湖',  // 預設路線
             'duration' => 4,  // 預設時長
             'notes' => '請穿著輕便衣物與防滑鞋;建議攜帶水壺、帽子、防蚊液;活動前3日若遇大雨將公告延期',
-            'imageUrl' => '@/assets/images/eventCard/cardimg1.jpg',
+            'imageUrl' => '/images/eventCard/cardimg1.jpg',
             'registrationDeadlineDate' => '2025-08-13',
             'registrationDeadlineTime' => '12:00:00'
         ];

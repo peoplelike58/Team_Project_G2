@@ -21,14 +21,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import EventCard from './eventCard.vue'  // 您現有的組件
+import EventCard from './eventCard.vue' 
 
 const events = ref([])
 const loading = ref(false)
 const error = ref('')
 
 // API 設定
-const API_URL = 'http://localhost/team-projcetG2/eventCard.php'
+const API_URL = `${import.meta.env.VITE_AJAX_URL}/eventCard.php` 
 
 // 獲取活動資料
 async function fetchEvents() {
@@ -36,21 +36,20 @@ async function fetchEvents() {
   error.value = ''
   
   try {
-    // 使用 axios 發送請求到您的 PHP API
+    // 使用 axios 發送請求到 PHP API
     const response = await axios.get(API_URL)
     
     // 檢查 PHP 回應
     if (response.data.success) {
       // 直接使用 PHP 回傳的資料，無需額外轉換
-      // PHP 已經將資料格式化為您的 EventCard 期望的格式
       events.value = response.data.data
-      console.log('成功載入活動資料:', events.value)
+      // console.log('成功載入活動資料:', events.value)
     } else {
       error.value = response.data.message || '載入失敗'
     }
     
   } catch (err) {
-    console.error('請求失敗:', err)
+    // console.error('請求失敗:', err)
     if (err.response) {
       error.value = `伺服器錯誤: ${err.response.status}`
     } else {
@@ -63,7 +62,7 @@ async function fetchEvents() {
 
 // 處理 CTA 點擊
 function handleCtaClick(eventData) {
-  console.log('點擊活動:', eventData)
+  // console.log('點擊活動:', eventData)
 }
 
 // 組件載入後獲取資料
@@ -72,7 +71,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .event-list {
   padding: 20px;
 }

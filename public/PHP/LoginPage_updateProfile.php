@@ -12,9 +12,14 @@ echo json_encode(['success' => false, 'message' => '尚未登入'],JSON_UNESCAPE
 
 $memberId = $_SESSION['member']['id']; // 從 Session 拿會員ID
 
-$sql = "UPDATE MEMBER SET NICKNAME = ?,NAME = ?,BIRTHDAY = ?,PHONE = ?,ADDRESS = ?,IMAGE = ?WHERE MEMBER_ID = ?";
+$sql = "UPDATE MEMBER SET NICKNAME = :nickname,ABOUT_ME = :about,BIRTHDAY = :birthday,PHONE = :phone, ADDRESS = :address WHERE MEMBER_ID = :memberId";
 
 $pstmt = $pdo->prepare($sql);
+$pstmt->bindValue( ":nickname", $update['nickname']);
+$pstmt->bindValue( ":about", $update['about']);
+$pstmt->bindValue( ":birthday", $update['birthday']);
+$pstmt->bindValue( ":phone", $update['phone']);
+$pstmt->bindValue( ":address", $update['address']);
 $pstmt->bindValue( ":memberId", $memberId);
 $pstmt->execute();
 $profileData = $pstmt->fetchAll(PDO::FETCH_ASSOC);

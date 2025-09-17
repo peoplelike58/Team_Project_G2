@@ -12,7 +12,7 @@ if (!verifyRecaptcha($member['recaptcha'])){
     echo json_encode([
         "sucess" => false,
          "message" => "請先通過驗證"
-    ]);
+    ],JSON_UNESCAPED_UNICODE);
     exit;
 }
 

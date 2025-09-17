@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import axios from 'axios';
+import { useUserStore } from '@/stores/user'
 
 // import trailsData from '@/assets/json/trails.json';
 
@@ -32,11 +33,20 @@ const fetchTrails = async () => {
   }
 }
 
+const user = useUserStore()
 
-onMounted(() => {                                           
-  fetchTrails()       
+// onMounted(() => {                                           
+//   fetchTrails()       
   
-}) 
+// }) 
+
+onMounted(async () => {
+  // 先把登入狀態與後端 Session 對齊（避免 F5 後 Pinia 還沒回灌）
+  try { await user.hydrateFromSession() } catch {}
+
+  // 再撈山（不需要登入）
+  await fetchTrails()
+})
 
 
 const route = useRoute()

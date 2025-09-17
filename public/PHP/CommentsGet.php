@@ -1,17 +1,17 @@
 <?php
 // CORS（因為是公開 GET，其實可不帶 credentials。但為了統一，這樣寫也可）
 
-header('Access-Control-Allow-Credentials: true');
-header('Vary: Origin');
+// header('Access-Control-Allow-Credentials: true');
+// header('Vary: Origin');
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-  header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-  header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
-  http_response_code(204);
-  exit;
-}
+// if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+//   header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+//   header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
+//   http_response_code(204);
+//   exit;
+// }
 
-header('Content-Type: application/json; charset=utf-8');
+// header('Content-Type: application/json; charset=utf-8');
 
 //（可有可無）開 Session，但不檢查會員
 session_start();
