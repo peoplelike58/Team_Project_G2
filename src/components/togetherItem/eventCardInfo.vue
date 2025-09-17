@@ -196,7 +196,7 @@ const eventData = ref({
   duration: 0,
   content: '',
   notes: '',
-  imageUrl: '/assets/images/eventCard/cardimg1.jpg', // 預設圖片
+  imageUrl: '/images/eventCard/cardimg1.jpg', // 預設圖片
   registrationDeadlineDate: '',
   registrationDeadlineTime: '',
   status: '揪團中'
@@ -207,7 +207,7 @@ const error = ref(null);
 const currentSlide = ref(0);
 
 // API 設定
-const API_BASE_URL = `${import.meta.env.VITE_AJAX_URL}/eventCardInfo.php`;
+const API_BASE_URL = `${import.meta.env.VITE_AJAX_URL}/eventCardInfo.php`
 
 // 取得活動資料
 const fetchEventData = async () => {
@@ -216,7 +216,6 @@ const fetchEventData = async () => {
         error.value = null;
         
         const eventId = route.params.id || 1;
-        console.log('正在載入活動 ID:', eventId);
         
         const response = await axios.get(API_BASE_URL, {
             params: { id: eventId },
@@ -224,22 +223,20 @@ const fetchEventData = async () => {
                 'Content-Type': 'application/json'
             }
         });
-        
-        console.log('API 回應:', response.data);
-        
+                
         if (response.data.success) {
             // ⭐ 合併資料，保留預設值
             eventData.value = {
                 ...eventData.value,  // 保留預設值
                 ...response.data.data  // 覆蓋新資料
             };
-            console.log('活動資料載入成功:', eventData.value);
+            // console.log('活動資料載入成功:', eventData.value);
         } else {
             throw new Error(response.data.message || '載入失敗');
         }
         
     } catch (err) {
-        console.error('載入活動資料失敗:', err);
+        // console.error('載入活動資料失敗:', err);
         
         if (err.response) {
             error.value = `伺服器錯誤: ${err.response.data?.message || '未知錯誤'}`;
