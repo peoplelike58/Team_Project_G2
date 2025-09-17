@@ -19,7 +19,7 @@
 
         //Web根目錄真實路徑
         $ServerRoot = $_SERVER["DOCUMENT_ROOT"] . "/TeamProject/public";
-        $uploadPath = $ServerRoot. "/images/Products/";
+        $uploadPath = $ServerRoot. "/images/Products/products/";
 
         //檔名
         $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
