@@ -33,11 +33,17 @@ const activities = ref([])
 const loading = ref(false)
 const error = ref('')
 
+const USE_FAKE = false
+const baseUrl = import.meta.env.BASE_URL
+
+const API_URL = USE_FAKE
+? baseUrl + 'json/homepage/activities.json'
+: `${import.meta.env.VITE_AJAX_URL}/eventCard.php`
+
 onMounted(async () => {
     loading.value = true
     try {
-        const { data } = await axios.get(import.meta.env.BASE_URL + 'json/homepage/activities.json') // 或 /api/activities
-        // 假資料為純陣列；若後端回 {items,total} 則用 data.items ?? []
+        const { data } = await axios.get(API_URL)
         activities.value = Array.isArray(data) ? data : (data.items ?? [])
     } catch (e) {
         error.value = e?.message ?? '載入失敗😓'

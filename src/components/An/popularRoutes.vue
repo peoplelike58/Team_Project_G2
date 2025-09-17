@@ -10,32 +10,32 @@
              <!-- 左欄：主資訊 -->
             <div class="left">
                 <Transition name="fade" mode="out-in">
-                    <div class="route-detail" :key="activeRoute.id">
-                        <h2 class="route-title">[ {{ activeRoute.name }} ]</h2>
+                    <div class="route-detail" :key="activeRoute.MOUNTAIN_ID">
+                        <h2 class="route-title">[ {{ activeRoute.MOUNTAIN_NAME }} ]</h2>
 
                         <div class="meta">
                             <div class="meta-block">
                                 <span class="label">里程</span>
                                 <div class="value">
-                                    <strong class="num">{{ activeRoute.distance }}</strong>
-                                    <span class="unit">公里</span>
+                                    <strong class="num">{{ cleanDistance }}</strong>
                                 </div>
                             </div>
 
                             <div class="meta-block">
                                 <span class="label">花費時間</span>
                                 <div class="value">
-                                    <strong class="num">{{ activeRoute.time.hour }}</strong>
+                                    <!-- <strong class="num">{{ activeRoute.time.hour }}</strong>
                                     <span class="unit">小時</span>
                                     <strong class="num">{{ activeRoute.time.minute }}</strong>
-                                    <span class="unit">分鐘</span>
+                                    <span class="unit">分鐘</span> -->
+                                    <strong class="num">{{ activeRoute.TIME }}</strong>
                                 </div>
                             </div>
 
                             <div class="meta-block">
                                 <span class="label">難度</span>
                                 <div class="value">
-                                    <strong class="num">{{ activeRoute.difficulty }}</strong>
+                                    <strong class="num">{{ activeRoute.LEVEL }}</strong>
                                 </div>
                             </div>
                         </div>
@@ -49,17 +49,17 @@
                 <ul class="route-list">
                     <li
                         v-for="route in routes"
-                        :key="route.id"
+                        :key="route.MOUNTAIN_ID"
                         class="route-item"
                         tabindex="0"
                         @mouseenter="onHoverEnter(route)"
                         @focus="onHoverEnter(route)"
-                        :class="{ 'is-hovered': hoveredRoute && hoveredRoute.id === route.id }"
+                        :class="{ 'is-hovered': hoveredRoute && hoveredRoute.MOUNTAIN_ID === route.MOUNTAIN_ID }"
                     >
                         <div class="left-part">
-                            <img :src="route.imageUrl" alt="" class="avatar" />
+                            <img :src="`${baseUrl}images/Mountain/${route.MOUNTAIN_ID}/${route.IMAGE}`" alt="" class="avatar"/>
                             <div class="divider"></div>
-                            <a class="name" href="#">{{ route.name }}</a>
+                            <a class="name" href="#">{{ route.MOUNTAIN_NAME }}</a>
                         </div>
                         <button class="open">
                             <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
@@ -89,7 +89,6 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 
-const MAX_ITEMS = 6
 
 const routes = ref([])
 const hoveredRoute = ref(null)
@@ -103,12 +102,21 @@ const featured = ref({
 
 // 👉 用滑入項目，否則 fallback 到精選
 const activeRoute = computed(() => hoveredRoute.value || featured.value)
+const cleanDistance = computed(() => {
+    const d = activeRoute.value.DISTANCE
+    return d ? d.replace('單程', '') : ''
+})
+
 function onHoverEnter(route) { hoveredRoute.value = route }
 
-const USE_FAKE = true
-const API_ENDPOINT = USE_FAKE
-    ? import.meta.env.BASE_URL + 'json/homepage/routes.json'
-    : 'api/routes'
+const USE_FAKE = false
+const baseUrl = import.meta.env.BASE_URL
+
+const API_URL = USE_FAKE
+? baseUrl + 'json/homepage/routes.json'
+: `${import.meta.env.VITE_AJAX_URL}/filterCard.php`
+
+const MAX_ITEMS = 6 //最大顯示筆數
 
 const loading = ref(false)
 const error = ref('')
@@ -117,7 +125,7 @@ async function fetchRoutes() {
     loading.value = true
     error.value = ''
     try {
-        const { data } = await axios.get(API_ENDPOINT)
+        const { data } = await axios.get(API_URL)
         const arr = Array.isArray(data) ? data : (data.items ?? [])
 
         routes.value = arr.slice(0, MAX_ITEMS)
@@ -126,7 +134,7 @@ async function fetchRoutes() {
         featured.value = routes.value[0]
         }
     } catch (e) {
-        error.value = e?.message ?? '載入失敗'
+        error.value = e?.message ?? '載入失敗😓'
     } finally {
         loading.value = false
     }
