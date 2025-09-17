@@ -1,5 +1,7 @@
-<?php
-// upload-avatar.php - 頭像上傳 
+<?php  // LoginPage_uploadAvatar.php - 頭像上傳更新會員頭像檔名到資料庫 
+
+
+include 'conn.php';
 
 
 // 檢查是否有上傳文件
@@ -12,7 +14,10 @@ if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
     exit();
 }
 
+
+
 // 檢查會員 ID
+session_start();
 if (!isset($_POST['member_id']) || empty($_POST['member_id'])) {
     http_response_code(400);
     echo json_encode(array(
@@ -21,9 +26,8 @@ if (!isset($_POST['member_id']) || empty($_POST['member_id'])) {
     ), JSON_UNESCAPED_UNICODE);
     exit();
 }
-
-$file = $_FILES['avatar'];
-$member_id = $_POST['member_id'];
+$memberId = $_SESSION['member']['id']; // 從 Session 拿會員ID
+$file =  $_FILES['avatar'];           
 
 // 檢查文件大小（限制 2MB）
 $max_size = 2 * 1024 * 1024; // 2MB
@@ -55,8 +59,8 @@ try {
     }
     
     // 生成唯一的文件名
-    $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $new_filename = 'avatar_' . $member_id . '_' . time() . '.' . $file_extension;
+    $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);                           //pathinfo(string $path, int $flags)：分析檔名/路徑資訊。PATHINFO_EXTENSION副檔名
+    $new_filename = 'avatar_' . $memberId . '_' . time() . '.' . $file_extension;
     $upload_path = $upload_dir . $new_filename;
     
     // 移動上傳的文件

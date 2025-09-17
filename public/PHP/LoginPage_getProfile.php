@@ -9,7 +9,7 @@ echo json_encode(['success' => false, 'message' => '尚未登入'],JSON_UNESCAPE
 
 $memberId = $_SESSION['member']['id']; // 從 Session 拿會員ID
 
-$sql = "SELECT NICKNAME, BIRTHDAY,PHONE,ADDRESS,ABOUT_ME FROM MEMBER WHERE MEMBER_ID = :memberId";
+$sql = "SELECT NICKNAME, BIRTHDAY,PHONE,ADDRESS,ABOUT_ME,IMAGE FROM MEMBER WHERE MEMBER_ID = :memberId";
 
 $pstmt = $pdo->prepare($sql);
 $pstmt->bindValue( ":memberId", $memberId);

@@ -370,7 +370,7 @@ const updateQty = (itemId, newQty) => {
       body: JSON.stringify({cartId: itemId})
     })
   const result = await response.json();  
-if (result.success) {
+  if (result.success) {
         console.log('後端刪除成功:', result.message)
         loadCartFromBackend()
         return true  // 回傳 true 表示刪除成功
