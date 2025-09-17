@@ -62,7 +62,7 @@
                   <el-button type="primary">上傳圖片</el-button>
                   <!-- 預覽縮圖 -->
                 </el-upload>
-                <img v-if="form[col.prop]" :src="getImageUrl() + '/images/Products/' + form[col.prop]"style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
+                <img v-if="form[col.prop]" :src="getImageUrl() + '/images/Products/products/' + form[col.prop]"style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
              </template>
 
              <template v-else>
