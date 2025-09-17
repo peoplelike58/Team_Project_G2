@@ -135,8 +135,8 @@ async function submitComment(){
   }
 }
 
-// ===== 刪除留言：POST /CommentsDelete.php（JSON） =====
-// 刪除留言：POST /CommentsDelete.php（JSON）
+// ===== 刪除留言：POST /CommentsDelete.php =====
+
 async function deleteMessageById(msgId){
   if (!msgId) return
   if (!confirm('確定要刪除此留言嗎？')) return
@@ -349,24 +349,38 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
   align-items: center;
   box-sizing: border-box;
   @include m(){
-    max-width: 430px;
+    max-width:768px;
     padding: 0 20px;
   }
 
   h1 {
+    width:100%;
+    max-width: 1200px;
     font-size: $pcFont-H1-m;
     font-weight: $semiBold;
     line-height: $lineHeight-title-120;
     letter-spacing: 2px;
     margin-right: auto;
+    padding: 0 30px;
+      @include m(){
+        max-width: 768px;
+        padding: 0 ;
+      }
   }
 
   .h1Tag {
+    width:100%;
+    max-width: 1200px;
     margin-right: auto;
+    padding: 0 30px;
     font-size: $pcFont-H4;
     font-weight: $semiBold;
     line-height: $lineHeight-title-120;
     letter-spacing: 1.5px;
+      @include m(){
+        max-width: 768px;
+        padding: 0 ;
+      }
   }
 
   .writeBtn {
@@ -534,7 +548,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
   overflow-y: auto;
 
   @include m(){
-    max-width: 430px;
+    max-width: 768px;
   }
 
   .showPopup {

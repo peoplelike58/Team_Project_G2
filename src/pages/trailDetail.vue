@@ -127,7 +127,7 @@ const trail = computed(() =>                                                    
         letter-spacing: 1.5px;
 
         @include m(){
-            max-width: 430px;
+            max-width: 768px;
             padding: 0 20px;
             box-sizing: border-box;
         }

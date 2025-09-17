@@ -204,7 +204,7 @@ onMounted(() => {
         transition: background-color 0.3s ease, color 0.3s ease;
       
         @include m(){
-          max-width: 210px;
+          max-width: 238px;
         }
       }
     .activity-card:hover{
