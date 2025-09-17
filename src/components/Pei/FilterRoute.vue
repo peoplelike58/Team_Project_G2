@@ -12,7 +12,7 @@ import axios from 'axios';
 
 // 先把 BASE_URL 存成變數，避免在 template 直接寫 import.meta
 // 取得部署子目錄，如 '/tjd102/g2/' 
-const baseUrl = import.meta.env.BASE_URL                              
+const baseUrl = import.meta.env.BASE_URL                             
 
 // 小工具：把 JSON 裡的相對路徑拼成可用網址
 // 回傳拼好的完整路徑
