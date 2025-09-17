@@ -1,32 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import Member from './member'//會員中心
+import Member from './member' //會員中心
 
 
-/*前台 */
+/* 前台 */
 import WelcomePage from '@/pages/WelcomePage.vue'
-import homePage from '@/pages/homePage.vue'//前台首頁
-import PeakGuide from '@/pages/PeakGuide.vue'// 百岳之書
-import togetherPage from '@/pages/togetherPage.vue'//揪上山
-import routesPage from '@/pages/routesPage.vue'//路線規劃
+import homePage from '@/pages/homePage.vue'                     //前台首頁
+import allNewsPage from '@/pages/allNewsPage.vue'               //全部消息
+import PeakGuide from '@/pages/PeakGuide.vue'                   //百岳之書
+import togetherPage from '@/pages/togetherPage.vue'             //揪上山
+import routesPage from '@/pages/routesPage.vue'                 //路線規劃
 import trailDetail from '@/pages/trailDetail.vue'
-import peacePage from '@/pages/peacePage.vue'// 揪安心
-import myChallenge from '@/pages/myChallenge.vue'//百岳挑戰
-import ShopPage from '@/pages/ShopPage/ShopPage.vue'//山腳雜貨店
-import LoginRegister from '@/pages/LoginPage/LoginRegister.vue'//會員登入
+import peacePage from '@/pages/peacePage.vue'                   //揪安心
+import myChallenge from '@/pages/myChallenge.vue'               //百岳挑戰
+import ShopPage from '@/pages/ShopPage/ShopPage.vue'            //山腳雜貨店
+import LoginRegister from '@/pages/LoginPage/LoginRegister.vue' //會員登入
 
 /* 各分頁的子頁面 */
 
 // 商品頁
 import ProductDetailRoute from '@/pages/ShopPage/ProductDetailRoute.vue'
-//商品頁-結賬流程
+// 商品頁-結賬流程
 import Chekout1Cart from '@/pages/ShopPage/Checkout1Cart.vue'   
 import Checkout2Info from '@/pages/ShopPage/Checkout2Info.vue'
 import Checkout3Success from '@/pages/ShopPage/Checkout3Success.vue'
 // 揪上山活動卡片
 import eventCardInfo from '@/components/togetherItem/eventCardInfo.vue'
 
-//會員登入
+// 會員登入
 import LoginPage_login from '@/components/Irene/LoginPage/LoginPage_login.vue'
 import LoginPage_register from '@/components/Irene/LoginPage/LoginPage_register.vue'
 import LoginPage_forget from '@/components/Irene/LoginPage/LoginPage_forget.vue'
@@ -34,7 +35,7 @@ import LoginPage_registercoupon from '@/components/Irene/LoginPage/LoginPage_reg
 import LoginPage_forgetsend from '@/components/Irene/LoginPage/LoginPage_forgetsend.vue'
 import LoginPage_resetpassword from '@/components/Irene/LoginPage/LoginPage_resetpassword.vue'
 
-/*後台*/
+/* 後台 */
 import backLogin from '@/pages/backLogin.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import Home from '@/pages/backHome.vue'
@@ -61,6 +62,10 @@ const frontroutes = [
     component: homePage,
   },
   {
+    path: '/allnewspage',
+    component: allNewsPage,
+  },
+  {
     path: '/peaks',
     component: PeakGuide,
   },
@@ -70,7 +75,7 @@ const frontroutes = [
   },
 //------- 詳細頁面 -----------
   {
-    path:'/routes/:id',
+    path:'/routes/:MOUNTAIN_ID',
     name:'trailDetail',
     component: trailDetail,
     props: true
@@ -160,7 +165,19 @@ const routes=[
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
+
+  //切頁後，頁面回到置頂
+  scrollBehavior(to, from, savedPosition) {
+    // 1) 瀏覽器返回/前進：恢復先前滾動位置
+    if (savedPosition) return savedPosition
+
+    // 2) 有錨點：捲到對應元素
+    if (to.hash) return { el: to.hash, top: 0 }
+
+    // 3) 一般導頁：回到最上方
+    return { left: 0, top: 0 }
+  }
 })
 
 // 後台登入阻擋
@@ -176,13 +193,20 @@ router.beforeEach((to, from, next) => {
 })
 
 // 前置守門員(這邊要修改isLoggedIn的條件和async 函數-因為 hydrateFromSession() 會去呼叫後端的 CheckLogin.php 裡面有非同步操作)
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   const user = useUserStore()
-  // user.hydrateFromSession()
-  // hydrateFromSession() 需在 store 裡實作，呼叫 CheckLogin.php 後把 email/name 寫回 state
-  const isLoggedIn = user.isLoggedIn// 取得最新登入狀態（回傳 boolean）
-  // const isLoggedIn = localStorage.getItem('email') //判讀是否有email值,改成從使用pinia作為登入的條件
   console.log(`從 ${from.path} 跳轉到 ${to.path}`)
+
+  // hydrateFromSession() 需在 store 裡實作，呼叫 CheckLogin.php 後把 email/name 寫回 state
+  // const isLoggedIn = localStorage.getItem('email') //判讀是否有email值,改成從使用pinia作為登入的條件
+  
+  // 如果本地沒有登入狀態，且沒在檢查中，就先檢查伺服器
+  if (!user.isLoggedIn && !user.loading.loginChecking) {
+    console.log('檢查伺服器登入狀態...')
+    await user.hydrateFromSession()  // 等待檢查完成
+  }
+  const isLoggedIn = user.isLoggedIn// 取得最新登入狀態（回傳 boolean）
+  
 
   
   if (to.meta.requiresAuth && !isLoggedIn) {//登入判斷:若頁面標記 requiresAuth，但沒有 email，就導去 /login。

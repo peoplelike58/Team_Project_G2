@@ -1,4 +1,4 @@
-<?php
+<?php /* 加入購物車php */
 
 session_start();
 include 'conn.php';
@@ -15,10 +15,11 @@ if (!isset($_SESSION['member']) || !isset($_SESSION['member']['id'])) {
 $memberId = $_SESSION['member']['id']; // 從 Session 拿會員ID
 
 $sql = "
-insert into CART(MEMBER_ID,PRODUCT_ID,SIZE,COLOR,QUANTITY)
+insert into CART (MEMBER_ID,PRODUCT_ID,SIZE,COLOR,QUANTITY)
 values (:memberId ,:productID ,:size ,:color,:quantity)
 ON DUPLICATE KEY UPDATE 
   QUANTITY = :quantity
+
 ";
 
 foreach ($cartItems as $item) {   //cartItems裡面是陣列包物件
@@ -31,5 +32,5 @@ foreach ($cartItems as $item) {   //cartItems裡面是陣列包物件
   $pstmt->execute();
 }
 
-  echo json_encode(['success' => true, 'message' => '購物車已同步新增到後端']);
+  echo json_encode(['success' => true, 'message' => '購物車已同步新增到後端'],JSON_UNESCAPED_UNICODE);
 ?>

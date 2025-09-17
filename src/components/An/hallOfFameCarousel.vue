@@ -56,22 +56,21 @@
   
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
   
 const originalDataList = ref([])
 const isPaused = ref(false)
   
-// 取得 public/data/hallOfFame.json
 onMounted(async () => {
     try {
-        const response = await fetch('/json/homepage/hallOfFame.json')
-        if (!response.ok) throw new Error('JSON 載入失敗')
-        originalDataList.value = await response.json()
+        const { data } = await axios.get(import.meta.env.BASE_URL + 'json/homepage/hallOfFame.json')
+        // data 就是已經解析好的 JSON，不需要再 .json()
+        originalDataList.value = data
     } catch (error) {
         console.error('載入 JSON 發生錯誤:', error)
     }
 })
-  
-// 複製兩份資料，讓動畫能無縫循環
+
 const duplicatedDataList = computed(() => [...originalDataList.value])
   
 // 動畫秒數
@@ -176,9 +175,9 @@ const scrollDurationSeconds = 20
     opacity: 0.3;
 }
   
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .carousel-card { 
-        flex: 0 0 220px;
+        flex: 0 0 280px;
     }
 }
  </style>

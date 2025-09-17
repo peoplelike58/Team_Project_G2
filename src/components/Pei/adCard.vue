@@ -1,9 +1,11 @@
 <script setup>
-import { computed } from 'vue'
+import { ref,computed,onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import axios from 'axios';
 
-import trailsJson from '@/assets/json/trails.json';
-const trailsTen = trailsJson.slice(0,10);
+
+// import trailsJson from '@/assets/json/trails.json';
+// const trailsTen = trailsJson.slice(0,10);
 // 只取十座百岳
 // console.log(trailsTen);
 
@@ -13,7 +15,37 @@ const baseUrl = import.meta.env.BASE_URL
 
 // 小工具：把 JSON 裡的相對路徑拼成可用網址
 // 回傳拼好的完整路徑
-const toUrl = (p) => `${baseUrl}${p}`  
+// const toUrl = (p) => `${baseUrl}${p}`  
+
+
+// ----------------PHP---------------------------
+// API 基本路徑
+const API_URL = `${import.meta.env.VITE_AJAX_URL}/filterCard.php`
+const trailsTen = ref([])
+
+const adTrails = async () => {
+  
+  try {
+    const resp = await axios.get(API_URL)
+    trailsTen.value = resp.data.slice(0,10)
+    
+
+    // console.log(trailsTen.value);
+
+
+    
+    
+
+  } catch (err) {
+    console.log(err.message);
+    
+  }
+}
+
+onMounted(() => {                                           
+  adTrails()       
+  
+}) 
 
 
 
@@ -32,61 +64,71 @@ const toUrl = (p) => `${baseUrl}${p}`
           <li 
             class="activity-card" 
             v-for="trail in trailsTen"
-            :key="trail.id"
+            :key="trail.MOUNTAIN_ID"
           >
             <div class="top-content">
               <div>
-                <p class="ac-date">{{ trail.region }}</p>
+                <p class="ac-date">{{ trail.REGION }}</p>
+                
               </div>
 
               <!--:src="trail.img"-->
               <div name="image">
                 <img class="ac-img" 
-                :src="toUrl(trail.img)"
+                :src="`${baseUrl}images/Mountain/${trail.MOUNTAIN_ID}/${trail.IMAGE}`" 
+                :alt="trail.MOUNTAIN_NAME"
                  
                 loading="lazy" />
               </div>
 
               <div name="title">
-                <h3 class="ac-title">{{ trail.name }}</h3>
+                <h3 class="ac-title">{{ trail.MOUNTAIN_NAME }}</h3>
               </div>
 
               <div class="ac-tags">
-                <h3 class="tag">{{ trail.long }}</h3>
-                <h3 class="tag">所花時間{{ trail.time }}</h3>
+                <h3 class="tag">{{ trail.DISTANCE }}</h3>
+                <h3 class="tag">所花時間{{ trail.TIME }}</h3>
               </div>
             </div>
-            <RouterLink class="ac-cta" :to="`/routes/${trail.id}`">查看路線</RouterLink>
+            <RouterLink class="ac-cta" :to="`/routes/${trail.MOUNTAIN_ID}`">查看路線</RouterLink>
           </li>
         </ul>
 
-        <ul>
+                <ul>
           <li 
             class="activity-card" 
             v-for="trail in trailsTen"
-            :key="trail.id"
+            :key="trail.MOUNTAIN_ID"
           >
             <div class="top-content">
               <div>
-                <p class="ac-date">{{ trail.region }}</p>
+                <p class="ac-date">{{ trail.REGION }}</p>
+                
               </div>
 
+              <!--:src="trail.img"-->
               <div name="image">
-                <img class="ac-img" :src="trail.img" loading="lazy" />
+                <img class="ac-img" 
+                :src="`${baseUrl}images/Mountain/${trail.MOUNTAIN_ID}/${trail.IMAGE}`" 
+                :alt="trail.MOUNTAIN_NAME"
+                 
+                loading="lazy" />
               </div>
 
               <div name="title">
-                <h3 class="ac-title">{{ trail.name }}</h3>
+                <h3 class="ac-title">{{ trail.MOUNTAIN_NAME }}</h3>
               </div>
 
               <div class="ac-tags">
-                <h3 class="tag">{{ trail.long }}</h3>
-                <h3 class="tag">所花時間{{ trail.time }}</h3>
+                <h3 class="tag">{{ trail.DISTANCE }}</h3>
+                <h3 class="tag">所花時間{{ trail.TIME }}</h3>
               </div>
             </div>
-            <RouterLink class="ac-cta" :to="`/routes/${trail.id}`">查看路線</RouterLink>
+            <RouterLink class="ac-cta" :to="`/routes/${trail.MOUNTAIN_ID}`">查看路線</RouterLink>
           </li>
         </ul>
+
+
       </div>
     </div>
   </div>
@@ -151,7 +193,7 @@ const toUrl = (p) => `${baseUrl}${p}`
         justify-content: space-between;
 
         width: 100%;
-        max-width: 275px;
+        max-width: 290px;
         
         padding: 20px;
         border: 1px dashed $black-14;
@@ -166,7 +208,7 @@ const toUrl = (p) => `${baseUrl}${p}`
         }
       }
     .activity-card:hover{
-        background-color: $mountain-green;
+        background-color: #77b5d6;
         color: white;
 
         .ac-cta{
@@ -274,7 +316,7 @@ const toUrl = (p) => `${baseUrl}${p}`
   display: flex;
   gap:12px;
   width: max-content; // 關鍵！內容有多寬就滾多遠
-  animation: scroll 45s linear infinite; // 速度可自行調整秒數
+  animation: scroll 80s linear infinite; // 速度可自行調整秒數
 }
 
 .marquee-wrapper:hover .marquee-track {

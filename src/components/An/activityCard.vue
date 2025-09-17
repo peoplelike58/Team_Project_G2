@@ -157,9 +157,9 @@ function handleCtaClick() {
         color: #F7D0D1;
     }
 
-    @media (max-width: 430px) {
+    @media (max-width: 768px) {
         .activity-card {
-            min-width: 280px;
+            min-width: 320px;
         }
     }
 </style>

@@ -146,14 +146,14 @@ const  handleLogin = async () => {
            // 如果登入成功，再去檢查 Session
            return fetch(import.meta.env.VITE_AJAX_URL + '/CheckLogin.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' ,'Accept': 'application/json'},
             credentials: 'include'
           })
           .then(res => res.json())
           .then(sessionData => {
             if(sessionData && sessionData.isLogin){
-              user.login(sessionData.member.email,sessionData.member.name)
-              alert(`登入成功！歡迎 ${email.value}`)/*這個alert前面要加上判斷資料庫匹配成功的條件 */
+              user.login(sessionData.member.email,sessionData.member.name,sessionData.member.id)
+              alert(`登入成功！歡迎 ${email.value}`)
               router.push({ name: 'member-profile' })
             }
           });
@@ -174,7 +174,7 @@ const  handleLogin = async () => {
 
 
 
-//立即登入-按鈕
+//立即登入-按鈕(localstorage版)
 // 「一般用戶登入」可以把登入資訊放在 localStorage 內，登出時要刪除
 // const handleLogin = async () => {
 //   if (email.value && password.value && email.value.includes('@') && password.value.length >= 8 ) {

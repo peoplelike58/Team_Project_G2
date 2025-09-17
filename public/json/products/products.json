@@ -1,0 +1,717 @@
+[
+  {
+    "id": 1,
+    "name": "帳篷輕量版",
+    "price": 3200,
+    "image": "帳篷輕量版.jpg",
+    "gender": "unisex",
+    "description": "輕量化設計，適合登山健行使用，搭建快速。",
+    "category": "帳篷",
+    "color": [
+      "橘",
+      "軍綠",
+      "沙色"
+    ],
+    "size": [
+      "3人",
+      "2人",
+      "4人"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "雙人睡袋加厚保暖",
+    "price": 1800,
+    "image": "雙人睡袋加厚保暖.jpg",
+    "gender": "unisex",
+    "description": "保暖加厚設計，冬季露營也能舒適入睡。",
+    "category": "睡袋",
+    "color": [
+      "藍",
+      "灰",
+      "紅"
+    ],
+    "size": [
+      "L",
+      "XL",
+      "M"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "登山健行背包",
+    "price": 2500,
+    "image": "登山健行背包.jpg",
+    "gender": "unisex",
+    "description": "容量適中，透氣背負系統，長途健行必備。",
+    "category": "登山包",
+    "color": [
+      "鈦灰",
+      "紅",
+      "黑"
+    ],
+    "size": [
+      "120cm",
+      "110cm",
+      "130cm"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "鋁合金登山杖",
+    "price": 750,
+    "image": "鋁合金登山杖.jpg",
+    "gender": "unisex",
+    "description": "輕巧堅固設計，減少膝蓋壓力，適合各種路段。",
+    "category": "登山杖",
+    "color": [
+      "鈦灰",
+      "紅",
+      "黑"
+    ],
+    "size": [
+      "120cm",
+      "130cm",
+      "110cm"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "不鏽鋼保溫水瓶",
+    "price": 600,
+    "image": "不鏽鋼保溫水瓶.png",
+    "gender": "unisex",
+    "description": "保溫長達 12 小時，冷熱飲皆適用。",
+    "category": "水瓶",
+    "color": [
+      "橄欖綠",
+      "海軍藍",
+      "透明"
+    ],
+    "size": [
+      "1L",
+      "500ml",
+      "750ml"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "快乾登山褲",
+    "price": 1200,
+    "image": "快乾登山褲.jpg",
+    "gender": "female",
+    "description": "速乾耐磨布料，透氣舒適，戶外活動佳選。",
+    "category": "登山服飾",
+    "color": [
+      "黑",
+      "紅",
+      "鈦灰"
+    ],
+    "size": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "防風防水外套",
+    "price": 2800,
+    "image": "防風防水外套.jpg",
+    "gender": "female",
+    "description": "三層防護設計，輕便保暖，風雨無懼。",
+    "category": "登山服飾",
+    "color": [
+      "黑",
+      "紅",
+      "鈦灰"
+    ],
+    "size": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "登山頭燈可充電",
+    "price": 950,
+    "image": "登山頭燈可充電.avif",
+    "gender": "unisex",
+    "description": "高亮度 LED 照明，USB 可重複充電。",
+    "category": "登山配件",
+    "color": [
+      "海軍藍",
+      "橄欖綠",
+      "透明"
+    ],
+    "size": [
+      "10W",
+      "8W",
+      "5W"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "戶外折疊椅",
+    "price": 1100,
+    "image": "戶外折疊椅.jpg",
+    "gender": "unisex",
+    "description": "輕巧可摺疊，露營野餐皆適合攜帶。",
+    "category": "登山配件",
+    "color": [
+      "黑",
+      "沙色",
+      "軍綠"
+    ],
+    "size": [
+    ]
+  },
+  {
+    "id": 10,
+    "name": "行動電源",
+    "price": 1280,
+    "image": "行動電源.jpg",
+    "gender": "unisex",
+    "description": "大容量電力，支援快充，戶外長時間使用必備。",
+    "category": "登山配件",
+    "color": [
+      "白色",
+      "沙色",
+      "黑"
+    ],
+    "size": [
+      "15000mAh",
+      "18000mAh",
+      "20000mAh"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "野營卡式爐",
+    "price": 1300,
+    "image": "野營卡式爐.jpg",
+    "gender": "unisex",
+    "description": "輕便火力強，戶外烹煮最佳選擇。",
+    "category": "廚具",
+    "color": [
+      "軍綠",
+      "黑"
+    ],
+    "size": [
+      "2~3人",
+      "4~6人",
+      "6~8人"
+    ]
+  },
+  {
+    "id": 12,
+    "name": "登山護膝支撐帶",
+    "price": 500,
+    "image": "登山護膝支撐帶.jpg",
+    "gender": "unisex",
+    "description": "舒適貼合，減少運動傷害，有效支撐關節。",
+    "category": "登山服飾",
+    "color": [
+      "藍色",
+      "黑",
+      "軍綠"
+    ],
+    "size": [
+      "5~10歲",
+      "10~18歲",
+      "18歲以上"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "防水登山鞋",
+    "price": 3200,
+    "image": "防水登山鞋.jpg",
+    "gender": "male",
+    "description": "鞋底防滑抓地力強，雨天路況也能穩健。",
+    "category": "登山鞋",
+    "color": [
+      "黑",
+      "咖啡",
+      "灰"
+    ],
+    "size": [
+      "41",
+      "42",
+      "40"
+    ]
+  },
+  {
+    "id": 14,
+    "name": "女款透氣登山鞋",
+    "price": 3200,
+    "image": "女款透氣登山鞋.jpg",
+    "gender": "female",
+    "description": "輕量透氣設計，長時間行走舒適不悶熱。",
+    "category": "登山鞋",
+    "color": [
+      "黑",
+      "灰",
+      "咖啡"
+    ],
+    "size": [
+      "36",
+      "37",
+      "38"
+    ]
+  },
+  {
+    "id": 15,
+    "name": "便攜野餐桌",
+    "price": 950,
+    "image": "便攜野餐桌.jpg",
+    "gender": "unisex",
+    "description": "折疊收納方便，戶外聚會餐桌必備。",
+    "category": "廚具",
+    "color": [
+      "砂銀",
+      "鈦灰",
+      "黑"
+    ],
+    "size": [
+      "300*300",
+      "400*400",
+      "300*400"
+    ]
+  },
+  {
+    "id": 16,
+    "name": "防蚊速乾長袖衫",
+    "price": 990,
+    "image": "防蚊速乾長袖衫.jpg",
+    "gender": "female",
+    "description": "輕薄透氣材質，防蚊功能戶外必需。",
+    "category": "登山服飾",
+    "color": [
+      "黑",
+      "灰",
+      "卡其"
+    ],
+    "size": [
+      "L",
+      "M",
+      "S"
+    ]
+  },
+  {
+    "id": 17,
+    "name": "野營吊床",
+    "price": 1400,
+    "image": "野營吊床.jpg",
+    "gender": "unisex",
+    "description": "承重力強，易於安裝，休閒放鬆好選擇。",
+    "category": "睡袋",
+    "color": [
+      "砂銀",
+      "藍白條紋",
+      "黑"
+    ],
+    "size": [
+      "1000lm",
+      "500lm"
+    ]
+  },
+  {
+    "id": 18,
+    "name": "露營掛燈",
+    "price": 700,
+    "image": "露營掛燈.jpg",
+    "gender": "unisex",
+    "description": "暖黃光設計，夜晚露營氛圍最佳拍檔。",
+    "category": "登山配件",
+    "color": [
+      "鈦灰",
+      "砂銀",
+      "黑"
+    ],
+    "size": [
+      "8w",
+      "5w",
+      "10w"
+    ]
+  },
+  {
+    "id": 19,
+    "name": "野營炊具套裝",
+    "price": 2100,
+    "image": "野營炊具套裝.jpg",
+    "gender": "unisex",
+    "description": "鍋具組合齊全，適合多人露營烹煮。",
+    "category": "廚具",
+    "color": [
+      "砂銀",
+      "鈦灰",
+      "黑"
+    ],
+    "size": [
+      "2~3人",
+      "4~6人",
+      "6~8人"
+    ]
+  },
+  {
+    "id": 20,
+    "name": "戶外急救包",
+    "price": 800,
+    "image": "戶外急救包.jpg",
+    "gender": "unisex",
+    "description": "含急救用品，應對戶外突發狀況。",
+    "category": "登山配件",
+    "color": [
+      "紅",
+      "橘"
+    ],
+    "size": [
+      "基礎",
+      "進階"
+    ]
+  },
+  {
+    "id": 21,
+    "name": "便攜濾水壺",
+    "price": 900,
+    "image": "便攜濾水壺.jpg",
+    "gender": "unisex",
+    "description": "內建濾芯，野外取水也能安心飲用。",
+    "category": "水瓶",
+    "color": [
+      "透明",
+      "海軍藍",
+      "橄欖綠"
+    ],
+    "size": [
+      "500ml",
+      "1L",
+      "750ml"
+    ]
+  },
+  {
+    "id": 22,
+    "name": "專業防滑手套",
+    "price": 3600,
+    "image": "專業防滑手套.jpg",
+    "gender": "male",
+    "description": "透氣排汗，專業防滑設計，貼心不磨手。",
+    "category": "登山配件",
+    "color": [
+      "白色",
+      "黑色",
+      "軍綠色"
+    ],
+    "size": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": 23,
+    "name": "輕量登山包",
+    "price": 2800,
+    "image": "輕量登山包.png",
+    "gender": "unisex",
+    "description": "45L 大容量，透氣減壓設計，長途登山首選。",
+    "category": "登山包",
+    "color": ["黑", "藍", "灰"],
+    "size": ["35L", "45L"]
+  },
+  {
+    "id": 24,
+    "name": "輕量羽絨睡袋",
+    "price": 2800,
+    "image": "輕量羽絨睡袋.jpg",
+    "gender": "unisex",
+    "description": "羽絨填充，輕盈保暖，適合冬季登山。",
+    "category": "睡袋",
+    "color": [
+      "紅",
+      "灰",
+      "藍"
+    ],
+    "size": [
+      "M",
+      "L",
+      "XL"
+    ]
+  },
+  {
+    "id": 25,
+    "name": "專業登山包",
+    "price": 3500,
+    "image": "專業登山包.jpg",
+    "gender": "unisex",
+    "description": "高強度防水材質，適合多日縱走行程。",
+    "category": "登山包",
+    "color": [
+      "軍綠", 
+      "深藍", 
+      "黑"
+    ],
+    "size": [
+      "45L", 
+      "55L"
+    ]
+  },
+  {
+    "id": 26,
+    "name": "強光手電筒",
+    "price": 900,
+    "image": "強光手電筒.jpg",
+    "gender": "unisex",
+    "description": "LED 強光設計，續航持久，適合夜間登山。",
+    "category": "手電筒",
+    "color": [
+      "藍",
+      "灰",
+      "紅"
+    ],
+    "size": [
+      "小型", 
+      "中型"
+    ]
+  },
+  {
+    "id": 27,
+    "name": "多功能露營手電筒",
+    "price": 1200,
+    "image": "多功能露營手電筒.jpg",
+    "gender": "unisex",
+    "description": "具備 SOS 閃爍模式與防水功能，戶外必備。",
+    "category": "手電筒",
+    "color": [
+      "黑",
+      "銀",
+      "鈦灰"
+    ],
+    "size": [
+      "中型"
+    ]
+  },
+  {
+    "id": 28,
+    "name": "雙人帳篷",
+    "price": 4200,
+    "image": "雙人帳篷.jpg",
+    "gender": "unisex",
+    "description": "輕量快搭設計，適合雙人露營使用。",
+    "category": "帳篷",
+    "color": [
+      "鈦灰",
+      "軍綠"
+    ],
+    "size": [
+      "3人",
+      "2人"
+    ]
+  },
+  {
+    "id": 29,
+    "name": "防水帳篷",
+    "price": 5800,
+    "image": "防水帳篷.avif",
+    "gender": "unisex",
+    "description": "防風防雨材質，適合家庭或團隊露營。",
+    "category": "帳篷",
+    "color": ["藍", "卡其", "綠"],
+    "size": [
+      "2人",
+      "4人"
+    ]
+  },
+  {
+    "id": 30,
+    "name": "可調節式登山杖",
+    "price": 1100,
+    "image": "可調節式登山杖.jpg",
+    "gender": "unisex",
+    "description": "鋁合金材質，三段式可調節高度，適合不同身高與地形。",
+    "category": "登山杖",
+    "color": ["黑", "藍", "紅"],
+    "size": ["100cm", "120cm", "140cm"]
+  },
+  {
+    "id": 31,
+    "name": "戶外折疊桌椅組",
+    "price": 2400,
+    "image": "戶外折疊桌椅組.jpg",
+    "gender": "unisex",
+    "description": "桌椅組合設計，露營聚會更輕鬆。",
+    "category": "廚具",
+    "color": [
+      "卡其",
+      "黑",
+      "灰"
+    ],
+    "size": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": 32,
+    "name": "輕盈防曬帽",
+    "price": 650,
+    "image": "輕盈防曬帽.png",
+    "gender": "unisex",
+    "description": "頭巾式帽簷設計，遮陽透氣。",
+    "category": "登山服飾",
+    "color": [
+      "卡其",
+      "灰",
+      "黑"
+    ],
+    "size": [
+      "M",
+      "S",
+      "L"
+    ]
+  },
+  {
+    "id": 33,
+    "name": "透氣登山帽",
+    "price": 800,
+    "image": "透氣登山帽.jpg",
+    "gender": "unisex",
+    "description": "寬帽沿設計，提供全方位防曬保護。",
+    "category": "登山服飾",
+    "color": [
+      "卡其",
+      "米白",
+      "藍"
+    ],
+    "size": [
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": 34,
+    "name": "防水登山望遠鏡",
+    "price": 3600,
+    "image": "防水登山望遠鏡.png",
+    "gender": "unisex",
+    "description": "防水抗霧設計，適合潮濕或高山環境。",
+    "category": "望遠鏡",
+    "color": [
+      "深藍", 
+      "黑"
+    ],
+    "size": [
+      "中型", 
+      "大型"
+    ]
+  },
+  {
+    "id": 35,
+    "name": "高倍數望遠鏡",
+    "price": 3200,
+    "image": "高倍數望遠鏡.png",
+    "gender": "unisex",
+    "description": "10x42 高倍數放大，遠距觀察清晰。",
+    "category": "望遠鏡",
+    "color": [
+      "海軍藍",
+      "橄欖綠"
+    ],
+    "size": [
+      "小型", 
+      "中型"
+    ]
+  },
+  {
+    "id": 36,
+    "name": "專業登山指南針",
+    "price": 600,
+    "image": "專業登山指南針.jpg",
+    "gender": "unisex",
+    "description": "高精度磁針設計，快速指北，戶外探險必備。",
+    "category": "登山配件",
+    "color": [
+      "橘",
+      "黑"
+    ],
+    "size": [
+      "小型", 
+      "中型"
+    ]
+  },
+  {
+    "id": 37,
+    "name": "登山護手套",
+    "price": 500,
+    "image": "登山護手套.jpg",
+    "gender": "unisex",
+    "description": "防滑耐磨，長途健行保護雙手。",
+    "category": "登山配件",
+    "color": [
+      "深藍",
+      "黑",
+      "軍綠"
+    ],
+    "size": [
+      "35L",
+      "55L",
+      "45L"
+    ]
+  },
+  {
+    "id": 38,
+    "name": "時尚型登山墨鏡",
+    "price": 350,
+    "image": "時尚型登山墨鏡.png",
+    "gender": "female",
+    "description": "輕量化設計，長時間配戴舒適，時尚又適合戶外冒險。",
+    "category": "登山服飾",
+    "color": [
+      "深藍",
+       "紅", 
+       "黑"
+    ],
+    "size": [
+      "均碼"
+    ]
+  },
+  {
+    "id": 39,
+    "name": "戶外行動冰箱",
+    "price": 4200,
+    "image": "戶外行動冰箱.jpg",
+    "gender": "unisex",
+    "description": "保冷持久，適合長時間露營使用。",
+    "category": "廚具",
+    "color": [
+      "紅",
+      "深藍",
+      "黑"
+    ],
+    "size": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": 40,
+    "name": "偏光登山墨鏡",
+    "price": 1200,
+    "image": "偏光登山墨鏡.jpg",
+    "gender": "unisex",
+    "description": "抗 UV、防眩光偏光鏡片，適合登山與戶外活。",
+    "category": "登山服飾",
+    "color": [
+      "黑", 
+      "銀", 
+      "霧灰"
+    ],
+    "size": [
+      "均碼"
+    ]
+  }
+]

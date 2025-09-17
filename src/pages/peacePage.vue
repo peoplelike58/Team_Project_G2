@@ -1,51 +1,64 @@
 <template>
-<NavMenu/>
+  <NavMenu/>
+
   <div class="wrapper">
-    <!-- 遊戲 -->
+    <!-- 遊戲區塊 -->
     <div class="game">
-      <br>
-      <p>Comming Soon!!!</p>
-      <br>
-      <p>遊戲難產中</p>
+      <GamePage @fail="handleGameFail" />
     </div>
 
-    <!-- 按鈕列表，由 tabs 做陣列動態產生 -->
+    <!-- 按鈕列表 -->
     <div class="iconList">
       <button
         v-for="tab in tabs"
         :key="tab.key"
-        :class="{ active: tab.key === activeTab }"
-        @click="selectTab(tab.key)"
-        aria-pressed="tab.key === activeTab"
+        :class="{ 
+          'active': tab.key === currentSelectedIcon && !isMobileView,
+          'icon-hidden': tab.key === currentSelectedIcon && isMobileView
+        }"
+        @click="handleIconClick(tab.key)"
+        aria-pressed="tab.key === currentSelectedIcon"
       >
         <img :src="tab.icon" :alt="tab.label" />
         <p>{{ tab.label }}</p>
       </button>
     </div>
 
-    <!-- 下方內容區 -->
+    <!-- 手機版被選中的 icon -->
+    <div v-if="isMobileView && currentSelectedIcon" class="selected-icon-area">
+      <button 
+        class="selected-icon"
+        @click="handleIconClick(currentSelectedIcon)"
+      >
+        <img :src="getSelectedIconData.icon" :alt="getSelectedIconData.label" />
+        <p>{{ getSelectedIconData.label }}</p>
+      </button>
+    </div>
+
+    <!-- 內容區塊 -->
     <div class="content">
-      <!-- 使用v-if 有陣列才顯示 -->
-      <ul v-if="activeTabData.length">
-        <li v-for="(line, index) in activeTabData" :key="index">
+      <ul v-if="currentIconContent.length">
+        <li v-for="(line, index) in currentIconContent" :key="index">
           {{ line }}
         </li>
       </ul>
     </div>
   </div>
-<Footer/>
+
+  <Footer/>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import Woni   from '@/assets/images/peaceCard/woniPhotoroom.png'
-import Back   from '@/assets/images/peaceCard/back.png'
-import People from '@/assets/images/peaceCard/people.png'
-import Info   from '@/assets/images/peaceCard/info.png'
-import NavMenu from '@/components/An/navMenu.vue'
-import Footer from '@/components/An/footer.vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import NavMenu  from '@/components/An/navMenu.vue'
+import Footer   from '@/components/An/footer.vue'
+import GamePage from './gamePage.vue'
+import Woni     from '@/assets/images/peaceCard/woniPhotoroom.png'
+import People   from '@/assets/images/peaceCard/people.png'
+import Info     from '@/assets/images/peaceCard/info.png'
+import Back     from '@/assets/images/peaceCard/back.png'
 
-// 1. 定義 tabs 時直接把 content 變陣列，每項都是一句
+// 四個 tab，content 填入原始資料
 const tabs = [
   {
     key: 'woni',
@@ -114,22 +127,46 @@ const tabs = [
       '登山口、林道施工封閉資訊（如能高越嶺道）',
       '政府發布山區限時封閉公告彙整（如防疫、災後重建）'
     ]
-  },
+  }
 ]
 
-// 預設為第一筆 key
-const activeTab = ref(tabs[0]?.key || '')
+const currentSelectedIcon = ref(tabs[0].key)
+const isMobileView = ref(false)
 
-// 用 computed 直接回傳 content 陣列，如果找不到則回空陣列
-const activeTabData = computed(() => {
-  const tab = tabs.find(t => t.key === activeTab.value)
-  return Array.isArray(tab?.content) ? tab.content : []
+function handleIconClick(key) {
+  currentSelectedIcon.value = key
+}
+
+function handleGameFail(level) {
+  const idx = level - 1
+  if (idx >= 0 && idx < tabs.length) {
+    currentSelectedIcon.value = tabs[idx].key
+    const el = document.querySelector('.content')
+    el && el.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
+const currentIconContent = computed(() => {
+  const tab = tabs.find(t => t.key === currentSelectedIcon.value)
+  return tab ? tab.content : []
 })
 
-// 切換 tab
-function selectTab(key) {
-  activeTab.value = key
+const getSelectedIconData = computed(() => {
+  return tabs.find(t => t.key === currentSelectedIcon.value) || {}
+})
+
+function checkScreenSize() {
+  isMobileView.value = window.innerWidth <= 768
 }
+
+onMounted(() => {
+  checkScreenSize()
+  window.addEventListener('resize', checkScreenSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScreenSize)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -139,68 +176,165 @@ function selectTab(key) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 20px;
 }
 
 .game {
-  width: 1400px;
-  height: 550px;
-  border: 1px solid red;
+  width: 100%;
+  max-width: 1000px;
+  height: 400px;
   text-align: center;
-  font-size: 100px;
-  margin-bottom: 90px;
+  margin-bottom: 250px;
+
+  @media (max-width: 1200px) {
+    display: none;
+  }
 }
 
 .iconList {
   display: flex;
+  justify-content: center;
+  gap: 90px;
+  width: 100%;
 
   button {
     border: none;
-    margin-left: 30px;
-    cursor: pointer;
     background: transparent;
-
-    &:first-child {
-      margin-left: 0;
-    }
+    cursor: pointer;
+    transition: all 0.3s ease;
 
     img {
       width: 142px;
       height: 142px;
-      object-fit: cover;
       margin-bottom: 17px;
+      transition: all 0.3s ease;
     }
 
     p {
       font-size: 24px;
+      transition: color 0.3s ease;
     }
 
     &.active {
       transform: scale(1.05);
+
       p {
         color: #007bff;
       }
     }
+
+    &.icon-hidden {
+      @media (max-width: 768px) {
+        opacity: 0;
+        visibility: hidden;
+        width: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+    }
+
+    @media (max-width: 768px) {
+      img {
+        width: 80px;
+        height: 80px;
+      }
+
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 15px;
+    padding: 0 10px;
+  }
+}
+
+.selected-icon-area {
+  display: none;
+  width: 100%;
+  justify-content: center;
+  margin: 30px 0;
+  animation: slideDown 0.3s ease;
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+
+  .selected-icon {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transform: scale(1.3);
+    animation: scaleUp 0.3s ease;
+
+    img {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+
+    p {
+      font-size: 20px;
+      color: #007bff;
+      font-weight: bold;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.3);
   }
 }
 
 .content {
-  margin-top: 40px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 1200px;
+  text-align: center;
 
   ul {
     list-style: inside decimal;
-    padding: 0;
-    margin-top: 60px;
+    padding: 0 20px;
+    margin-top: 20px;
 
     li {
       margin-bottom: 0.5rem;
       line-height: 1.6;
       font-size: 20px;
+      overflow-wrap: break-word;
+
+      @media (max-width: 768px) {
+        font-size: 16px;
+        line-height: 1.8;
+      }
     }
   }
 
-  p {
-    font-size: 20px;
-    color: #888;
+  @media (max-width: 1200px) {
+    margin-top: 60px;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 0;
   }
 }
 </style>

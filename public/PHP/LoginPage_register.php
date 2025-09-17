@@ -12,7 +12,7 @@ if (!verifyRecaptcha($member['recaptcha'])){
     echo json_encode([
         "sucess" => false,
          "message" => "請先通過驗證"
-    ]);
+    ],JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -28,7 +28,7 @@ if($checkEmail){
 }else{
     $sql = "
     insert into MEMBER(EMAIL,NAME,PW,PHONE,CREATED_AT,STATUS)
-    values(:email,:username ,:password ,:phone,now(),'normal')
+    values(:email,:username ,:password ,:phone,now(),'啟用')
     ";
 
     $pstmt = $pdo->prepare($sql);
@@ -43,4 +43,4 @@ if($checkEmail){
 }
 
 
-echo json_encode( $respBody ) ;
+echo json_encode( $respBody ,JSON_UNESCAPED_UNICODE) ;

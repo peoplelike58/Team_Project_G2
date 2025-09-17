@@ -13,5 +13,11 @@ $dsn = "mysql:host=".$db_host.";dbname=".$db_select.";charset=utf8";
 //建立PDO物件，並放入指定的相關資料
 $pdo = new PDO($dsn, $db_user, $db_pass);
 
+// 若前端在 http://localhost:5173
+header('Access-Control-Allow-Origin: http://localhost:5173'); // ⚠️ 不能用 *
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Content-Type: application/json; charset=utf-8');
 
 ?>

@@ -51,7 +51,7 @@
             const trackElement = reelElement.querySelector('.track')
   
             const loops = 1
-            const isMobile = window.matchMedia('(max-width: 430px)').matches
+            const isMobile = window.matchMedia('(max-width: 768px)').matches
             const height = isMobile ? 36 : 72
             const duration = 1.7
             const distance = -((loops * 10) + targetNumber) * height
@@ -102,7 +102,7 @@
         line-height: 72px;
     }
 
-    @media (max-width: 430px){
+    @media (max-width: 768px){
         .reel {
             height: 48px;
         }

@@ -1,12 +1,62 @@
 <script setup>
-import { ref,computed } from 'vue'
+import { ref,computed,onMounted } from 'vue'
 import { useRouter,useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
-import Products from '@/assets/json/products.json'
+// import Products from '@/assets/json/products.json'
 
 const CartStore = useCartStore()
 const router = useRouter()
 const route = useRoute()
+
+// 響應式變數，存放商品資料
+// const products = ref([])
+
+
+// // 載入資料的函式
+// const loadProducts = async () => {
+//   try {
+//     // [修改] fetch 從 public/products.json 抓資料
+//     const res = await fetch('/json/products/products.json')
+//     if (!res.ok) throw new Error('載入失敗')
+
+//     // [修改] 將 JSON 字串轉成 JS 物件
+//     const data = await res.json()
+//     products.value = data
+//   } catch (err) {
+//     console.error('讀取商品資料錯誤:', err)
+//   }
+// }
+
+const products = ref([])
+
+// 🟢 載入資料的函式
+const loadProducts = async () => {
+  try {
+    // [修改] fetch 從 public/products.json 抓資料改成實際的API端點
+    const res = await fetch(import.meta.env.VITE_AJAX_URL + '/ShopPage_getProducts.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({})
+    })
+    // const res = await fetch('/json/products/products.json')
+    if (!res.ok) throw new Error('載入失敗')
+    // throw new Error(`HTTP error! status: ${res.status}`)
+
+    // [修改] 將 JSON 字串轉成 JS 物件
+    const data = await res.json()
+    console.log(data)
+    products.value = data.products
+  } catch (err) {
+    console.error('讀取商品資料錯誤:', err)
+  }
+}
+
+// 🟢 元件掛載完成後自動執行
+onMounted(() => {
+  loadProducts()
+})
+
 
 
 
@@ -63,7 +113,7 @@ const props = defineProps({ // 用 props.id 來拿商品 id,在router裡有props
 })
 const product = computed(() => {                     
   const id = Number(route.params.id)                 // 參數是字串 → 轉數字
-  return Products.find(p => Number(p.id) === id)     // 找到對應商品,find是
+  return products.value.find(p => Number(p.id) === id)     // 找到對應商品,find是JavaScript 陣列的方法,會「逐一檢查陣列裡的元素」，找到第一個符合條件的元素就回傳,array.find( callback(element, index, array) )
 })
 
 //加入購物車
@@ -136,7 +186,7 @@ const buyRightnow = async () => {
         <div class="product_show">
             <div class="product_image">
                 <!-- <img src="@/assets/images/Products/products/望遠鏡_3.png" alt="折疊雙筒望遠鏡"/> -->
-                 <img :src="product.image" :alt="product.name">
+                 <img :src="`/images/Products/products/${product.image}`" :alt="product.name">
             </div> 
           <!-- 標籤 -->
           <div class="product_tags">
@@ -284,6 +334,9 @@ const buyRightnow = async () => {
     flex: 0 0 400px;
     .product_image{
         @include product_card_img(400px,400px,16px);
+        & > img{
+          height: 100%;
+        };
     }
     .product_tags{
         display: flex;

@@ -8,7 +8,7 @@
                 <h3 class="left-title-m">INFORMATION</h3>
             </div>
             <ul class="news-list">
-                <li v-for="(item, index) in newsItems" :key="`news-${index}`" class="news-row">
+                <li v-for="(item, index) in news" :key="item.id ?? `news-${index}`" class="news-row">
                     <div class="date-tag">
                         <time class="news-date">{{ item.date }}</time>
                         <div class="news-tag">{{ item.tag }}</div>
@@ -20,9 +20,9 @@
                 </li>
             </ul>
             <div class="view-box">
-                <a href="#" class="view-all" @click.prevent>
+                <RouterLink to="/allnewspage" class="view-all" @click.prevent>
                     查看全部消息
-                </a>
+                </RouterLink>
                 <button class="diag-btn" aria-label="open">
                     <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
                         <line x1="5" y1="19" x2="18" y2="6" class="shaft"/>
@@ -62,47 +62,93 @@
 </template>
   
 <script setup>
-import {ref, onMounted} from 'vue'
+import { ref, onMounted, onBeforeUnmount, onActivated, onDeactivated, nextTick } from 'vue'
+import axios from 'axios'
 import gsap from 'gsap'
 import {ScrollTrigger} from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
+let ctx // gsap context
+let inited = false // 是否已初始化 GSAP
 
 const boardWrapRef = ref(null)
 const listColumnRef = ref(null)
 const badgeColumnRef = ref(null)
   
-// demo data
-const newsItems = [
-    { date: '2025.08.23', tag: '路線旅遊',   title: '手作家山步道，微笑山線由你守護' },
-    { date: '2025.08.17', tag: '新聞時事', title: '受豪雨影響步道0.55k崩塌，北大武山步道暫停開放' },
-    { date: '2025.08.14', tag: '登山知識',   title: '規劃得好，山就走得順 - 行程規劃指南' },
-    { date: '2025.08.03', tag: '路線旅遊',   title: '淡蘭北路：從車站出發，山海美景與小吃全收錄' },
-    { date: '2025.07.28', tag: '登山知識',   title: '新手不越級，行程這樣安排才安全' },
-]
-  
-// 視差滾動控制
-onMounted(() => {
-    const timeline = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-            trigger: boardWrapRef.value,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-        },
+// 遠端資料狀態
+const news = ref([])          // 渲染來源
+const loading = ref(false)
+const error = ref('')
+ 
+// 假資料模式：/public/news.json；之後接後端把 USE_FAKE 改 false，API_ENDPOINT 換掉即可
+const USE_FAKE = true
+const API_ENDPOINT = USE_FAKE ? import.meta.env.BASE_URL + 'json/homepage/news.json' : '/api/news'
+
+async function fetchNews() {
+    if (news.value.length) return
+    loading.value = true
+    error.value = ''
+    try {
+        const { data } = await axios.get(API_ENDPOINT)
+        // 假資料模式：data 為「純陣列」
+        // 若後端回傳 { items: [...], total: 123 }，可改成：news.value = data.items ?? []
+        news.value = Array.isArray(data) ? data : (data.items ?? [])
+    } catch (e) {
+        error.value = e?.message ?? '載入失敗'
+    } finally {
+        loading.value = false
+    }
+}
+
+function initGsap() {
+    if (inited) return
+    ctx = gsap.context(() => {
+        const timeline = gsap.timeline({
+            defaults: { ease: 'none' },
+            scrollTrigger: {
+                trigger: boardWrapRef.value,
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true,
+                invalidateOnRefresh: true, // 高度變動時自動重算
+            },
+        })
+        if (listColumnRef.value) timeline.to(listColumnRef.value, { yPercent: -10 }, 0)
+        if (badgeColumnRef.value) timeline.to(badgeColumnRef.value, { yPercent: -100 }, 0)
     })
+    inited = true
+    requestAnimationFrame(() => ScrollTrigger.refresh())
+}
+
+function destroyGsap() {
+    ctx?.revert()
+    ctx = null
+    inited = false
+}
   
-    timeline
-        // left
-        .to(listColumnRef.value, { yPercent: -10 }, 0)
-        // right
-        .to(badgeColumnRef.value, { yPercent: -100 }, 0)
-    })
+onMounted(async () => { await fetchNews()     // 先拿資料
+    await nextTick()      // 等 DOM 渲染完成
+    initGsap()            // 再初始化 GSAP
+})
+
+onBeforeUnmount(() => {
+    destroyGsap()
+})
+
+onActivated(async () => {  // 回到頁面：資料已在（因為上面做了快取），只要刷新觸發點
+    await nextTick()
+    initGsap()
+    ScrollTrigger.refresh()
+})
+
+onDeactivated(() => {
+    // 被切走（但未銷毀）也要還原，避免重複初始化
+    destroyGsap()
+})
 </script>
   
 <style scoped lang="scss">
-@import '../../assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
 
 /* ---- Layout ---- */
 .board-wrap {
@@ -259,7 +305,7 @@ onMounted(() => {
 }
   
 .badge-text {
-    font: $black 32px 'Inter';
+    font: $bold 32px 'Inter';
     letter-spacing: 0.24rem;
     text-transform: uppercase;
     fill: #24936E;
@@ -345,13 +391,16 @@ onMounted(() => {
 }
 
 /* ---- RWD ---- */
-@media (max-width: 430px) {
+@media (max-width: 768px) {
     .board-wrap {
         flex-direction: column;
         align-items: stretch;
 
         padding: 64px 24px;
         box-sizing: border-box;
+    }
+    .list-column {
+        max-width: none;
     }
     .news-row {
         padding: 20px 8px;
