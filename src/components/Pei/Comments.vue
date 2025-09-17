@@ -518,6 +518,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
           align-items: center;
           height: 40px;
           margin-top: auto;
+          margin-left: auto;
           cursor: pointer;
           background-color: transparent;
           border: none;
