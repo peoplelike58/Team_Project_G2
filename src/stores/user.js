@@ -1,5 +1,7 @@
 // stores/use.js-用戶相關：登入狀態、個人資料
 /* options API */
+import axios from 'axios'
+const API_BASE = import.meta.env.VITE_AJAX_URL
 import { defineStore } from 'pinia'           // 匯入定義 store 的 API
 export const useUserStore = defineStore(      // 定義一個「使用者」store，並輸出成 hook 函式
   'user',                                     // 這個 store 的唯一 id（字串）；之後 DevTools/插件會用到

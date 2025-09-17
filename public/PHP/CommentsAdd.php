@@ -1,15 +1,15 @@
 <?php
 
-header('Access-Control-Allow-Credentials: true');
-header('Vary: Origin'); // 避免快取混淆
+// header('Access-Control-Allow-Credentials: true');
+// header('Vary: Origin'); // 避免快取混淆
 
-// 處理預檢請求（OPTIONS）
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-  header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-  header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
-  http_response_code(204);
-  exit;
-}
+// // 處理預檢請求（OPTIONS）
+// if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+//   header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+//   header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
+//   http_response_code(204);
+//   exit;
+// }
 // ===== Session：確認登入 =====
 session_start();
 $memberId = 0;
