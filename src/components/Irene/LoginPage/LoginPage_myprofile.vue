@@ -16,14 +16,18 @@
           <label class="form-label">頭像</label>
           <div class="avatar-upload">
             <div class="avatar-preview">
-              <img :src="profileData.avatar || '/images/Products/default-avatar.jpg'" alt="頭像" />
+              <img :src="user.profile.avatarUrl|| '/images/Products/default-avatar.jpg'" alt="頭像" />
+            </div>
+            <div v-if="user.loading.uploadingAvatar" class="upload-loading">
+              上傳中...
             </div>
             <button 
               v-if="isEditing" 
               class="upload-btn" 
               @click="handleAvatarUpload"
+              :disabled="user.loading.uploadingAvatar"
             >
-              上傳檔案
+              {{ user.loading.uploadingAvatar ? '上傳中...' : '上傳檔案' }}
             </button>
           </div>
         </div>
@@ -94,7 +98,10 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
 
+
+const user = useUserStore()
 // 編輯模式狀態
 const isEditing = ref(false)
 
@@ -115,23 +122,96 @@ const toggleEditMode = () => {
 // 處理頭像上傳
 const handleAvatarUpload = () => {
   // 創建文件輸入元素
-  const input = document.createElement('input')
-  input.type = 'file'
-  input.accept = 'image/*'
+  const input = document.createElement('input')       //用 DOM（文件物件模型）動態建立一個 <input> HTML 元素。
+  input.type = 'file'                                 //把這個 <input> 的型別設成 file，讓使用者可以選檔案。
+  input.accept = 'image/*'                            //限制可選檔案的 MIME 類型為圖片（image/* 表示各種圖片格式都可）
   
-  input.onchange = (event) => {
-    const file = event.target.files[0]
+  input.onchange = async (event) => {                       //當使用者選擇檔案後會觸發 change 事件；這裡註冊事件處理器，參數 event 裝著事件資訊。
+    const file = event.target.files[0]                //從事件來源的檔案清單（files 是一個 FileList）抓第一個檔案物件（File）。
     if (file) {
       // 這裡可以加入圖片上傳邏輯
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        profileData.avatar = e.target.result
+      const reader = new FileReader()                  //建立 FileReader（瀏覽器內建的檔案讀取器，用來把本機選到的檔案讀成可用的資料）
+      reader.onload = (e) => {                         //當 FileReader 讀取完成會觸發 load 事件；這裡註冊完成後要做的事。
+        profileData.avatar = e.target.result           //把讀到的結果（通常是 Data URL（資料網址，如 data:image/png;base64,...））指定給 profileData.avatar，前端就能立刻顯示預覽。 
       }
-      reader.readAsDataURL(file)
+      reader.readAsDataURL(file)                       // 將檔案轉為 base64 格式預覽,叫 FileReader 以 Data URL 的形式把檔案讀進來（適合做圖片預覽）。
+
+      await uploadAvatar(file)
     }
   }
   
-  input.click()
+  input.click()                                        //程式主動觸發這個隱形的 <input type="file"> 的點擊，跳出系統檔案選擇視窗。
+}
+
+// 上傳頭像到伺服器的函式
+const uploadAvatar = async (file) => {
+  // 檢查是否已登入
+  if (!user.isLoggedIn || !user.id) {
+    alert('請先登入')
+    return
+  }
+
+  // 設定上傳中狀態
+  user.loading.uploadingAvatar = true
+
+   try {
+    // 建立 FormData 物件來傳送檔案
+    const formData = new FormData()
+    formData.append('avatar', file)           // 添加檔案
+    formData.append('member_id', user.id)     // 添加會員 ID
+
+    // 發送上傳請求
+    const response = await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_uploadAvatar.php', {
+      method: 'POST',
+      credentials: 'include',    // 包含 cookie
+      body: formData            // 不設定 Content-Type，讓瀏覽器自動設定
+    })
+
+    const result = await response.json()
+
+    if (result.success) {
+      // 上傳成功後，更新資料庫中的頭像檔名
+      await updateAvatarInDatabase(result.data.filename)
+      console.log(result.data.filename)
+      
+      // 更新 Pinia store 中的頭像狀態
+      user.updateAvatar(result.data.filename)
+      
+      alert('頭像上傳成功！')
+    } else {
+      throw new Error(result.message || '上傳失敗')
+    }
+  } catch (error) {
+    console.error('頭像上傳失敗:', error)
+    alert('頭像上傳失敗：' + error.message)
+  } finally {
+    // 結束上傳狀態
+    user.loading.uploadingAvatar = false
+  }
+
+}
+
+// 更新資料庫中的頭像檔名
+const updateAvatarInDatabase = async (filename) => {
+  try {
+    const response = await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_updateAvatarDB.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ 
+        member_id: user.id,
+        avatar_filename: filename 
+      })
+    })
+
+    const result = await response.json()
+    if (!result.success) {
+      throw new Error(result.message || '更新資料庫失敗')
+    }
+  } catch (error) {
+    console.error('更新資料庫頭像失敗:', error)
+    throw error  // 重新拋出錯誤，讓上層處理
+  }
 }
 
 // 儲存個人資料
@@ -156,7 +236,8 @@ const saveProfile = async () => {
     // await new Promise(resolve => setTimeout(resolve, 1000))
     if(data.success){
       console.log('儲存個人資料:', profileData)
-      isEditing.value = false      // 關閉編輯模式
+      isEditing.value = false                       // 關閉編輯模式
+      user.updateProfile(profileData)               // 更新 Pinia store 中的個人資料
       alert('個人資料更新成功！')
     }else {
       // 處理伺服器回傳的錯誤訊息
@@ -195,7 +276,14 @@ const getProfile = async () => {
       profileData.address = profile.ADDRESS || ''
       profileData.about = profile.ABOUT_ME || ''  // PHP 是 ABOUTME
       console.log('成功取得的儲存個人資料:', profileData)
+       
+      if (profile.IMAGE) {                       // 處理頭像資料
+        profileData.avatar = profile.IMAGE
+        // 更新 Pinia store 中的頭像狀態
+        user.updateAvatar(profile.IMAGE)
+      }
       isEditing.value = false
+      console.log(user.profile.avatarUrl)
     }else {
       console.error('取得資料失敗:', data.message)
       alert(data.message || '無法取得個人資料')

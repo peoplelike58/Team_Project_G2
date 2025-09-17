@@ -17,14 +17,17 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
         birthday: null,
         phone: null,
         address: null,
-        aboutme: null
+        aboutme: null,
+        avatar: null,          // 頭像檔名（從資料庫讀取）
+        avatarUrl: null        // 完整的頭像 URL 路徑
       },
     
       // 載入狀態
       loading: {
         profile: false,
         updating: false,
-        loginChecking: false  // 檢查登入狀態的載入狀態
+        loginChecking: false,  // 檢查登入狀態的載入狀態
+        uploadingAvatar: false //頭像上傳載入狀態
       }
     }),
 
@@ -73,6 +76,8 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
       this.name  = name
       this.id = id
       this.isLoggedIn = true
+      this.profile.avatar = null
+      this.profile.avatarUrl = null
       console.log('登入成功，用戶ID:', this.id)
       /* 把狀態寫回 localStorage，刷新不會掉 */            
       // localStorage.setItem('email', email)                           
@@ -84,10 +89,28 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
         this.id = null
         this.isLoggedIn = false
         this.loading.loginChecking = false 
+        this.profile.avatar = null
+        this.profile.avatarUrl = null
         // this.clearProfile()
         /* 同步清掉 localStorage */                           
         // localStorage.removeItem('email')                                
         // localStorage.removeItem('userRole')                             
+      },
+      // 更新個人資料（包含頭像）
+      updateProfile(profileData) {
+        // 更新個人資料狀態
+        Object.assign(this.profile, profileData)
+        
+        // 如果有頭像檔名，生成完整 URL
+        if (this.profile.avatar) {
+          this.profile.avatarUrl = `/uploads/avatars/${this.profile.avatar}`
+        }
+      },
+
+      // 更新頭像檔名
+      updateAvatar(filename) {
+        this.profile.avatar = filename
+        this.profile.avatarUrl = `/uploads/avatars/${filename}`
       }
     },              
   }
