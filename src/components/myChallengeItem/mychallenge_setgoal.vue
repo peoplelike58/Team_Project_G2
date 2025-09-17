@@ -33,7 +33,7 @@ import axios from 'axios'
         }
     })
 
-    const emit = defineEmits(['close', 'updateGoal'])
+    const emit = defineEmits(['close', 'updateGoal', 'refreshData'])
 
     const closeModel = () => {
         emit('close')
@@ -75,27 +75,29 @@ import axios from 'axios'
             const response = await axios.post(
                 API_URL,
                 jsonData,
-                // {
-                // withCredentials: true,  // ← 讓 session 可以運作
-                // headers: {
-                //     'Content-Type': 'application/json'  // 重要！
-                // }
-                // }
+                {
+                withCredentials: true,  // ← 讓 session 可以運作
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                }
             )
 
             if (response.data.success) {
-                // 將新的目標值傳給父組件
-                const updatedGoal = props.item.kind === '大百岳' 
-                                    ? response.data.data.big_target 
-                                    : response.data.data.small_target
+                console.log('後端回應:', response.data) // 除錯
                 
-                emit('updateGoal', updatedGoal)
+                emit('refreshData')
+                emit('close')
 
             } else {
-                alert('設定失敗：' + response.data.message)
+                alert(response.data.message)
+                emit('close')
             }
         }catch (error) {
             console.error('API 錯誤:', error)
+            console.error('錯誤詳情:', error.response?.data)
+            console.error('狀態碼:', error.response?.status)
+            console.error('完整錯誤:', error.message)
             alert('網路錯誤，請稍後再試')
         }
         
@@ -180,34 +182,17 @@ import axios from 'axios'
                     }
                 }
             }
-        }
-    }
 
-    @media screen and (max-width: 1000px) {
-        
-        .modalOverlay{
-
-            .goalsetModal{
+            @media screen and (max-width: 1000px) {
                 width: 60%;
-                // height: 600px;
                 padding: 60px;
-                
+            }
+
+            @media screen and (max-width: 768px) {
+                width: 80%;
+                padding: 60px 20px;
             }
         }
-
     }
 
-    @media screen and (max-width: 430px) {
-        
-        .modalOverlay{
-
-            .goalsetModal{
-                width: 60%;
-                // height: 600px;
-                padding: 60px;
-                
-            }
-        }
-
-    }
 </style>

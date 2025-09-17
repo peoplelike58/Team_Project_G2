@@ -5,11 +5,6 @@
     include 'conn.php'; 
 
     //---------------------------------------------------
-    if (!isset($_SESSION["memberID"])) {
-        $_SESSION["memberID"] = 1;  // 測試用的固定用戶ID
-    }
-
-    $MEMBER_ID = $_SESSION["memberID"];
 
     // // 1. 取得所有山峰的基本資料
     $sql = "SELECT MOUNTAIN_ID, MOUNTAIN_NAME, type, LATITUDE, LONGITUDE
@@ -22,19 +17,33 @@
     $allMountains = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
     // 2. 取得該用戶已攀登的山峰
-    $climbedSql = "SELECT DISTINCT M.MOUNTAIN_ID, M.MOUNTAIN_NAME 
-                   FROM MOUNTAIN M 
-                   JOIN FOOT F ON M.MOUNTAIN_ID = F.MOUNTAIN_ID 
-                   WHERE F.MEMBER_ID = ?";
-    
-    $climbedStmt = $pdo->prepare($climbedSql);
-    $climbedStmt->execute([$MEMBER_ID]);
-    $climbed = $climbedStmt->fetchAll(PDO::FETCH_COLUMN);
+    // 檢查是否已登入
+    $climbed = [];
+    $isLoggedIn = false;
+    $MEMBER_ID = null;
+
+    if (isset($_SESSION['member']['id']) && !empty($_SESSION['member']['id'])) {
+        
+        $isLoggedIn = true;
+        $MEMBER_ID = $_SESSION['member']['id'];
+
+        $climbedSql = "SELECT DISTINCT M.MOUNTAIN_ID, M.MOUNTAIN_NAME 
+                       FROM MOUNTAIN M 
+                       JOIN FOOT F ON M.MOUNTAIN_ID = F.MOUNTAIN_ID 
+                       WHERE F.MEMBER_ID = ?";
+
+        $climbedStmt = $pdo->prepare($climbedSql);
+        $climbedStmt->execute([$MEMBER_ID]);
+        $climbed = $climbedStmt->fetchAll(PDO::FETCH_COLUMN);
+    }
 
     // 3. 組合結果
     $result = [
+        'success' => true,
         'mountains' => $allMountains,
-        'climbed' => $climbed
+        'climbed' => $climbed,
+        'isLoggedIn' => $isLoggedIn,
+        'member_id' => $MEMBER_ID,
     ];
     
     echo json_encode($result, JSON_UNESCAPED_UNICODE);

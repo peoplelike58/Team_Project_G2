@@ -54,14 +54,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRecordStore } from "@/stores/recordStore"
+// import { useRecordStore } from "@/stores/recordStore"
 import axios from 'axios'
 
     const height = ref(0)
     const kilo = ref(0)
     const time = ref(0)
 
-    const memberId = ref(1)
     const mountainId = ref(null)
 
     // let mountain = ref({name: '玉山', kind: '大百岳'})
@@ -240,39 +239,38 @@ import axios from 'axios'
 
         try {
             // 準備要發送給 PHP 的資料
-            const formData = new FormData()
-            formData.append('member_id', memberId.value)
-            formData.append('mountain_id', mountainId.value || 1) // 暫時使用 1，需要查詢實際 ID
-            formData.append('height', height.value)
-            formData.append('distance', kilo.value)
-            formData.append('duration', time.value)
-            formData.append('content', thought.value)
-
+            const jsonData = {
+                mountain_id: mountainId.value,
+                height: height.value,
+                distance: kilo.value,
+                duration: time.value,
+                content: thought.value
+            }
             // 發送 POST 請求到 PHP
             const response = await axios.post(
             API_URL_1,
-            formData,
-            // {
-            //     withCredentials: true  // ← 讓 session 可以運作
-            // }
+            jsonData,
+            {
+                withCredentials: true  // ← 讓 session 可以運作
+            }
             )
 
             console.log('儲存成功:', response.data)
             
             // ✅ **同時保存到 localStorage（作為備份）**
-            const key = `gpx-${props.mountain.name}`
-            const record = {
-                thought: thought.value,
-                height: height.value,
-                kilo: kilo.value,
-                time: time.value,
-                fileName: fileName.value
-            }
-            localStorage.setItem(key, JSON.stringify(record))
+            // const key = `gpx-${props.mountain.name}`
+            // const record = {
+            //     thought: thought.value,
+            //     height: height.value,
+            //     kilo: kilo.value,
+            //     time: time.value,
+            //     fileName: fileName.value
+            // }
+            // localStorage.setItem(key, JSON.stringify(record))
 
             // ✅ **存 Pinia**
-            const recordStore = useRecordStore()
-            recordStore.saveRecord(props.mountain.name, record)
+            // const recordStore = useRecordStore()
+            // recordStore.saveRecord(props.mountain.name, record)
 
             alert(`對於 ${props.mountain.name} 的紀錄已保存到資料庫！`)
 
@@ -318,17 +316,17 @@ import axios from 'axios'
         // 查詢山 ID
         mountainId.value = await getMountainId(props.mountain.name)
 
-        const key = `gpx-${props.mountain.name}`
-        const saved = localStorage.getItem(key)
-        if (saved) {
-            const record = JSON.parse(saved)
-            thought.value = record.thought || ""
-            textCount.value = thought.value.length
-            height.value = record.height || 0
-            kilo.value = record.kilo || 0
-            time.value = record.time || 0
-            fileName.value = record.fileName || ""
-        }
+        // const key = `gpx-${props.mountain.name}`
+        // const saved = localStorage.getItem(key)
+        // if (saved) {
+        //     const record = JSON.parse(saved)
+        //     thought.value = record.thought || ""
+        //     textCount.value = thought.value.length
+        //     height.value = record.height || 0
+        //     kilo.value = record.kilo || 0
+        //     time.value = record.time || 0
+        //     fileName.value = record.fileName || ""
+        // }
     }
     })
 
@@ -405,6 +403,10 @@ import axios from 'axios'
                     font-weight: $medium;
                     line-height: $lineHeight-title-120;
                     color: $black-14;
+
+                    @media screen and (max-width: 750px) {
+                        font-size: $pcFont-H3;
+                    }
                 }
                 
                 #theFile{
@@ -437,6 +439,10 @@ import axios from 'axios'
                         font-size: $pcFont-H1-m;
                         font-weight: $medium;
                         line-height: $lineHeight-title-120;
+
+                        @media screen and (max-width: 750px) {
+                            font-size: $pcFont-H4;
+                        }
                     }
                 }
             }
@@ -491,64 +497,27 @@ import axios from 'axios'
                     cursor: pointer;
                 }
             }
-        }
-    }
 
-    @media screen and (max-width: 1200px) {
-		.modalOverlay{
-            z-index: 20 !important;
-            padding: 20px 0;
-    
-            .mychallengeModal{
+            @media screen and (max-width: 1200px) {
                 position: relative;
             }
-        }
-    }
 
-    @media screen and (max-width: 1000px) {
-		.modalOverlay{
-    
-            .mychallengeModal{
+            @media screen and (max-width: 1000px) {
                 max-width: 800px;
                 width: 80%;
                 padding: 20px;
             }
-        }
-    }
 
-    @media screen and (max-width: 750px) {
-		.modalOverlay{
-    
-            .mychallengeModal{
-
-                .uploadArea{
-                
-                    .add{
-                        font-size: $pcFont-H3;
-                    }
-                    
-                }
-                .score{
-                
-                    p{
-                        span{
-                            font-size: $pcFont-H4;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-
-
-    @media screen and (max-width: 430px) {
-		.modalOverlay{
-    
-            .mychallengeModal{
+            @media screen and (max-width: 430px) {
                 max-width: 800px;
                 width: 80%;
             }
         }
+
+        @media screen and (max-width: 1200px) {
+            z-index: 20 !important;
+            padding: 20px 0;
+        }
     }
+    
 </style>

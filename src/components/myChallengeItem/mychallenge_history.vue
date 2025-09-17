@@ -4,51 +4,67 @@
             <img :src="`${BASE}images/myChallenge/left.png`" alt="">
             <h4>返回</h4>
         </div>
-        <h2>[ 歷史足跡 ]</h2>
+        <div class="title">
+            <h2>[ 歷史足跡 ]</h2>
+                <p>💡 雙擊山名可顯示完整名稱</p>
+        </div>
         <div class="myhistory">
             <div class="myhistoryTitle">
                 <h3 class="mountainName">山名</h3>
                 <h3>上傳日期</h3>
             </div>
-            <article class="myhistoryMountain" v-for="history in histories" >
+            <article class="myhistoryMountain" v-for="(history, index) in histories" >
                 <div class="mountainTitle">
-                    <div class="mountainTitleLeft" @click="toggle(history.name)">
-                        <h4 class="mountain">{{ history.name }}</h4>
+                    <div class="mountainTitleLeft" @click="toggle(index)">
+                        <h4 class="mountain"
+                            :class="{ 'show-full': showFullName === index }"
+                            @dblclick="toggleFullName(index)"
+                            :title="history.name"                      
+                        >{{ history.name }}</h4>
                         <h4>{{ history.date }}</h4>
                     </div>
                     <img 
                     :src="`${BASE}images/myChallenge/down.png`"
                     alt="down"
-                    :class="{ 'rotated': openItem === history.name }"
+                    :class="{ 'rotated': openItem === index }"
                     />
                 </div>
                 <transition name="dropdown">
-                    <div class="totalScore"  v-show="openItem == history.name">
+                    <div class="totalScore"  v-show="openItem == index">
                         <div class="total">
                             <p>[累積高度]</p>
-                            <p><span>{{ history.height }}</span> m</p>
+                            <p><span>{{ history.height }}</span> <br/>m</p>
                         </div>
                         <div class="total">
                             <p>[累積里程]</p>
-                            <p><span>{{ history.kilo }}</span> km</p>
+                            <p><span>{{ history.kilo }}</span> <br/>km</p>
                         </div>
                         <div class="total">
                             <p>[累積時間]</p>
-                            <p><span>{{ history.time }}</span> hr</p>
+                            <p><span>{{ history.time }}</span> <br/>hr</p>
                         </div>
                     </div>
                 </transition>
             </article>
         </div>
+        
     </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import axios from 'axios'
+
+    const props = defineProps({
+        isLoggedIn: {
+            type: Boolean,
+            default: false
+        }
+    })
 
     // --- 1.控制手風琴開關 ---
     const openItem = ref(null)     // 全關
+    const showFullName = ref(null)
 
     const toggle = (index) => {
         if(openItem.value == index){
@@ -58,6 +74,24 @@ import axios from 'axios'
             // 如果點擊的是其他項目 → 展開它（同時會關閉之前展開的）
             openItem.value = index
         }
+    }
+
+    const isMobile = computed(() => {
+        return window.innerWidth <= 768
+    })
+
+    const toggleFullName = (index) => {
+        if(showFullName.value === index){
+            showFullName.value = null
+        }else{
+            showFullName.value = index
+        }
+        
+        setTimeout(() => {
+            if(showFullName.value === index) {
+                showFullName.value = null
+            }
+        }, 3000)
     }
 
     // --- 2.emit 傳遞事件 ---
@@ -76,14 +110,12 @@ import axios from 'axios'
 
     // 載入歷史資料
     const loadHistories = async () => {
-        // 如果未登入，不載入資料
-        if (!userStore.isLoggedIn || !userStore.memberId) {
+         if (!props.isLoggedIn) {
             histories.value = []
+            console.log('用戶未登入，清空歷史資料')
             return
         }
 
-        isLoading.value = true
-        
         try {
             const response = await axios.post(API_URL, {}, {
                 withCredentials: true,  // ← 讓 session 可以運作
@@ -92,12 +124,20 @@ import axios from 'axios'
                 }
             })
 
-            if (response.data.success) {
-                histories.value = response.data.data || []
-                console.log('歷史資料載入成功:', response.data)
+            if (response.data.success && response.data.data) {
+                if (props.isLoggedIn) {
+                    // 已登入且有資料
+                    histories.value = response.data.data || []
+                    console.log('歷史資料載入成功:', response.data)
+                } else {
+                    // 未登入
+                    histories.value = []
+                    console.log('用戶未登入')
+                    console.log('Session 內容:', response.data.session_data)
+                }
             } else {
-                console.error('載入失敗:', response.data.error || response.data.message)
                 histories.value = []
+                console.log('無歷史資料或未登入')
             }
             
         } catch (err) {
@@ -105,13 +145,25 @@ import axios from 'axios'
             histories.value = []
         }
     }
+
+    watch(() => props.isLoggedIn, async (newValue, oldValue) => {
+        console.log('History 組件：登入狀態變化', oldValue, '->', newValue)
+        
+        if (newValue === false) {
+            // 登出時清空資料
+            histories.value = []
+            openItem.value = null  // 關閉所有展開項目
+            console.log('已清空歷史資料')
+        } else if (newValue === true) {
+            // 登入時重新載入
+            await loadHistories()
+        }
+    })
     
     onMounted(async() => {
-        // 如果已經登入，載入資料
-        if (userStore.isLoggedIn && userStore.memberId) {
-            loadHistories()
+        if (props.isLoggedIn) {
+            await loadHistories()
         }
-    
     })
 
 </script>
@@ -136,12 +188,35 @@ import axios from 'axios'
                 margin-right: 24px;
                 height: 20px;
             }
+
+            @media screen and (max-width: 768px) {
+                h4{
+                    font-size: $pcFont-H2;
+                }
+
+                img{
+                    height: 40px;
+                }
+            }
         }
 
-        h2{
-            font-size: $pcFont-H2;
-            font-weight: $semiBold;
+        .title{
             margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            h2{
+                font-size: $pcFont-H2;
+                font-weight: $semiBold;
+            }
+            p{
+                font-size: $pcFont-H4;
+                align-self: flex-end;
+                
+                
+                @media (min-width: 769px) {
+                    display: none;
+                }
+            }
         }
 
         .myhistoryTitle{
@@ -194,7 +269,22 @@ import axios from 'axios'
                         &:first-of-type{
                             width: 100px;
                             margin-right: 40px;
-                        
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            
+                            // hover 顯示完整內容
+                            &:hover {
+                                overflow: visible;
+                                white-space: normal;
+                                background-color: rgba(255, 255, 255, 0.9);
+                                padding: 2px 4px;
+                                border-radius: 4px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                                position: relative;
+                                z-index: 10;
+                            }
+                            
                             &::after{
                                 content: '';
                                 position: absolute;
@@ -243,115 +333,33 @@ import axios from 'axios'
                             font-size: $pcFont-H1-m;
                             font-weight: $medium;
                             line-height: $lineHeight-title-120;
-                        }
-                    }
-                }
-            }
-        }
-    
-    .dropdown-enter-active{
-        transition: all 0.3s ease;
-    }
-
-    .dropdown-enter-from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    
-    }
-
-    @media screen and (max-width: 1200px) {
-        .mychallengeHistroy{
-        
-            .myhistoryMountain{
-
-                .totalScore{
-                    .total{
-                        p{
-                            span{
+                        
+                            @media screen and (max-width: 490px) {
                                 font-size: $pcFont-H3;
                             }
                         }
                     }
                 }
+
+                @media screen and (max-width: 1200px) {
+
+                    flex-direction: column;
+                    gap: 16px;
+                }
             }
-
         }
-    }
 
-        @media screen and (max-width: 1000px) {
-        .mychallengeHistroy{
-        
-            .myhistoryMountain{
-                
-                .mountainTitle{
-                    .mountainTitleLeft{
-                        h4:nth-child(2){
-                            font-size: $mbFont-label;
-                        }
+
+
+        .dropdown-enter-active{
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-enter-from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
     
-                    }
-                }
-
-                .totalScore{
-                    .total{
-                        p{
-                            span{
-                                font-size: $pcFont-p-s;
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-
-    @media screen and (max-width: 650px) {
-        .mychallengeHistroy{
-        
-            .myhistoryMountain{
-
-                .mountainTitle{
-                    .mountainTitleLeft{
-                        h4:nth-child(2){
-                            font-size: $pcFont-H4;
-                        }
-    
-                    }
-                }
-
-                .totalScore{
-                    .total{
-                        p{
-                            span{
-                                font-size: $pcFont-H2;
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-
-    @media screen and (max-width: 490px) {
-        .mychallengeHistroy{
-        
-            .myhistoryMountain{
-
-                .totalScore{
-                    .total{
-                        p{
-                            span{
-                                font-size: $pcFont-H3;
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
     }
 
 </style>

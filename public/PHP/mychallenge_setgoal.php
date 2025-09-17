@@ -4,9 +4,18 @@
     // 導入資料庫連線的資料檔
     include 'conn.php'; 
     //---------------------------------------------------
+    if (!isset($_SESSION['member']['id']) || empty($_SESSION['member']['id'])) {
+        $response = [
+            'success' => false,
+            'message' => '尚未登入',
+        ];
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 
-    $MEMBER_ID = $_SESSION["memberID"] = "1";
+    $MEMBER_ID = $_SESSION['member']['id'];
 
+    $input = json_decode(file_get_contents('php://input'), true);
 
     if (isset($input['BIG_TARGET']) || isset($input['SMALL_TARGET'])) {
         
@@ -44,7 +53,7 @@
                 $response = [
                 'success' => false,
                 'message' => '資料庫操作失敗'
-            ];
+                ];
             }
             
         } else {

@@ -12,8 +12,8 @@
                    SUM(F.HEIGHT)                   AS height,
                    SUM(F.DISTANCE)                 AS kilo,
                    SUM(F.DURATION)                 AS time,
-                   SUM(CASE WHEN MT.TYPE='大百岳'   THEN 1 ELSE 0 END) AS big,
-                   SUM(CASE WHEN MT.TYPE='小百岳' THEN 1 ELSE 0 END) AS small
+                   COUNT(DISTINCT CASE WHEN MT.TYPE='大百岳' THEN F.MOUNTAIN_ID END) AS big,
+                   COUNT(DISTINCT CASE WHEN MT.TYPE='小百岳' THEN F.MOUNTAIN_ID END) AS small
                    FROM FOOT F
                    JOIN MOUNTAIN MT ON MT.MOUNTAIN_ID = F.MOUNTAIN_ID
                    JOIN MEMBER  MB ON MB.MEMBER_ID    = F.MEMBER_ID

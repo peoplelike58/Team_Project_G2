@@ -7,11 +7,9 @@
     //---------------------------------------------------
 
     // 檢查是否已登入
-    if (!isset($_SESSION["memberID"]) || empty($_SESSION["memberID"])) {
+    if (!isset($_SESSION['member']['id']) || empty($_SESSION['member']['id'])) {
         $response = [
             'success' => true,
-            'isLoggedIn' => false,
-            'member_id' => null,
             'heightTotal' => '0.00',
             'kiloTotal' => '0.00',
             'timeTotal' => '0.00'
@@ -22,7 +20,7 @@
     }
 
     // 已登入，取得使用者數據
-    $MEMBER_ID = $_SESSION["memberID"];
+    $MEMBER_ID = $_SESSION['member']['id'];
     
 
     $sql = "SELECT COALESCE(SUM(HEIGHT), 0) as heightTotal,
@@ -38,8 +36,8 @@
     // 格式化數值 (保留2位小數)
     $response = [
         'success' => true,
-        'isLoggedIn' => true,
-        'member_id' => $MEMBER_ID,
+        // 'isLoggedIn' => true,
+        // 'member_id' => $MEMBER_ID,
         'heightTotal' => number_format($result['heightTotal'], 2),
         'kiloTotal' => number_format($result['kiloTotal'], 2),
         'timeTotal' => number_format($result['timeTotal'], 2)

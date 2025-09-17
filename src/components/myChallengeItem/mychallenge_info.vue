@@ -17,10 +17,15 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, watch } from 'vue'
     import axios from 'axios'
-    // import { useRecordStore } from "@/stores/recordStore"
-    // import { storeToRefs } from "pinia"
+
+    const props = defineProps({
+        isLoggedIn: {
+            type: Boolean,
+            default: false
+        }
+    })
 
     const heightTotal = ref('0.00')
     const kiloTotal = ref('0.00')
@@ -37,6 +42,14 @@
 
 
     const loadTotalStats = async () => {
+        if (!props.isLoggedIn) {
+            // 未登入時重置為預設值
+            heightTotal.value = '0.00'
+            kiloTotal.value = '0.00'
+            timeTotal.value = '0.00'
+            console.log('用戶未登入，重置累積數據')
+            return
+        }
 
         try{
             const response = await axios.post(API_URL,{}, {
@@ -64,6 +77,21 @@
         }
     }
 
+    watch(() => props.isLoggedIn, async (newValue, oldValue) => {
+        console.log('Info 組件：登入狀態變化', oldValue, '->', newValue)
+        
+        if (newValue === false) {
+            // 登出時清空資料
+            heightTotal.value = '0.00'
+            kiloTotal.value = '0.00'
+            timeTotal.value = '0.00'
+            console.log('已清空累積數據')
+        } else if (newValue === true) {
+            // 登入時重新載入
+            await loadTotalStats()
+        }
+    })
+
     // 重新載入數據的方法（給父組件調用）
     const refreshStats = async () => {
         await loadTotalStats()
@@ -76,7 +104,9 @@
 
     // 🔧 組件載入時取得數據
     onMounted(() => {
-        loadTotalStats()
+        if (props.isLoggedIn) {
+            loadTotalStats()
+        }
     })
     // --- 2.利用 Pinia+解構賦值，把store裡的state轉乘ref
     // const recordStore = useRecordStore()
@@ -118,32 +148,6 @@
                 cursor: pointer;
             }
         }
-    }
-
-    @media screen and (max-width: 800px) {
-
-        .mychallengeInfomation{
-    
-            .totalInfo{
-                button{
-                    font-size: 14px;
-                }
-            }
-        }
-        
-    }
-
-        @media screen and (max-width: 650px) {
-
-        .mychallengeInfomation{
-    
-            .totalInfo{
-                button{
-                    font-size: $pcFont-H4;
-                }
-            }
-        }
-        
     }
 
 </style>
