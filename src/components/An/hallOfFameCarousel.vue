@@ -14,15 +14,15 @@
             }"
             role="list"
             >
-                <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="dataItem.id + '-' + dataIndex">
+                <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="dataItem.MEMBER_ID + '-' + dataIndex">
                     <article class="carousel-card" role="listitem">
-                        <img class="card-image" :src="dataItem.avatarUrl" :alt="dataItem.name + ' 的照片'" />
+                        <img class="card-image" :src="dataItem.image"/>
                         <div class="card-meta">
                             <div class="card-name">{{ dataItem.name }}</div>
                             <div class="card-stats">
-                                <span>百岳 {{ dataItem.heroCount }} 座</span>
+                                <span>百岳 {{ dataItem.big }} 座</span>
                                 <span class="divider">|</span>
-                                <span>小百岳 {{ dataItem.minorCount }} 座</span>
+                                <span>小百岳 {{ dataItem.small }} 座</span>
                             </div>
                         </div>
                     </article>
@@ -60,11 +60,16 @@ import axios from 'axios'
   
 const originalDataList = ref([])
 const isPaused = ref(false)
+
+const USE_FAKE = false
+const API_URL = USE_FAKE
+    ? import.meta.env.BASE_URL  + 'json/homepage/hallOfFame.json'
+    : `${import.meta.env.VITE_AJAX_URL}/mychallenge_rank.php`
+
   
 onMounted(async () => {
     try {
-        const { data } = await axios.get(import.meta.env.BASE_URL + 'json/homepage/hallOfFame.json')
-        // data 就是已經解析好的 JSON，不需要再 .json()
+        const { data } = await axios.get(API_URL)
         originalDataList.value = data
     } catch (error) {
         console.error('載入 JSON 發生錯誤:', error)
