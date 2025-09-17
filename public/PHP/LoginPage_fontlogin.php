@@ -14,7 +14,7 @@ if (!verifyRecaptcha($member['recaptcha'])){
     exit;
 }
 
-$sql = "SELECT MEMBER_ID,EMAIL,NAME from MEMBER WHERE EMAIL = :email and PW = :passwords ";
+$sql = "SELECT MEMBER_ID,EMAIL,NAME,IMAGE from MEMBER WHERE EMAIL = :email and PW = :passwords ";
 
 $pstmt = $pdo->prepare($sql);
 $pstmt->bindValue( ":email", $member["email"]);   //前端傳來的值放在陣列裡，把這個值給到：email去sql裡尋找，：是佔位符號，：email是命名參數
@@ -29,7 +29,8 @@ if ($respBody['success']) {
     $_SESSION['member'] = [
     "email" => $member[0]["EMAIL"],     // 左邊 是存進session的 key: 你自己命名,右邊 table 的欄位名是 EMAIL
     "name"  => $member[0]["NAME"],
-    "id"  => $member[0]["MEMBER_ID"]
+    "id"  => $member[0]["MEMBER_ID"],
+    "avatar" => $member[0]["IMAGE"]
     ];
 
 }

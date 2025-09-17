@@ -1,24 +1,12 @@
-<?php   /* 加入購物車php */
+<?php   /* 獲取收藏資料 php */
 
 include 'conn.php';
 
 try {
-    $sql = "SELECT 
-                p.PRODUCT_ID,
-                p.PRODUCT_NAME,
-                p.PRICE,
-                p.IMAGE,
-                p.GENDER,
-                p.DESCRIPTION,
-                p.PRODUCT_TYPE,
-                p.PRODUCT_STATUS,
-                GROUP_CONCAT(DISTINCT pc.COLOR SEPARATOR ',') as COLOR,
-                GROUP_CONCAT(DISTINCT ps.SIZE SEPARATOR ',') as SIZE
-            FROM PRODUCT p
-            LEFT JOIN PRODUCT_COLOR pc ON p.PRODUCT_ID = pc.PRODUCT_ID
-            LEFT JOIN PRODUCT_SIZE ps ON p.PRODUCT_ID = ps.PRODUCT_ID
-            GROUP BY p.PRODUCT_ID, p.PRODUCT_NAME, p.PRICE, p.IMAGE, p.GENDER, p.DESCRIPTION, p.PRODUCT_TYPE, p.PRODUCT_STATUS
-            ORDER BY p.PRODUCT_ID";
+    $sql = "insert into CART (MEMBER_ID,PRODUCT_ID,SIZE,COLOR,QUANTITY)
+values (:memberId ,:productID ,:size ,:color,:quantity)
+ON DUPLICATE KEY UPDATE 
+  QUANTITY = :quantity";
 
     $pstmt = $pdo->prepare($sql);
     $pstmt->execute();
@@ -56,4 +44,3 @@ try {
 echo json_encode($respBody, JSON_UNESCAPED_UNICODE);
 
 ?>
-

@@ -16,7 +16,7 @@
           <label class="form-label">頭像</label>
           <div class="avatar-upload">
             <div class="avatar-preview">
-              <img :src="user.profile.avatarUrl|| '/images/Products/default-avatar.jpg'" alt="頭像" />
+              <img :src="user.profile.avatarUrl || '/images/Products/default-avatar.jpg'" alt="頭像" />
             </div>
             <div v-if="user.loading.uploadingAvatar" class="upload-loading">
               上傳中...
@@ -238,6 +238,7 @@ const saveProfile = async () => {
       console.log('儲存個人資料:', profileData)
       isEditing.value = false                       // 關閉編輯模式
       user.updateProfile(profileData)               // 更新 Pinia store 中的個人資料
+      getProfile()
       alert('個人資料更新成功！')
     }else {
       // 處理伺服器回傳的錯誤訊息
@@ -296,6 +297,7 @@ const getProfile = async () => {
 onMounted(() => {
   console.log('元件已載入，開始取得個人資料') // 調試用
   // 載入個人資料的API呼叫
+  user.profile.avata
   getProfile()
 })
 </script>

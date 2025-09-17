@@ -1,15 +1,16 @@
 <script setup>
 import { ref,computed,watch,onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-// import Products from '/json/products/products.json'// 從json引入
-// const products = Products;
+import { useFavoriteStore } from '@/stores/favorites'
+import { useUserStore } from '@/stores/user'
 
 
 
+const user = useUserStore()
 // 響應式變數，存放商品資料
 const products = ref([])
 
-// 🟢 載入資料的函式
+// 載入資料的函式
 const loadProducts = async () => {
   try {
     // [修改] fetch 從 public/products.json 抓資料改成實際的API端點
@@ -32,20 +33,22 @@ const loadProducts = async () => {
   }
 }
 
-// 🟢 元件掛載完成後自動執行
+// 元件掛載完成後自動執行
 onMounted(() => {
   loadProducts()
   console.log(products)
 })
 
 /*點擊收藏*/
-const favorites = ref([])
+const FavoriteStore = useFavoriteStore()
+const favorites =  FavoriteStore.favorites.products               //ref([])
 const toggleFavorite = (productId) => {
-  const index = favorites.value.indexOf(productId)
+  const index = favorites.indexOf(productId)
   if (index > -1) {
-    favorites.value.splice(index, 1)
+    favorites.splice(index, 1)
+    FavoriteStore.addFavorite(user.id,productId)
   } else {
-    favorites.value.push(productId)
+    favorites.push(productId)
   }
 }
 
