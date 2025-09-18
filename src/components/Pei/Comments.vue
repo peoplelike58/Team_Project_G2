@@ -59,13 +59,14 @@ const API_DEL_COMMENT  = '/CommentsDelete.php'
 // ===== 上傳檔案對外 URL 基底：把 /PHP 拿掉 → 變成 /public =====
 const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'')
 const UPLOADS_BASE = `${API_ROOT}/uploads`
+// console.log(user.profile.avatar); // 印出會員avatar檔名
 
 // ===== 從後端一列資料 → 轉成前端需要的物件 =====
 function mapRowToMessage(row){
   // 後端可能用別名：MESSAGE_IMAGE / MEMBER_IMAGE
   const msgImageKey = row.MESSAGE_IMAGE ?? null
   const avatarKey   = row.MEMBER_IMAGE ?? null
-  console.log(user.profile.avatar);
+ 
   
   
   return {
@@ -295,7 +296,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
 
       <div class="popupUser">
         <div class="popupAvatar">
-          <img src="../../../public/images/myChallenge/head4.png" alt="使用者頭像" />
+          <img :src="`${UPLOADS_BASE}/avatars/${user.profile.avatar}`" alt="使用者頭像" />
         </div>
         <p class="popupName">{{ user.name || '尊爵不凡會員' }}</p>
       </div>
