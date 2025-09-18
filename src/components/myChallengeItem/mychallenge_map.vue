@@ -23,17 +23,12 @@
 
 <script setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
-import { useUserStore } from '@/stores/user.js' // 導入 user store
-import { useRouter } from 'vue-router'
 
 import 'leaflet/dist/leaflet.css'
 import { Icon } from 'leaflet'
 import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet'
 import L from "leaflet"
 import "leaflet.markercluster"
-
-const userStore = useUserStore()
-const router = useRouter()
 
 const BASE = import.meta.env.BASE_URL
 const jsonPath = `${BASE}json/mychallenge/ranks.json`
@@ -60,9 +55,12 @@ const center = ref([centerLatitude, centerLongitude])
 const props = defineProps({
 	mountains: {
 		type: Array,
-		// default: () => [],
-		// required: true
-	}
+		default: () => [],
+	},
+	isLoggedIn: {
+        type: Boolean,
+        default: false
+    }
 })
 
 const emit = defineEmits(["openUploadModal"])
@@ -74,18 +72,8 @@ let mapInstance = null
 
 function handleMarkerClick(mountainName) {
 	console.log('點擊山峰:', mountainName) // 測試用 log
-	console.log('登入狀態:', userStore.isLoggedIn) // 測試用 log
-	console.log('用戶資料:', userStore.email, userStore.name) // 測試用 log
+	console.log('登入狀態:', props.isLoggedIn) // 測試用 log
 
-	// 檢查是否已登入
-	if (!userStore.isLoggedIn) {
-		// 未登入時顯示提示訊息
-		alert('請先登入才能上傳 GPX 檔案！')
-		router.push('/loginregister/fontrelogin')
-		return
-	}
-	
-	// 已登入則正常開啟上傳彈窗
 	emit('openUploadModal', mountainName)
 }
 
@@ -294,6 +282,17 @@ watch(() => props.mountains, (newMountains) => {
 				height: 16px;
 			}
 		}
+
+		@media screen and (max-width: 1200px) {
+				width: 100%;
+				height: 100%;
+				z-index: 1 !important;
+		}
+
+		@media screen and (max-width: 768px) {
+				max-width: 768px;
+				max-height: 780px;
+		}
     }
 
     .myCluster{
@@ -311,36 +310,12 @@ watch(() => props.mountains, (newMountains) => {
         margin-top: -20px;
         box-shadow: 0 0 5px rgba(0,0,0,0.3);
 
+		&:focus,
+		&:focus-visible,
+		&:hover {
+			outline: none;
+			box-shadow: none;
+		}
     }
-	
-	.myCluster,
-	.myCluster:focus,
-	.myCluster:focus-visible,
-	.myCluster:hover {
-		outline: none;
-		box-shadow: none;
-	}
 
-	@media screen and (max-width: 1200px) {
-		.map{
-            width: 100%;
-            height: 100%;
-			z-index: 1 !important;
-        }
-	}
-
-	@media screen and (max-width: 650px) {
-		.map{
-			max-width: 650px;
-			max-height: 780px;
-        }
-	}
-
-	// @media screen and (max-width: 430px) {
-	// 	.wrapper{
-	// 		// max-width: 100%;
-    //         width: 100%;
-    //         height: 100%;
-    //     }
-	// }
 </style>

@@ -1,4 +1,4 @@
-<?php /* 加入購物車php */
+<?php  /* 加入購物車php */
 
 session_start();
 include 'conn.php';
@@ -19,7 +19,6 @@ insert into CART (MEMBER_ID,PRODUCT_ID,SIZE,COLOR,QUANTITY)
 values (:memberId ,:productID ,:size ,:color,:quantity)
 ON DUPLICATE KEY UPDATE 
   QUANTITY = :quantity
-
 ";
 
 foreach ($cartItems as $item) {   //cartItems裡面是陣列包物件

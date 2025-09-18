@@ -55,3 +55,5 @@ try {
 
 echo json_encode($respBody, JSON_UNESCAPED_UNICODE);
 
+?>
+

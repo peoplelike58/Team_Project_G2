@@ -9,7 +9,8 @@
                 <div class="mychallengeMap">
                     <mychallenge_map
                         :mountains="mountains"
-                        @openUploadModal="openModal"
+                        :isLoggedIn="isLoggedIn"
+                        @openUploadModal="handleOpenModal"
                         style="z-index: 0;"
                         ref="mapRef"
                     />
@@ -20,11 +21,16 @@
                         <mychallenge_info 
                             ref="infoRef"
                             v-show="!showHistory" 
+                            :isLoggedIn="isLoggedIn"
                             @openHistoryComp="showHistory = true"/>
-                        <mychallenge_progress />
+                        <mychallenge_progress 
+                            :isLoggedIn="isLoggedIn"
+                        />
                     </div>
                     <mychallenge_history
                         v-show="showHistory"
+                        :isLoggedIn="isLoggedIn"
+                        ref="historyRef"
                         @closeHistoryComp="closeHistory"/>
                 </div>
             </div>
@@ -56,24 +62,105 @@
     import mychallenge_history from '@/components/myChallengeItem/mychallenge_history.vue';
     import brandFooter from '@/components/An/footer.vue';
     
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, computed, watch } from 'vue'
+    import { useRouter } from 'vue-router'
     import * as turf from "@turf/turf"
     
     import { useGoalStore } from "@/stores/goalStore"
     import { useRecordStore } from "@/stores/recordStore"
+    import { useUserStore } from '@/stores/user'
     import axios from 'axios';
 
     const showHistory = ref(false)
     const mountains = ref([])
     const openWindows = ref({})
     const infoRef = ref(null)
+    const historyRef = ref(null)
     const mapRef = ref(null)
+
+    const router = useRouter()
+    const userStore = useUserStore()
+
+    const userInfo = ref({
+        email: '',
+        name: ''
+    })
+
+    const isLoggedIn = computed(() => userStore.isLoggedIn)
 
     const BASE = import.meta.env.BASE_URL
     const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_mountains.php`
 
-    function openModal(mountainName) {
-        openWindows.value[mountainName] = true
+    watch(isLoggedIn, async (newValue, oldValue) => {
+        console.log('登入狀態變化:', oldValue, '->', newValue)
+        
+        // 如果從登入變為登出
+        if (oldValue === true && newValue === false) {
+            console.log('偵測到使用者已登出，清除頁面資料')
+            
+            // 重置所有山峰圖示為預設狀態
+            mountains.value.forEach(mountain => {
+                mountain.icon = 'mountain.png'
+            })
+            
+            // 可以選擇重新載入資料或只是清除登入相關的資料
+            // await loadMountainsData() // 完全重新載入
+            
+            // 或者只清除使用者相關資料（較輕量）
+            console.log('已清除使用者相關的山峰標記')
+        }
+        
+        // 如果從登出變為登入
+        if (oldValue === false && newValue === true) {
+            console.log('偵測到使用者已登入，重新載入資料')
+            await loadMountainsData()
+        }
+    })
+
+    const loadMountainsData = async () => {
+        try {
+            const res = await axios.get(API_URL, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            
+            if (res.data.success) {
+                const { mountains: mountainsData, climbed: climbedIds, isLoggedIn: apiIsLoggedIn, member_id } = res.data
+
+                // 設定所有山峰資料
+                mountains.value = mountainsData.map(mountain => ({
+                    name: mountain.MOUNTAIN_NAME,
+                    kind: mountain.type,
+                    latitude: parseFloat(mountain.LATITUDE),
+                    longitude: parseFloat(mountain.LONGITUDE),
+                    icon: 'mountain.png' // 預設圖示
+                }))
+                
+                // **修改：使用 computed 的 isLoggedIn**
+                if (isLoggedIn.value && climbedIds.length > 0) {
+                    // 已登入且有攀登記錄：根據資料庫資料標記
+                    mountains.value.forEach(mountain => {
+                        const mountainData = mountainsData.find(mount => mount.MOUNTAIN_NAME === mountain.name)
+                        if (mountainData && climbedIds.includes(mountainData.MOUNTAIN_ID)) {
+                            mountain.icon = 'flag.png'
+                        }
+                    })
+                }
+
+                // 初始化視窗狀態
+                mountains.value.forEach(mountain => {
+                    openWindows.value[mountain.name] = false
+                })
+                
+                console.log('山峰資料載入完成，登入狀態:', isLoggedIn.value)
+            } else {
+                console.error('API 請求失敗:', res.data)
+            }
+        } catch(err) {
+            console.error("讀取失敗:", err)
+        }
     }
 
     function closeModal(mountainName) {
@@ -86,11 +173,32 @@
         showHistory.value = false
     }
 
+    function handleOpenModal(mountainName) {
+        // 檢查是否已登入
+        if (!isLoggedIn.value) {
+            alert('請先登入才能上傳 GPX 檔案！')
+            // 導向登入頁面
+            router.push('/loginregister/fontrelogin')
+            return
+        }
+        
+        // 已登入則開啟 modal
+        openWindows.value[mountainName] = true
+    }
+
     const handleRefreshStats = async () => {
-    console.log('收到刷新請求，正在重新載入累積數據...')
-    if (infoRef.value && typeof infoRef.value.refreshStats === 'function') {
-        await infoRef.value.refreshStats()
-        console.log('累積數據已刷新')
+        console.log('收到刷新請求，正在重新載入累積數據...')
+
+        // 刷新 info 組件的數據
+        if (infoRef.value && typeof infoRef.value.refreshStats === 'function') {
+            await infoRef.value.refreshStats()
+            console.log('累積數據已刷新')
+        }
+
+        // 刷新 history 組件的數據
+        if (showHistory.value && historyRef.value && typeof historyRef.value.refreshHistories === 'function') {
+        await historyRef.value.refreshHistories()
+        console.log('歷史數據已刷新')
     }
     }
 
@@ -152,74 +260,18 @@
 
 
         const recordStore = useRecordStore()
-
-
-        onMounted(() => {
-            const climbed = JSON.parse(localStorage.getItem("climbedMountains") || "[]")
-            mountains.value.forEach(m => {
-                if (climbed.includes(m.name)) {
-                m.icon = "flag.png"   // 重新套旗子
-                }
-            })
-            recordStore.loadAllRecords()
-            goalStore.loadFromStorage()
-        })
-
         
         onMounted(async() => {
 
-            try{
-                // 使用新的 API，直接包含攀登狀態
-                const res2 = await axios.get(API_URL, {}, 
-                // {
-                //     withCredentials: true,
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     }
-                // }
-                )
-                
-                // 正確解析PHP返回的資料結構
-                const { mountains: mountainsData, climbed: climbedIds } = res2.data
-
-                // 設定所有山峰資料
-                mountains.value = mountainsData.map(mountain => ({
-                    name: mountain.MOUNTAIN_NAME,
-                    kind: mountain.type,
-                    latitude: parseFloat(mountain.LATITUDE),
-                    longitude: parseFloat(mountain.LONGITUDE),
-                    icon: 'mountain.png' // 預設圖示
-                }))
-                
-                // 標記已攀登的山峰
-                mountains.value.forEach(mountain => {
-                    // 檢查這座山是否在已攀登列表中
-                    if (climbedIds.includes(mountain.name)) {
-                        mountain.icon = 'flag.png'
-                    }
-                })
-
-                // 載入本地已攀登資料
-                const climbed = JSON.parse(localStorage.getItem("climbedMountains") || "[]")
-                mountains.value.forEach(m => {
-                    if (climbed.includes(m.name)) {
-                        m.icon = "flag.png"
-                    }
-                })
-
-                // 初始化視窗狀態
-                mountains.value.forEach(mountain => {
-                    openWindows.value[mountain.name] = false
-                })
-
-                // 載入 store 資料
-                recordStore.loadAllRecords()
-                goalStore.loadFromStorage()
-            }catch(err){
-                console.error("讀取失敗:", err)
-            }
+        // **修改：使用獨立的載入函數**
+        await loadMountainsData()
+        
+        // 載入 store 資料
+        recordStore.loadAllRecords()
+        goalStore.loadFromStorage()
+        
+        console.log('頁面載入完成，開始監聽登入狀態變化')
         })
-
 
 </script>
 
@@ -232,6 +284,11 @@
         .breadCrumb{
             margin-top: 48px;
             margin-bottom: 20px;
+
+            @media screen and (max-width: 430px) {
+                margin-top: 49px;
+                margin-bottom: 20px;
+            }
         }
         
         .mychallengeInfo{
@@ -243,18 +300,54 @@
             .mychallengeMap{
                 width: 50%;
                 // height: 713px;
+
+                @media screen and (max-width: 768px) {
+                    width: 100%;
+                    height: 600px;
+                }
+
+                @media screen and (max-width: 430px) {
+                    width: 100%;
+                    height: 600px;
+                }
             }
         
             .mychallengeAcheve, .mychallenge-history{
                 width: 50%;
-                // height: 514px;
                 margin: 20px 0 20px 80px;
+
+                @media screen and (max-width: 768px) {
+                    width: 100%;
+                    margin: 40px 0;
+                    margin: 20px 0 20px 0px;
+                }
+
+                @media screen and (max-width: 430px) {
+                    width: 100%;
+                    margin: 40px 0;
+                }
             }
             .mychallengeAcheve h2{
                 font-size: $pcFont-H2;
                 font-weight: $semiBold;
                 line-height: $lineHeight-p-150;
                 margin-bottom: 60px;
+            }
+
+            @media screen and (max-width: 768px) {
+                display: flex;
+                flex-direction: column;
+                height: auto;
+                margin-bottom: 0;
+                box-sizing: border-box;
+            }
+
+            @media screen and (max-width: 430px) {
+                display: flex;
+                flex-direction: column;
+                height: auto;
+                margin-bottom: 0;
+                box-sizing: border-box;
             }
         }
         
@@ -272,95 +365,40 @@
                 line-height: $lineHeight-p-150;
                 text-align: center;
             }
-        }
 
-    }
-
-    @media screen and (max-width: 1200px) {
-		.wrapper{
-            width: calc(100% - 40px);
-            padding: 20px;
-
-            .mychallengeRank{
+            @media screen and (max-width: 1200px) {
                 margin-top: 152px;
                 background-color: $ivory-gray-100;
                 box-sizing: border-box;
-            }
-        }
-	}
 
-    @media screen and (max-width: 650px) {
-		.wrapper{
-            
-            .mychallengeInfo{
-                display: flex;
-                flex-direction: column;
-                height: auto;
-                margin-bottom: 0;
-                box-sizing: border-box;
-                
-                .mychallengeMap{
-                    width: 100%;
-                    height: 600px;
-                }
-                .mychallengeAcheve, .mychallenge-history{
-                    width: 100%;
-                    margin: 40px 0;
-                    margin: 20px 0 20px 0px;
-                }
-                
             }
 
-            .mychallengeRank{
+            @media screen and (max-width: 768px) {
                 box-sizing: border-box;
-                // max-width: 100%;
                 width: 100%;
                 padding: 32px 16px;
-        
-            }
-        }
-	}
-
-    @media screen and (max-width: 430px) {
-		.wrapper{
-            max-width: 430px;
-            width: 100%;
-            padding: 0 16px;
-
-            .breadCrumb{
-                margin-top: 49px;
-                margin-bottom: 20px;
             }
 
-            
-            .mychallengeInfo{
-                display: flex;
-                flex-direction: column;
-                height: auto;
-                margin-bottom: 0;
+            @media screen and (max-width: 430px) {
                 box-sizing: border-box;
-                
-                .mychallengeMap{
-                    width: 100%;
-                    height: 600px;
-                }
-                .mychallengeAcheve, .mychallenge-history{
-                    width: 100%;
-                    margin: 40px 0;
-                }
-                
-            }
-
-            .mychallengeRank{
-                box-sizing: border-box;
-                // max-width: 100%;
                 width: 100%;
                 padding: 32px 16px;
                 margin: 60px 0;
-        
             }
         }
-	}
+
+        @media screen and (max-width: 1200px) {
+            width: calc(100% - 40px);
+            padding: 20px;
+        }
+
+        @media screen and (max-width: 430px) {
+            max-width: 430px;
+            width: 100%;
+            padding: 0 16px;
+        }
+    }
+
 </style>
 
 <!-- 

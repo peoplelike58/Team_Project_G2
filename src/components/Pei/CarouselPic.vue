@@ -125,7 +125,7 @@ onBeforeUnmount(stopAutoPlay)
   padding: 40px;
 
   @include m(){
-    max-width: 430px;
+    max-width: 768px;
     padding: 20px;
     font-size: 14px;
     box-sizing: border-box;
@@ -159,7 +159,8 @@ onBeforeUnmount(stopAutoPlay)
       width: 100%;
       max-width: 500px;
       @include m(){
-        max-width: 390px;
+        max-width: 728px;
+      
       }
 
 
@@ -175,7 +176,7 @@ onBeforeUnmount(stopAutoPlay)
 
 
         @include m(){
-          height: 250px;
+          height: 330px;
         }
       }
 
@@ -206,9 +207,7 @@ onBeforeUnmount(stopAutoPlay)
         justify-content: center;
         gap: 16px;
         margin-top: 16px;
-        @include m(){
-          margin-top: 8px;
-        }
+
       }
 
       .dot {
@@ -235,7 +234,7 @@ onBeforeUnmount(stopAutoPlay)
       line-height: $lineHeight-p-200;
       @include m(){
         width: 100%;
-        max-width: 390px;
+        max-width: 100%;
         padding: 20px 0;
        
       }

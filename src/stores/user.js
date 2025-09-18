@@ -1,7 +1,5 @@
 // stores/use.js-用戶相關：登入狀態、個人資料
 /* options API */
-import axios from 'axios'
-const API_BASE = import.meta.env.VITE_AJAX_URL
 import { defineStore } from 'pinia'           // 匯入定義 store 的 API
 export const useUserStore = defineStore(      // 定義一個「使用者」store，並輸出成 hook 函式
   'user',                                     // 這個 store 的唯一 id（字串）；之後 DevTools/插件會用到
@@ -19,14 +17,17 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
         birthday: null,
         phone: null,
         address: null,
-        aboutme: null
+        aboutme: null,
+        avatar: null,          // 頭像檔名（從資料庫讀取）
+        avatarUrl: null        // 完整的頭像 URL 路徑
       },
     
       // 載入狀態
       loading: {
         profile: false,
         updating: false,
-        loginChecking: false  // 檢查登入狀態的載入狀態
+        loginChecking: false,  // 檢查登入狀態的載入狀態
+        uploadingAvatar: false //頭像上傳載入狀態
       }
     }),
 
@@ -52,11 +53,12 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
           const sessionData = await response.json()
           
           // 如果伺服器回傳已登入狀態，就更新 Pinia 狀態
-          if (sessionData && sessionData.isLogin && sessionData.member) {
+          if (sessionData && sessionData.isLogin && sessionData.member)  {
             this.email = sessionData.member.email
             this.name = sessionData.member.name
             this.id = sessionData.member.id
             this.isLoggedIn = true
+            this.profile.avatar = sessionData.member.avatar
             console.log('從 session 恢復登入狀態:', sessionData.member)
           } else {
             // 伺服器沒有登入狀態，清除本地狀態
@@ -86,10 +88,27 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
         this.id = null
         this.isLoggedIn = false
         this.loading.loginChecking = false 
+
         // this.clearProfile()
         /* 同步清掉 localStorage */                           
         // localStorage.removeItem('email')                                
         // localStorage.removeItem('userRole')                             
+      },
+      // 更新個人資料（包含頭像）
+      updateProfile(profileData) {
+        // 更新個人資料狀態
+        Object.assign(this.profile, profileData)
+        
+        // 如果有頭像檔名，生成完整 URL
+        if (this.profile.avatar) {
+          this.profile.avatarUrl = `/uploads/avatars/${this.profile.avatar}`
+        }
+      },
+
+      // 更新頭像檔名
+      updateAvatar(filename) {
+        this.profile.avatar = filename
+        this.profile.avatarUrl = `/uploads/avatars/${filename}`
       }
     },              
   }

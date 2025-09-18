@@ -6,14 +6,24 @@
 
     //---------------------------------------------------
 
-    $_SESSION["memberID"] = "1";
+    if (!isset($_SESSION['member']['id']) || empty($_SESSION['member']['id'])) {
+        $response = [
+            'success' => true,
+        ];
+
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $MEMBER_ID = $_SESSION['member']['id'];
 
 
-    $mountain_id = $_POST['mountain_id'];
-    $height = $_POST['height'];
-    $distance = $_POST['distance'];
-    $duration = $_POST['duration'];
-    $content = $_POST['content'] ?? '';  // 可為空字串
+    $input = json_decode(file_get_contents('php://input'), true);
+    $mountain_id = $input['mountain_id'];
+    $height = $input['height'];
+    $distance = $input['distance'];
+    $duration = $input['duration'];
+    $content = $input['content'] ?? '';  // 可為空字串
 
     //建立SQL語法
     $sql = "INSERT INTO FOOT(MEMBER_ID, MOUNTAIN_ID, HEIGHT, DISTANCE, DURATION, CONTENT, UPLOAD_AT) 
@@ -21,7 +31,7 @@
 
     $statement = $pdo->prepare($sql);
 
-    $result = $statement->execute([$member_id, $mountain_id, $height, $distance, $duration, $content]);
+    $result = $statement->execute([$MEMBER_ID, $mountain_id, $height, $distance, $duration, $content]);
 
     if ($result) {
             echo json_encode(['success' => true, 'message' => '紀錄儲存成功']);

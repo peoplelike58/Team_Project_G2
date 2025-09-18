@@ -31,11 +31,11 @@
             </div>
             <div class="mountScore">
                 <article>
-                    <p>百岳</p>
+                    <p>大百岳</p>
                     <p><span>{{ rank.big }}</span> 座</p>
                 </article>
                 <article>
-                    <p>百岳</p>
+                    <p>小百岳</p>
                     <p><span>{{ rank.small }}</span> 座</p>
                 </article>
             </div>
@@ -174,7 +174,20 @@ import axios from 'axios'
             
                 article:nth-child(1n+2){
                     margin-left: 48px;
+
+                    @media screen and (max-width: 650px) {
+                        margin-left: 20px;
+                    }
                 }
+
+                @media screen and (max-width: 650px) {
+                    display: flex;
+                    justify-content: space-between;
+                }
+            }
+
+            @media screen and (max-width: 650px) {
+                padding: 16px 16px;
             }
         }
 
@@ -195,9 +208,20 @@ import axios from 'axios'
                 font-size: $pcFont-H1-m;
                 font-weight: $medium;
                 line-height: $lineHeight-title-120;
+
+                @media screen and (max-width: 500px) {
+                    font-size: $pcFont-H3;
+                }
+            }
+
+            @media screen and (max-width: 500px) {
+                font-size: 12px;
             }
         }
 
+        @media screen and (max-width: 1200px) {
+            width: calc(100% - 20px);
+        }
     }
 
     .dropdown-enter-active{
@@ -207,46 +231,6 @@ import axios from 'axios'
     .dropdown-enter-from {
         opacity: 0;
         transform: translateY(-20px);
-    }
-
-    @media screen and (max-width: 1200px) {
-        .nomb{
-            width: calc(100% - 20px);
-        }
-
-    }
-
-    @media screen and (max-width: 650px) {
-        .nomb{
-
-            .totalScore{
-                padding: 16px 16px;
-
-                .nombScore{
-                    display: flex;
-                    justify-content: space-between;
-            
-                    article:nth-child(1n+2){
-                        margin-left: 20px;
-                    }
-                }
-            }
-        }
-
-    }
-
-    @media screen and (max-width: 500px) {
-        .nomb{
-
-            p{
-
-                span{
-                    font-size: $pcFont-H3;
-
-                }
-            }
-        }
-
     }
 
 </style>

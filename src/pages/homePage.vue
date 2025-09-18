@@ -44,7 +44,7 @@ onMounted(async () => {
     loading.value = true
     try {
         const { data } = await axios.get(API_URL)
-        activities.value = Array.isArray(data) ? data : (data.items ?? [])
+        activities.value = Array.isArray(data) ? data : (data.data ?? data.items ?? [])
     } catch (e) {
         error.value = e?.message ?? '載入失敗😓'
     } finally {

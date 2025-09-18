@@ -1,7 +1,11 @@
 <?php
 // 共用 連線資料庫
 
+<<<<<<< HEAD
       //MySQL相關資訊（本機端測試）
+=======
+    //   MySQL相關資訊（本機端測試）
+>>>>>>> 10f673bea6d757e9e2f44151a679116860312d98
       $db_host = "127.0.0.1";
       $db_user = "root";
       $db_pass = "password";
@@ -22,7 +26,7 @@
       $pdo = new PDO($dsn, $db_user, $db_pass);
 
       //Fetch API with CORS （共用設定） 這樣其它頁面就不用寫
-    //   header("Access-Control-Allow-Origin: *");
+      //   header("Access-Control-Allow-Origin: *");
 
       
       

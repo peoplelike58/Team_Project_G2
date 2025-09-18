@@ -9,7 +9,7 @@ try {
     
     // SQL指令查詢對應資料庫
     $sql = "SELECT EVENT_ID,EVENT_NAME,JOIN_QTY,EVENT_DATE,EVENT_TIME,START_DATE,START_TIME,END_DATETIME,
-            STATUS,CONTENT,MEETING_PLACE,DISTANCE,MOUNTAIN_ID 
+            STATUS,CONTENT,MEETING_PLACE,DISTANCE,MOUNTAIN_ID
             FROM EVENT 
             ORDER BY EVENT_DATE DESC ";
 
@@ -49,6 +49,7 @@ try {
             'id' => $event['EVENT_ID'],                // 活動編號
             'title' => $event['EVENT_NAME'],           // 活動標題
             'date' => $event['EVENT_DATE'],            // 活動日期
+            'startDate' => $event['START_DATE'],          
             'ctaUrl' => '/activities/' . $event['EVENT_ID'], // 活動詳情連結
             'joinQty' => $event['JOIN_QTY'],           // 報名人數
             'eventTime' => $event['EVENT_TIME'],       // 活動時間

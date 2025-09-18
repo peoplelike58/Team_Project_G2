@@ -6,19 +6,17 @@
 
     //---------------------------------------------------
     // 檢查是否已登入
-    if (!isset($_SESSION["memberID"]) || empty($_SESSION["memberID"])) {
+    if (!isset($_SESSION['member']['id']) || empty($_SESSION['member']['id'])) {
         $response = [
-            'success' => false,
-            'isLoggedIn' => false,
-            'message' => '請先登入',
+            'success' => true,
+            // 'session_data' => $_SESSION,
             'data' => []
         ];
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
         exit;
     }
 
-
-    $MEMBER_ID = $_SESSION["memberID"];
+    $MEMBER_ID = $_SESSION['member']['id'];
 
     //建立SQL語法
     $sql = "SELECT M.MOUNTAIN_NAME as name,
@@ -37,13 +35,12 @@
 
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $response = [
-        'success' => true,
-        'isLoggedIn' => true,
-        'member_id' => $MEMBER_ID,
-        'data' => $rows,
+    $response = [
+    'success' => true,
+    'isLoggedIn' => true,
+    'data' => $rows,
     ];
 
-    echo json_encode($rows, JSON_UNESCAPED_UNICODE);
+    echo json_encode( $response, JSON_UNESCAPED_UNICODE);
 
 ?>

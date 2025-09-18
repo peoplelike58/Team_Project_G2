@@ -3,22 +3,25 @@
     <article class="activity-card">
         <div class="top-content">
             <!-- 日期 -->
-            <time class="ac-date">{{ dateText }}</time>
+            <time class="ac-date">{{ item.startDate }}</time>
             
             <!-- 圖片 -->
-            <img class="ac-img" :src="item.imageUrl" loading="lazy" />
+            <img class="ac-img" :src="`${baseUrl}images/Mountain/${item.mountainId}/main.png`" loading="lazy" />
             
             <!-- 標題 -->
             <h3 class="ac-title">{{ item.title }}</h3>
             
             <!-- 標籤 -->
-            <ul class="ac-tags" v-if="item.tags?.length">
-                <li v-for="tag in item.tags" :key="tag" class="tag">{{ tag }}</li>
+            <ul class="ac-tags">
+                <li v-if="item.tags?.length" v-for="tag in item.tags" :key="tag" class="tag">
+                    {{ tag }}
+                </li>
+                <li v-else class="tag">近期活動</li>
             </ul>
         </div>
             
         <!-- CTA -->
-        <a v-if="item.ctaUrl" class="ac-cta" :href="item.ctaUrl" @click.stop="handleCtaClick">
+        <a v-if="item.ctaUrl" class="ac-cta" :href="'/together' + item.ctaUrl" @click.stop="handleCtaClick">
             查看詳情
         </a>
     </article>
@@ -26,19 +29,7 @@
 
 <script setup>
 import { computed } from 'vue'
-
-/**
- * 預期的資料格式
- * {
- *   id: string|number,
- *   date: string,
- *   title: string,
- *   imageUrl: string,
- *   tags?: string[],
- *   ctaText?: string,
- *   ctaUrl?: string
- * }
- */
+const baseUrl = import.meta.env.BASE_URL
 
 const props = defineProps({
     item: { type: Object, required: true },
@@ -47,7 +38,10 @@ const props = defineProps({
 
 const emit = defineEmits(['cta-click'])
 
-const dateText = computed(() => props.item.date)
+const displayTags = computed(() => {
+    const tags = props.item.tags
+    return Array.isArray(tags) && tags.length ? tags : ['近期活動']
+})
 
 function handleCtaClick() {
     emit('cta-click', props.item)

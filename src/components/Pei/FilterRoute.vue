@@ -1,6 +1,6 @@
 <script setup>
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -61,10 +61,6 @@ const fetchTrails = async () => {
 
 
 
-onMounted(() => {                                           
-  fetchTrails()       
-  
-}) 
 
 
 
@@ -89,6 +85,7 @@ const typeNow = ref(typeBtns[0])
 // 1 條件過濾
 const filteredTrails = computed(() => {
   return trails.value.filter((trail) => {
+     
     const matchArea = areaNow.value === '全部' || trail.AREA.includes(areaNow.value)
     const matchTraffic = trafficNow.value === '全部' || trail.TRAFFIC.includes(trafficNow.value)
     const matchTime = timeNow.value === '全部' || trail.TIME.includes(timeNow.value)
@@ -117,15 +114,19 @@ const finalResults = computed(() => {
 
 // 3 分頁處理（從最終結果中取出某一頁）
 const page = ref(1)
-const perPage = 8
+const perPage = ref(8)
+
+function rwdPerPage(){
+  perPage.value = window.matchMedia('(max-width: 768px)').matches ? 6 : 8
+}
 
 const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(finalResults.value.length / perPage))
+  return Math.max(1, Math.ceil(finalResults.value.length / perPage.value))
 })
 
 const pagedTrails = computed(() => {
-  const start = (page.value - 1) * perPage
-  const end = start + perPage
+  const start = (page.value - 1) * perPage.value
+  const end = start + perPage.value
   return finalResults.value.slice(start, end)
 })
 
@@ -134,6 +135,15 @@ function goPage(p) {
   page.value = p
 }
 
+onMounted(() => {                                           
+  fetchTrails()
+  window.addEventListener('resize',rwdPerPage)       
+  
+}) 
+
+onUnmounted(() => {
+  window.removeEventListener('resize',rwdPerPage)
+})
 
 
 </script>
@@ -346,6 +356,11 @@ function goPage(p) {
       text-align: center;
       justify-content: space-between;
       margin: 8px;
+      @include m(){
+        width: 87px;
+        margin: 4px;
+
+      }
 
     }
     
@@ -378,7 +393,7 @@ function goPage(p) {
 
   @include m(){
     order: 1;
-    max-width: 400px;
+    max-width: 708px;
     margin-top: 20px;
     padding: 20px;
   }
@@ -400,7 +415,7 @@ button{ // 通用按鈕樣式
 }
 
 
-.otherBar{ // 關鍵字＋地圖搜尋外框
+.otherBar{ // 關鍵字搜尋外框
   width: 100%;
   max-width: 1200px;
   margin: auto;
@@ -414,7 +429,7 @@ button{ // 通用按鈕樣式
 
   @include m(){
    
-    max-width: 430px;
+    max-width: 768px;
   }
 
 
@@ -454,7 +469,7 @@ button{ // 通用按鈕樣式
     box-sizing: border-box; 
 
     @include m(){
-      width: 390px;
+      width: 708px;
     }
 
   }
@@ -504,7 +519,7 @@ button{ // 通用按鈕樣式
   margin-top: 60px; // 與上方間距
   @include m(){
     order: 3;
-    max-width: 430px;
+    max-width: 768px;
   }
 
   // border:2px solid #ff0404;
@@ -569,7 +584,7 @@ button{ // 通用按鈕樣式
 
   @include m(){
    
-    max-width: 430px;
+    max-width: 768px;
     gap: 8px;
   }
   
@@ -599,8 +614,8 @@ button{ // 通用按鈕樣式
 
   @include m(){
    
-  // width: calc(50% - 12px); // 4 欄等分（扣除gap視覺修正）
-  flex-basis: calc((100% - 8px) / 2);
+  // flex-basis: calc((100% - 8px) / 2);
+  flex-basis: calc((100% - 16px) / 3);
     
   }
 
