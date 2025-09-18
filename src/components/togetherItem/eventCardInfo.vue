@@ -582,7 +582,7 @@ onMounted(fetchEventData);
     img {
         display: block;
         width: 400px;
-        height: auto;
+        height: 260px;
         margin-top: 64px;
         border-radius: 10px;
         object-fit: cover;
@@ -590,7 +590,7 @@ onMounted(fetchEventData);
 }
 
 .rightInfo {
-    margin-top: 135px;
+    margin-top: 65px;
     margin-bottom: 18px;
     margin-left: 150px;
     
@@ -880,7 +880,7 @@ onMounted(fetchEventData);
             width: 100%;
             max-width: 280px;
             margin-top: 0;
-            margin-bottom: 120px;
+            margin-bottom: 50px;
         }
 
         .rightInfo {
