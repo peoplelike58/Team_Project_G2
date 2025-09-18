@@ -5,6 +5,28 @@ import { useRouter } from 'vue-router';
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
+import markerIcon2x from 'leaflet/dist/images/markerIcon2x.png'
+import markerIcon from 'leaflet/dist/images/markerIcon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+// 取消預設取圖 marker
+delete L.Icon.Default.prototype._getIconUrl
+
+// 合併新預設，之後 new L.Marker() 就會用這三個檔案                 // 全域套用新圖示
+L.Icon.Default.mergeOptions({                                    // 設定圖示路徑
+  iconRetinaUrl: markerIcon2x,                                   // Retina 用圖示
+  iconUrl: markerIcon,                                           // 一般用圖示
+  shadowUrl: markerShadow,                                        // 陰影圖
+
+  iconSize: [48, 64],                                             // 圖示顯示大小：寬64×高64
+  iconAnchor: [24, 64],                                           // 錨點在底部中央：寬/2=32, 高=64
+  popupAnchor: [0, -64],                                          // 泡泡往上偏移一個圖示高
+
+  // 若你沿用 Leaflet 原陰影，記得一起調整大小與錨點：               // 陰影大小對齊
+  shadowSize: [64, 64],                                           // 陰影顯示大小（依你的陰影圖而定）
+  shadowAnchor: [24, 64],                                         // 陰影錨點（通常與 iconAnchor 對齊）
+
+})
+
 const router = useRouter()  
 const goShopping = () => router.push('/shop')
 
@@ -29,10 +51,8 @@ const props = defineProps({
 // console.log('LATITUDE raw =', props.trail?.LATITUDE, 'type=', typeof props.trail?.LATITUDE)
 const latitude = computed(() => Number(props.trail?.LATITUDE))
 // console.log(latitude.value);
-
 const longitude = computed(() => Number(props.trail?.LONGITUDE))
 // console.log(longitude.value);
-
 const name = props.trail.MOUNTAIN_NAME
 
 let map // 宣告在外面，讓後面可以存取
