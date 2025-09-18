@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user";
 
+
 // ===== 路徑工具（保留你的寫法） =====
 const baseUrl = import.meta.env.BASE_URL
 const toUrl = (p) => {
@@ -22,7 +23,6 @@ const props = defineProps({
 // ===== 路由與使用者狀態 =====
 const router = useRouter()
 const user = useUserStore() // 含 (isLoggedIn/name/email）
-
 
 // ===== UI 狀態 =====
 const messages = ref([])
@@ -65,7 +65,9 @@ function mapRowToMessage(row){
   // 後端可能用別名：MESSAGE_IMAGE / MEMBER_IMAGE
   const msgImageKey = row.MESSAGE_IMAGE ?? null
   const avatarKey   = row.MEMBER_IMAGE ?? null
-
+  console.log(user.profile.avatar);
+  
+  
   return {
     msgId:Number(row.MESSAGE_ID),       
     memId:Number(row.MEMBER_ID),         
@@ -73,7 +75,7 @@ function mapRowToMessage(row){
     msgId: row.MESSAGE_ID,
     name: row.NICKNAME || row.MEMBER_NAME || `會員#${row.MEMBER_ID}`,
     mountain: row.MOUNTAIN_NAME || '',
-    avatar: avatarKey ? `${UPLOADS_BASE}/${avatarKey}` : 'images/myChallenge/head4.png',
+    avatar: `${UPLOADS_BASE}/avatars/${avatarKey}` || 'images/myChallenge/head4.png',
     time: row.CREATED_AT || row.CREATE_AT || row.CREATE_TIME || '',
     content: row.CONTENT || '',
     photo: msgImageKey ? `${UPLOADS_BASE}/${msgImageKey}` : '',
