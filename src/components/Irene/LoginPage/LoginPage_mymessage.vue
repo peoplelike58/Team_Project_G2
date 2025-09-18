@@ -54,7 +54,7 @@ function phpToVue(row){
   // 時間轉成 年/月/日 顯示
   const date = (craateTime || '').slice(0,10).replace(/-/g,'/')
   
-  return{ msgId, mountain, content, date }
+  return{ msgId, mountain, content, date, mountainId }
 
 }
 
@@ -76,17 +76,38 @@ async function fetchComments(){
 }
 
 
+// ===== 刪除留言：POST /CommentsDelete.php =====
 
+async function deleteMessageById(msgId){
+  if (!msgId) return
+  if (!confirm('確定要刪除此留言嗎？')) return
+
+  try{
+    const { data } = await apiAuth.post('/CommentsDelete.php', { MESSAGE_ID: msgId })
+    if (data?.success){
+      const i = messages.value.findIndex(m => m.msgId === msgId)
+      if (i > -1) messages.value.splice(i, 1)
+    }else{
+      alert(data?.message || '刪除失敗')
+    }
+  }catch(err){
+    const msg =
+      err?.response?.data?.message ||
+      (typeof err?.response?.data === 'string' ? err.response.data : '') ||
+      err?.message || '刪除時發生錯誤'
+    alert(msg)
+  }
+}
 
 
 
 // 刪除留言
-const deleteMessage = (messageId) => {
-  // 刪除留言功能
-  if (confirm('確定要刪除留言嗎？')) {
-    messages.value = messages.value.filter(message => message.id !== messageId)
-  }
-}
+// const deleteMessage = (messageId) => {
+//   // 刪除留言功能
+//   if (confirm('確定要刪除留言嗎？')) {
+//     messages.value = messages.value.filter(message => message.id !== messageId)
+//   }
+// }
 
 onMounted(() => {
   // 載入留言資料的API呼叫
@@ -119,13 +140,16 @@ onMounted(() => {
           class="table-row"
         >
           <div class="body-cell route-name">
-            <router-link :to="`/routes/${message.mountainId}`" >{{ message.mountain }}</router-link>  
-           山的ID: {{ message.mountainId }}
-            
+            <router-link :to="`/routes/${message.mountainId}`" >
+            <!-- <router-link
+              :to="{ name: 'trailDetail', params: { id: String(message.mountainId) } }"  
+            > -->
+            {{ message.mountain }}
+          </router-link>   
           </div>
           <div class="body-cell message-content">
             <div class="content-text">{{ message.content }}</div>
-            <button class="delete-btn" @click="deleteMessage(message.msgId)">
+            <button class="delete-btn" @click="deleteMessageById(message.msgId)">
               <i class="edit-icon"><svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32zm448-64v-64H416v64zM224 896h576V256H224zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32m192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32"></path></svg></i>
             </button>
           </div>
