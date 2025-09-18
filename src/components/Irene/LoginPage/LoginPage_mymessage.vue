@@ -247,6 +247,15 @@ onMounted(() => {
           &.route-name {
             justify-content: flex-start;
             text-align: left;
+            a{
+              text-decoration: none;
+              color: $tag;
+              font-weight: 600;
+              letter-spacing: 1.2px;
+              &:hover{
+                color: #BABAAB;
+              }
+            }
           }
           
           &.message-content {
@@ -301,6 +310,7 @@ onMounted(() => {
               
               .content-text {
                 width: 100%;
+                letter-spacing: 1.2px;
               }
               
               .delete-btn {
