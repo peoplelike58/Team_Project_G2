@@ -53,7 +53,7 @@ try {
             'duration' => 4,  // 預設時長
             'notes' => '請穿著輕便衣物與防滑鞋;建議攜帶水壺、帽子、防蚊液;活動前3日若遇大雨將公告延期',
             'imageUrl' => '/images/eventCard/cardimg1.jpg',
-            'registrationDeadlineDate' => '2025-08-13',
+            'registrationDeadlineDate' => $event['END_DATETIME'],
             'registrationDeadlineTime' => '12:00:00'
         ];
         
