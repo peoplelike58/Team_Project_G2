@@ -7,6 +7,7 @@ import { useCartStore } from '@/stores/cart'
 const CartStore = useCartStore()
 const router = useRouter()
 const route = useRoute()
+const BASE = import.meta.env.BASE_URL;
 
 // 響應式變數，存放商品資料
 // const products = ref([])
@@ -186,7 +187,7 @@ const buyRightnow = async () => {
         <div class="product_show">
             <div class="product_image">
                 <!-- <img src="@/assets/images/Products/products/望遠鏡_3.png" alt="折疊雙筒望遠鏡"/> -->
-                 <img :src="`/images/Products/products/${product.image}`" :alt="product.name">
+                 <img :src="`${BASE}images/Products/products/${product.image}`" :alt="product.name">
             </div> 
           <!-- 標籤 -->
           <div class="product_tags">

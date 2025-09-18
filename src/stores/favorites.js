@@ -14,13 +14,14 @@ export const useFavoriteStore = defineStore('favorites',()=>{
     // 計算收藏商品數量
         return favorites.products.length
     })
-
-    const isFavorite = computed(() => {
-        // 回傳一個函數，用來檢查某商品是否已收藏
-        return (productId) => {
-        return favorites.productIds.includes(Number(productId))
-        }
-    })
+    //檢查某商品是否已收藏
+    const isFavorite= (productId) => {
+      // return favorites.productIds.includes(Number(productId))
+      const numericProductId = Number(productId)
+      const result = favorites.productIds.includes(numericProductId)
+      console.log(`檢查收藏狀態: 商品${productId} -> ${result}`)
+      return result
+    }
 
     const isEmpty = computed(() => {
         // 檢查收藏清單是否為空
@@ -68,9 +69,15 @@ export const useFavoriteStore = defineStore('favorites',()=>{
       
             if (result.success) {
                 //  直接修改陣列，reactive 會自動追蹤變化
+                console.log('載入的收藏資料：',result)
                 favorites.products = result.favorites || []
-                favorites.productIds = favorites.products.map(product => Number(product.id))
-                
+                favorites.productIds = favorites.products.map(product => {
+
+                  const id = product.id || product.product_id || product.PRODUCT_ID
+                  const numericId = Number(id)
+                  console.log(`商品ID轉換: ${id} (${typeof id}) -> ${numericId} (${typeof numericId})`)
+                  return numericId
+                })
                 console.log(`載入收藏成功: ${favorites.products.length} 個商品`)
                 return true
             } else {
@@ -97,7 +104,7 @@ export const useFavoriteStore = defineStore('favorites',()=>{
     }
 
     // 檢查是否已經收藏
-    if (isFavorite.value(productId)) {
+    if (isFavorite(productId)) {
       console.log('ℹ️ 商品已在收藏清單中')
       return true
     }
@@ -182,10 +189,13 @@ export const useFavoriteStore = defineStore('favorites',()=>{
       const result = await response.json()
       
       if (result.success) {
-        // 🟢 直接使用 filter 方法，更簡潔
+        // 直接使用 filter 方法，更簡潔
         const numericProductId = Number(productId)
         favorites.productIds = favorites.productIds.filter(id => id !== numericProductId)
-        favorites.products = favorites.products.filter(product => Number(product.id) !== numericProductId)
+        favorites.products = favorites.products.filter(product => {
+          const productIdValue = product.id || product.product_id || product.PRODUCT_ID
+          return Number(productIdValue) !== numericProductId
+        })
         
         console.log('✅ 移除收藏成功')
         return true
@@ -207,7 +217,7 @@ export const useFavoriteStore = defineStore('favorites',()=>{
    * @param {number} productId - 商品ID
    */
   const toggleFavorite = async (memberId, productId) => {
-    if (isFavorite.value(productId)) {
+    if (isFavorite(productId)) {
       return await removeFavorite(memberId, productId)
     } else {
       return await addFavorite(memberId, productId)

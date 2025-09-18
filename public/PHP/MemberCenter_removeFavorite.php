@@ -13,23 +13,30 @@ if (!isset($_SESSION['member']) || !isset($_SESSION['member']['id'])) {
 
 $memberId = $_SESSION['member']['id']; // 從 Session 拿會員ID
 
-//檢查前端是否有傳送要刪除的購物車 ID
-if (!isset($data['cartId']) || empty($data['cartId'])) {
+// 檢查收藏記錄是否存在
+$favoriteCheck = $pdo->prepare("
+    SELECT id FROM FAVORITES 
+    WHERE MEMBER_ID = :member_id AND PRODUCT_ID = :product_id
+");
+$favoriteCheck->bindParam(':member_id', $memberId, PDO::PARAM_INT);
+$favoriteCheck->bindParam(':product_id', $data['product_id'], PDO::PARAM_INT);
+$favoriteCheck->execute();
+
+if ($favoriteCheck->rowCount() === 0) {
     echo json_encode([
-        'success' => false, 
-        'message' => '缺少購物車項目 ID'
-    ],JSON_UNESCAPED_UNICODE);
-    exit;
+        'success' => false,
+        'message' => '收藏記錄不存在'
+    ]);
+    exit();
 }
 
-//取得要刪除的購物車項目 ID
-$cartId = $data['cartId'];
-
-//建立SQL
-$sql = "DELETE FROM CART WHERE CART_ID = ? AND MEMBER_ID = ?";
+// 刪除收藏記錄
+$sql = "DELETE FROM FAVORITES WHERE PRODUCT_ID = :productID AND MEMBER_ID = :memberId";
 
   $pstmt = $pdo->prepare($sql);        // prepare() → 預先編譯 SQL 語句，提高安全性和效能
-  $result = $pstmt->execute([$cartId,$memberId]);  // execute([參數陣列]) → 執行預備語句，自動替換佔位符
+  $pstmt->bindValue( ":memberId", $memberId);
+  $pstmt->bindValue(":productID", $data["product_id"]);
+  $result = $pstmt->execute();  // execute([參數陣列]) → 執行預備語句，自動替換佔位符
 
 //檢查是否有刪除到資料
 $affectedRows = $pstmt->rowCount();     // rowCount() → 取得受影響的資料筆數
@@ -37,13 +44,13 @@ $affectedRows = $pstmt->rowCount();     // rowCount() → 取得受影響的資�
 if($affectedRows > 0){
     echo json_encode([
             'success' => true,
-            'message' => '商品已成功從購物車移除',
+            'message' => '商品已成功從收藏移除',
             'affectedRows' => $affectedRows    ],
             JSON_UNESCAPED_UNICODE);
 }else{
         echo json_encode([
         'success' => false,
-        'message' => '找不到該購物車項目或您沒有權限刪除']
+        'message' => '商品移除失敗或商品不存在']
         ,JSON_UNESCAPED_UNICODE);
 }
 

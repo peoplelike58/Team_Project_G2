@@ -99,16 +99,21 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
         // 更新個人資料狀態
         Object.assign(this.profile, profileData)
         
+        
         // 如果有頭像檔名，生成完整 URL
         if (this.profile.avatar) {
-          this.profile.avatarUrl = `/uploads/avatars/${this.profile.avatar}`
+          // 根據環境判斷路徑格式：開發環境用 /uploads，生產環境用 uploads
+          const basePath = import.meta.env.MODE === 'development' ? '/uploads' : 'uploads'
+          this.profile.avatarUrl = `${basePath}/avatars/${this.profile.avatar}`
         }
       },
 
       // 更新頭像檔名
       updateAvatar(filename) {
         this.profile.avatar = filename
-        this.profile.avatarUrl = `/uploads/avatars/${filename}`
+        // 根據環境判斷路徑格式：開發環境用 /uploads，生產環境用 uploads
+        const basePath = import.meta.env.MODE === 'development' ? '/uploads' : 'uploads'
+        this.profile.avatarUrl = `${basePath}/avatars/${filename}`
       }
     },              
   }

@@ -16,7 +16,7 @@
           <label class="form-label">頭像</label>
           <div class="avatar-upload">
             <div class="avatar-preview">
-              <img :src="user.profile.avatarUrl || '/images/Products/default-avatar.jpg'" alt="頭像" />
+              <img :src="user.profile.avatarUrl || `${BASE}images/Products/default-avatar.jpg`" alt="頭像" />
             </div>
             <div v-if="user.loading.uploadingAvatar" class="upload-loading">
               上傳中...
@@ -100,7 +100,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 
-
+const BASE = import.meta.env.BASE_URL;
 const user = useUserStore()
 // 編輯模式狀態
 const isEditing = ref(false)

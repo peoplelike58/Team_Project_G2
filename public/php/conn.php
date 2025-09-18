@@ -41,6 +41,7 @@
       $allowed = [                          // 允許的來源域名白名單
           'http://localhost:5173',          // 本地開發
           'https://tibamef2e.com/tjd102/g2/'           // 正式環境
+          
       ];
       
       $origin = $_SERVER['HTTP_ORIGIN'] ?? '';          // 取得請求來源
