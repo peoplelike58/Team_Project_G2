@@ -12,6 +12,7 @@ import { useCartStore } from '@/stores/cart';
 const CartStore = useCartStore()
 const router = useRouter()
 const allChecked = ref(true)    // 從 store 取得全選狀態，不需要自己維護
+const BASE = import.meta.env.BASE_URL;
 
 
 // const checkedMap = reactive(Object.fromEntries(CartStore.cartItems.map(i => [i.id, true])))  
@@ -173,7 +174,7 @@ function goNext(){
 
                 <el-table-column label="商品圖片" width="140">
                     <template #default="{ row }">
-                        <el-image :src="`/images/Products/products/${row.image}`" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
+                        <el-image :src="`${BASE}images/Products/products/${row.image}`" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
                     </template>
                 </el-table-column>
                 

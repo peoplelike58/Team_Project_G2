@@ -202,7 +202,7 @@ onMounted(async () => {
   box-sizing: border-box;
 
   @include m(){
-    max-width:430px ;
+    max-width:768px ;
     padding: 30px 20px;
     font-size: 14px;
   }
@@ -234,8 +234,9 @@ onMounted(async () => {
     margin-top: 48px;
     @include m(){
       flex-direction: column;
-      gap:12px;
-      max-width: 390px;
+      gap:28px;
+      max-width: 70%;
+      margin: 48px auto ;
     }
     
 
@@ -307,7 +308,7 @@ onMounted(async () => {
   letter-spacing: 1px;
   width: 100%;
   @include m(){
-    max-width: 390px;
+    max-width: 728px;
   }
 
   }

@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user";
 
+
 // ===== 路徑工具（保留你的寫法） =====
 const baseUrl = import.meta.env.BASE_URL
 const toUrl = (p) => {
@@ -22,7 +23,6 @@ const props = defineProps({
 // ===== 路由與使用者狀態 =====
 const router = useRouter()
 const user = useUserStore() // 含 (isLoggedIn/name/email）
-
 
 // ===== UI 狀態 =====
 const messages = ref([])
@@ -59,13 +59,16 @@ const API_DEL_COMMENT  = '/CommentsDelete.php'
 // ===== 上傳檔案對外 URL 基底：把 /PHP 拿掉 → 變成 /public =====
 const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'')
 const UPLOADS_BASE = `${API_ROOT}/uploads`
+// console.log(user.profile.avatar); // 印出會員avatar檔名
 
 // ===== 從後端一列資料 → 轉成前端需要的物件 =====
 function mapRowToMessage(row){
   // 後端可能用別名：MESSAGE_IMAGE / MEMBER_IMAGE
   const msgImageKey = row.MESSAGE_IMAGE ?? null
   const avatarKey   = row.MEMBER_IMAGE ?? null
-
+ 
+  
+  
   return {
     msgId:Number(row.MESSAGE_ID),       
     memId:Number(row.MEMBER_ID),         
@@ -73,7 +76,7 @@ function mapRowToMessage(row){
     msgId: row.MESSAGE_ID,
     name: row.NICKNAME || row.MEMBER_NAME || `會員#${row.MEMBER_ID}`,
     mountain: row.MOUNTAIN_NAME || '',
-    avatar: avatarKey ? `${UPLOADS_BASE}/${avatarKey}` : 'images/myChallenge/head4.png',
+    avatar: `${UPLOADS_BASE}/avatars/${avatarKey}` || 'images/myChallenge/head4.png',
     time: row.CREATED_AT || row.CREATE_AT || row.CREATE_TIME || '',
     content: row.CONTENT || '',
     photo: msgImageKey ? `${UPLOADS_BASE}/${msgImageKey}` : '',
@@ -135,8 +138,8 @@ async function submitComment(){
   }
 }
 
-// ===== 刪除留言：POST /CommentsDelete.php（JSON） =====
-// 刪除留言：POST /CommentsDelete.php（JSON）
+// ===== 刪除留言：POST /CommentsDelete.php =====
+
 async function deleteMessageById(msgId){
   if (!msgId) return
   if (!confirm('確定要刪除此留言嗎？')) return
@@ -293,7 +296,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
 
       <div class="popupUser">
         <div class="popupAvatar">
-          <img src="../../../public/images/myChallenge/head4.png" alt="使用者頭像" />
+          <img :src="`${UPLOADS_BASE}/avatars/${user.profile.avatar}`" alt="使用者頭像" />
         </div>
         <p class="popupName">{{ user.name || '尊爵不凡會員' }}</p>
       </div>
@@ -349,24 +352,38 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
   align-items: center;
   box-sizing: border-box;
   @include m(){
-    max-width: 430px;
+    max-width:768px;
     padding: 0 20px;
   }
 
   h1 {
+    width:100%;
+    max-width: 1200px;
     font-size: $pcFont-H1-m;
     font-weight: $semiBold;
     line-height: $lineHeight-title-120;
     letter-spacing: 2px;
     margin-right: auto;
+    padding: 0 30px;
+      @include m(){
+        max-width: 768px;
+        padding: 0 ;
+      }
   }
 
   .h1Tag {
+    width:100%;
+    max-width: 1200px;
     margin-right: auto;
+    padding: 0 30px;
     font-size: $pcFont-H4;
     font-weight: $semiBold;
     line-height: $lineHeight-title-120;
     letter-spacing: 1.5px;
+      @include m(){
+        max-width: 768px;
+        padding: 0 ;
+      }
   }
 
   .writeBtn {
@@ -504,6 +521,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
           align-items: center;
           height: 40px;
           margin-top: auto;
+          margin-left: auto;
           cursor: pointer;
           background-color: transparent;
           border: none;
@@ -534,7 +552,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
   overflow-y: auto;
 
   @include m(){
-    max-width: 430px;
+    max-width: 768px;
   }
 
   .showPopup {

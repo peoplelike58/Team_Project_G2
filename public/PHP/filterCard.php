@@ -9,7 +9,7 @@ $response = ['ok' => false, 'data' => [], 'error' => null];   // 預設回傳
 include 'conn.php'; 
 
 
-$sql = "SELECT m.MOUNTAIN_ID, m.MOUNTAIN_NAME, m.REGION, m.DIFF, m.LEVEL, m.TYPE, img.IMAGE, m.TRAFFIC, m.DISTANCE, m.TIME
+$sql = "SELECT m.MOUNTAIN_ID, m.MOUNTAIN_NAME, m.REGION, m.DIFF, m.LEVEL, m.TYPE, img.IMAGE, m.TRAFFIC, m.DISTANCE, m.TIME, m.AREA
 FROM MOUNTAIN m
 	JOIN MOUNTAIN_IMAGE img
     ON m.MOUNTAIN_ID = img.MOUNTAIN_ID

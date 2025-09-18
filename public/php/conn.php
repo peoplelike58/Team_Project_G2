@@ -1,14 +1,18 @@
 <?php
 // 共用 連線資料庫
 
+<<<<<<< HEAD
     //   MySQL相關資訊（本機端測試）
+=======
+      //MySQL相關資訊（本機端測試）
+>>>>>>> cc00b09870ee3602c0198621840e7d8bcc390b20
       $db_host = "127.0.0.1";
       $db_user = "root";
       $db_pass = "password";
       $db_select = "hou_shan";
 
-      //=====================================重要
-      // 上傳上傳到TibaMe伺服器時改成如下
+    //====================重要=================
+    // 上傳上傳到TibaMe伺服器時改成如下
     //   $db_host = "127.0.0.1";
     //   $db_user = "tibamefe_since2021";
     //   $db_pass = "vwRBSb.j&K#E";
@@ -37,6 +41,7 @@
       $allowed = [                          // 允許的來源域名白名單
           'http://localhost:5173',          // 本地開發
           'https://tibamef2e.com/tjd102/g2/'           // 正式環境
+          
       ];
       
       $origin = $_SERVER['HTTP_ORIGIN'] ?? '';          // 取得請求來源

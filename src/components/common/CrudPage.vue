@@ -56,7 +56,7 @@
                       console.log('上傳成功，檔名：', res.filename);
                       // const imgUrl = getImageUrl();
                     } else {
-                       alert(res?.message || '上傳失敗') }}"
+                       window.alert(res?.message || '上傳失敗') }}"
                   >
            
                   <el-button type="primary">上傳圖片</el-button>

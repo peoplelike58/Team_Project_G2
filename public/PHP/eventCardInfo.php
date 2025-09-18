@@ -47,7 +47,7 @@ try {
             'distance' => $event['DISTANCE'] ?? 15,
             'content' => $event['CONTENT'] ?? '活動簡介',
             'status' => ($event['STATUS'] == '報名中') ? '揪團中' : '已截止',
-            
+            'mountainId' => $event['MOUNTAIN_ID'],
             // 不在資料庫中，給予預設值
             // 'route' => '冷水坑 → 七星公園 → 夢幻湖',  // 預設路線
             'duration' => 4,  // 預設時長

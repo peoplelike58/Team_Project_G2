@@ -5,6 +5,28 @@ import { useRouter } from 'vue-router';
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
+import markerIcon2x from 'leaflet/dist/images/markerIcon2x.png'
+import markerIcon from 'leaflet/dist/images/markerIcon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+// 取消預設取圖 marker
+delete L.Icon.Default.prototype._getIconUrl
+
+// 合併新預設，之後 new L.Marker() 就會用這三個檔案                 // 全域套用新圖示
+L.Icon.Default.mergeOptions({                                    // 設定圖示路徑
+  iconRetinaUrl: markerIcon2x,                                   // Retina 用圖示
+  iconUrl: markerIcon,                                           // 一般用圖示
+  shadowUrl: markerShadow,                                        // 陰影圖
+
+  iconSize: [48, 64],                                             // 圖示顯示大小：寬64×高64
+  iconAnchor: [24, 64],                                           // 錨點在底部中央：寬/2=32, 高=64
+  popupAnchor: [0, -64],                                          // 泡泡往上偏移一個圖示高
+
+  // 若你沿用 Leaflet 原陰影，記得一起調整大小與錨點：               // 陰影大小對齊
+  shadowSize: [64, 64],                                           // 陰影顯示大小（依你的陰影圖而定）
+  shadowAnchor: [24, 64],                                         // 陰影錨點（通常與 iconAnchor 對齊）
+
+})
+
 const router = useRouter()  
 const goShopping = () => router.push('/shop')
 
@@ -29,10 +51,8 @@ const props = defineProps({
 // console.log('LATITUDE raw =', props.trail?.LATITUDE, 'type=', typeof props.trail?.LATITUDE)
 const latitude = computed(() => Number(props.trail?.LATITUDE))
 // console.log(latitude.value);
-
 const longitude = computed(() => Number(props.trail?.LONGITUDE))
 // console.log(longitude.value);
-
 const name = props.trail.MOUNTAIN_NAME
 
 let map // 宣告在外面，讓後面可以存取
@@ -244,11 +264,22 @@ watch(goPage, (newPage) => {
                 </li>
             </ul>
 
-            <button
+            <!-- <button
             @click="goShopping"
             >
                 前往山腳雜貨店↗
-            </button>
+            </button> -->
+
+                        <!-- 底部 CTA -->
+            <footer class="section-footer">
+                <RouterLink to="/shop" class="view-all">前往山腳雜貨店</RouterLink>
+                <button class="diag-btn" aria-label="open">
+                    <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="5" y1="19" x2="18" y2="6" class="shaft"/>
+                        <polyline points="8,5 19,5 19,16" class="head"/>
+                    </svg>
+                </button>
+            </footer>
         
         
         </div>
@@ -269,7 +300,7 @@ watch(goPage, (newPage) => {
     margin:0 auto;
 
     @include m(){
-        max-width: 430px;
+        max-width: 768px;
         padding: 50px 20px;
         font-size: 14px;
         box-sizing: border-box;
@@ -282,10 +313,11 @@ watch(goPage, (newPage) => {
         justify-content: center; /* li 置中 */
         align-items: center;
         gap: 48px;
+        margin: 0 auto;
 
         @include m(){
-            max-width: 390px;
-            gap:12px;
+            max-width: 728px;
+            gap:28px;
         }
 
         li{
@@ -302,7 +334,7 @@ watch(goPage, (newPage) => {
 
                 @include m(){
                    
-                    padding: 8px 20px;
+                    // padding: 8px 20px;
                     box-sizing: border-box;
                 }
 
@@ -326,7 +358,7 @@ watch(goPage, (newPage) => {
         // border: 1px solid red;
 
         @include m(){
-            width: 100%;
+            
         }
         
             li{
@@ -395,10 +427,11 @@ watch(goPage, (newPage) => {
             align-self: flex-start;
             margin: 0 80px;
             flex-grow: 1;
-            width: 100%;
+            // width: 100%;
 
             @include m(){
-                margin: 0;
+                align-self: center;
+                margin: 0 auto;
             }
 
 
@@ -412,7 +445,7 @@ watch(goPage, (newPage) => {
             flex-grow: 2;
 
             @include m(){
-            width: 100%;
+            
             flex-wrap: wrap;
 
             }
@@ -420,7 +453,7 @@ watch(goPage, (newPage) => {
 
             li{
             // border: 1px solid red;
-            flex-basis: 0;
+            flex-basis: calc(( 100% - 16px) / 3);
             flex-grow: 1;
 
             display: flex;
@@ -454,7 +487,9 @@ watch(goPage, (newPage) => {
                     }
 
                     .grayImg {
-                        filter: grayscale(100%); /* 讓圖片變灰階 */
+                        filter: grayscale(100%) brightness(1.2) contrast(80%);
+                        opacity: .6;                         /* 再淡一點 */
+                        transition: filter .25s ease, opacity .25s ease;
                     }
                 }
 
@@ -477,32 +512,32 @@ watch(goPage, (newPage) => {
 
         }
 
-        button{
+        // button{
             
 
-            width: 25%;
-            max-width: 240px;
+        //     width: 25%;
+        //     max-width: 240px;
            
-            padding: 10px;
-            margin-bottom: 40px;
+        //     padding: 10px;
+        //     margin-bottom: 40px;
             
-            border-radius: 8px;
-            border: none;
-            background-color:$tag;
-            color: white;
+        //     border-radius: 8px;
+        //     border: none;
+        //     background-color:$tag;
+        //     color: white;
 
-            font-size: $pcFont-p-m;
-            cursor: pointer;
+        //     font-size: $pcFont-p-m;
+        //     cursor: pointer;
 
-            @include m(){
-                width: 80%;
-                font-size: 14px;
-                margin-bottom: 0;
-            }
+        //     @include m(){
+        //         width: 90%;
+        //         font-size: $pcFont-p-s;
+        //         margin-bottom: 0;
+        //     }
 
             
 
-        }
+        // }
     }
 
 
@@ -524,10 +559,9 @@ watch(goPage, (newPage) => {
     box-sizing: border-box;
 
     @include m(){
-        max-width: 390px;
-        padding: 20px;
+        max-width: 728px;
         font-size: 14px;
-        padding: 20px;
+        padding: 36px 20px;
     }
 
 
@@ -657,7 +691,113 @@ watch(goPage, (newPage) => {
 }
 
 
+.section-footer { 
+    display: inline-flex;
+    // align-items: center;
+    // align-items: baseline;
+    width: max-content;
+    margin: 0 auto;
+    gap: 8px;
+    flex-wrap: nowrap;        /* 不允許換行 */
+    white-space: nowrap;      /* 內容不斷行（中文也不會在字與字之間折） */
 
+    transition: gap 0.4s ease;
+}
+.section-footer:hover {
+    gap: 16px;
+}
+.section-footer .view-all {  
+    color: $black-14;
+    font-size: $pcFont-H3;
+    font-weight: $bold;
+    text-decoration: 1px underline;
+    text-underline-offset: 10px;
+    line-height: 150%;
+    display: inline-block;    /* 保持在同一行 */
+    white-space: nowrap;      /* 文字本身也不斷行 */
+    cursor: pointer;
+}
+
+.section-footer .diag-btn{
+    --size: 40px;        /* 按鈕尺寸 */
+    --icon: 24px;        /* 箭頭大小 */
+    --fly: 24px;         /* 飛出距離（右上 / 左下） */
+    --dur: 720ms;        /* 動畫時間 */
+  
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    background-color: $tag;
+    border: 0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+  
+.section-footer .arrow{
+    width: var(--icon);
+    height: var(--icon);
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    will-change: transform, opacity;
+}
+  
+.section-footer .shaft, .head{
+    stroke: #fff;
+    stroke-width: 2px;
+    stroke-linecap: square;
+    stroke-linejoin: square;
+    fill: none;
+}
+
+.section-footer:hover .arrow,
+.section-footer:focus-visible .arrow{
+    animation: boomerang45 var(--dur) cubic-bezier(.2,.7,.2,1) 1;
+}
+  
+@keyframes boomerang45 {
+    0% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+    55% {
+        transform: translate(var(--fly), calc(var(--fly) * -1)); /* 右上 */
+        opacity: 0;
+    }
+    56% {
+        transform: translate(calc(var(--fly) * -1), var(--fly));  /* 左下 */
+        opacity: 0;
+    }
+    100% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .activity-section{
+        padding: 0;
+    }
+    .activity-section .content{
+        width: auto;
+    }
+    .activity-section .section-header{
+        margin-left: 24px;
+    }
+    .activity-section .view-all{
+        font-size: $pcFont-H4;
+        text-underline-offset: 8px;
+    }
+    .activity-section .card-container{
+        width: 100%;
+        padding: 0 24px;
+        box-sizing: border-box;
+
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+}
 
 
 </style>

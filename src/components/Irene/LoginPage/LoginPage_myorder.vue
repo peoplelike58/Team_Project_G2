@@ -14,50 +14,12 @@ const orders = ref([
     status: 'processing',
     statusText: '備貨中'
   },
-  {
-    id: 2,
-    orderNumber: '20250801143',
-    products: [
-      { id: 3, name: '登山背包' }
-    ],
-    amount: 'NT2500',
-    status: 'completed',
-    statusText: '已完成'
-  },
-  {
-    id: 3,
-    orderNumber: '20250801143',
-    products: [
-      { id: 4, name: '戶外睡袋' }
-    ],
-    amount: 'NT2500',
-    status: 'processing',
-    statusText: '備貨中'
-  },
-  {
-    id: 4,
-    orderNumber: '20250801143',
-    products: [
-      { id: 5, name: '登山鞋' }
-    ],
-    amount: 'NT2500',
-    status: 'processing',
-    statusText: '備貨中'
-  },
-  {
-    id: 5,
-    orderNumber: '20250801143',
-    products: [
-      { id: 6, name: '防水外套' }
-    ],
-    amount: 'NT2500',
-    status: 'processing',
-    statusText: '備貨中'
-  }
+ 
 ])
 
 onMounted(() => {
   // 載入訂單資料的API呼叫
+  
 })
 </script>
 <template>

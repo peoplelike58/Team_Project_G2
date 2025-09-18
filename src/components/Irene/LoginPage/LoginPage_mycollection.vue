@@ -8,20 +8,20 @@
     <!-- 收藏商品列表 -->
     <div class="favorites-grid">
       <div 
-        v-for="product in favoriteProducts" 
-        :key="product.id"
+        v-for="product in FavoriteStore.favorites.products" 
+        :key="product.PRODUCT_ID"
         class="product-card"
       >
         <div class="product-image">
-          <img :src="product.image" :alt="product.name" />
-          <button class="favorite-btn" @click="removeFavorite(product.id)">
+          <img :src="`/images/Products/products/${product.IMAGE}`" :alt="product.name" />
+          <button class="favorite-btn" @click="removeFavorite(product.PRODUCT_ID)">
             <i class="heart-icon">❤️</i>
           </button>
         </div>
         <div class="product-info">
-          <h3 class="product-name">{{ product.name }}</h3>
+          <h3 class="product-name">{{ product.PRODUCT_NAME }}</h3>
           <div class="box">
-            <p class="product-price">${{ product.price }}</p>
+            <p class="product-price">${{ product.PRICE }}</p>
             <button class="add_cart">加入購物車</button>
           </div>
         </div>
@@ -32,38 +32,52 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted,watch } from 'vue'
+import { useFavoriteStore } from '@/stores/favorites'
+import { useUserStore } from '@/stores/user'
+
+const FavoriteStore = useFavoriteStore()
+const user = useUserStore()
 
 // 收藏商品資料
-const favoriteProducts = ref([
-  {
-    id: 1,
-    name: '三人帳篷快速收合登山帳',
-    price: 1000,
-    image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=600&fit=crop&auto=format'
-  },
-  {
-    id: 2,
-    name: '帳篷快速收合登山帳',
-    price: 2000,
-    image: ''
-  },
-  {
-    id: 3,
-    name: '快速收合登山帳',
-    price: 3000,
-    image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=600&fit=crop&auto=format'
-  }
-])
+// const favoriteProducts = ref([
+//   {
+//     id: 1,
+//     name: '三人帳篷快速收合登山帳',
+//     price: 1000,
+//     image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=600&fit=crop&auto=format'
+//   },
+//   {
+//     id: 2,
+//     name: '帳篷快速收合登山帳',
+//     price: 2000,
+//     image: ''
+//   },
+//   {
+//     id: 3,
+//     name: '快速收合登山帳',
+//     price: 3000,
+//     image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=600&fit=crop&auto=format'
+//   }
+// ])
+// const favoriteProducts = FavoriteStore.favorites.products
 
-// 移除收藏商品
-const removeFavorite = (productId) => {
-  favoriteProducts.value = favoriteProducts.value.filter(product => product.id !== productId)
+
+/* 移除收藏商品*/
+const removeFavorite = async(productId) => {
+  // favoriteProducts.value = favoriteProducts.value.filter(product => product.id !== productId)
+  await FavoriteStore.removeFavorite(user.id,productId)
+  FavoriteStore.loadFavorites(user.id)
 }
 
+// 監聽收藏商品數量變化
+watch(() => FavoriteStore.favorites.products.length, (newCount, oldCount) => {
+  console.log(`收藏商品數量變化: ${oldCount} -> ${newCount}`)
+}, { immediate: true })
 
-onMounted(() => {
+onMounted(async() => {
   // 載入收藏資料的API呼叫
+  await FavoriteStore.loadFavorites(user.id)
 })
 
 </script>
@@ -107,8 +121,10 @@ onMounted(() => {
     
     .product-image {
       position: relative;
-      @include product_card_img(100%, 200px, 0);
-      
+      @include product_card_img(100%, 300px, 0);
+      > img{
+        height: 100%
+      }
       .favorite-btn {
         @include btn(0);
         position: absolute;
