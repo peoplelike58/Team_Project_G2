@@ -185,6 +185,11 @@ const imgPosition = (item) => {
     return `translateX(${ratio * maxDistance}px)`
 }
 
+defineExpose({ 
+    progressData,
+    refreshData: progressData 
+})
+
 </script>
 
 <style scoped lang="scss">

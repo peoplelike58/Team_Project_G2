@@ -24,6 +24,7 @@
                             :isLoggedIn="isLoggedIn"
                             @openHistoryComp="showHistory = true"/>
                         <mychallenge_progress 
+                            ref="progressRef"
                             :isLoggedIn="isLoggedIn"
                         />
                     </div>
@@ -36,7 +37,7 @@
             </div>
             <div class="mychallengeRank">
                 <h2>🏆 百岳勇士排行榜 🏆</h2>
-                <mychallenge_ranking />
+                <mychallenge_ranking ref="rankingRef"/>
             </div>
             <mychallenge_modal
                 v-for="mountain in mountains"
@@ -77,6 +78,8 @@
     const infoRef = ref(null)
     const historyRef = ref(null)
     const mapRef = ref(null)
+    const rankingRef = ref(null)
+    const progressRef = ref(null)
 
     const router = useRouter()
     const userStore = useUserStore()
@@ -189,17 +192,39 @@
     const handleRefreshStats = async () => {
         console.log('收到刷新請求，正在重新載入累積數據...')
 
-        // 刷新 info 組件的數據
-        if (infoRef.value && typeof infoRef.value.refreshStats === 'function') {
-            await infoRef.value.refreshStats()
-            console.log('累積數據已刷新')
-        }
+            try {
+                // 1. 刷新 info 組件的數據
+                if (infoRef.value && typeof infoRef.value.refreshStats === 'function') {
+                    await infoRef.value.refreshStats()
+                    console.log('累積數據已刷新')
+                }
 
-        // 刷新 history 組件的數據
-        if (showHistory.value && historyRef.value && typeof historyRef.value.refreshHistories === 'function') {
-        await historyRef.value.refreshHistories()
-        console.log('歷史數據已刷新')
-    }
+                // 2. 刷新 progress 組件的數據
+                if (progressRef.value && typeof progressRef.value.progressData === 'function') {
+                    await progressRef.value.progressData()
+                    console.log('進度數據已刷新')
+                }
+
+                // 3. 刷新 history 組件的數據
+                if (historyRef.value && typeof historyRef.value.loadHistories === 'function') {  // ✅ 移除 showHistory 條件
+                    await historyRef.value.loadHistories()  // ✅ 保留函數調用
+                    console.log('歷史數據已刷新')
+                }
+
+                // 4. 刷新 ranking 組件的數據
+                if (rankingRef.value && typeof rankingRef.value.refreshRanking === 'function') {
+                    await rankingRef.value.refreshRanking()
+                    console.log('排行榜數據已刷新')
+                }
+
+                // 5. 重新載入山峰狀態
+                await loadMountainsData()
+                console.log('山峰狀態已更新')
+
+            } catch (error) {
+                console.error('刷新數據時發生錯誤:', error)
+            }
+
     }
 
     const goalStore = useGoalStore()
@@ -216,11 +241,11 @@
 
         let climbed = false
         for (const [lon, lat] of coords) {
-            const gpxPoint = turf.point([lon, lat]) // 正確：[lon, lat]
+            const gpxPoint = turf.point([lon, lat])
             const distance = turf.distance(mountainPoint, gpxPoint, { units: "kilometers" })
             console.log("距離:", mountain, "vs", [lon, lat], "=", distance, "km")
 
-            if (distance < 0.5) {
+            if (distance < 0.01) {
                 climbed = true
                 break
             }
@@ -249,6 +274,10 @@
 
                 // 更新 Pinia 進度
                 goalStore.addDone(target.kind)
+
+                if (rankingRef.value && typeof rankingRef.value.refreshRanking === 'function') {
+                    rankingRef.value.refreshRanking()
+                }
             }
 
             } else {

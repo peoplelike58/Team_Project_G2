@@ -35,7 +35,7 @@
             FROM FOOT F
             LEFT JOIN MOUNTAIN M
             ON F.MOUNTAIN_ID = M.MOUNTAIN_ID
-            WHERE F.MEMBER_ID = ?
+            WHERE F.MEMBER_ID = ? AND F.IS_CLIMBED = 1
             GROUP BY M.TYPE";
 
     $stmt = $pdo->prepare($sql);

@@ -40,10 +40,10 @@
                 <h4>想法記錄</h4>
                 <textarea
                     v-model="thought"
-                    maxlength="200"
+                    maxlength="500"
                     @input="updateCount"
                 ></textarea>
-                <p class="textCount">{{ textCount }} / 200</p>
+                <p class="textCount">{{ textCount }} / 500</p>
             </article>
             <div class="buttunWrapper">
                 <button @click="saveThought">提交</button>
@@ -63,11 +63,18 @@ import axios from 'axios'
 
     const mountainId = ref(null)
 
-    // let mountain = ref({name: '玉山', kind: '大百岳'})
-
     const isVisible = ref(true)
+    const isDragOver = ref(false)
 
-    // --- 1.定義父層傳入的山資料
+    const fileName = ref("")
+    const fileContent = ref("")         // 存原始 XML
+    const trackName = ref("")           // GPX track 名稱
+    const trackPointsCount = ref(0)     // track points 數量
+    const gpxCoords = ref([])  // 存 [lon, lat]
+    const thought = ref("")
+    const textCount = ref(0)
+
+    // --- Props 1.定義父層傳入的山資料
     const props = defineProps({
     mountain: {
         type: Object,
@@ -75,10 +82,293 @@ import axios from 'axios'
     }
     })
 
-    const isDragOver = ref(false)
-    const fileName = ref("")
+    // Emits
+    const emit = defineEmits(["closeUploadModal", "saveGpx", "refreshStats"])
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_TRACK_POINTS = 20000; // 最多2萬個軌跡點
+    const ALLOWED_MIME_TYPES = ['application/xml', 'text/xml', 'application/gpx+xml'];
+
+    const API_URL_1 = `${import.meta.env.VITE_AJAX_URL}/mychallenge_modal_1.php`
+    const API_URL_2 = `${import.meta.env.VITE_AJAX_URL}/mychallenge_modal_2.php`
+
+    function extractCoordinatesSafely(trkpts) {
+        const coords = [];
+        
+        for (let i = 0; i < trkpts.length; i++) {
+                const lat = parseFloat(trkpts[i].getAttribute("lat"));
+                const lon = parseFloat(trkpts[i].getAttribute("lon"));
+                
+                // 驗證座標有效性
+                if (isNaN(lat) || isNaN(lon) || 
+                    lat < -90 || lat > 90 || 
+                    lon < -180 || lon > 180) {
+                    console.warn(`跳過無效座標: ${lat}, ${lon}`);
+                    continue;
+                }
+                
+                coords.push([lon, lat]); // turf.js 預設是 [lon, lat]
+            }
+            
+            return coords;
+        }
+
+        function calculateHeightSafely(trkpts) {
+        let heightTotal = 0;
+        let exElevation = parseFloat(trkpts[0].querySelector('ele')?.textContent || 0);
+        
+        // 驗證初始高度
+        if (isNaN(exElevation) || exElevation < -500 || exElevation > 10000) {
+            exElevation = 0;
+        }
+        
+        trkpts.forEach((coordinatePoint, i) => {
+            if (i === 0) return;
+            
+            const elevation = parseFloat(coordinatePoint.querySelector('ele')?.textContent || 0);
+            
+            // 驗證高度有效性
+            if (isNaN(elevation) || elevation < -500 || elevation > 10000) {
+                return;
+            }
+            
+            if (elevation > exElevation) {
+                const gain = elevation - exElevation;
+                // 防止異常大的高度變化
+                if (gain < 1000) {
+                    heightTotal += gain;
+                }
+            }
+            exElevation = elevation;
+        });
+        
+        height.value = Number(heightTotal.toFixed(2));
+    }
+
+    function calculateDistanceSafely(trkpts) {
+        function haversine(lat1, lon1, lat2, lon2) {
+            const r = 6371e3; // 地球半徑(公尺)
+            const rad = (v) => v * Math.PI / 180;
+
+            const latGap = rad(lat2 - lat1);
+            const lonGap = rad(lon2 - lon1);
+
+            const a = Math.sin(latGap / 2) ** 2 +
+                    Math.cos(rad(lat1)) * Math.cos(rad(lat2)) *
+                    Math.sin(lonGap / 2) ** 2;
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return r * c; // 公尺
+        }
+
+        let distance = 0;
+        
+        for (let i = 1; i < trkpts.length; i++) {
+            const lat1 = parseFloat(trkpts[i-1].getAttribute("lat"));
+            const lon1 = parseFloat(trkpts[i-1].getAttribute("lon"));
+            const lat2 = parseFloat(trkpts[i].getAttribute("lat"));
+            const lon2 = parseFloat(trkpts[i].getAttribute("lon"));
+            
+            // 驗證所有座標
+            if ([lat1, lon1, lat2, lon2].some(coord => 
+                isNaN(coord) || coord < -180 || coord > 180)) {
+                continue;
+            }
+            
+            const segmentDistance = haversine(lat1, lon1, lat2, lon2);
+            
+            // 防止異常大的距離（可能是錯誤資料）
+            if (segmentDistance < 10000) { // 10km 以內才計算
+                distance += segmentDistance;
+            }
+        }
+        
+        kilo.value = Number((distance / 1000).toFixed(2));
+    }
+
+    function calculateTimeSafely(trkpts) {
+        const firstTime = trkpts[0].querySelector("time")?.textContent;
+        const lastTime = trkpts[trkpts.length - 1].querySelector("time")?.textContent;
+        
+        if (!firstTime || !lastTime) {
+            time.value = 0;
+            return;
+        }
+        
+        const startTime = new Date(firstTime);
+        const endTime = new Date(lastTime);
+        
+        // 驗證時間有效性
+        if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+            time.value = 0;
+            return;
+        }
+        
+        const speedMins = endTime - startTime;
+        
+        // 防止異常時間（負數或超過24小時）
+        if (speedMins < 0 || speedMins > 24 * 60 * 60 * 1000) {
+            time.value = 0;
+            return;
+        }
+        
+        const speedHrs = speedMins / 1000 / 60 / 60;
+        time.value = Number(speedHrs.toFixed(2));
+    }
+
+    function isTrackWithinMountainArea(trkpts, mountainLat, mountainLon, radiusKm = 2) {
+        // 計算兩點間距離的函數（Haversine公式）
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // 地球半徑(公里)
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // 檢查是否有任何軌跡點在山峰附近
+        for (let i = 0; i < trkpts.length; i++) {
+            const lat = parseFloat(trkpts[i].getAttribute("lat"));
+            const lon = parseFloat(trkpts[i].getAttribute("lon"));
+            
+            // 驗證座標有效性
+            if (isNaN(lat) || isNaN(lon)) continue;
+            
+            const distance = calculateDistance(mountainLat, mountainLon, lat, lon);
+            
+            if (distance <= radiusKm) {
+                return true; // 找到在範圍內的點
+            }
+        }
+        return false; // 沒有點在範圍內
+    }
+
+    // 驗證檔案格式
+    function validateFile(file) {
+        // 檢查副檔名
+        const ext = file.name.split(".").pop().toLowerCase();
+        if (ext !== "xml" && ext !== "gpx") {
+            return false;
+        }
+
+        // 檔案大小檢查
+        if (file.size > MAX_FILE_SIZE) {
+            alert(`檔案過大！請使用小於 ${MAX_FILE_SIZE / 1024 / 1024}MB 的檔案`);
+            return false;
+        }
+        
+        // MIME 類型檢查
+        if (file.type && !ALLOWED_MIME_TYPES.includes(file.type)) {
+            alert('檔案類型不正確，請確認是有效的 GPX/XML 檔案');
+            return false;
+        }
+        
+        return true;
+    }
+
+    // 讀取並解析 XML
+    function readFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+            
+            // 內容大小二次檢查
+            if (content.length > MAX_FILE_SIZE) {
+                alert('檔案內容過大');
+                fileName.value = "";
+                return;
+            }
+            
+            fileContent.value = content;
+
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(content, "text/xml");
+
+                // 檢查 XML 解析錯誤
+                const parseError = xmlDoc.querySelector('parsererror');
+                if (parseError) {
+                    alert("檔案格式錯誤，請確認是有效的 GPX 檔案");
+                    fileName.value = "";
+                    return;
+                }
+
+                // 檢查是否為 GPX 格式
+                if (xmlDoc.documentElement.tagName !== 'gpx') {
+                    alert("不是有效的 GPX 檔案格式");
+                    fileName.value = "";
+                    return;
+                }
+
+                // 地理位置驗證
+                const trkpts = xmlDoc.querySelectorAll("trkpt");
+                if (trkpts.length === 0) {
+                    alert("GPX 檔案中沒有找到軌跡點！");
+                    fileName.value = "";
+                    return;
+                }
+
+                // 軌跡點數量限制
+                if (trkpts.length > MAX_TRACK_POINTS) {
+                    alert(`軌跡點過多（${trkpts.length}個），請使用少於 ${MAX_TRACK_POINTS} 個點的檔案`);
+                    fileName.value = "";
+                    return;
+                }
+
+                const isWithinArea = isTrackWithinMountainArea(
+                    trkpts,
+                    props.mountain.latitude,
+                    props.mountain.longitude,
+                    2 // 允許範圍：2公里
+                );
+
+                if (!isWithinArea) {
+                    const userConfirm = confirm(
+                        `系統偵測到此 GPX 軌跡可能不在「${props.mountain.name}」附近（2公里範圍內）\n` +
+                        `是否確定要上傳？`
+                    );
+                    if (!userConfirm) {
+                        fileName.value = "";
+                        return;
+                    }
+                }
+                            
+                // 安全地提取座標和計算數據
+                gpxCoords.value = extractCoordinatesSafely(trkpts);
+                calculateHeightSafely(trkpts);
+                calculateDistanceSafely(trkpts);
+                calculateTimeSafely(trkpts);
+
+            } catch (err) {
+                console.error("XML parse error", err);
+                alert("檔案解析失敗，請確認檔案格式正確");
+                fileName.value = "";
+            }
+        };
+        
+        reader.onerror = () => {
+            alert("檔案讀取失敗");
+            fileName.value = "";
+        };
+        
+        reader.readAsText(file);
+    }
+
+    // 文字輸入清理
+    function sanitizeInput(text) {
+        if (typeof text !== 'string') {
+            return '';
+        }
+        
+        return text.substring(0, 500);
+    }
     
+
     // 拖曳事件
+    
     function onDragOver() {
         isDragOver.value = true
     }
@@ -112,129 +402,31 @@ import axios from 'axios'
             e.target.value = "" // 清空 input
         }
     }
-
-
-    const fileContent = ref("")         // 存原始 XML
-    const trackName = ref("")           // GPX track 名稱
-    const trackPointsCount = ref(0)     // track points 數量
-
-    // 驗證檔案格式
-    function validateFile(file) {
-    const ext = file.name.split(".").pop().toLowerCase()
-        return ext === "xml" || ext === "gpx"
-    }
-
-    const gpxCoords = ref([])  // 存 [lon, lat]
-    // 讀取並解析 XML
-    function readFile(file) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-        fileContent.value = e.target.result
-
-        try {
-            const parser = new DOMParser()
-            const xmlDoc = parser.parseFromString(fileContent.value, "text/xml")
-
-            // GPX <name>
-            const nameTag = xmlDoc.querySelector("gpx > metadata > name, trk > name")
-            trackName.value = nameTag ? nameTag.textContent : "未找到名稱"
-
-                // 🔹 檢查 GPX 名稱是否含有當前 modal 山名
-            if (!trackName.value.includes(props.mountain.name)) {
-                alert(`GPX 檔案名稱與「${props.mountain.name}」不符，請上傳正確的紀錄！`)
-                fileName.value = ""
-                return
-            }
-                
-            // 取得 <trkpt> gpx檔裡面的標籤，把每一個座標點的數據包住
-            const trkpts = xmlDoc.querySelectorAll("trkpt")
-            gpxCoords.value = Array.from(trkpts).map(pt => {
-                const lat = parseFloat(pt.getAttribute("lat"))
-                const lon = parseFloat(pt.getAttribute("lon"))
-                return [lon, lat]   // turf.js 預設是 [lon, lat]
-            })
-            
-            // 計算gpx高度
-            // 變數名稱:elevation海拔, exElevation前一個高度, coordinatePoint座標點
-            let heightTotal = 0
-            let exElevation = parseFloat(trkpts[0].querySelector('ele')?.textContent || 0)
-
-            trkpts.forEach((coordinatePoint, i) => {
-                
-                if (i === 0) return
-
-                const elevation = parseFloat(coordinatePoint.querySelector('ele')?.textContent || 0)
-                if(elevation > exElevation){
-                    heightTotal += elevation - exElevation
-
-                }
-                exElevation = elevation
-            })
-            height.value = Number(heightTotal.toFixed(2))
-
-            // 計算gpx里程
-            // 變數名稱:haversine半正矢公式(用經緯度計算兩點的距離),lat緯度, lon經度, r半徑, v角度, rad弧度, lonGap經度差, latGap緯度差, a點與點的距離, c角距離, distance距離
-            function haversine(lat1, lon1, lat2, lon2){
-                const r = 6371e3 // 地球半徑(公尺)
-                const rad = ( v ) => v * Math.PI / 180
-
-                const latGap = rad(lat2 - lat1)
-                const lonGap = rad(lon2 - lon1)
-
-                const a = Math.sin(latGap / 2) ** 2 +
-                        Math.cos(rad(lat1)) * Math.cos(rad(lat2)) *
-                        Math.sin(lonGap / 2) ** 2
-                const c = 2  * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-                return r * c //公尺
-            }
-            let distance = 0
-            for (let i = 1; i < trkpts.length; i++) {
-                const lat1 = parseFloat(trkpts[i-1].getAttribute("lat"));
-                const lon1 = parseFloat(trkpts[i-1].getAttribute("lon"));
-                const lat2 = parseFloat(trkpts[i].getAttribute("lat"));
-                const lon2 = parseFloat(trkpts[i].getAttribute("lon"));
-
-                distance += haversine(lat1, lon1, lat2, lon2);
-            }
-            kilo.value = Number((distance / 1000).toFixed(2))    // 換算成 km
-
-            // 計算 gpx 時間
-            const startTime = new Date(trkpts[0].querySelector("time")?.textContent);
-            const endTime   = new Date(trkpts[trkpts.length - 1].querySelector("time")?.textContent);
-
-            const speedMins = endTime - startTime;              // 毫秒
-            const speedHrs = speedMins / 1000 / 60 / 60;      // 小時
-            time.value = Number(speedHrs.toFixed(2))
-
-        } catch (err) {
-            console.error("XML parse error", err)
-            trackName.value = "解析失敗"
-        }
-    }
-        reader.readAsText(file)
-    }
-
-    const thought = ref("")
-    const textCount = ref(0)
-    const API_URL_1 = `${import.meta.env.VITE_AJAX_URL}/mychallenge_modal_1.php`
-    const API_URL_2 = `${import.meta.env.VITE_AJAX_URL}/mychallenge_modal_2.php`
-
+    
     function updateCount() {
+
+        const cleanText = sanitizeInput(thought.value)
+        if (cleanText !== thought.value) {
+            thought.value = cleanText
+        }
+
         textCount.value = thought.value.length
     }
 
-    const emit = defineEmits(["closeUploadModal", "saveGpx", "refreshStats"])
+
+
+
 
     async function saveThought() {
         if (!props.mountain.name) {
-            alert("沒有山的名稱，無法保存！")
-            return
+            alert("沒有山的名稱，無法保存！");
+            return;
         }
 
-        // ✅ **檢查必要資料**
+        // 檢查必要資料
         if (!fileName.value) {
-            alert("請先上傳 GPX 檔案！")
-            return
+            alert("請先上傳 GPX 檔案！");
+            return;
         }
 
         try {
@@ -244,48 +436,55 @@ import axios from 'axios'
                 height: height.value,
                 distance: kilo.value,
                 duration: time.value,
-                content: thought.value
-            }
+                content: thought.value,
+                gpx_coords: gpxCoords.value,
+            };
+            
             // 發送 POST 請求到 PHP
             const response = await axios.post(
-            API_URL_1,
-            jsonData,
-            {
-                withCredentials: true  // ← 讓 session 可以運作
+                API_URL_1,
+                jsonData,
+                {
+                    withCredentials: true  // 讓 session 可以運作
+                }
+            );
+
+            console.log('儲存成功:', response.data);
+
+            if (response.data.climbed) {
+                alert(`恭喜！${props.mountain.name} 登頂成功，紀錄已儲存到資料庫！`);
+            } else {
+                alert(`${props.mountain.name} 的軌跡已記錄，繼續挑戰登頂吧！`);
             }
-            )
-
-            console.log('儲存成功:', response.data)
-            
-            // ✅ **同時保存到 localStorage（作為備份）**
-            // const key = `gpx-${props.mountain.name}`
-            // const record = {
-            //     thought: thought.value,
-            //     height: height.value,
-            //     kilo: kilo.value,
-            //     time: time.value,
-            //     fileName: fileName.value
-            // }
-            // localStorage.setItem(key, JSON.stringify(record))
-
-            // ✅ **存 Pinia**
-            // const recordStore = useRecordStore()
-            // recordStore.saveRecord(props.mountain.name, record)
-
-            alert(`對於 ${props.mountain.name} 的紀錄已保存到資料庫！`)
 
             // 發送資料給父層
             emit("saveGpx", {
                 mountain: props.mountain.name,
                 coords: gpxCoords.value
-            })
+            });
             
-            emit("refreshStats")
-            emit("closeUploadModal", props.mountain.name)
+            emit("refreshStats");
+
+            // 清空表單
+            fileName.value = "";
+            thought.value = "";
+            textCount.value = 0;
+            height.value = 0;
+            kilo.value = 0;
+            time.value = 0;
+            fileContent.value = "";
+            gpxCoords.value = [];
+
+            const fileInput = document.getElementById('theFile');
+            if (fileInput) {
+                fileInput.value = "";
+            }
+
+            emit("closeUploadModal", props.mountain.name);
 
         } catch (error) {
-            console.error('儲存失敗:', error)
-            alert('儲存失敗，請稍後再試！')
+            console.error('儲存失敗:', error);
+            alert('儲存失敗，請稍後再試！');
         }
     }
 
@@ -329,6 +528,8 @@ import axios from 'axios'
         // }
     }
     })
+
+
 
 </script>
 

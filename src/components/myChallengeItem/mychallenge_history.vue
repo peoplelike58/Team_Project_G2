@@ -166,6 +166,11 @@ import axios from 'axios'
         }
     })
 
+    defineExpose({ 
+        loadHistories,
+        refreshData: loadHistories 
+    })
+
 </script>
 
 <style scoped lang="scss">

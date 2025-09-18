@@ -245,6 +245,13 @@ watch(() => props.mountains, (newMountains) => {
 				// 檢查登入
 				marker.on("click", () => handleMarkerClick(mountain.name))
 
+				marker.bindTooltip(mountain.name, {
+					permanent: true,
+					direction: 'bottom',
+					offset: [5, 5], 
+					className: 'mountain-name-tooltip'
+				})
+
 				clusterGroup.addLayer(marker)
 				markerMap.set(mountain.name, marker)
 			})

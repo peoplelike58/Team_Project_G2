@@ -30,7 +30,7 @@
         $climbedSql = "SELECT DISTINCT M.MOUNTAIN_ID, M.MOUNTAIN_NAME 
                        FROM MOUNTAIN M 
                        JOIN FOOT F ON M.MOUNTAIN_ID = F.MOUNTAIN_ID 
-                       WHERE F.MEMBER_ID = ?";
+                       WHERE F.MEMBER_ID = ? AND F.IS_CLIMBED = 1";
 
         $climbedStmt = $pdo->prepare($climbedSql);
         $climbedStmt->execute([$MEMBER_ID]);

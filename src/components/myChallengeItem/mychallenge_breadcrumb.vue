@@ -7,7 +7,7 @@
 
     p{
         color: #ccc;
-        cursor: pointer;
+        // cursor: pointer;
 
         span{
             color: $black-14;
