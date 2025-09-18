@@ -1,33 +1,84 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useUserStore } from "@/stores/user";
 
 // 留言資料
-const messages = ref([
-  {
-    id: 1,
-    routeName: '玉山新手友善',
-    content: '風景超美，新手爬也不會覺得太難',
-    updateTime: '2025/08/04'
-  },
-  {
-    id: 2,
-    routeName: '玉山新手友善',
-    content: '風景超美，新手爬也不會覺得太難',
-    updateTime: '2025/08/04'
-  },
-  {
-    id: 3,
-    routeName: '玉山新手友善',
-    content: '風景超美，新手爬也不會覺得太難',
-    updateTime: '2025/08/04'
-  },
-  {
-    id: 4,
-    routeName: '玉山新手友善',
-    content: '風景超美，新手爬也不會覺得太難',
-    updateTime: '2025/08/04'
+// const messages = ref([
+//   {
+//     id: 1,
+//     routeName: '玉山新手友善',
+//     content: '風景超美，新手爬也不會覺得太難',
+//     updateTime: '2025/08/04'
+//   },
+//   {
+//     id: 2,
+//     routeName: '玉山新手友善',
+//     content: '風景超美，新手爬也不會覺得太難',
+//     updateTime: '2025/08/04'
+//   },
+//   {
+//     id: 3,
+//     routeName: '玉山新手友善',
+//     content: '風景超美，新手爬也不會覺得太難',
+//     updateTime: '2025/08/04'
+//   },
+//   {
+//     id: 4,
+//     routeName: '玉山新手友善',
+//     content: '風景超美，新手爬也不會覺得太難',
+//     updateTime: '2025/08/04'
+//   }
+// ])
+
+const user = useUserStore()
+
+// 只打你自己的 PHP 根路徑，例如 http://localhost/TeamProject/public/PHP
+const API_BASE = import.meta.env.VITE_AJAX_URL
+
+// 需要 Cookie / Session（會員操作用）
+const apiAuth = axios.create({
+  baseURL: API_BASE,
+  withCredentials: true,
+})
+
+const messages = ref([])
+
+// ==== 將後端回傳欄位對應到前端 ====
+function phpToVue(row){
+  const mountainId = row.MOUNTAIN_ID
+  const msgId = row.MESSAGE_ID
+  const mountain = row.MOUNTAIN_NAME
+  const content = row.CONTENT
+  const craateTime = row.CREATED_AT
+  // 時間轉成 年/月/日 顯示
+  const date = (craateTime || '').slice(0,10).replace(/-/g,'/')
+  
+  return{ msgId, mountain, content, date }
+
+}
+
+// ==== 讀留言,從 session 判斷 member id ====
+async function fetchComments(){
+
+  try{
+    const resp = await apiAuth.post('/CommentsMember.php',{})
+    const data = resp.data || {}
+    if(!data.success){
+      console.log(data.message || '讀取留言失敗');   
+    }
+    const rows = Array.isArray(data.data) ? data.data : []             // 取得資料陣列                                                // 取 rows
+    messages.value = rows.map(phpToVue)      
+  }catch(err){
+    console.error('fetchComments error:', err)
+    messages.value = []
   }
-])
+}
+
+
+
+
+
 
 // 刪除留言
 const deleteMessage = (messageId) => {
@@ -39,6 +90,9 @@ const deleteMessage = (messageId) => {
 
 onMounted(() => {
   // 載入留言資料的API呼叫
+  
+  fetchComments()
+
 })
 </script>
 
@@ -52,31 +106,36 @@ onMounted(() => {
     <!-- 留言列表表格 -->
     <div class="messages-table">
       <div class="table-header">
-        <div class="header-cell">留言的路線</div>
-        <div class="header-cell">內容</div>
-        <div class="header-cell">更新時間</div>
+        <div class="header-cell">留言路線</div>
+        <div class="header-cell">留言內容</div>
+        <div class="header-cell">留言時間</div>
       </div>
       
       <div class="table-body">
         <div 
+          v-if="messages.length > 0"
           v-for="message in messages" 
-          :key="message.id"
+          :key="message.msId"
           class="table-row"
         >
-          <div class="body-cell route-name">{{ message.routeName }}</div>
+          <div class="body-cell route-name">
+            <router-link :to="`/routes/${message.mountainId}`" >{{ message.mountain }}</router-link>  
+           山的ID: {{ message.mountainId }}
+            
+          </div>
           <div class="body-cell message-content">
             <div class="content-text">{{ message.content }}</div>
-            <button class="delete-btn" @click="deleteMessage(message.id)">
+            <button class="delete-btn" @click="deleteMessage(message.msgId)">
               <i class="edit-icon"><svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32zm448-64v-64H416v64zM224 896h576V256H224zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32m192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32"></path></svg></i>
             </button>
           </div>
-          <div class="body-cell">{{ message.updateTime }}</div>
+          <div class="body-cell">{{ message.date }}</div>
         </div>
       </div>
     </div>
 
     <!-- 空狀態 -->
-    <div v-if="messages.length === 0" class="empty-state">
+    <div v-if="messages.length === 0 " class="empty-state">
       <p class="empty-message">目前沒有任何留言</p>
     </div>
   </div>
