@@ -97,6 +97,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+// import CryptoJS from 'crypto-js' // 需要安裝: npm install crypto-js  （加密方式待考慮）
 
 // 響應式數據
 const email = ref('')
@@ -104,6 +105,10 @@ const password = ref('')
 const router = useRouter()
 const user = useUserStore()
 
+// 密碼加密函數(待考慮)
+// const encryptPassword = (password) => {
+//   // 使用 SHA-256 雜湊（推薦用於密碼）
+//   return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex)}
 
 // Google reCAPTCHA 金鑰(Yuki)
 const siteKey ="6LepsL4rAAAAACyRJsYbyJaL3v4XH-3RBGwhBJd-"
@@ -129,13 +134,16 @@ const  handleLogin = async () => {
       return;
     }
 
-    await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_fontLogin.php', {
+    // 加密密碼（待考慮）
+    // const encryptedPassword = encryptPassword(password.value)
+
+    await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_fontlogin.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({
         email: email.value,
-        password: password.value,
+        password: password.value,      // encryptedPassword（加密待考慮）
         recaptcha: token
       })
     })

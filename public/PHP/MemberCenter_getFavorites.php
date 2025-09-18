@@ -2,41 +2,37 @@
 
 include 'conn.php';
 
+$data=json_decode(file_get_contents("php://input"), true);//接收前端來的東西，做json檔的解碼，file_get_contents("php://input") → 抓到整個 JSON 字串，json_decode(..., true) → 把 JSON 轉成 關聯陣列 (associative array)
+
 try {
-    $sql = "insert into CART (MEMBER_ID,PRODUCT_ID,SIZE,COLOR,QUANTITY)
-values (:memberId ,:productID ,:size ,:color,:quantity)
-ON DUPLICATE KEY UPDATE 
-  QUANTITY = :quantity";
+    $sql = "SELECT 
+        p.PRODUCT_ID,
+        p.PRODUCT_NAME,
+        p.PRICE,
+        p.IMAGE,
+        p.PRODUCT_TYPE,
+        p.GENDER,
+        f.CREATED_AT
+        FROM FAVORITES f
+        INNER JOIN PRODUCT p ON f.PRODUCT_ID = p.PRODUCT_ID
+        WHERE f.MEMBER_ID = :member_id
+        ORDER BY f.CREATED_AT DESC";
 
     $pstmt = $pdo->prepare($sql);
+    $pstmt->bindParam(':member_id', $data['member_id'], PDO::PARAM_INT);
     $pstmt->execute();
-    $products = $pstmt->fetchAll(PDO::FETCH_ASSOC);
+    $favorites = $pstmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 處理資料格式，將顏色和尺寸轉為陣列
-    $formattedProducts = array_map(function($product) {
-        return [
-            'id' => $product['PRODUCT_ID'],
-            'name' => $product['PRODUCT_NAME'],
-            'price' => $product['PRICE'],
-            'image' => $product['IMAGE'],
-            'gender' => $product['GENDER'],
-            'description' => $product['DESCRIPTION'],
-            'category' => $product['PRODUCT_TYPE'], // 對應前端的 category
-            'status' => $product['PRODUCT_STATUS'],
-            'color' => $product['COLOR'] ? explode(',', $product['COLOR']) : [],
-            'size' => $product['SIZE'] ? explode(',', $product['SIZE']) : []
-        ];
-    }, $products);
 
     $respBody = [
         'success' => true,
-        'products' => $formattedProducts,
-        'total' => count($formattedProducts)
+        'favorites' =>  $favorites,
+        'count' => count($favorites)
     ];
 } catch (Exception $e) {
     $respBody = [
         'success' => false,
-        'message' => '資料查詢失敗: ' . $e->getMessage(),
+        'message' => '已收藏商品資料查詢失敗: ' . $e->getMessage(),
         'products' => []
     ];
 }

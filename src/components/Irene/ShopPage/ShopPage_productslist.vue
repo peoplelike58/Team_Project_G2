@@ -5,7 +5,7 @@ import { useFavoriteStore } from '@/stores/favorites'
 import { useUserStore } from '@/stores/user'
 
 
-
+const BASE = import.meta.env.BASE_URL;
 const user = useUserStore()
 // 響應式變數，存放商品資料
 const products = ref([])
@@ -34,22 +34,53 @@ const loadProducts = async () => {
 }
 
 // 元件掛載完成後自動執行
-onMounted(() => {
-  loadProducts()
-  console.log(products)
+onMounted(async () => {
+  // 先載入商品數據
+  await loadProducts()
+  console.log('商品載入完成')
+  
+  // 如果用戶已登入，載入收藏資料後再顯示
+  if (user.isLoggedIn && user.id) {
+    console.log('用戶已登入，載入收藏數據...')
+    await FavoriteStore.loadFavorites(user.id)
+    console.log('收藏數據載入完成:', FavoriteStore.favorites.productIds)
+  }
+})
+
+// 只監聽登入事件，不處理登出
+watch(() => user.isLoggedIn, async (isLoggedIn) => {
+  if (isLoggedIn && user.id) {
+    // 只處理從未登入變成登入的情況
+    await FavoriteStore.loadFavorites(user.id)
+  }
 })
 
 /*點擊收藏*/
 const FavoriteStore = useFavoriteStore()
-const favorites =  FavoriteStore.favorites.products               //ref([])
-const toggleFavorite = (productId) => {
-  const index = favorites.indexOf(productId)
-  if (index > -1) {
-    favorites.splice(index, 1)
-    FavoriteStore.addFavorite(user.id,productId)
-  } else {
-    favorites.push(productId)
+const handletoggleFavorite = async (productId) => {
+  // 檢查是否登入
+  if (!user.isLoggedIn) {
+    alert('請先登入才能使用收藏功能')
+    return
   }
+  // 使用 FavoriteStore 的 toggleFavorite 方法
+  try {
+    const success = await FavoriteStore.toggleFavorite(user.id, productId)
+    if (success) {
+      console.log('收藏狀態切換成功')
+    } else {
+      console.error('收藏狀態切換失敗')
+    }
+  } catch (error) {
+    console.error('收藏操作發生錯誤:', error)
+  }
+  // const index = favorites.indexOf(productId)
+  // if (index > -1) {
+  //   favorites.splice(index, 1)
+  //   FavoriteStore.addFavorite(user.id,productId)
+  // } else {
+  //   favorites.push(productId)
+  // }
 }
 
 /* 點擊出現商品明細卡片 */
@@ -148,9 +179,10 @@ const pagedProducts = computed(() => {
     <div class="products_content">
       <div class="product_card" v-for="product in pagedProducts" :key="product.id" @click="Showdetail(product)">
           <div class="product_image">
-            <img :src="`/images/Products/products/${product.image}`" :alt="product.name">
-            <button class="favorite-btn" @click.stop="toggleFavorite(product.id)">
-              {{ favorites.includes(product.id) ? '❤️' : '🤍' }}
+            <img :src="`${BASE}images/Products/products/${product.image}`" :alt="product.name">
+            <button class="favorite-btn" @click.stop="handletoggleFavorite(product.id)">
+              <!-- {{ favorites.includes(product.id) ? '❤️' : '🤍' }} -->
+              {{ FavoriteStore.isFavorite(product.id) ? '❤️' : '🤍' }}
             </button>
           </div>
           <h3 class="product-name">{{ product.name }}</h3>
