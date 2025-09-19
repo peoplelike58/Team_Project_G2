@@ -23,8 +23,10 @@ $statement->execute();
 $checkEmail = $statement->fetch();
 
 if($checkEmail){
-    $respBody['fail'] = false ;
-    $respBody['message'] = '此email已註冊過,註冊失敗!' ;
+    $respBody['success'] = false ;
+    $respBody['message'] = '註冊失敗: 此email已註冊過 !' ;
+    echo json_encode( $respBody ,JSON_UNESCAPED_UNICODE) ;
+    exit;
 }else{
     $sql = "
     insert into MEMBER(EMAIL,NAME,PW,PHONE,CREATED_AT,STATUS)
@@ -65,7 +67,7 @@ if($checkEmail){
         // 6. 回傳成功結果（包含會員資料，讓前端可以直接更新 Pinia）
         echo json_encode([
             "success" => true,
-            "message" => "註冊成功並已自動登入",
+            "message" => "恭喜註冊成功!",
             "member" => $_SESSION['member'],
             "autoLogin" => true
         ], JSON_UNESCAPED_UNICODE);

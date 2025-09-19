@@ -1,7 +1,7 @@
 <?php
 // 共用 連線資料庫
 
-    //   MySQL相關資訊（本機端測試）
+      //MySQL相關資訊（本機端測試）
       $db_host = "127.0.0.1";
       $db_user = "root";
       $db_pass = "password";
