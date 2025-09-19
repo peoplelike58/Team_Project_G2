@@ -5,9 +5,9 @@ import { useRouter } from 'vue-router';
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
-import markerIcon2x from 'leaflet/dist/images/markerIcon2x.png'
-import markerIcon from 'leaflet/dist/images/markerIcon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+// import markerIcon2x from 'leaflet/dist/images/markerIcon2x.png'
+// import markerIcon from 'leaflet/dist/images/markerIcon.png'
+// import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 // 取消預設取圖 marker
 delete L.Icon.Default.prototype._getIconUrl
 

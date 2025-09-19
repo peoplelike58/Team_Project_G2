@@ -1,6 +1,7 @@
 <?php
     // 導入資料庫連線的資料檔
-    include 'conn.php'; 
+    include 'conn.php';
+
     session_start();
 
     //---------------------------------------------------
@@ -42,7 +43,9 @@
     $gpx_coords = $input['gpx_coords'] ?? [];
 
     // 取得山峰座標
-    $mountainSql = "SELECT LATITUDE, LONGITUDE, MOUNTAIN_NAME FROM MOUNTAIN WHERE MOUNTAIN_ID = ?";
+    $mountainSql = "SELECT LATITUDE, LONGITUDE, MOUNTAIN_NAME 
+                    FROM MOUNTAIN 
+                    WHERE MOUNTAIN_ID = ?";
     $mountainStmt = $pdo->prepare($mountainSql);
     $mountainStmt->execute([$mountain_id]);
     $mountain = $mountainStmt->fetch(PDO::FETCH_ASSOC);
@@ -52,22 +55,7 @@
         exit;
     }
 
-    $isClimbed = false;
-    if (!empty($gpx_coords)) {
-        foreach ($gpx_coords as $coord) {
-            $distance = calculateDistance(
-                $mountain['LATITUDE'], 
-                $mountain['LONGITUDE'],
-                $coord[1], // lat
-                $coord[0]  // lon
-            );
-            
-            if ($distance < 0.01) { // 10公尺內才算登頂
-                $isClimbed = true;
-                break;
-            }
-        }
-    }
+    $isClimbed =  $input['is_climbed'] ?? false;
 
     //建立SQL語法
     $sql = "INSERT INTO FOOT(MEMBER_ID, MOUNTAIN_ID, HEIGHT, DISTANCE, DURATION, CONTENT, IS_CLIMBED, UPLOAD_AT) 
@@ -86,14 +74,5 @@
             'success' => false, 
             'message' => '儲存失敗'
         ]);
-    }
-
-    function calculateDistance($lat1, $lon1, $lat2, $lon2) {
-        $R = 6371;
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-        $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon/2) * sin($dLon/2);
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
-        return $R * $c;
     }
 ?>

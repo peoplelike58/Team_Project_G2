@@ -1,8 +1,8 @@
 <?php
-    session_start();
-
     // 導入資料庫連線的資料檔
     include 'conn.php'; 
+    
+    session_start();
 
     //---------------------------------------------------
     // 檢查是否已登入
@@ -19,11 +19,14 @@
     $MEMBER_ID = $_SESSION['member']['id'];
 
     //建立SQL語法
-    $sql = "SELECT M.MOUNTAIN_NAME as name,
+    $sql = "SELECT F.ID as id,
+                   F.CONTENT as content,
+                   M.MOUNTAIN_NAME as name,
                    F.UPLOAD_AT as date,
                    F.HEIGHT as height,
                    F.DISTANCE as kilo,
-                   F.DURATION as time
+                   F.DURATION as time,
+                   F.IS_CLIMBED as isClimbed
             FROM FOOT AS F
             JOIN MOUNTAIN AS M
             ON F.MOUNTAIN_ID = M.MOUNTAIN_ID
@@ -36,9 +39,9 @@
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $response = [
-    'success' => true,
-    'isLoggedIn' => true,
-    'data' => $rows,
+        'success' => true,
+        'isLoggedIn' => true,
+        'data' => $rows,
     ];
 
     echo json_encode( $response, JSON_UNESCAPED_UNICODE);
