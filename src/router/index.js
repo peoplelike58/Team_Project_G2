@@ -122,13 +122,13 @@ const frontroutes = [
     alias: '/Shop',      // 兩個都算進來
     component: ShopPage,
     meta: { title: '山上見｜山腳雜貨店'},
-    children:[
-      {path:'product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true },props: true},
-      // （可選）把 params 直接變成元件的 props, // ← 子路由}
-      //: 開頭的東西叫「動態參數 (Dynamic Segment)」,meta標記這是一個彈窗路由
-    ]
+    // children:[
+    //   {path:'product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true },props: true},
+    //    （可選）把 params 直接變成元件的 props, // ← 子路由}
+    //   : 開頭的東西叫「動態參數 (Dynamic Segment)」,meta標記這是一個彈窗路由
+    // ]
   },
-
+  {path:'/shop/product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true },props: true},
   //前台-結賬流程
   { path: '/Shop/cart',name:'Shop-cart', component: Chekout1Cart ,meta: { requiresAuth: true }},
   { path: '/Shop/info',name:'Shop-info', component: Checkout2Info ,meta: { requiresAuth: true }},
@@ -230,6 +230,11 @@ router.beforeEach(async(to, from, next) => {
     return
   }
   
+   if ((to.path === '/loginregister/fontregister' ) && isLoggedIn) {//防止已登入再去到註冊界面，會自動導回會員中心-我的優惠券。
+    next({ name: 'member-coupons' })
+    return
+  }
+
   if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {//防止已登入再進登入頁,→ 登入狀態下去 /member，會自動導回會員中心。
     next({ name: 'member-profile' })
     return

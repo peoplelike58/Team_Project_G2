@@ -1,4 +1,219 @@
 <!-- LoginPage_register.vue 這是註冊的組件，註冊成功之後會出現優惠券的組件 -->
+<script setup>
+// import member from '@/router/member'
+import { ref, computed, onMounted} from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import LoginPage_registercoupon from './LoginPage_registercoupon.vue'                     // 調整為你的實際路徑
+
+
+// Google reCAPTCHA 金鑰(Yuki)
+const siteKey ="6LepsL4rAAAAACyRJsYbyJaL3v4XH-3RBGwhBJd-"
+
+const router = useRouter()
+const user = useUserStore() 
+
+// 表單資料
+const formData = ref({
+  email: '',
+  name: '',
+  phone: '',
+  password: '',
+  confirmPassword: '',
+  // isNotRobot: false
+})
+
+//機器人驗證(Yuki)
+const recaptchaToken = ref('')
+const isNotRobot = computed(() => recaptchaToken.value !=='')
+
+// 優惠券彈窗狀態
+const showCouponModal = ref(false)
+
+// 密碼顯示狀態
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+
+// 密碼驗證函數
+const validatePassword = (password) => {
+  // 檢查長度 8-16 位
+  if (password.length < 8 || password.length > 16) {
+    return { valid: false, message: '密碼長度必須為8-16位' }
+  }
+  
+  // 檢查是否包含小寫字母 (a-z)
+  const hasLowercase = /[a-z]/.test(password)
+  
+  // 檢查是否包含大寫字母 (A-Z)  
+  const hasUppercase = /[A-Z]/.test(password)
+  
+  // 必須同時包含大小寫
+  if (!hasLowercase || !hasUppercase) {
+    return { valid: false, message: '密碼必須包含大小寫英文字母' }
+  }
+  
+  return { valid: true, message: '密碼格式正確' }
+}
+
+// 即時密碼驗證的計算屬性
+const passwordValidation = computed(() => {
+  return validatePassword(formData.value.password)
+})
+
+// 確認密碼驗證
+const confirmPasswordValidation = computed(() => {
+  if (!formData.value.confirmPassword) {
+    return { valid: false, message: '' }
+  }
+  if (formData.value.password !== formData.value.confirmPassword) {
+    return { valid: false, message: '密碼不一致' }
+  }
+  return { valid: true, message: '密碼一致' }
+})
+
+
+// 表單驗證
+const isFormValid = computed(() => {
+  return formData.value.email && 
+         formData.value.name && 
+         formData.value.phone && 
+         formData.value.password && 
+         formData.value.confirmPassword && 
+         formData.value.password === formData.value.confirmPassword &&
+         isNotRobot.value
+})
+
+//掛載機器人(Yuki)
+onMounted(() => {
+  const interval = setInterval(()=>{
+    if(window.grecaptcha && document.querySelector('.g-recaptcha')){
+      window.grecaptcha.render(document.querySelector('.g-recaptcha'),{
+        sitekey: siteKey,
+        callback: (token) => {
+          recaptchaToken.value = token
+        }
+      })
+      clearInterval(interval)
+    }
+  })
+})
+
+
+
+// 方法
+const togglePassword = () => {
+  showPassword.value = !showPassword.value
+}
+
+const toggleConfirmPassword = () => {
+  showConfirmPassword.value = !showConfirmPassword.value
+}
+
+
+const switchToLogin = () => {
+  // 切換到登入模式
+  router.push({name:'loginregister-fontrelogin'})
+}
+
+const GoRegister = () => {
+  //機器人驗證檢查(Yuki)
+  if(!recaptchaToken.value){
+    alert("請先完成驗證！")
+    return;
+  }
+
+  // 逐步檢查每個欄位，提供具體錯誤訊息
+  if (!formData.value.email.includes('@') ) {
+    alert(`請輸入正確的EMAIL格式`)
+    return;
+  }
+
+  if (formData.value.phone.length !== 10) {
+    alert(`請輸入正確的電話`)
+    return;
+  }
+
+  if (!passwordValidation.value.valid) {
+    alert(`密碼錯誤: ${passwordValidation.value.message}`)
+    return;
+  }
+
+  if (!confirmPasswordValidation.value.valid) {
+    alert(`確認密碼錯誤: ${confirmPasswordValidation.value.message}`)
+    return;
+  }
+
+  // 最終整體檢查
+  if (!isFormValid.value) {
+    alert("請檢查所有欄位是否正確填寫")
+    return;
+  }
+
+  // 提交前的確認（可選）
+  if (!confirm("確認要送出註冊申請嗎？")) {
+    return;
+  }
+
+
+  
+  fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
+  method: 'POST',
+  headers:{'Content-Type':'application/json'},
+  credentials: 'include',
+  body:JSON.stringify({               //前端把使用者輸入的資料打包成 JSON，送去後端
+    email:formData.value.email,
+    name:formData.value.name,
+    password:formData.value.password,
+    phone:formData.value.phone,
+    recaptcha: recaptchaToken.value   // 把 token 傳給後端
+  })  
+  })
+  .then(resp=>resp.json())
+  .then(register => {
+    const {success,message,autoLogin, member} = register;
+    alert(message);
+    if(success){
+      // 檢查是否自動登入成功
+      if (autoLogin && member) {
+        // 自動登入成功，更新 Pinia store
+        user.login(
+          member.email,
+          member.name,
+          member.id,
+          member.nickname,
+          member.phone,
+          member.address,
+          member.avatar
+        )
+        console.log('註冊成功!並已自動登入')
+        // router.push({name:'loginregister-registercoupon'})
+        // 顯示優惠券彈窗
+        showCouponModal.value = true
+      }else{
+        window.grecaptcha.reset() // 失敗的話要重置機器人驗證(Yuki)
+        recaptchaToken.value = ''
+        console.log('註冊成功!自動登入失敗')
+        router.push({ name: 'loginregister-fontrelogin' })   // 註冊成功但沒有自動登入，導向登入頁面
+      }
+    }
+  })
+}
+
+// 優惠券彈窗相關處理
+const handleCouponClose = () => {
+  showCouponModal.value = false
+  // 關閉後跳轉到會員中心
+  router.push({ name: 'member-profile' })
+}
+
+
+const handleViewCoupons = () => {
+  showCouponModal.value = false
+  // 跳轉到會員優惠券頁面
+  router.push({ name: 'member-coupons' })
+}
+
+</script>
 
 <template>
   <div class="modal-content">
@@ -19,6 +234,10 @@
           required
         />
       </div>
+        <!--email 錯誤訊息 -->
+        <!-- <div v-if="!emailValidation.valid && formData.email" class="error-message">
+          {{ emailValidation.message }}
+        </div>       -->
         
         <!-- 姓名欄位 -->
       <div class="form-group">
@@ -27,7 +246,7 @@
           type="text" 
           id="name" 
           v-model="formData.name"
-          placeholder="輸入您的姓名"
+          placeholder="輸入您的真實姓名"
           required
         />
       </div>
@@ -105,7 +324,6 @@
       
       <!-- 立即註冊按鈕 -->
       <button type="button" class="submit-btn" :disabled="!isFormValid" @click="GoRegister">
-      <!-- 暫時沒有認證，直接註冊成功 -->
         立即註冊
       </button>
       
@@ -157,152 +375,7 @@
     />
 </template>
 
-<script setup>
-// import member from '@/router/member'
-import { ref, computed, onMounted} from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import LoginPage_registercoupon from './LoginPage_registercoupon.vue'                     // 調整為你的實際路徑
 
-
-// Google reCAPTCHA 金鑰(Yuki)
-const siteKey ="6LepsL4rAAAAACyRJsYbyJaL3v4XH-3RBGwhBJd-"
-
-const router = useRouter()
-
-// 表單資料
-const formData = ref({
-  email: '',
-  name: '',
-  phone: '',
-  password: '',
-  confirmPassword: '',
-  // isNotRobot: false
-})
-
-//機器人驗證(Yuki)
-const recaptchaToken = ref('')
-const isNotRobot = computed(() => recaptchaToken.value !=='')
-
-// 優惠券彈窗狀態
-const showCouponModal = ref(false)
-
-// 密碼顯示狀態
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-
-
-
-// 表單驗證
-const isFormValid = computed(() => {
-  return formData.value.email && 
-         formData.value.name && 
-         formData.value.phone && 
-         formData.value.password && 
-         formData.value.confirmPassword && 
-         formData.value.password === formData.value.confirmPassword &&
-         isNotRobot.value
-})
-
-//掛載機器人(Yuki)
-onMounted(() => {
-  const interval = setInterval(()=>{
-    if(window.grecaptcha && document.querySelector('.g-recaptcha')){
-      window.grecaptcha.render(document.querySelector('.g-recaptcha'),{
-        sitekey: siteKey,
-        callback: (token) => {
-          recaptchaToken.value = token
-        }
-      })
-      clearInterval(interval)
-    }
-  })
-})
-
-
-
-// 方法
-const togglePassword = () => {
-  showPassword.value = !showPassword.value
-}
-
-const toggleConfirmPassword = () => {
-  showConfirmPassword.value = !showConfirmPassword.value
-}
-
-
-const switchToLogin = () => {
-  // 切換到登入模式
-  router.push({name:'loginregister-fontrelogin'})
-}
-
-const GoRegister = () => {
-  //機器人驗證檢查(Yuki)
-  if(!recaptchaToken.value){
-    alert("請先完成驗證！")
-    return;
-  }
-
-  const user = useUserStore()
-  
-  fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
-  method: 'POST',
-  headers:{'Content-Type':'application/json'},
-  credentials: 'include',
-  body:JSON.stringify({
-    email:formData.value.email,
-    name:formData.value.name,
-    password:formData.value.password,
-    phone:formData.value.phone,
-    recaptcha: recaptchaToken.value   // 把 token 傳給後端
-  })  //前端把使用者輸入的資料打包成 JSON，送去後端
-  })
-  .then(resp=>resp.json())
-  .then(register => {
-    const {success,message,autoLogin, member} = register;
-    alert(message);
-    if(success){
-      // 檢查是否自動登入成功
-      if (autoLogin && member) {
-        // 自動登入成功，更新 Pinia store
-        user.login(
-          member.email,
-          member.name,
-          member.id,
-          member.nickname,
-          member.phone,
-          member.address,
-          member.avatar
-        )
-        console.log('註冊成功!並已自動登入')
-        // router.push({name:'loginregister-registercoupon'})
-        // 顯示優惠券彈窗
-        showCouponModal.value = true
-      }else{
-        window.grecaptcha.reset() // 失敗的話要重置機器人驗證(Yuki)
-        recaptchaToken.value = ''
-        console.log('註冊成功!自動登入失敗')
-        router.push({ name: 'loginregister-fontrelogin' })   // 註冊成功但沒有自動登入，導向登入頁面
-      }
-    }
-  })
-}
-
-// 優惠券彈窗相關處理
-const handleCouponClose = () => {
-  showCouponModal.value = false
-  // 關閉後跳轉到會員中心
-  router.push({ name: 'member-profile' })
-}
-
-
-const handleViewCoupons = () => {
-  showCouponModal.value = false
-  // 跳轉到會員優惠券頁面
-  router.push({ name: 'member-coupons' })
-}
-
-</script>
 
 <style lang="scss" scoped>
 @import '@/assets/styles/main.scss';
@@ -341,16 +414,26 @@ const handleViewCoupons = () => {
   align-items: stretch;
 }
 
+/* 錯誤訊息樣式 */
+.error-message {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  min-height: 16px; /* 保持一致的空間 */
+}
+
 .form-group {
   @include flexcenter(0px, column);
   align-items: stretch;
-  
+  margin-bottom: 16px;                 /*  調整間距，為錯誤訊息留空間 */
   label {
     font-size: $pcFont-label;
     font-weight: $medium;
     color: $black-14;
     text-align: left;
-    // margin-bottom: 12px;
+    margin-bottom: 8px;               /*  調整間距，為錯誤訊息留空間 */
   }
   
   input {
@@ -369,22 +452,39 @@ const handleViewCoupons = () => {
     &::placeholder {
       color: #999;
     }
+
+    /* 錯誤狀態樣式 */
+   &.error {
+    border-bottom-color: #dc2626;
+    &:focus {
+      border-bottom-color: #dc2626;
+    }
   }
 }
 
+/* 含密碼輸入框錯誤狀態 */
 .password-input {
   position: relative;
   border-bottom: 2px solid #ccc;
+  /* 錯誤狀態 */
+  &.error {
+    border-bottom-color: #dc2626;
+  }
+
   /* 當裡面的 input 被 focus 時，父層改樣式 */
   &:focus-within{
     border-bottom-color: #6b7280;
+    /* 錯誤狀態下 focus 仍為紅色 */
+    &.error {
+      border-bottom-color: #dc2626;
+    }
   }
-
   
   input {
-    padding-right: 48px;
+    padding-right: 12px;
     border-bottom: 0px solid #ccc;
-
+    width: 88%;
+    font-size: 14px
   }
   
   .eye-btn {
@@ -400,6 +500,7 @@ const handleViewCoupons = () => {
       background-color: #f5f5f5;
     }
   }
+}
 }
 
 .captcha-group {
@@ -538,6 +639,7 @@ const handleViewCoupons = () => {
     border-color: #00C300;
   }
 }
+
 </style>
 
 <style lang="scss">
@@ -547,6 +649,9 @@ const handleViewCoupons = () => {
   display: flex;
   justify-content: center;
   min-height: 80px;
-  z-index: 10000;
+  z-index: 100;
 }
+
+
+
 </style>

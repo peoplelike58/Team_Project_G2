@@ -1,45 +1,9 @@
-<template>
-    <div class="member-favorites">
-    <!-- 頁面標題 -->
-    <div class="page-header">
-      <h1 class="page-title">商品收藏</h1>
-    </div>
-
-    <!-- 收藏商品列表 -->
-    <div class="favorites-grid">
-      <div 
-        v-for="product in FavoriteStore.favorites.products" 
-        :key="product.PRODUCT_ID"
-        class="product-card"
-      >
-        <div class="product-image">
-          <img :src="`${BASE}/images/Products/products/${product.IMAGE}`" :alt="product.name" />
-          <button class="favorite-btn" @click="removeFavorite(product.PRODUCT_ID)">
-            <i class="heart-icon">❤️</i>
-          </button>
-        </div>
-        <div class="product-info">
-          <h3 class="product-name">{{ product.PRODUCT_NAME }}</h3>
-          <div class="box">
-            <p class="product-price">${{ product.PRICE }}</p>
-            <button class="add_cart">加入購物車</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- 空狀態- 沒有訂單時顯示 -->
-  <div v-if="FavoriteStore.favorites.products.length === 0" class="empty-state">
-    <p class="empty-message">目前還沒有任何收藏~</p>
-  </div>
- 
-    
-</template>
-
 <script setup>
 import { onMounted,watch } from 'vue'
 import { useFavoriteStore } from '@/stores/favorites'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+
 
 const FavoriteStore = useFavoriteStore()
 const user = useUserStore()
@@ -80,12 +44,61 @@ watch(() => FavoriteStore.favorites.products.length, (newCount, oldCount) => {
   console.log(`收藏商品數量變化: ${oldCount} -> ${newCount}`)
 }, { immediate: true })
 
+/* 點擊出現商品明細卡片 */
+const router = useRouter()
+function Showdetail(product){
+  // router.push(`/Shop/product/${product.id}`);
+  router.push({
+    name:'ProductDetailRoute',
+    params:{id:product.PRODUCT_ID}
+  })
+}
+
 onMounted(async() => {
   // 載入收藏資料的API呼叫
   await FavoriteStore.loadFavorites(user.id)
 })
 
 </script>
+
+<template>
+    <div class="member-favorites">
+      <!-- 頁面標題 -->
+      <div class="page-header">
+        <h1 class="page-title">商品收藏</h1>
+      </div>
+
+      <!-- 收藏商品列表 -->
+      <div class="favorites-grid">
+        <div 
+          v-for="product in FavoriteStore.favorites.products" 
+          :key="product.PRODUCT_ID"
+          class="product-card"
+        >
+          <div class="product-image">
+            <img :src="`${BASE}images/Products/products/${product.IMAGE}`" :alt="product.name" />
+            <button class="favorite-btn" @click="removeFavorite(product.PRODUCT_ID)">
+              <i class="heart-icon">❤️</i>
+            </button>
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">{{ product.PRODUCT_NAME }}</h3>
+            <div class="box">
+              <p class="product-price">${{ product.PRICE }}</p>
+              <button class="add_cart" @click="Showdetail(product)">加入購物車</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 空狀態- 沒有訂單時顯示 -->
+      <div v-if="FavoriteStore.favorites.products.length === 0" class="empty-state">
+        <p class="empty-message">目前還沒有任何收藏~</p>
+      </div>
+    </div>   
+</template>
+
+
 
 <style lang="scss" scoped>
 @import '@/assets/styles/main.scss';
