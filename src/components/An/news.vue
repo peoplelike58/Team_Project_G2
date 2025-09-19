@@ -1,4 +1,3 @@
-<!-- src/components/NewsTeaserBoard.vue -->
 <template>
     <section class="board-wrap" ref="boardWrapRef">
         <!-- Left: list -->
@@ -8,14 +7,14 @@
                 <h3 class="left-title-m">INFORMATION</h3>
             </div>
             <ul class="news-list">
-                <li v-for="(item, index) in news" :key="item.id ?? `news-${index}`" class="news-row">
+                <li v-for="(item, index) in news" :key="item.NEWS_ID" class="news-row">
                     <div class="date-tag">
-                        <time class="news-date">{{ item.date }}</time>
-                        <div class="news-tag">{{ item.tag }}</div>
+                        <time class="news-date">{{ item.UPLOAD_AT }}</time>
+                        <div class="news-tag">{{ item.TYPE }}</div>
                     </div>
   
                     <a class="news-title" href="#" @click.prevent>
-                        {{ item.title }}
+                        {{ item.TITLE }}
                     </a>
                 </li>
             </ul>
@@ -80,19 +79,19 @@ const news = ref([])          // 渲染來源
 const loading = ref(false)
 const error = ref('')
  
-// 假資料模式：/public/news.json；之後接後端把 USE_FAKE 改 false，API_ENDPOINT 換掉即可
-const USE_FAKE = true
-const API_ENDPOINT = USE_FAKE ? import.meta.env.BASE_URL + 'json/homepage/news.json' : '/api/news'
+const USE_FAKE = false
+const API_URL = USE_FAKE
+    ? import.meta.env.BASE_URL + 'json/homepage/news.json'
+    : `${import.meta.env.VITE_AJAX_URL}/NewsPage.php`
 
 async function fetchNews() {
     if (news.value.length) return
     loading.value = true
     error.value = ''
     try {
-        const { data } = await axios.get(API_ENDPOINT)
-        // 假資料模式：data 為「純陣列」
-        // 若後端回傳 { items: [...], total: 123 }，可改成：news.value = data.items ?? []
-        news.value = Array.isArray(data) ? data : (data.items ?? [])
+        const { data } = await axios.get(API_URL)
+        const list = Array.isArray(data) ? data : (data.items ?? [])
+        news.value = list.slice(0, 5)
     } catch (e) {
         error.value = e?.message ?? '載入失敗'
     } finally {

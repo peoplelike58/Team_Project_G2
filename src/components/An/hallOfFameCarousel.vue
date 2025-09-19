@@ -16,7 +16,7 @@
             >
                 <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="dataItem.MEMBER_ID + '-' + dataIndex">
                     <article class="carousel-card" role="listitem">
-                        <img class="card-image" :src="dataItem.image"/>
+                        <img class="card-image" :src="dataItem.image" :alt="dataItem.name + ' 的照片'" />
                         <div class="card-meta">
                             <div class="card-name">{{ dataItem.name }}</div>
                             <div class="card-stats">
@@ -36,15 +36,15 @@
             }"
             role="list"
             >
-                <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="dataItem.id + '-' + dataIndex">
+                <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="MEMBER_ID + '-' + dataIndex">
                     <article class="carousel-card" role="listitem">
-                        <img class="card-image" :src="dataItem.avatarUrl" :alt="dataItem.name + ' 的照片'" />
+                        <img class="card-image" :src="dataItem.image" :alt="dataItem.name + ' 的照片'" />
                         <div class="card-meta">
                             <div class="card-name">{{ dataItem.name }}</div>
                             <div class="card-stats">
-                                <span>百岳 {{ dataItem.heroCount }} 座</span>
+                                <span>大百岳 {{ dataItem.big }} 座</span>
                                 <span class="divider">|</span>
-                                <span>小百岳 {{ dataItem.minorCount }} 座</span>
+                                <span>小百岳 {{ dataItem.small }} 座</span>
                             </div>
                         </div>
                     </article>
