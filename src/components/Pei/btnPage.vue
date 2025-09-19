@@ -4,19 +4,16 @@ import { useRouter } from 'vue-router';
 
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
-
-import markerIcon2x from 'leaflet/dist/images/markerIcon2x.png'
-import markerIcon from 'leaflet/dist/images/markerIcon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 // 取消預設取圖 marker
 delete L.Icon.Default.prototype._getIconUrl
 
 // 合併新預設，之後 new L.Marker() 就會用這三個檔案                 // 全域套用新圖示
+const baseUrl = import.meta.env.BASE_URL
 L.Icon.Default.mergeOptions({                                    // 設定圖示路徑
-  iconRetinaUrl: markerIcon2x,                                   // Retina 用圖示
-  iconUrl: markerIcon,                                           // 一般用圖示
-  shadowUrl: markerShadow,                                        // 陰影圖
-
+  iconUrl:      `${baseUrl}images/icon/markerIcon.png`,
+  iconRetinaUrl:`${baseUrl}images/icon/markerIcon2x.png`,
+  shadowUrl: `${baseUrl}images/icon/marker-shadow.png`, // 有陰影檔再開
   iconSize: [48, 64],                                             // 圖示顯示大小：寬64×高64
   iconAnchor: [24, 64],                                           // 錨點在底部中央：寬/2=32, 高=64
   popupAnchor: [0, -64],                                          // 泡泡往上偏移一個圖示高
@@ -270,7 +267,7 @@ watch(goPage, (newPage) => {
                 前往山腳雜貨店↗
             </button> -->
 
-                        <!-- 底部 CTA -->
+            <!-- 底部 CTA -->
             <footer class="section-footer">
                 <RouterLink to="/shop" class="view-all">前往山腳雜貨店</RouterLink>
                 <button class="diag-btn" aria-label="open">

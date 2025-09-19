@@ -52,9 +52,9 @@ const apiAuth = axios.create({
 
 
 // ===== API 路徑（交給 baseURL 幫你接）=====
-const API_GET_COMMENTS = '/CommentsGet.php'
-const API_ADD_COMMENT  = '/CommentsAdd.php'
-const API_DEL_COMMENT  = '/CommentsDelete.php'
+// const API_GET_COMMENTS = '/CommentsGet.php'
+// const API_ADD_COMMENT  = '/CommentsAdd.php'
+// const API_DEL_COMMENT  = '/CommentsDelete.php'
 
 // ===== 上傳檔案對外 URL 基底：把 /PHP 拿掉 → 變成 /public =====
 const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'')

@@ -27,7 +27,8 @@
 }
 
 .map-image {
-  width: 100%;
+  margin: 0 auto;
+  width: 73%;
   display: block;
 }
 
@@ -36,14 +37,14 @@
   position: absolute;
   width: 20px;
   height: 20px;
-  background: rgba(255,255,0,0.8);
+  background: #F34336;
   border-radius: 50%;
   animation: blink 1.5s infinite;
   cursor: pointer;
 
   .arrow {
     position: absolute;
-    top: -95px;
+    top: -70px;
     left: -15px;
     opacity: 0;
     transition: opacity 0.2s;
@@ -58,8 +59,8 @@
   50%      { opacity: 0.3; }
 }
 
-.p1 { top: 20%;  left: 30%; }
-.p2 { top: 40%;  left: 70%; }
-.p3 { top: 65%;  left: 25%; }
-.p4 { top: 80%;  left: 60%; }
+.p1 { top: 88%;  left: 35.5%; }
+.p2 { top: 56%;  left: 63.2%; }
+.p3 { top: 73.5%;  left: 51.5%; }
+.p4 { top: 31.1%;  left: 64.1%; }
 </style>

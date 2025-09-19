@@ -149,7 +149,7 @@ const  handleLogin = async () => {
     })
       .then(res => res.json())
       .then(async(member) =>{
-        const { success } =member;
+        const { success } = member;
         if(success){
            // 如果登入成功，再去檢查 Session
            return fetch(import.meta.env.VITE_AJAX_URL + '/CheckLogin.php', {
@@ -160,7 +160,15 @@ const  handleLogin = async () => {
           .then(res => res.json())
           .then(sessionData => {
             if(sessionData && sessionData.isLogin){
-              user.login(sessionData.member.email,sessionData.member.name,sessionData.member.id)
+              user.login(
+                sessionData.member.email,
+                sessionData.member.name,
+                sessionData.member.id,
+                sessionData.member.nickname,
+                sessionData.member.phone,
+                sessionData.member.address,
+                sessionData.member.avatar
+              )
               alert(`登入成功！歡迎 ${email.value}`)
               router.push({ name: 'member-profile' })
             }
@@ -333,7 +341,7 @@ const handleSocialLogin = (provider) => {
     border-radius: 0;
     box-shadow: none;              /* 移除預設外框陰影 */
     border-bottom: 2px solid #ccc; /* 只留底線 */
-    padding: 0 8px;                /* 給右側眼睛圖示留空間 */
+    padding: 0 8px 0 0;                /* 給右側眼睛圖示留空間 */
     outline: none; 
     box-shadow: none; 
   }
@@ -359,7 +367,7 @@ const handleSocialLogin = (provider) => {
   :deep(.el-input__wrapper.is-focus){ box-shadow:none !important; outline:none; }
   :deep(.el-input__wrapper:hover){ box-shadow: none; }
   :deep(.el-input__inner),  :deep(.el-input__inner:focus){
-    outline:none; box-shadow:none; background:transparent;
+    outline:none; box-shadow:none; background:transparent;padding-left: 16px;
   }
   /* 密碼眼睛圖示間距/顏色 */
   :deep(.el-input__suffix){ padding-left: 6px; }

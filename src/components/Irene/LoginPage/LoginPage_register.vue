@@ -153,6 +153,7 @@
 // import member from '@/router/member'
 import { ref, computed, onMounted} from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 
 // Google reCAPTCHA 金鑰(Yuki)
@@ -233,7 +234,7 @@ const GoRegister = () => {
   }
 
 
-
+  const user = useUserStore()
   fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
   method: 'POST',
   headers:{'Content-Type':'application/json'},
@@ -248,17 +249,30 @@ const GoRegister = () => {
   })
   .then(resp=>resp.json())
   .then(register => {
-    const {success,message} = register;
+    const {success,message,autoLogin, member} = register;
     alert(message);
     if(success){
-      //暫時不認證，直接成功,就直接使用這裡
-      router.push({name:'loginregister-registercoupon'})
+    // 檢查是否自動登入成功
+    if (autoLogin && member) {
+      // 自動登入成功，更新 Pinia store
+      user.login(
+        member.email,
+        member.name,
+        member.id,
+        member.nickname,
+        member.phone,
+        member.address,
+        member.avatar
+      )
+      // router.push({name:'loginregister-registercoupon'})
     }else{
       window.grecaptcha.reset() // 失敗的話要重置機器人驗證(Yuki)
       recaptchaToken.value = ''
+      
+      router.push({ name: 'loginregister-fontrelogin' })   // 註冊成功但沒有自動登入，導向登入頁面
+    }
     }
   })
-  
 }
 
 </script>

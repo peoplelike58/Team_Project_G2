@@ -115,7 +115,7 @@ const timeLeft = ref(props.timeLimit)
 let timer = null
 
 const formattedTime = computed(() => {
-  const m = String(Math.floor(timeLeft.value / 60)).padStart(2, '0')
+  const m = String(Math.floor(timeLeft.value / 180)).padStart(2, '0')
   const s = String(timeLeft.value % 60).padStart(2, '0')
   return `${m}:${s}`
 })
