@@ -206,6 +206,10 @@ onMounted(() => {
         @include m(){
           max-width: 238px;
         }
+
+        @include s(){
+          max-width: 200px;
+        }
       }
     .activity-card:hover{
         background-color: #77b5d6;

@@ -302,6 +302,10 @@ watch(goPage, (newPage) => {
         font-size: 14px;
         box-sizing: border-box;
     }
+
+    @include s(){
+        max-width: 430px;
+    }
     
     .btns{/* ul 切換按鈕 */
         // border: 1px solid red;
@@ -317,11 +321,26 @@ watch(goPage, (newPage) => {
             gap:28px;
         }
 
+        @media (max-width: 648px){
+            max-width: 608px;
+            gap:20px;
+        }
+
+        @media (max-width: 590px){
+            max-width: 550px;
+       
+        }
+
+        @include s(){
+            max-width: 390px;
+            
+        }
+
         li{
 
             button{
                 cursor: pointer;
-                // width: 192px;
+
                 padding: 8px 52px;
                 border-radius: 8px;
                 border: none;
@@ -329,10 +348,30 @@ watch(goPage, (newPage) => {
 
                 font-size: $pcFont-p-m;
 
-                @include m(){
-                   
-                    // padding: 8px 20px;
+                @include m(){                 
                     box-sizing: border-box;
+                }
+
+                @media (max-width: 648px){
+                    padding: 8px 45px;        
+                }
+
+                @media (max-width: 590px){
+                    padding: 8px 30px;        
+                }
+
+                @media (max-width: 500px){
+                    padding: 8px 25px;  
+                    font-size: $pcFont-p-s;
+                }
+
+                @include s(){               
+                    padding: 8px 20px;                    
+                }
+
+                @media (max-width: 392px){
+                    padding: 8px 15px;  
+                    font-size: $pcFont-p-s;
                 }
 
                 &:focus{
@@ -354,7 +393,13 @@ watch(goPage, (newPage) => {
         margin:64px auto 0;
         // border: 1px solid red;
 
-        @include m(){
+        @media (max-width: 566px) {
+            width: 95%;
+
+        }
+
+        @include s(){
+            width: 100%;
             
         }
         
@@ -373,6 +418,10 @@ watch(goPage, (newPage) => {
                     gap:0;
                     justify-content: space-between;
                     padding: 8px;
+                }
+
+                @include s(){
+                    font-size: $pcFont-p-s;
                 }
 
                 p{ /* 內容 */
@@ -463,6 +512,10 @@ watch(goPage, (newPage) => {
                 gap:16px;
             }
 
+            @include m(){
+                gap:16px;
+            }
+
         
                 div{ /* 裝備圖片 */ 
                     width: 120px;
@@ -475,6 +528,11 @@ watch(goPage, (newPage) => {
                     @include m(){
                         width: 100px;
                         height: 100px;
+                    }
+
+                    @include s(){
+                        width: 90px;
+                        height: 90px;
                     }
 
                     img{
@@ -588,7 +646,9 @@ watch(goPage, (newPage) => {
         overflow-x: hidden;
 
         .showPopup{ /* 彈窗的框 */
-            width: 30%;
+            width: 80%;
+            max-width: 500px;
+
             background-color:$ivory-gray-100;         
             border-radius: 16px;
             padding: 30px ;
@@ -605,9 +665,14 @@ watch(goPage, (newPage) => {
 
             @include m(){
                 width: 100%;
-                max-width: 340px;
+                max-width: 400px;
                 padding: 20px;
             }
+
+            @include s(){
+                max-width: 350px;
+            }
+            
 
             button{
                 margin-left: auto;

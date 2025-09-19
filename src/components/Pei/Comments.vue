@@ -23,6 +23,8 @@ const props = defineProps({
 // ===== 路由與使用者狀態 =====
 const router = useRouter()
 const user = useUserStore() // 含 (isLoggedIn/name/email）
+// console.log(user.profile.nickname);
+
 
 // ===== UI 狀態 =====
 const messages = ref([])
