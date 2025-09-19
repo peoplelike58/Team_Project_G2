@@ -91,7 +91,6 @@ function Showdetail(product){
     name:'ProductDetailRoute',
     params:{id:product.id}
   })
-
 }
 
 

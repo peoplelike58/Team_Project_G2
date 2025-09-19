@@ -16,7 +16,8 @@
           <label class="form-label">頭像</label>
           <div class="avatar-upload">
             <div class="avatar-preview">
-              <img :src="user.profile.avatarUrl || `${BASE}images/Products/default-avatar.jpg`" alt="頭像" />
+              <!-- <img :src="profileData.tempAvatarPreview || user.profile.avatarUrl || `${BASE}images/Products/default-avatar.jpg`" alt="頭像" /> -->
+              <img :src="profileData.tempAvatarPreview || (user.profile.avatarUrl? `${BASE}uploads/avatars/${user.profile.avatar}`:`${BASE}uploads/avatars/default-avatar.jpg`)" alt="頭像" />
             </div>
             <div v-if="user.loading.uploadingAvatar" class="upload-loading">
               上傳中...
@@ -72,7 +73,7 @@
             v-model="profileData.phone" 
             type="tel" 
             class="form-input"
-            :disabled="!isEditing"
+            :disabled="!isEditing " 
           />
         </div>
 
@@ -90,7 +91,7 @@
 
       <!-- 儲存按鈕 -->
       <div v-if="isEditing" class="form-actions">
-        <button class="save-btn" @click="saveProfile">儲存異更</button>
+        <button class="save-btn" @click="saveProfile">儲存變更</button>
       </div>
     </div>
   </div>
@@ -104,6 +105,7 @@ const BASE = import.meta.env.BASE_URL;
 const user = useUserStore()
 // 編輯模式狀態
 const isEditing = ref(false)
+// const canEdit = ref(false)
 
 // 個人資料數據
 const profileData = reactive({
@@ -112,14 +114,24 @@ const profileData = reactive({
   about: '',
   birthday: '',
   phone: '',
-  address: ''
+  address: '',
+  // 新增：暫存的頭像檔案和預覽URL
+  tempAvatarFile: null,      // 暫存檔案物件
+  tempAvatarPreview: ''      // 暫存預覽URL
 })
 
 // 切換編輯模式
 const toggleEditMode = () => {
+  if (isEditing.value) {
+    // 如果正在編輯中，取消時清除暫存資料
+    profileData.tempAvatarFile = null
+    profileData.tempAvatarPreview = ''
+    // 可選：重新載入原始資料
+    getProfile()
+  }
   isEditing.value = !isEditing.value
 }
-// 處理頭像上傳
+// 處理頭像上傳（不立刻上傳）
 const handleAvatarUpload = () => {
   // 創建文件輸入元素
   const input = document.createElement('input')       //用 DOM（文件物件模型）動態建立一個 <input> HTML 元素。
@@ -129,10 +141,12 @@ const handleAvatarUpload = () => {
   input.onchange = async (event) => {                       //當使用者選擇檔案後會觸發 change 事件；這裡註冊事件處理器，參數 event 裝著事件資訊。
     const file = event.target.files[0]                //從事件來源的檔案清單（files 是一個 FileList）抓第一個檔案物件（File）。
     if (file) {
-      // 這裡可以加入圖片上傳邏輯
+      // 暫存檔案
+      profileData.tempAvatarFile = file
+      // 產生預覽URL
       const reader = new FileReader()                  //建立 FileReader（瀏覽器內建的檔案讀取器，用來把本機選到的檔案讀成可用的資料）
       reader.onload = (e) => {                         //當 FileReader 讀取完成會觸發 load 事件；這裡註冊完成後要做的事。
-        profileData.avatar = e.target.result           //把讀到的結果（通常是 Data URL（資料網址，如 data:image/png;base64,...））指定給 profileData.avatar，前端就能立刻顯示預覽。 
+        profileData.tempAvatarPreview  = e.target.result           //把讀到的結果（通常是 Data URL（資料網址，如 data:image/png;base64,...））指定給 profileData.avatar，前端就能立刻顯示預覽。 
       }
       reader.readAsDataURL(file)                       // 將檔案轉為 base64 格式預覽,叫 FileReader 以 Data URL 的形式把檔案讀進來（適合做圖片預覽）。
 
@@ -217,7 +231,19 @@ const updateAvatarInDatabase = async (filename) => {
 // 儲存個人資料
 const saveProfile = async () => {
   console.log('準備儲存的資料:', profileData) // 調試用
+
+  // 處理生日空值
+  if (profileData.birthday === '') {
+    profileData.birthday = null
+  }
+  console.log('實際的 birthday 值:', profileData.birthday)
+  console.log('birthday 的型別:', typeof profileData.birthday)
+  
   try {
+    // 先上傳頭像（如果有新的頭像檔案）
+    if (profileData.tempAvatarFile) {
+      await uploadAvatar(profileData.tempAvatarFile)
+    }
     // API 呼叫儲存資料
     const res = await fetch (import.meta.env.VITE_AJAX_URL + '/LoginPage_updateProfile.php',{
       method: 'POST',
@@ -236,6 +262,9 @@ const saveProfile = async () => {
     // await new Promise(resolve => setTimeout(resolve, 1000))
     if(data.success){
       console.log('儲存個人資料:', profileData)
+            
+      profileData.tempAvatarFile = null             // 清除暫存的頭像資料
+      profileData.tempAvatarPreview = ''
       isEditing.value = false                       // 關閉編輯模式
       user.updateProfile(profileData)               // 更新 Pinia store 中的個人資料
       getProfile()
@@ -250,6 +279,7 @@ const saveProfile = async () => {
     alert('儲存失敗，請重試')
   }
 }
+
 // 取得個人資料 
 const getProfile = async () => {
   console.log('開始取得個人資料...') // 調試用
