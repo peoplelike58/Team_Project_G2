@@ -34,7 +34,7 @@
 const props = defineProps({
     keyword: String,
     activeTag: String,
-    tags: { type: Array, default: () => ['全部', '新聞時事', '登山知識', '路線旅遊'] }
+    tags: { type: Array, default: () => ['全部', '新聞時事', '登山知識', '路線旅遊','話題'] }
 })
 </script>
   

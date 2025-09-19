@@ -164,7 +164,7 @@ onMounted(async () => {
             height="44"
           />
           <div class="hotORrain">
-            <p>溫度：{{ day.minT }}° / {{ day.maxT }}°</p>
+            <p>溫度：{{ day.minT }}° ～ {{ day.maxT }}°</p>
             <p>降雨：{{ day.popDisplay }}</p>
           </div>
         </li>
@@ -232,6 +232,7 @@ onMounted(async () => {
   ul{
     display: flex;
     margin-top: 48px;
+
     @include m(){
       flex-direction: column;
       gap:28px;
@@ -239,6 +240,20 @@ onMounted(async () => {
       margin: 48px auto ;
     }
     
+    @media (max-width: 655px){
+      max-width: 80%;
+
+    }
+
+    @include s(){
+      max-width: 90%;
+
+    }
+
+    @media (max-width: 390px){
+      max-width: 100%;
+
+    }
 
   
 

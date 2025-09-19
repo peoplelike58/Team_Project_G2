@@ -4,19 +4,16 @@ import { useRouter } from 'vue-router';
 
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
-
-// import markerIcon2x from 'leaflet/dist/images/markerIcon2x.png'
-// import markerIcon from 'leaflet/dist/images/markerIcon.png'
-// import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 // 取消預設取圖 marker
 delete L.Icon.Default.prototype._getIconUrl
 
 // 合併新預設，之後 new L.Marker() 就會用這三個檔案                 // 全域套用新圖示
+const baseUrl = import.meta.env.BASE_URL
 L.Icon.Default.mergeOptions({                                    // 設定圖示路徑
-  iconRetinaUrl: markerIcon2x,                                   // Retina 用圖示
-  iconUrl: markerIcon,                                           // 一般用圖示
-  shadowUrl: markerShadow,                                        // 陰影圖
-
+  iconUrl:      `${baseUrl}images/icon/markerIcon.png`,
+  iconRetinaUrl:`${baseUrl}images/icon/markerIcon2x.png`,
+  shadowUrl: `${baseUrl}images/icon/marker-shadow.png`, // 有陰影檔再開
   iconSize: [48, 64],                                             // 圖示顯示大小：寬64×高64
   iconAnchor: [24, 64],                                           // 錨點在底部中央：寬/2=32, 高=64
   popupAnchor: [0, -64],                                          // 泡泡往上偏移一個圖示高
@@ -270,7 +267,7 @@ watch(goPage, (newPage) => {
                 前往山腳雜貨店↗
             </button> -->
 
-                        <!-- 底部 CTA -->
+            <!-- 底部 CTA -->
             <footer class="section-footer">
                 <RouterLink to="/shop" class="view-all">前往山腳雜貨店</RouterLink>
                 <button class="diag-btn" aria-label="open">
@@ -305,6 +302,10 @@ watch(goPage, (newPage) => {
         font-size: 14px;
         box-sizing: border-box;
     }
+
+    @include s(){
+        max-width: 430px;
+    }
     
     .btns{/* ul 切換按鈕 */
         // border: 1px solid red;
@@ -320,11 +321,26 @@ watch(goPage, (newPage) => {
             gap:28px;
         }
 
+        @media (max-width: 648px){
+            max-width: 608px;
+            gap:20px;
+        }
+
+        @media (max-width: 590px){
+            max-width: 550px;
+       
+        }
+
+        @include s(){
+            max-width: 390px;
+            
+        }
+
         li{
 
             button{
                 cursor: pointer;
-                // width: 192px;
+
                 padding: 8px 52px;
                 border-radius: 8px;
                 border: none;
@@ -332,10 +348,30 @@ watch(goPage, (newPage) => {
 
                 font-size: $pcFont-p-m;
 
-                @include m(){
-                   
-                    // padding: 8px 20px;
+                @include m(){                 
                     box-sizing: border-box;
+                }
+
+                @media (max-width: 648px){
+                    padding: 8px 45px;        
+                }
+
+                @media (max-width: 590px){
+                    padding: 8px 30px;        
+                }
+
+                @media (max-width: 500px){
+                    padding: 8px 25px;  
+                    font-size: $pcFont-p-s;
+                }
+
+                @include s(){               
+                    padding: 8px 20px;                    
+                }
+
+                @media (max-width: 392px){
+                    padding: 8px 15px;  
+                    font-size: $pcFont-p-s;
                 }
 
                 &:focus{
@@ -357,7 +393,13 @@ watch(goPage, (newPage) => {
         margin:64px auto 0;
         // border: 1px solid red;
 
-        @include m(){
+        @media (max-width: 566px) {
+            width: 95%;
+
+        }
+
+        @include s(){
+            width: 100%;
             
         }
         
@@ -376,6 +418,10 @@ watch(goPage, (newPage) => {
                     gap:0;
                     justify-content: space-between;
                     padding: 8px;
+                }
+
+                @include s(){
+                    font-size: $pcFont-p-s;
                 }
 
                 p{ /* 內容 */
@@ -466,6 +512,10 @@ watch(goPage, (newPage) => {
                 gap:16px;
             }
 
+            @include m(){
+                gap:16px;
+            }
+
         
                 div{ /* 裝備圖片 */ 
                     width: 120px;
@@ -478,6 +528,11 @@ watch(goPage, (newPage) => {
                     @include m(){
                         width: 100px;
                         height: 100px;
+                    }
+
+                    @include s(){
+                        width: 90px;
+                        height: 90px;
                     }
 
                     img{
@@ -591,7 +646,9 @@ watch(goPage, (newPage) => {
         overflow-x: hidden;
 
         .showPopup{ /* 彈窗的框 */
-            width: 30%;
+            width: 80%;
+            max-width: 500px;
+
             background-color:$ivory-gray-100;         
             border-radius: 16px;
             padding: 30px ;
@@ -608,9 +665,14 @@ watch(goPage, (newPage) => {
 
             @include m(){
                 width: 100%;
-                max-width: 340px;
+                max-width: 400px;
                 padding: 20px;
             }
+
+            @include s(){
+                max-width: 350px;
+            }
+            
 
             button{
                 margin-left: auto;

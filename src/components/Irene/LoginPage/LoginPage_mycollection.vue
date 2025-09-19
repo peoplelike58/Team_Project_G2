@@ -13,7 +13,7 @@
         class="product-card"
       >
         <div class="product-image">
-          <img :src="`/images/Products/products/${product.IMAGE}`" :alt="product.name" />
+          <img :src="`${BASE}/images/Products/products/${product.IMAGE}`" :alt="product.name" />
           <button class="favorite-btn" @click="removeFavorite(product.PRODUCT_ID)">
             <i class="heart-icon">❤️</i>
           </button>
@@ -28,6 +28,11 @@
       </div>
     </div>
   </div>
+  <!-- 空狀態- 沒有訂單時顯示 -->
+  <div v-if="FavoriteStore.favorites.products.length === 0" class="empty-state">
+    <p class="empty-message">目前還沒有任何收藏~</p>
+  </div>
+ 
     
 </template>
 
@@ -38,7 +43,7 @@ import { useUserStore } from '@/stores/user'
 
 const FavoriteStore = useFavoriteStore()
 const user = useUserStore()
-
+const BASE = import.meta.env.BASE_URL;
 // 收藏商品資料
 // const favoriteProducts = ref([
 //   {
@@ -228,6 +233,11 @@ onMounted(async() => {
         }
       }
     }
+  }
+  :deep(.empty-message) {
+    font-size: $pcFont-p-m;
+    color: $ash-olive-400;
+    text-align: center;
   }
 }
     

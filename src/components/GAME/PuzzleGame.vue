@@ -1,7 +1,7 @@
 <template>
   <div class="puzzle-game">
     <!-- 標題 -->
-    <h2>拼圖挑戰</h2>
+    <h2>{{ size }}x{{ size }} 拼圖挑戰</h2>
 
     <!-- 倒數計時 -->
     <div class="timer" :class="{ warning: timeLeft <= 30 }">
@@ -23,18 +23,20 @@
 
       <!-- 拼圖遊戲區 -->
       <div class="game-area">
-        <div class="grid" :class="{ completed: isCompleted }">
+        <div 
+          class="grid" 
+          :class="{ completed: isCompleted }"
+          :style="gridStyle"
+        >
           <div 
             v-for="(piece, idx) in puzzlePieces" 
             :key="`piece-${piece.originalId}-${gameId}`"
             :class="['cell', { selected: selected === idx }]"
             @click="onPieceClick(idx)"
-            :style="{ 
-              backgroundImage: `url(${imgUrl})`, 
-              backgroundPosition: piece.correctPosition,
-              backgroundSize: '300% 300%'
-            }"
+            :style="getCellStyle(piece)"
           >
+            <!-- 可選：顯示片段編號用於調試 -->
+            <span v-if="showDebug" class="piece-number">{{ piece.originalId }}</span>
           </div>
         </div>
 
@@ -45,6 +47,9 @@
           </button>
           <button class="shuffle-btn" @click="shufflePieces" :disabled="isCompleted">
             重新
+          </button>
+          <button v-if="showHintButton" class="hint-btn" @click="showHint" :disabled="isCompleted">
+            提示
           </button>
         </div>
       </div>
@@ -57,6 +62,11 @@ import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 
 // Props 定義
 const props = defineProps({
+  size: {
+    type: Number,
+    default: 5,
+    validator: (value) => value >= 2 && value <= 10
+  },
   level: {
     type: Number,
     required: true
@@ -68,6 +78,21 @@ const props = defineProps({
   showDebug: {
     type: Boolean,
     default: false
+  },
+  showHintButton: {
+    type: Boolean,
+    default: false
+  },
+  // 自定義正確順序
+  customCorrectOrder: {
+    type: Array,
+    default: null,
+    validator: (value) => {
+      if (!value) return true
+      // 檢查陣列是否包含所有必要的數字
+      const sorted = [...value].sort((a, b) => a - b)
+      return sorted.every((num, idx) => num === idx)
+    }
   }
 })
 
@@ -75,8 +100,7 @@ const props = defineProps({
 const emit = defineEmits(['success', 'fail'])
 
 // 響應式變數
-const size = 3 // 3x3 拼圖
-const puzzlePieces = ref([]) // 當前拼圖片段排列
+const puzzlePieces = ref([]) // 拼圖片段排列
 const selected = ref(null)
 const isCompleted = ref(false)
 const timeLeft = ref(props.timeLimit)
@@ -85,10 +109,65 @@ const gameId = ref(Date.now())
 // 計時器
 let timer = null
 
-const imgUrl = computed(() => `/images/GAME/Game${props.level}.jpg`)
+//API網址
+const baseUrl = computed(() => {
+    // 從環境變數取得 AJAX URL
+    const ajaxUrl = import.meta.env.VITE_AJAX_URL || ''
+    return ajaxUrl.replace('/PHP', '/')
+})
 
-// 正確拼圖順序
-const correctOrder = [0, 2, 1, 6, 8, 7, 3, 5, 4]
+// 圖片URL
+const imgUrl = computed(() => `${baseUrl.value}images/GAME/Game${props.level}.jpg`)
+
+// 預定義的答案配置（根據 size 和 level）
+const predefinedOrders = {
+  // 2x2 拼圖的答案
+  '2': {
+    1: [0, 1, 2, 3],     // 2x2 答案
+    default: [0, 1, 2, 3] // 預設 2x2 答案
+  },
+  // 3x3 拼圖的答案  
+  '3': {
+    1: [0, 2, 1, 6, 8, 7, 3, 5, 4],     //  3x3 答案
+    default: [0, 2, 1, 6, 8, 7, 3, 5, 4] // 預設 3x3 答案
+  },
+  // 4x4 拼圖的答案
+  '4': {
+    1: [0, 3, 2, 1, 12, 15, 14, 13, 8, 11, 10, 9, 4, 7, 6, 5],
+    default: [0, 3, 2, 1, 12, 15, 14, 13, 8, 11, 10, 9, 4, 7, 6, 5]
+  },
+  // 5x5 拼圖的答案
+  '5': {
+    1: [0, 4, 3, 2, 1, 20, 24, 23, 22, 21, 15, 19, 18, 17, 16, 10, 14, 13, 12, 11, 5, 9, 8, 7, 6],
+    default: [0, 4, 3, 2, 1, 20, 24, 23, 22, 21, 15, 19, 18, 17, 16, 10, 14, 13, 12, 11, 5, 9, 8, 7, 6]
+  },
+}
+
+// 取得正確順序
+const correctOrder = computed(() => {
+  // 優先使用自定義順序
+  if (props.customCorrectOrder && props.customCorrectOrder.length === props.size * props.size) {
+    return props.customCorrectOrder
+  }
+  
+  // 查找預定義順序
+  const sizeOrders = predefinedOrders[props.size] || predefinedOrders['default']
+  
+  if (sizeOrders) {
+    const levelOrder = sizeOrders[props.level] || sizeOrders['default']
+    if (levelOrder && levelOrder.length === props.size * props.size) {
+      return levelOrder
+    }
+  }
+  
+  // 如果沒有預定義，返回簡單順序 0-N
+  // console.warn(`沒有找到 size ${props.size}, level ${props.level} 的預定義順序，使用預設順序`)
+  const order = []
+  for (let i = 0; i < props.size * props.size; i++) {
+    order.push(i)
+  }
+  return order
+})
 
 // 格式化時間
 const formattedTime = computed(() => {
@@ -97,24 +176,69 @@ const formattedTime = computed(() => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 })
 
-// 創建拼圖片段
-function createPuzzlePiece(id) {
-  const row = Math.floor(id / size)
-  const col = id % size
+// Grid 樣式
+const gridStyle = computed(() => {
+  const cellSize = getCellSize()
+  return {
+    gridTemplateColumns: `repeat(${props.size}, ${cellSize}px)`,
+    gridTemplateRows: `repeat(${props.size}, ${cellSize}px)`
+  }
+})
+
+// 根據拼圖大小獲取單元格尺寸
+function getCellSize() {
+  // 基礎尺寸對應表
+  const baseSizes = {
+    2: 150,
+    3: 120,
+    4: 100,
+    5: 80,
+    6: 70,
+    7: 60,
+    8: 55,
+    9: 50,
+    10: 45
+  }
+  return baseSizes[props.size] || Math.floor(360 / props.size)
+}
+
+// 獲取單元格樣式
+function getCellStyle(piece) {
+  const cellSize = getCellSize()
+  const backgroundSize = `${props.size * 100}% ${props.size * 100}%`
   
   return {
-    originalId: id, // 原始編號 (0-8)
-    correctPosition: `-${col * 50}% -${row * 50}%`, // 正確的背景位置
+    width: `${cellSize}px`,
+    height: `${cellSize}px`,
+    backgroundImage: `url(${imgUrl.value})`,
+    backgroundPosition: piece.correctPosition,
+    backgroundSize: backgroundSize
+  }
+}
+
+// 創建拼圖片段
+function createPuzzlePiece(id) {
+  const row = Math.floor(id / props.size)
+  const col = id % props.size
+  const positionPercentage = props.size === 1 ? 0 : 100 / (props.size - 1)
+  
+  return {
+    originalId: id, // 原始編號
+    correctPosition: `-${col * positionPercentage}% -${row * positionPercentage}%`, // 正確的背景位置
     isInCorrectPosition: false // 是否在正確位置
   }
 }
 
 // 初始化拼圖
 function initPieces() {  
-  // 創建所有拼圖
+  // 創建所有拼圖片段
   const allPieces = []
-  for (let i = 0; i < size * size; i++) {
-    allPieces.push(createPuzzlePiece(i))
+  const totalPieces = props.size * props.size
+  
+  // 根據正確順序創建拼圖片段
+  for (let i = 0; i < totalPieces; i++) {
+    const correctId = correctOrder.value[i]
+    allPieces.push(createPuzzlePiece(correctId))
   }
   
   // 打亂順序，確保不是正確順序
@@ -123,18 +247,22 @@ function initPieces() {
   do {
     shuffled = [...allPieces].sort(() => Math.random() - 0.5)
     attempts++
-    if (attempts > 100) break
+    if (attempts > 100) {
+      const temp = shuffled[0]
+      shuffled[0] = shuffled[shuffled.length - 1]
+      shuffled[shuffled.length - 1] = temp
+      break
+    }
   } while (isCorrectOrder(shuffled))
   
   puzzlePieces.value = shuffled
   selected.value = null
   isCompleted.value = false
-  
 }
 
 // 檢查是否為正確順序
 function isCorrectOrder(pieces) {
-  return pieces.every((piece, index) => piece.originalId === correctOrder[index])
+  return pieces.every((piece, index) => piece.originalId === correctOrder.value[index])
 }
 
 // 打亂拼圖
@@ -148,7 +276,6 @@ function shufflePieces() {
   
   puzzlePieces.value = shuffled
   selected.value = null
-  
 }
 
 // 點擊拼圖片段
@@ -162,6 +289,7 @@ function onPieceClick(index) {
     // 取消選擇
     selected.value = null
   } else {
+    // 交換拼圖片段
     const newPieces = [...puzzlePieces.value]
     const temp = newPieces[selected.value]
     newPieces[selected.value] = newPieces[index]
@@ -195,15 +323,33 @@ function checkPuzzle() {
   if (isComplete) {
     handleGameSuccess()
   } else {
-    alert('拼圖未完成，加油！\n\n提示：需讓拼圖片與完整完整圖片一樣呦。')
+    alert(`拼圖未完成，加油！`)
   }
 }
 
+// 顯示提示
+function showHint() {
+  if (isCompleted.value) return
+  
+  // 找出第一個錯誤位置
+  for (let i = 0; i < puzzlePieces.value.length; i++) {
+    if (puzzlePieces.value[i].originalId !== i) {
+      const row = Math.floor(i / props.size) + 1
+      const col = (i % props.size) + 1
+      alert(`提示：第 ${row} 行第 ${col} 列的拼圖片不正確！`)
+      return
+    }
+  }
+  
+  alert('所有拼圖片都在正確位置！點擊"完成"按鈕即可。')
+}
+
+// 顯示答案
 function showSolution() {
   if (isCompleted.value) return
   
   const correctPieces = []
-  for (let i = 0; i < size * size; i++) {
+  for (let i = 0; i < props.size * props.size; i++) {
     correctPieces.push(createPuzzlePiece(i))
   }
   
@@ -225,7 +371,11 @@ function handleGameSuccess() {
   
   // 延遲觸發成功事件，確保UI更新
   setTimeout(() => {
-    emit('success')
+    emit('success', {
+      size: props.size,
+      timeUsed: props.timeLimit - timeLeft.value,
+      level: props.level
+    })
   }, 500)
 }
 
@@ -260,7 +410,7 @@ function stopTimer() {
 
 // 重置遊戲
 function resetGame() {
-  console.log('重置遊戲')
+  // console.log(`重置遊戲 - Size: ${props.size}x${props.size}`)
   stopTimer()
   timeLeft.value = props.timeLimit
   gameId.value = Date.now()
@@ -268,19 +418,22 @@ function resetGame() {
   startTimer()
 }
 
-// 監聽 level 變化，重置遊戲
+// 監聽 props 變化
 watch(() => props.level, () => {
   resetGame()
-}, { immediate: false })
+})
 
-// 監聽 timeLimit 變化
+watch(() => props.size, () => {
+  resetGame()
+})
+
 watch(() => props.timeLimit, (newLimit) => {
   timeLeft.value = newLimit
 })
 
 // 組件掛載
 onMounted(() => {
-  console.log('PuzzleGame 組件掛載, level:', props.level)
+  console.log(`PuzzleGame 組件掛載 - Size: ${props.size}x${props.size}, Level: ${props.level}`)
   resetGame()
 })
 
@@ -372,8 +525,6 @@ defineExpose({
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 120px);
-    grid-template-rows: repeat(3, 120px);
     gap: 4px;
     margin-bottom: 20px;
     padding: 15px;
@@ -389,8 +540,6 @@ defineExpose({
   }
 
   .cell {
-    width: 120px;
-    height: 120px;
     border: 2px solid #ccc;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -464,6 +613,15 @@ defineExpose({
         background: #e0a800;
       }
     }
+
+    .hint-btn {
+      background: #17a2b8;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: #138496;
+      }
+    }
   }
 
   .debug {
@@ -510,13 +668,38 @@ defineExpose({
   }
   
   .grid {
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
+    // Grid 大小會由 computed 自動調整
+    gap: 3px;
+    padding: 10px;
   }
   
   .cell {
-    width: 100px;
-    height: 100px;
+    // Cell 大小會由 computed 自動調整
+    &.selected {
+      transform: scale(1.05); // 移動端減小縮放
+    }
+  }
+}
+
+// 小螢幕優化
+@media (max-width: 480px) {
+  .puzzle-game {
+    padding: 10px;
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    .timer {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .controls {
+    button {
+      padding: 8px 15px;
+      font-size: 0.9rem;
+    }
   }
 }
 

@@ -1,9 +1,17 @@
 //手機 < 430px
-$m: 768px;   // 手機（<= 430px）
+$s: 430px;   // （<= 430px）
+@mixin s(){ 
+    @media screen and (max-width: $s){
+    @content; } 
+}
+
+//橫 < 768px
+$m: 768px;   // 橫（<= 768px）
 @mixin m(){ 
     @media screen and (max-width: $m){
     @content; } 
 }
+
 
 //平板
 $t: 1024px;  // 平板（<= 1024px）

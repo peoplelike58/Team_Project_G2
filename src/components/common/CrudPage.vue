@@ -52,7 +52,7 @@
                   :show-file-list="false"
                   :on-success="(res) => { 
                     if(res?.success){ 
-                      form[col.prop] = res.filename  //只存檔名
+                      form[col.prop] = res.filename  //只存檔名res.filename 
                       console.log('上傳成功，檔名：', res.filename);
                       // const imgUrl = getImageUrl();
                     } else {
@@ -63,6 +63,7 @@
                   <!-- 預覽縮圖 -->
                 </el-upload>
                 <img v-if="form[col.prop]" :src="getImageUrl() + '/images/Products/products/' + form[col.prop]"style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
+                <!-- <img v-if="form[col.prop]" :src="getImageUrl()  + form[col.prop]" style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" /> -->
              </template>
 
              <template v-else>
@@ -165,7 +166,7 @@ const uploadUrl = import.meta.env.VITE_AJAX_URL + '/uploadimg.php'
 
 const getImageUrl = () => {
   console.log('當前端口:', window.location.port);
-  if (window.location.port === '5173') {
+  if (import.meta.env.MODE === 'development') {
     // console.log('開發環境，返回後端路徑');  
     return 'http://localhost/TeamProject/public';
   } else {

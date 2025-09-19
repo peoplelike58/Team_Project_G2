@@ -1,3 +1,5 @@
+<!-- LoginPage_register.vue 這是註冊的組件，註冊成功之後會出現優惠券的組件 -->
+
 <template>
   <div class="modal-content">
     <!-- 標題 -->
@@ -50,7 +52,7 @@
             :type="showPassword ? 'text' : 'password'" 
             id="password" 
             v-model="formData.password"
-            placeholder="請輸入密碼"
+            placeholder="請輸入8~16位入密碼包含大小寫英文"
             required
           />
           <button type="button" class="eye-btn" @click="togglePassword">
@@ -71,7 +73,7 @@
             :type="showConfirmPassword ? 'text' : 'password'" 
             id="confirmPassword" 
             v-model="formData.confirmPassword"
-            placeholder="請輸入密碼"
+            placeholder="請再次輸入密碼"
             required
           />
           <button type="button" class="eye-btn" @click="toggleConfirmPassword">
@@ -103,7 +105,7 @@
       
       <!-- 立即註冊按鈕 -->
       <button type="button" class="submit-btn" :disabled="!isFormValid" @click="GoRegister">
-        <!-- 暫時沒有認證，直接註冊成功 -->
+      <!-- 暫時沒有認證，直接註冊成功 -->
         立即註冊
       </button>
       
@@ -145,20 +147,26 @@
         </button>
       </div>
     </form>
-  </div>
 
+  </div>
+    <!-- 引入優惠券彈窗組件 -->
+    <LoginPage_registercoupon 
+      :isVisible="showCouponModal" 
+      @close="handleCouponClose"
+      @viewCoupons="handleViewCoupons" 
+    />
 </template>
 
 <script setup>
 // import member from '@/router/member'
 import { ref, computed, onMounted} from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import LoginPage_registercoupon from './LoginPage_registercoupon.vue'                     // 調整為你的實際路徑
 
 
 // Google reCAPTCHA 金鑰(Yuki)
 const siteKey ="6LepsL4rAAAAACyRJsYbyJaL3v4XH-3RBGwhBJd-"
-
-
 
 const router = useRouter()
 
@@ -176,11 +184,14 @@ const formData = ref({
 const recaptchaToken = ref('')
 const isNotRobot = computed(() => recaptchaToken.value !=='')
 
-
+// 優惠券彈窗狀態
+const showCouponModal = ref(false)
 
 // 密碼顯示狀態
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
+
+
 
 // 表單驗證
 const isFormValid = computed(() => {
@@ -232,8 +243,8 @@ const GoRegister = () => {
     return;
   }
 
-
-
+  const user = useUserStore()
+  
   fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_register.php', {   //http://localhost/teamproject/LoginPage_register.php（local端測試網址）
   method: 'POST',
   headers:{'Content-Type':'application/json'},
@@ -248,17 +259,47 @@ const GoRegister = () => {
   })
   .then(resp=>resp.json())
   .then(register => {
-    const {success,message} = register;
+    const {success,message,autoLogin, member} = register;
     alert(message);
     if(success){
-      //暫時不認證，直接成功,就直接使用這裡
-      router.push({name:'loginregister-registercoupon'})
-    }else{
-      window.grecaptcha.reset() // 失敗的話要重置機器人驗證(Yuki)
-      recaptchaToken.value = ''
+      // 檢查是否自動登入成功
+      if (autoLogin && member) {
+        // 自動登入成功，更新 Pinia store
+        user.login(
+          member.email,
+          member.name,
+          member.id,
+          member.nickname,
+          member.phone,
+          member.address,
+          member.avatar
+        )
+        console.log('註冊成功!並已自動登入')
+        // router.push({name:'loginregister-registercoupon'})
+        // 顯示優惠券彈窗
+        showCouponModal.value = true
+      }else{
+        window.grecaptcha.reset() // 失敗的話要重置機器人驗證(Yuki)
+        recaptchaToken.value = ''
+        console.log('註冊成功!自動登入失敗')
+        router.push({ name: 'loginregister-fontrelogin' })   // 註冊成功但沒有自動登入，導向登入頁面
+      }
     }
   })
-  
+}
+
+// 優惠券彈窗相關處理
+const handleCouponClose = () => {
+  showCouponModal.value = false
+  // 關閉後跳轉到會員中心
+  router.push({ name: 'member-profile' })
+}
+
+
+const handleViewCoupons = () => {
+  showCouponModal.value = false
+  // 跳轉到會員優惠券頁面
+  router.push({ name: 'member-coupons' })
 }
 
 </script>
@@ -333,9 +374,17 @@ const GoRegister = () => {
 
 .password-input {
   position: relative;
+  border-bottom: 2px solid #ccc;
+  /* 當裡面的 input 被 focus 時，父層改樣式 */
+  &:focus-within{
+    border-bottom-color: #6b7280;
+  }
+
   
   input {
     padding-right: 48px;
+    border-bottom: 0px solid #ccc;
+
   }
   
   .eye-btn {
@@ -498,6 +547,6 @@ const GoRegister = () => {
   display: flex;
   justify-content: center;
   min-height: 80px;
-  z-index: 100000;
+  z-index: 10000;
 }
 </style>

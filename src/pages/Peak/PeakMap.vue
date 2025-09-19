@@ -9,7 +9,7 @@
       ref="mapRef"
       :center="[23.7, 121]"
       :zoom="8.5"                
-      :minZoom="7"
+      :minZoom="8"
       :maxZoom="8.5"
       :zoomControl="false"
       :scrollWheelZoom="false"  

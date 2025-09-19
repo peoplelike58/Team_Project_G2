@@ -196,6 +196,7 @@ onUnmounted(() => {
   justify-content: center;
   gap: 90px;
   width: 100%;
+  margin-top: 50px;
 
   button {
     border: none;

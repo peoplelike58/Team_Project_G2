@@ -23,16 +23,30 @@ const props = defineProps({
 // ===== 路由與使用者狀態 =====
 const router = useRouter()
 const user = useUserStore() // 含 (isLoggedIn/name/email）
+// console.log(user.profile.nickname);
+
 
 // ===== UI 狀態 =====
 const messages = ref([])
-const showPopup = ref(false)
+const msgMaxLen = 500
 const newMessageText = ref('')
+const countMsgLen = computed(() => Array.from(newMessageText.value).length)
+const noOverMaxLen = (e) => {
+  const chars = Array.from(e.target.value)
+  if (chars.length > msgMaxLen){
+    newMessageText.value = chars.slice(0, msgMaxLen).join('')
+  }else{
+    newMessageText.value = e.target.value
+  }
+}
+
+const showPopup = ref(false)
 const newPhotoFile = ref(null)
 const newPhotoPreview = ref('')
 
 const isImageViewerVisible = ref(false)
 const imageViewerUrl = ref('')
+
 
 
 // 只打你自己的 PHP 根路徑，例如 http://localhost/TeamProject/public/PHP
@@ -51,10 +65,6 @@ const apiAuth = axios.create({
 })
 
 
-// ===== API 路徑（交給 baseURL 幫你接）=====
-const API_GET_COMMENTS = '/CommentsGet.php'
-const API_ADD_COMMENT  = '/CommentsAdd.php'
-const API_DEL_COMMENT  = '/CommentsDelete.php'
 
 // ===== 上傳檔案對外 URL 基底：把 /PHP 拿掉 → 變成 /public =====
 const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'')
@@ -74,7 +84,7 @@ function mapRowToMessage(row){
     memId:Number(row.MEMBER_ID),         
     mountainId:Number(row.MOUNTAIN_ID),
     msgId: row.MESSAGE_ID,
-    name: row.NICKNAME || row.MEMBER_NAME || `會員#${row.MEMBER_ID}`,
+    name: row.NICKNAME ?? row.MEMBER_NAME ?? `會員#${row.MEMBER_ID}`,
     mountain: row.MOUNTAIN_NAME || '',
     avatar: `${UPLOADS_BASE}/avatars/${avatarKey}` || 'images/myChallenge/head4.png',
     time: row.CREATED_AT || row.CREATE_AT || row.CREATE_TIME || '',
@@ -298,15 +308,20 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
         <div class="popupAvatar">
           <img :src="`${UPLOADS_BASE}/avatars/${user.profile.avatar}`" alt="使用者頭像" />
         </div>
-        <p class="popupName">{{ user.name || '尊爵不凡會員' }}</p>
+        <p class="popupName">{{ user.profile.nickname ?? user.name ?? `會員#${user.id}` }}</p>
       </div>
 
       <textarea
         class="popupTextarea"
         v-model="newMessageText"
+        @input="noOverMaxLen"
         rows="5"
         placeholder="想說些什麼呢？"
       ></textarea>
+
+      <div class="maxWords">
+        <span> {{ countMsgLen }} / {{ msgMaxLen }}</span>
+      </div>
 
       <label
         class="photoUploadBtn"
@@ -503,8 +518,8 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
           overflow: hidden;
 
           img {
-            width: 100%;
-            height: 100%;
+            width: 100% !important;
+            height: 100% !important;
             border-radius: 8px;
             object-fit: cover;
             object-position: center;
@@ -566,7 +581,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
 
     @include m(){
       width: 350px
@@ -619,7 +634,8 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
     }
 
     .popupTextarea {
-      width: 95%;
+      width: 100%;
+      height: 100px;
       border-radius: 0px 40px 40px 40px;
       padding: 12px;
       border: 1px solid #ccc;
@@ -655,6 +671,8 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
       position: relative;
       width: 150px;
       height: 150px;
+      object-fit: cover;
+
 
       img {
         width: 100%;
@@ -701,6 +719,18 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
 
       &:hover {
         background-color: rgba(186, 186, 171, 0.6);
+      }
+    }
+
+    .maxWords{
+      // outline: 1px solid red;
+      display: flex;
+      span{
+      // outline: 1px solid blue;
+      margin-left: auto;
+      margin-right: 10px;
+      color: #999;
+      font-size: 12px;
       }
     }
   }
