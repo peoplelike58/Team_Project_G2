@@ -168,10 +168,14 @@
     <div class="button-wrapper" v-if="!isLoading && !error">
       <button
         class="join-btn"
-        @click="handleJoin"
-        :disabled="eventData.status === '已截止'"
+        :class="{ 
+          'btn-registered': hasUserRegistered,
+          'btn-disabled': eventData.status === '已截止'
+        }"
+        @click="handleJoinEvent"
+        :disabled="eventData.status === '已截止' || hasUserRegistered"
       >
-        {{ eventData.status === '已截止' ? '報名已截止' : '報名參加' }}
+        {{ getButtonText }}
       </button>
     </div>
 
@@ -182,14 +186,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';  // Pinia
 import axios from 'axios';
 import NavMenu from '../An/navMenu.vue';
 import Footer from '@/components/An/footer.vue';
 
 const route = useRoute();
 const router = useRouter();
+const userStore = useUserStore();
 
-// 1. 初始資料結構
+// 初始資料結構
 const eventData = ref({
   mountainId: null,
   imageName: null,
@@ -213,11 +219,28 @@ const imageMap = ref({});
 const isLoading = ref(true);
 const error = ref(null);
 const currentSlide = ref(0);
+const hasUserRegistered = ref(false);  // 追蹤使用者是否已報名
 
 const AJAX_URL = import.meta.env.VITE_AJAX_URL; 
 const BASE_URL = AJAX_URL.replace(/\/PHP$/, '/');
 
-// 4. 計算最終 img src
+// 動態按鈕文字
+const getButtonText = computed(() => {
+  // 活動已截止的情況
+  if (eventData.value.status === '已截止') {
+    return '報名已截止';
+  }
+  
+  // 已登入且已報名
+  if (userStore.isLoggedIn && hasUserRegistered.value) {
+    return '已完成報名';
+  }
+  
+  // 未登入或未報名
+  return '報名參加';
+});
+
+// img src
 const imgSrc = computed(() => {
   const mid  = eventData.value.mountainId;
   const name = eventData.value.imageName;
@@ -228,7 +251,34 @@ const imgSrc = computed(() => {
   return `${BASE_URL}images/eventCard/cardimg1.jpg`;
 });
 
-// 5. 並行呼叫兩支 API：文字 & 圖片
+// 檢查使用者是否已報名此活動
+const checkUserRegistration = async () => {
+  // 如果使用者未登入，直接返回
+  if (!userStore.isLoggedIn) {
+    hasUserRegistered.value = false;
+    return;
+  }
+
+  try {
+    // 呼叫後端 API 檢查報名狀態
+    const response = await axios.get(`${AJAX_URL}/checkEventRegistration.php`, {
+      params: {
+        userId: userStore.id,  // 使用者 ID
+        eventId: eventData.value.id  // 活動 ID
+      }
+    });
+
+    // 根據後端回應更新報名狀態
+    if (response.data.success) {
+      hasUserRegistered.value = response.data.hasRegistered || false;
+    }
+  } catch (err) {
+    console.error('檢查報名狀態失敗:', err);
+    hasUserRegistered.value = false;
+  }
+};
+
+// 呼叫兩支 API：文字 & 圖片
 const fetchEventData = async () => {
   isLoading.value = true;
   error.value = null;
@@ -244,6 +294,8 @@ const fetchEventData = async () => {
     // 處理活動文字資料
     if (resInfo.data.success) {
       Object.assign(eventData.value, resInfo.data.data);
+      // 取得活動資料後，檢查使用者報名狀態
+      await checkUserRegistration();
     } else {
       throw new Error(resInfo.data.message || '活動資料載入失敗');
     }
@@ -272,10 +324,56 @@ const fetchEventData = async () => {
   }
 };
 
-// 6. 返回上一頁
+// 處理報名點擊事件
+const handleJoinEvent = async () => {
+  // 如果活動已截止或用戶已報名，不執行任何操作
+  if (eventData.value.status === '已截止' || hasUserRegistered.value) {
+    return;
+  }
+
+  // 檢查登入狀態
+  if (!userStore.isLoggedIn) {
+    // 未登入的話導向登入頁面
+    alert('請先登入才能報名活動！');
+    // 儲存當前頁面路徑，登入後可以返回
+    sessionStorage.setItem('redirectAfterLogin', route.fullPath);
+    router.push('/loginregister');
+    return;
+  }
+
+  // 已登入：執行報名
+  try {
+    // 顯示載入狀態
+    const confirmJoin = confirm(`確定要報名「${eventData.value.title}」嗎？`);
+    if (!confirmJoin) return;
+
+    // 進行報名
+    const response = await axios.post(`${AJAX_URL}/registerEvent.php`, {
+      userId: userStore.id,  // 使用者 ID
+      eventId: eventData.value.id,  // 活動 ID
+      userName: userStore.name,  // 使用者姓名
+      userEmail: userStore.email  // 使用者 email
+    });
+
+    if (response.data.success) {
+      // 報名成功
+      hasUserRegistered.value = true;
+      eventData.value.joinQty += 1;  // 更新報名人數
+      alert('報名成功！');
+    } else {
+      // 報名失敗
+      alert(response.data.message || '報名失敗，請稍後再試');
+    }
+  } catch (err) {
+    console.error('報名過程發生錯誤:', err);
+    alert('系統錯誤，請稍後再試');
+  }
+};
+
+// 7. 返回上一頁
 const goBack = () => router.back();
 
-// 7. 輪播邏輯
+// 8. 輪播邏輯
 let touchStartX = 0;
 const handleTouchStart = (e) => (touchStartX = e.touches[0].clientX);
 const handleTouchEnd = (e) => {
@@ -288,7 +386,7 @@ const handleTouchEnd = (e) => {
 };
 const goToSlide = (idx) => (currentSlide.value = idx);
 
-// 8. 格式化日期、時間、notes、報名
+// 9. 格式化日期、時間、notes
 const formatDate = (s) => {
   if (!s) return '';
   const d = new Date(s);
@@ -303,19 +401,23 @@ const formatTime = (t) => {
   return `${disp}:${m} ${period}`;
 };
 const parseNotes = (str) => str ? str.split(/[;\\n]/).filter(n => n.trim()) : [];
-const handleJoin = () => {
-  if (eventData.value.status === '已截止') {
-    alert('報名已截止');
-  } else {
-    alert('報名功能開發中...');
+
+// 元件掛載後執行
+onMounted(async () => {
+  // 先取得活動資料
+  await fetchEventData();
+  
+  // 檢查是否有登入後重定向的需求
+  const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+  if (redirectPath && route.fullPath === redirectPath) {
+    sessionStorage.removeItem('redirectAfterLogin');
+    // 可以顯示提示訊息
+    if (userStore.isLoggedIn) {
+      console.log('歡迎回來！您現在可以報名活動了');
+    }
   }
-};
-
-// 9. 元件掛載後執行
-onMounted(fetchEventData);
+});
 </script>
-
-
 
 <style lang="scss" scoped>
 @import '../../assets/styles/main.scss';
@@ -644,6 +746,7 @@ onMounted(fetchEventData);
     margin-bottom: 50px;
 }
 
+// 報名按鈕樣式
 .join-btn {
     width: 342px;
     height: 56px;
@@ -656,17 +759,45 @@ onMounted(fetchEventData);
     cursor: pointer;
     transition: all 0.3s ease;
 
-    &:hover {
+    &:hover:not(:disabled) {
         background-color: darken($black-14, 10%);
         transform: translateY(-2px);
     }
 
-    &:active {
+    &:active:not(:disabled) {
         transform: translateY(0);
+    }
+
+    // 已報名狀態樣式
+    &.btn-registered {
+        background-color: #4CAF50;  // 綠色表示已完成
+        cursor: default;
+        
+        &:hover {
+            background-color: #4CAF50;
+            transform: none;
+        }
+    }
+
+    // 已截止狀態樣式
+    &.btn-disabled {
+        background-color: #9E9E9E;  // 灰色表示無法操作
+        cursor: not-allowed;
+        opacity: 0.7;
+        
+        &:hover {
+            background-color: #9E9E9E;
+            transform: none;
+        }
+    }
+
+    // 禁用狀態
+    &:disabled {
+        cursor: not-allowed;
     }
 }
 
-
+// 手機版響應式樣式保持不變
 @media screen and (max-width: 768px) {
     .wrapper {
         padding: 0 15px;
