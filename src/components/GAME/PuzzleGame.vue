@@ -54,15 +54,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Debug 區域 -->
-    <div v-if="showDebug" class="debug">
-      <p>拼圖大小: {{ size }}x{{ size }}</p>
-      <p>總片數: {{ size * size }}</p>
-      <p>當前順序: {{ puzzlePieces.map(p => p.originalId).join(', ') }}</p>
-      <p>正確順序: {{ correctOrder.join(', ') }}</p>
-      <button class="debug-btn" @click="showSolution">顯示答案</button>
-    </div>
   </div>
 </template>
 
@@ -73,7 +64,7 @@ import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 const props = defineProps({
   size: {
     type: Number,
-    default: 3,
+    default: 5,
     validator: (value) => value >= 2 && value <= 10
   },
   level: {
@@ -92,7 +83,7 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  // 自定義正確順序（可選）
+  // 自定義正確順序
   customCorrectOrder: {
     type: Array,
     default: null,
@@ -109,7 +100,7 @@ const props = defineProps({
 const emit = defineEmits(['success', 'fail'])
 
 // 響應式變數
-const puzzlePieces = ref([]) // 當前拼圖片段排列
+const puzzlePieces = ref([]) // 拼圖片段排列
 const selected = ref(null)
 const isCompleted = ref(false)
 const timeLeft = ref(props.timeLimit)
@@ -118,8 +109,15 @@ const gameId = ref(Date.now())
 // 計時器
 let timer = null
 
+//API網址
+const baseUrl = computed(() => {
+    // 從環境變數取得 AJAX URL
+    const ajaxUrl = import.meta.env.VITE_AJAX_URL || ''
+    return ajaxUrl.replace('/PHP', '/')
+})
+
 // 圖片URL
-const imgUrl = computed(() => `/images/GAME/Game${props.level}.jpg`)
+const imgUrl = computed(() => `${baseUrl.value}images/GAME/Game${props.level}.jpg`)
 
 // 預定義的答案配置（根據 size 和 level）
 const predefinedOrders = {
@@ -136,15 +134,13 @@ const predefinedOrders = {
   // 4x4 拼圖的答案
   '4': {
     1: [0, 3, 2, 1, 12, 15, 14, 13, 8, 11, 10, 9, 4, 7, 6, 5],
-    default: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    default: [0, 3, 2, 1, 12, 15, 14, 13, 8, 11, 10, 9, 4, 7, 6, 5]
   },
   // 5x5 拼圖的答案
   '5': {
-    1: [12, 6, 0, 18, 24, 11, 5, 4, 17, 23, 10, 9, 3, 16, 22, 14, 8, 2, 15, 21, 13, 7, 1, 19, 20],
-    default: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+    1: [0, 4, 3, 2, 1, 20, 24, 23, 22, 21, 15, 19, 18, 17, 16, 10, 14, 13, 12, 11, 5, 9, 8, 7, 6],
+    default: [0, 4, 3, 2, 1, 20, 24, 23, 22, 21, 15, 19, 18, 17, 16, 10, 14, 13, 12, 11, 5, 9, 8, 7, 6]
   },
-  // 6x6 及以上使用簡單順序（可自行擴充）
-  'default': null
 }
 
 // 取得正確順序
@@ -164,8 +160,8 @@ const correctOrder = computed(() => {
     }
   }
   
-  // 如果沒有預定義，返回簡單順序 0-N（用於測試）
-  console.warn(`沒有找到 size ${props.size}, level ${props.level} 的預定義順序，使用預設順序`)
+  // 如果沒有預定義，返回簡單順序 0-N
+  // console.warn(`沒有找到 size ${props.size}, level ${props.level} 的預定義順序，使用預設順序`)
   const order = []
   for (let i = 0; i < props.size * props.size; i++) {
     order.push(i)
@@ -252,7 +248,6 @@ function initPieces() {
     shuffled = [...allPieces].sort(() => Math.random() - 0.5)
     attempts++
     if (attempts > 100) {
-      // 如果無法打亂（例如 2x2 很容易重複），就手動交換幾個位置
       const temp = shuffled[0]
       shuffled[0] = shuffled[shuffled.length - 1]
       shuffled[shuffled.length - 1] = temp
@@ -328,7 +323,7 @@ function checkPuzzle() {
   if (isComplete) {
     handleGameSuccess()
   } else {
-    alert(`拼圖未完成，加油！\n\n提示：需讓 ${props.size}x${props.size} 的拼圖片與完整圖片一樣呦。`)
+    alert(`拼圖未完成，加油！`)
   }
 }
 
@@ -349,7 +344,7 @@ function showHint() {
   alert('所有拼圖片都在正確位置！點擊"完成"按鈕即可。')
 }
 
-// 顯示答案（調試用）
+// 顯示答案
 function showSolution() {
   if (isCompleted.value) return
   
@@ -415,7 +410,7 @@ function stopTimer() {
 
 // 重置遊戲
 function resetGame() {
-  console.log(`重置遊戲 - Size: ${props.size}x${props.size}`)
+  // console.log(`重置遊戲 - Size: ${props.size}x${props.size}`)
   stopTimer()
   timeLeft.value = props.timeLimit
   gameId.value = Date.now()
