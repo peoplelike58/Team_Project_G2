@@ -6,9 +6,9 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
   {
     state: () => ({                           // state：集中放「可響應的資料狀態」
       // 基本登入資訊
+      id:null,
       email: null,           //   例如登入 email（未登入就是 null）
       name:null,
-      id:null,
       isLoggedIn:false,
 
       // 個人資料
@@ -58,7 +58,10 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
             this.name = sessionData.member.name
             this.id = sessionData.member.id
             this.isLoggedIn = true
-            this.profile.avatar = sessionData.member.avatar
+            this.profile.nickname = sessionData.member.nickname
+            this.profile.phone = sessionData.member.phone
+            this.profile.address = sessionData.member.address
+            // this.profile.avatar = sessionData.member.avatar
             console.log('從 session 恢復登入狀態:', sessionData.member)
           } else {
             // 伺服器沒有登入狀態，清除本地狀態
@@ -72,11 +75,16 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
           this.loading.loginChecking = false
         }
       } ,
-      login(email, name,id) {                     //   自訂登入行為
+      login(email, name,id,nickname,phone,address,avatar) {                     //   自訂登入行為
       this.email =  email            
       this.name  = name
       this.id = id
       this.isLoggedIn = true
+      this.profile.nickname = nickname
+      this.profile.phone = phone
+      this.profile.address = address
+      this.profile.avatar = avatar
+
       console.log('登入成功，用戶ID:', this.id)
       /* 把狀態寫回 localStorage，刷新不會掉 */            
       // localStorage.setItem('email', email)                           
@@ -87,8 +95,11 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
         this.name = null
         this.id = null
         this.isLoggedIn = false
+        this.profile.nickname = null
+        this.profile.phone = null
+        this.profile.address = null
+        this.profile.avatar = null
         this.loading.loginChecking = false 
-
         // this.clearProfile()
         /* 同步清掉 localStorage */                           
         // localStorage.removeItem('email')                                
@@ -106,6 +117,7 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
           const basePath = import.meta.env.MODE === 'development' ? '/uploads' : 'uploads'
           this.profile.avatarUrl = `${basePath}/avatars/${this.profile.avatar}`
         }
+        return `${import.meta.env.BASE_URL}images/Products/default-avatar.jpg`
       },
 
       // 更新頭像檔名

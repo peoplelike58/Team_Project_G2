@@ -1,4 +1,4 @@
-<?php
+<?php  /* fontlogin.php 登入 */
 $member=json_decode(file_get_contents("php://input"), true);//接收前端來的東西，做json檔的解碼
 
 
@@ -25,7 +25,7 @@ include 'conn.php';
 // 接收前端傳來的加密密碼，並再次加密以比對資料庫-（待考慮）
 // $encryptedPassword = encryptPassword($member["password"]);
 
-$sql = "SELECT MEMBER_ID,EMAIL,NAME,IMAGE from MEMBER WHERE EMAIL = :email and PW = :passwords ";
+$sql = "SELECT MEMBER_ID,EMAIL,NAME,NICKNAME,BIRTHDAY,PHONE,ADDRESS,IMAGE from MEMBER WHERE EMAIL = :email and PW = :passwords ";
 
 $pstmt = $pdo->prepare($sql);
 $pstmt->bindValue( ":email", $member["email"]);   //前端傳來的值放在陣列裡，把這個值給到：email去sql裡尋找，：是佔位符號，：email是命名參數
@@ -38,10 +38,13 @@ if ($respBody['success']) {
     session_start();
     // $_SESSION['member'] = $member;
     $_SESSION['member'] = [
-    "email" => $member[0]["EMAIL"],     // 左邊 是存進session的 key: 你自己命名,右邊 table 的欄位名是 EMAIL
-    "name"  => $member[0]["NAME"],
-    "id"  => $member[0]["MEMBER_ID"],
-    "avatar" => $member[0]["IMAGE"]
+        "id"  => $member[0]["MEMBER_ID"],
+        "email" => $member[0]["EMAIL"],     // 左邊 是存進session的 key: 你自己命名,右邊 table 的欄位名是 EMAIL
+        "name"  => $member[0]["NAME"],
+        "nickname"  => $member[0]["NICKNAME"],
+        "phone" => $member[0]["PHONE"],
+        "address" => $member[0]["ADDRESS"],
+        "avatar" => $member[0]["IMAGE"]
     ];
 
 }

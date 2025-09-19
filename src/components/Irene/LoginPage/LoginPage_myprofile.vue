@@ -276,6 +276,7 @@ const getProfile = async () => {
       profileData.phone = profile.PHONE || ''
       profileData.address = profile.ADDRESS || ''
       profileData.about = profile.ABOUT_ME || ''  // PHP 是 ABOUTME
+      profileData.avatar = profile.IMAGE || 'default-avatar.jpg'
       console.log('成功取得的儲存個人資料:', profileData)
        
       if (profile.IMAGE) {                       // 處理頭像資料
