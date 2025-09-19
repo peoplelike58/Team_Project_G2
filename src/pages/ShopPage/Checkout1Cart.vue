@@ -14,7 +14,6 @@ const router = useRouter()
 const allChecked = ref(true)    // 從 store 取得全選狀態，不需要自己維護
 const BASE = import.meta.env.BASE_URL;
 
-
 // const checkedMap = reactive(Object.fromEntries(CartStore.cartItems.map(i => [i.id, true])))  
 //.map把一個陣列「逐一」轉換成「另一個陣列」,轉換成[[1,true],[2,true]...],Object.fromEntries(...)把陣列變回物件=> { "1": true, "2": true }，checkedMap變成物件，記錄每個商品的勾選狀態
 

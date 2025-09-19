@@ -28,7 +28,7 @@
         <el-input
           v-model="password"
           type="password"
-          placeholder="請輸入密碼"
+          placeholder="請輸入8~16位入密碼包含大小寫英文"
           show-password
           
         /> 
@@ -47,7 +47,7 @@
        </div>
 
       <!-- 登入按鈕 -->
-      <button @click="handleLogin" class="login-btn">
+      <button class="login-btn" @click="handleLogin"  :disabled="!isFormValid">
         立即登入
       </button>
     </div>
@@ -94,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref,computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 // import CryptoJS from 'crypto-js' // 需要安裝: npm install crypto-js  （加密方式待考慮）
@@ -104,6 +104,12 @@ const email = ref('')
 const password = ref('')
 const router = useRouter()
 const user = useUserStore()
+
+
+// 表單驗證
+const isFormValid = computed(() => {
+   return email.value.includes('@') && password.value.length >= 8
+})
 
 // 密碼加密函數(待考慮)
 // const encryptPassword = (password) => {
@@ -417,18 +423,24 @@ const handleSocialLogin = (provider) => {
   color: white;
   padding: 16px;
   border-radius: 8px;
-  font-weight: $medium;
+  font-weight: $semiBold;
   font-size: $pcFont-p-s;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
   display: block;
   margin: 24px auto 0;
+
+  &:hover:not(:disabled) {
+  background-color: lighten($black-14, 10%);
+  }
+  
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 }
 
-.login-btn:hover {
-  background-color: #1f2937;
-}
 
 /* 去註冊區域 */
 .register-section {

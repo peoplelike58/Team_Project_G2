@@ -130,11 +130,10 @@ const frontroutes = [
       { path: 'fontregister',name:'loginregister-fontregister', component: LoginPage_register },
       { path: 'forgetpassword',name:'loginregister-forgetpassword', component: LoginPage_forget},
       { path: 'forgetsend',name:'loginregister-forgetsend', component: LoginPage_forgetsend },
-      { path: 'registercoupon',name:'loginregister-registercoupon', component: LoginPage_registercoupon },
-      { path: 'resetpassword',name:'loginregister-resetpassword', component: LoginPage_resetpassword }
-     
+      { path: 'resetpassword',name:'loginregister-resetpassword', component: LoginPage_resetpassword } 
     ]
   },
+  { path: '/registercoupon',name:'loginregister-registercoupon', component: LoginPage_registercoupon },
   // { path: '/forgetpassword',name:'loginregister-forgetpassword', component: LoginPage_forget },
 
   /* 後台 */

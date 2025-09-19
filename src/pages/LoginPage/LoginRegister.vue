@@ -41,6 +41,7 @@ import brandFooter from '@/components/An/footer.vue'
     width: 90%;
     max-width: 450px;
     margin: auto ;
+    margin-top: 80px;
 }
 
 </style>

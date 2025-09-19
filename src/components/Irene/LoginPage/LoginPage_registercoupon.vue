@@ -1,8 +1,9 @@
+<!-- LoginPage_registercoupon.vue 註冊後顯示這個的贈送優惠券彈窗，關閉後跳轉到會員中心 -->
 <template>
-  <div class="modal-overlay" v-if="showModal" @click="closeModal">
+  <div class="modal-overlay" v-if="isVisible" @click="closeModal">
     <div class="modal-container" @click.stop>
       <!-- 關閉按鈕 -->
-      <button class="close-btn" @click="closeModal">
+      <button class="close-btn" @click="handleClose">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
         </svg>
@@ -21,7 +22,7 @@
           稍後您可以再「會員專區 > 我的優惠」看到優惠內容
         </p>
         
-        <button class="action-btn" @click="viewCoupons">
+        <button class="action-btn" @click="handleViewCoupons">
           立即查看
         </button>
       </div>
@@ -30,16 +31,35 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-// 響應式數據
-const showModal = ref(false)
-const router = useRouter()
+// 定義 props - 從父組件接收控制顯示的狀態
+const props = defineProps({
+  isVisible: {
+    type: Boolean,
+    default: false
+  }
+})
+
+// 定義 emits - 向父組件發送事件
+const emit = defineEmits(['close', 'viewCoupons'])
 
 // 方法
-const closeModal = () => {
-  showModal.value = false
+const handleClose = () => {
+  // 發送關閉事件給父組件
+  emit('close')
 }
+
+const handleViewCoupons = () => {
+  // 發送查看優惠券事件給父組件
+  emit('viewCoupons')
+}
+
+// 暴露方法給父組件使用
+defineExpose({
+  showModal: () => emit('show'),
+  hideModal: () => emit('close')
+})
+
+
 
 const viewCoupons = () => {
   console.log('前往查看優惠券')
@@ -47,17 +67,6 @@ const viewCoupons = () => {
   closeModal()
 }
 
-// 生命週期
-onMounted(() => {
-  // 組件載入時顯示彈窗
-  showModal.value = true
-})
-
-// 暴露方法給父組件使用（可選）
-defineExpose({
-  showModal: () => showModal.value = true,
-  hideModal: () => showModal.value = false
-})
 </script>
 
 <style scoped lang="scss">
