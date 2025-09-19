@@ -2,12 +2,6 @@
 // 共用 連線資料庫
 
     //   MySQL相關資訊（本機端測試）
-<<<<<<< HEAD
-=======
-=======
-      //MySQL相關資訊（本機端測試）
->>>>>>> Irene
->>>>>>> ec81679fd06826cbebbc534fa9592ad3c66258f6
       $db_host = "127.0.0.1";
       $db_user = "root";
       $db_pass = "password";
@@ -22,7 +16,7 @@
 
 
       //建立資料庫連線物件
-      $dsn = "mysql:host=".$db_host.";dbname=".$db_select.";charset=utf8";
+      $dsn = "mysql:host=".$db_host.";dbname=".$db_select.";charset=utf8mb4";
 
       //建立PDO物件，並放入指定的相關資料
       $pdo = new PDO($dsn, $db_user, $db_pass);
