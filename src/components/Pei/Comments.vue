@@ -26,7 +26,7 @@ const user = useUserStore() // 含 (isLoggedIn/name/email）
 
 // ===== UI 狀態 =====
 const messages = ref([])
-const msgMaxLen = 255
+const msgMaxLen = 500
 const newMessageText = ref('')
 const countMsgLen = computed(() => Array.from(newMessageText.value).length)
 const noOverMaxLen = (e) => {
@@ -318,9 +318,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
       ></textarea>
 
       <div class="maxWords">
-        <span> {{ countMsgLen }}</span>
-        <span> / {{ msgMaxLen }} </span>
-
+        <span> {{ countMsgLen }} / {{ msgMaxLen }}</span>
       </div>
 
       <label
@@ -518,8 +516,8 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
           overflow: hidden;
 
           img {
-            width: 100%;
-            height: 100%;
+            width: 100% !important;
+            height: 100% !important;
             border-radius: 8px;
             object-fit: cover;
             object-position: center;
@@ -581,7 +579,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
 
     @include m(){
       width: 350px
@@ -634,7 +632,8 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
     }
 
     .popupTextarea {
-      width: 95%;
+      width: 100%;
+      height: 100px;
       border-radius: 0px 40px 40px 40px;
       padding: 12px;
       border: 1px solid #ccc;
@@ -670,6 +669,8 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
       position: relative;
       width: 150px;
       height: 150px;
+      object-fit: cover;
+
 
       img {
         width: 100%;
@@ -716,6 +717,18 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
 
       &:hover {
         background-color: rgba(186, 186, 171, 0.6);
+      }
+    }
+
+    .maxWords{
+      // outline: 1px solid red;
+      display: flex;
+      span{
+      // outline: 1px solid blue;
+      margin-left: auto;
+      margin-right: 10px;
+      color: #999;
+      font-size: 12px;
       }
     }
   }
