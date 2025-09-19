@@ -66,11 +66,16 @@ function routerTo(item){
 }
 
 const default_avatar = `${baseURL}images/Products/default-avatar.jpg`
-const avatar = computed( () => {
-    
+const avatar = computed( () => {    
     if (!user.profile.avatar) return default_avatar
     else return `${UPLOADS_BASE}/avatars/${user.profile.avatar}`
 } )
+
+const name = computed( () => {
+    if(!user.profile.nickname) return user.name
+    else return user.profile.nickname
+} )
+
 
 const menuItems = computed( () => [
     { label: '首頁', path: 'homepage' },
@@ -84,7 +89,7 @@ const menuItems = computed( () => [
     // { label: '會員中心', path: 'Member' },
 
     user.isLoggedIn
-        ? { label: user.profile.nickname ?? user.name ?? `會員#${user.id}`, avatar: avatar.value, path: 'Member'  }
+        ? { label: name ?? `會員#${user.id}`, avatar: avatar.value, path: 'Member'  }
         : { label: '會員登入', path: 'Member' }
 ] )
 
