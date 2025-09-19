@@ -85,6 +85,7 @@ const frontroutes = [
     path:'/routes/:MOUNTAIN_ID',
     name:'trailDetail',
     component: trailDetail,
+    meta: { title: '山上見｜路線規劃'},
     props: true
   },
 //----------------------------
