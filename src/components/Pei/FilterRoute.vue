@@ -337,8 +337,6 @@ onUnmounted(() => {
     display: flex;
     width: 100%;
     flex-wrap: wrap;
-
-
   }
   
 
@@ -356,10 +354,35 @@ onUnmounted(() => {
       text-align: center;
       justify-content: space-between;
       margin: 8px;
+
+
       @include m(){
         width: 87px;
         margin: 4px;
+      }
 
+      @media (max-width: 545px){
+        width: 85px;
+        padding: 5px 20px
+      }
+
+      @media (max-width: 442px){
+      padding: 5px 15px
+
+
+      }
+
+      // @include s(){
+
+      //   padding: 5px 15px
+
+      // }
+
+      
+
+      @media (max-width: 413px){
+
+        padding: 5px 10px
       }
 
     }
@@ -421,15 +444,25 @@ button{ // 通用按鈕樣式
   margin: auto;
   margin-top: 28px; // 與上方間距
   display: flex; // 彈性排版
-  justify-content: space-between; // 左右分散
-  padding:0 20px;
+  // justify-content: space-between; 
+  padding:0 40px;
 
   // border: 2px solid black;
   box-sizing: border-box;
 
   @include m(){
-   
     max-width: 768px;
+    padding:0 30px;
+    margin-top: 16px; 
+
+
+  }
+
+  @include s(){
+    max-width: 430px;
+    padding:0 20px;
+    margin-top: 12px; 
+
   }
 
 
@@ -440,9 +473,13 @@ button{ // 通用按鈕樣式
   display: flex; // 橫向排列0
   align-items: center; // 垂直置中
   gap: 12px; // 元素間距
+  width: 100%;
+  // border: 2px solid rgb(242, 4, 4);
+
 
   >span{
-    width: 80px;
+  // border: 2px solid rgb(90, 179, 94);
+  
 
     @include m(){
       display: none;
@@ -456,7 +493,14 @@ button{ // 通用按鈕樣式
 
   position: relative; // 讓圖示能絕對定位
   display: inline-block; // 寬度包內容
+  // border: 2px solid blue;
+  width: 60%;
   
+    @include m(){
+      width: 100%;
+    }
+
+
 
 
 
@@ -465,11 +509,13 @@ button{ // 通用按鈕樣式
     padding: 6px 12px; 
     border: 1.5px solid gray; 
     border-radius: 8px; 
-    width: 450px; 
+    width: 100%; 
     box-sizing: border-box; 
+    // border: 2px solid rgb(255, 208, 1);
+
 
     @include m(){
-      width: 708px;
+      width: 100%;
     }
 
   }
@@ -619,6 +665,14 @@ button{ // 通用按鈕樣式
     
   }
 
+  @media (max-width: 768px){
+    flex-basis: calc((100% - 8px) / 2);
+  }
+
+  // @include s(){ 
+  //   flex-basis: calc((100% - 8px) / 2);    
+  // }
+
   /* 新增圖片外層容器，負責裁切與固定高度 */
   .imgBox {
     flex: 0 0 60%;         // 讓圖片區佔卡片高度 60%
@@ -641,11 +695,11 @@ button{ // 通用按鈕樣式
   }
 
   .meta{ // 文字區
-    margin: 8px 8px; // 內距
+    margin: 12px 12px; // 內距
     white-space: pre-line; // 支援\n讓跨區顯示區域時斷行
     height: 30%;
     // border: 1px solid pink;
-    font-weight: $medium;
+    font-weight: 700;
 
     display: flex;
     flex-direction: column;
@@ -661,9 +715,13 @@ button{ // 通用按鈕樣式
       color: #999; // 次要色
       line-height: 1.3;
       font-size: 14px;
+      font-weight: 500;
 
       @include m(){
         font-size: 13px;
+      }
+      @include s(){
+        font-size: 12px;
       }
 
     }
@@ -671,19 +729,21 @@ button{ // 通用按鈕樣式
   .tags{ // 標籤列
     
     font-size: 12px; // 小字
-    margin: 8px 8px 16px; // 內距
+    margin: 12px 12px 16px; // 內距
     margin-top: auto; //把tags靠底部貼邊
      
     
     display: flex; // 橫向
     gap: 8px; // 間距
+
     span{ // 單一標籤
       font-weight: $semiBold;
       color: $tag;
       border: 1.5px solid $tag; // 邊框
-      padding: 2px 8px; // 內距
+      padding: 4px 8px; // 內距
       border-radius: 4px; // 圓角
       white-space: nowrap; // 避免換行
+
     }
   }
 }
