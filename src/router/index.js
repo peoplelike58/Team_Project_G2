@@ -60,18 +60,25 @@ const frontroutes = [
   {
     path: '/homepage',
     component: homePage,
+    meta: { title: '山上見｜首頁'}
+
   },
   {
     path: '/allnewspage',
     component: allNewsPage,
+    meta: { title: '山上見｜最新消息'}
+
   },
   {
     path: '/peaks',
     component: PeakGuide,
+    meta: { title: '山上見｜百岳之書'}
+
   },
   {
     path: '/routes',
-    component: routesPage
+    component: routesPage,
+    meta: { title: '山上見｜路線規劃'}
   },
 //------- 詳細頁面 -----------
   {
@@ -84,10 +91,14 @@ const frontroutes = [
   {
     path: '/together',
     component: togetherPage,
+    meta: { title: '山上見｜揪上山'}
+
   },
   {
     path: '/peace',
     component: peacePage,
+    meta: { title: '山上見｜揪安全'}
+
   },
   {
     path: '/together/activities/:id',
@@ -97,15 +108,19 @@ const frontroutes = [
   {
     path: '/mychallenge',
     component: myChallenge,
+    meta: { title: '山上見｜百岳挑戰'}
+
   },
    {
     path: '/shop/product',
     redirect: '/shop',//讓/shop/product輸入這個路徑導到商品頁
+  
   },
   {
     path: '/shop',
     alias: '/Shop',      // 兩個都算進來
     component: ShopPage,
+    meta: { title: '山上見｜山腳雜貨店'},
     children:[
       {path:'product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true },props: true},
       // （可選）把 params 直接變成元件的 props, // ← 子路由}
@@ -222,6 +237,9 @@ router.beforeEach(async(to, from, next) => {
   next()
 })
 
+router.afterEach((to) => {                                         // 每次路由切換後執行 // 繁中註解
+  document.title = to.meta?.title || '山上見'                      // 如果有meta.title就用，否則用預設 // 繁中註解
+})
 
 export default router
 
