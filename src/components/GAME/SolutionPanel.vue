@@ -19,7 +19,15 @@
 import { computed } from 'vue'
 const props = defineProps({ level:Number })
 // 隨機挑圖的結果要一致，直接重用 PuzzleGame 不暴露 randomIndex，故用 level 決定
-const puzzleFullUrl = `/images/GAME/Game${props.level}.jpg`
+
+//API網址
+const baseUrl = computed(() => {
+    // 從環境變數取得 AJAX URL
+    const ajaxUrl = import.meta.env.VITE_AJAX_URL || ''
+    return ajaxUrl.replace('/PHP', '/')
+})
+
+const puzzleFullUrl = `${baseUrl.value}images/GAME/Game${props.level}.jpg`
 const bank = [
   { q:'山上突遇大霧，應該？', options:['前進','等待','導航','求援'], answer:1 },
   { q:'失蹤時最重要？',     options:['留原地','呼喊','走動','揮旗'], answer:0 }
