@@ -73,27 +73,49 @@ const UPLOADS_BASE = `${API_ROOT}/uploads`
 
 // ===== 從後端一列資料 → 轉成前端需要的物件 =====
 function mapRowToMessage(row){
-  // 後端可能用別名：MESSAGE_IMAGE / MEMBER_IMAGE
+  // 後端圖片用別名：MESSAGE_IMAGE / MEMBER_IMAGE
   const msgImageKey = row.MESSAGE_IMAGE ?? null
-  const avatarKey   = row.MEMBER_IMAGE ?? null
- 
-  
-  
+
+  //頭貼
+  const default_avatar = `${baseUrl}images/Products/default-avatar.jpg`
+  const avatar = computed( () => {    
+    if (!row.MEMBER_IMAGE) return default_avatar
+    else return `${UPLOADS_BASE}/avatars/${row.MEMBER_IMAGE}`
+  } )
+
+
+  //姓名
+  const name = computed( () => {
+    if(!row.NICKNAME) return row.NAME
+    else return row.NICKNAME
+  } )
+
+
+
   return {
     msgId:Number(row.MESSAGE_ID),       
     memId:Number(row.MEMBER_ID),         
     mountainId:Number(row.MOUNTAIN_ID),
-    msgId: row.MESSAGE_ID,
-    name: row.NICKNAME ?? row.MEMBER_NAME ?? `會員#${row.MEMBER_ID}`,
+    name: name || `會員#${row.MEMBER_ID}`,
     mountain: row.MOUNTAIN_NAME || '',
-    avatar: `${UPLOADS_BASE}/avatars/${avatarKey}` || 'images/myChallenge/head4.png',
-    time: row.CREATED_AT || row.CREATE_AT || row.CREATE_TIME || '',
+    avatar: avatar || 'images/Products/default-avatar.jpg',
+    time: row.CREATED_AT  || '',
     content: row.CONTENT || '',
     photo: msgImageKey ? `${UPLOADS_BASE}/${msgImageKey}` : '',
-    canDelete : user.isLoggedIn && user.id === row.MEMBER_ID
-    
+    canDelete : user.isLoggedIn && user.id === row.MEMBER_ID  
   }
 }
+
+const default_avatar = `${baseUrl}images/Products/default-avatar.jpg`
+const user_vatar = computed( () => {    
+    if (!user.profile.avatar) return default_avatar
+    else return `${UPLOADS_BASE}/avatars/${user.profile.avatar}`
+} )
+
+const user_name = computed( () => {
+    if(!user.profile.nickname) return user.name
+    else return user.profile.nickname
+} )
 
 // ===== 讀留言：GET /CommentsGet.php?MOUNTAIN_ID=... =====
 async function fetchComments(){
@@ -306,9 +328,11 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
 
       <div class="popupUser">
         <div class="popupAvatar">
-          <img :src="`${UPLOADS_BASE}/avatars/${user.profile.avatar}`" alt="使用者頭像" />
+          <!-- <img :src="`${UPLOADS_BASE}/avatars/${user.profile.avatar}`" alt="使用者頭像" /> -->
+          <img :src="user_vatar" alt="使用者頭像" />
         </div>
-        <p class="popupName">{{ user.profile.nickname ?? user.name ?? `會員#${user.id}` }}</p>
+        <!-- <p class="popupName">{{ user.profile.nickname ?? user.name ?? `會員#${user.id}` }}</p> -->
+        <p class="popupName">{{ user_name ?? `會員#${user.id}` }}</p>
       </div>
 
       <textarea
