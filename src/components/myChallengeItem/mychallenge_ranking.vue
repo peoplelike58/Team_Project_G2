@@ -2,7 +2,10 @@
     <section v-for="(rank, index) in ranks" :key="index" class="nomb">
         <div class="personInfo" @click="toggle(index)">
             <div class="personInfoTitle">
-                <img :src="`${BASE}uploads/avatars/${rank.image}`" alt="" class="head">
+                <img :src="getAvatarPath(rank.image)"
+                    alt="頭像" 
+                    class="head"
+                    @error="handleImageError">
                 <h4 class="place">{{ rankText(index) }}<br />{{ rankIcon(index) }}</h4>
                 <h4>{{ rank.name }}</h4>
             </div>
@@ -60,6 +63,14 @@ import axios from 'axios'
         }else{
             openItem.value = index
         }
+    }
+
+    const getAvatarPath = (image) => {
+        return `${BASE}uploads/avatars/${image || 'default-avatar.png'}`
+    }
+
+    const handleImageError = (event) => {
+        event.target.src = `${BASE}uploads/avatars/default-avatar.png`
     }
 
     const ranks = ref([])
