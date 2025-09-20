@@ -47,7 +47,6 @@
             heightTotal.value = '0.00'
             kiloTotal.value = '0.00'
             timeTotal.value = '0.00'
-            console.log('用戶未登入，重置累積數據')
             return
         }
 
@@ -63,13 +62,12 @@
                 heightTotal.value = response.data.heightTotal
                 kiloTotal.value = response.data.kiloTotal
                 timeTotal.value = response.data.timeTotal
-                console.log('累積數據載入成功:', response.data)
             } else {
                 throw new Error(response.data.error || '載入失敗')
             }
 
         }catch(err){
-            console.error('載入數據失敗:', err)
+            // console.error('載入數據失敗:', err)
             // 發生錯誤時保持預設值
             heightTotal.value = '0.00'
             kiloTotal.value = '0.00'
@@ -78,14 +76,12 @@
     }
 
     watch(() => props.isLoggedIn, async (newValue, oldValue) => {
-        console.log('Info 組件：登入狀態變化', oldValue, '->', newValue)
         
         if (newValue === false) {
             // 登出時清空資料
             heightTotal.value = '0.00'
             kiloTotal.value = '0.00'
             timeTotal.value = '0.00'
-            console.log('已清空累積數據')
         } else if (newValue === true) {
             // 登入時重新載入
             await loadTotalStats()

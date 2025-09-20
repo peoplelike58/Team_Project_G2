@@ -79,7 +79,7 @@
     <!-- 空狀態 -->
     <div v-if="challengeRecords.length === 0 && !isLoading" class="emptyState">
       <p class="emptyMessage">目前沒有任何挑戰記錄</p>
-      <p class="emptyHint">開始你的登山挑戰吧！</p>
+      <p class="emptyHint">開始你的<router-link to="/mychallenge" class="challengeLink">百岳挑戰</router-link>吧！</p>
     </div>
 
     <!-- 載入狀態 -->
@@ -352,6 +352,19 @@ onMounted(() => {
     .emptyHint {
       font-size: $pcFont-p-s;
       color: #999;
+
+      .challengeLink {
+        color: #999;
+        text-decoration: none;
+        font-weight: bold;
+        border-bottom: 2px solid #999;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: #0056b3;
+          border-bottom-color: #0056b3;
+        }
+      }
     }
   }
   

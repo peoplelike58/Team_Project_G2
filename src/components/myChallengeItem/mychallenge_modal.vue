@@ -103,7 +103,7 @@ import axios from 'axios'
                 if (isNaN(lat) || isNaN(lon) || 
                     lat < -90 || lat > 90 || 
                     lon < -180 || lon > 180) {
-                    console.warn(`跳過無效座標: ${lat}, ${lon}`);
+                    // console.warn(`跳過無效座標: ${lat}, ${lon}`);
                     continue;
                 }
                 
@@ -338,7 +338,7 @@ import axios from 'axios'
                 calculateTimeSafely(trkpts);
 
             } catch (err) {
-                console.error("XML parse error", err);
+                // console.error("XML parse error", err);
                 alert("檔案解析失敗，請確認檔案格式正確");
                 fileName.value = "";
             }
@@ -377,7 +377,6 @@ import axios from 'axios'
         const file = event.dataTransfer.files[0]
         if (file && validateFile(file)) {
             fileName.value = file.name
-            console.log("拖曳上傳：", file)
             readFile(file)
         }else{
             alert("只允許上傳 XML/GPX 檔案！")
@@ -389,7 +388,6 @@ import axios from 'axios'
     const file = e.target.files[0]
         if (file && validateFile(file)) {
             fileName.value = file.name
-            console.log("點擊選擇：", file)
             readFile(file)
 
         }else {
@@ -470,8 +468,6 @@ import axios from 'axios'
                 }
             );
 
-            console.log('儲存成功:', response.data);
-
             if (response.data.climbed) {
                 alert(`恭喜！${props.mountain.name} 登頂成功，紀錄已儲存到資料庫！`);
             } else {
@@ -504,12 +500,12 @@ import axios from 'axios'
             emit("closeUploadModal", props.mountain.name);
 
         } catch (error) {
-            console.error('儲存失敗:', error);
+            // console.error('儲存失敗:', error);
             alert('儲存失敗，請稍後再試！');
         }
     }
 
-    // 查詢山峰 ID 的函數**
+    // 查詢山峰 ID 
     async function getMountainId(mountainName) {
         try {
         const response = await axios.get(`${ API_URL_2 }?name=${encodeURIComponent(mountainName)}`)
@@ -517,14 +513,11 @@ import axios from 'axios'
             if (response.data.success) {
                 return response.data.mountain_id
             } else {
-                console.error('查詢失敗:', response.data.error)
-                if (response.data.suggestions) {
-                    console.log('建議的山峰:', response.data.suggestions)
-                }
+                // console.error('查詢失敗:', response.data.error)
                 return null
             }
         } catch (error) {
-            console.error('查詢山峰 ID 失敗:', error)
+            // console.error('查詢山峰 ID 失敗:', error)
             return null
         }
     }

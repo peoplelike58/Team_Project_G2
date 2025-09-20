@@ -70,7 +70,7 @@ import axios from 'axios'
     }
 
     const handleImageError = (event) => {
-        event.target.src = `${BASE}uploads/avatars/default-avatar.png`
+        event.target.src = `${BASE}uploads/avatars/default-avatar.jpg`
     }
 
     const ranks = ref([])
@@ -94,7 +94,7 @@ import axios from 'axios'
             const res = await axios.get(API_URL)
             ranks.value = res.data
         } catch (err) {
-            console.error("載入排行榜失敗:", err)
+            
         }
     }
 
@@ -221,12 +221,12 @@ import axios from 'axios'
                 font-weight: $medium;
                 line-height: $lineHeight-title-120;
 
-                @media screen and (max-width: 500px) {
+                @media screen and (max-width: 540px) {
                     font-size: $pcFont-H3;
                 }
             }
 
-            @media screen and (max-width: 500px) {
+            @media screen and (max-width: 540px) {
                 font-size: 12px;
             }
         }

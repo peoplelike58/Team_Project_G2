@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     echo "PHP版本: " . phpversion() . "<br><br>";
     
     echo "<h3>當前目錄內容:</h3>";
+    
     $files = scandir(__DIR__);
     foreach ($files as $file) {
         if ($file != '.' && $file != '..') {
@@ -55,7 +56,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     } catch (Exception $e) {
         echo "✗ <span style='color:red'>資料庫連線失敗: " . $e->getMessage() . "</span><br>";
     }
+
+    echo "<h3>檢查 mail() 函數:</h3>";
+    if (function_exists('mail')) {
+        echo "✓ <span style='color:green'>mail() 函數可用</span><br>";
+        
+        // 測試發送
+        $test_result = mail('test@example.com', 'Test', 'Test message', 'From: test@tibamef2e.com');
+        if ($test_result) {
+            echo "✓ <span style='color:green'>測試郵件發送成功</span><br>";
+        } else {
+            echo "✗ <span style='color:red'>測試郵件發送失敗</span><br>";
+        }
+    } else {
+        echo "✗ <span style='color:red'>mail() 函數不可用</span><br>";
+    }
     
+    echo "<h3>PHP mail 設定:</h3>";
+    echo "sendmail_path: " . ini_get('sendmail_path') . "<br>";
+    echo "SMTP: " . ini_get('SMTP') . "<br>";
+    echo "smtp_port: " . ini_get('smtp_port') . "<br>";
+
     exit; // 重要：這裡要結束，不執行後面的程式碼
 }
 
@@ -214,9 +235,35 @@ function base64url_encode($data) {
  */
 function sendVerificationCodeEmail($email, $name, $code) {
     // 測試模式：記錄到檔案
-    file_put_contents('verification_codes.log', 
-        date('Y-m-d H:i:s') . " - {$email}: {$code}\n", FILE_APPEND);
-    error_log("模擬發送驗證碼 {$code} 到 {$email}");
-    return true; // 總是返回成功
+    // file_put_contents('verification_codes.log', 
+    //     date('Y-m-d H:i:s') . " - {$email}: {$code}\n", FILE_APPEND);
+    // error_log("模擬發送驗證碼 {$code} 到 {$email}");
+    // return true; // 總是返回成功
+
+    $subject = '密碼重設驗證碼';
+    $message = "親愛的 {$name}，
+
+您的密碼重設驗證碼是：{$code}
+
+此驗證碼將在10分鐘後失效。
+
+請在重設密碼頁面輸入此驗證碼以繼續操作。
+
+如果您沒有請求重設密碼，請忽略此郵件。";
+    
+    $headers = [
+        'From: noreply@tibamef2e.com',
+        'Reply-To: noreply@tibamef2e.com',
+        'Content-Type: text/plain; charset=UTF-8'
+    ];
+    
+    if (mail($email, $subject, $message, implode("\r\n", $headers))) {
+        error_log("郵件發送成功到: " . $email);
+        return true;
+    } else {
+        error_log("郵件發送失敗到: " . $email);
+        return false;
+    }
+
 }
 ?>

@@ -1,10 +1,4 @@
 <?php
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Access-Control-Allow-Credentials: true');
-header('Content-Type: application/json');
-
 include 'conn.php';
 
 //---------------------------------------------------
@@ -62,21 +56,6 @@ function verifyResetToken($token) {
  */
 function base64url_decode($data) {
     return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
-}
-
-// 將密碼哈希轉換為CRC32（不安全，僅用於適應INTEGER字段）
-function hashToInteger($password) {
-    // 使用CRC32將密碼直接轉換為整數（會有碰撞風險）
-    $hash = hash('crc32', $password . 'salt_key_for_security');
-    $result = hexdec($hash) % 2000000000; // 保持在安全範圍內
-    
-    // 確保結果不為0或null
-    if ($result <= 0) {
-        $result = abs($result) + 1000000;
-    }
-    
-    error_log("密碼轉換過程: " . $password . " -> " . $result);
-    return $result;
 }
 
 try {
@@ -152,21 +131,10 @@ try {
 
     error_log("找到用戶 - ID: " . $user['MEMBER_ID']);
 
-    if (is_numeric($newPassword)) {
-        $passwordToStore = intval($newPassword);
-        error_log("密碼是數字，直接轉換: " . $passwordToStore);
-    } else {
-
-        $passwordToStore = 0;
-        for ($i = 0; $i < strlen($newPassword); $i++) {
-            $passwordToStore += ord($newPassword[$i]);
-        }
-        $passwordToStore = $passwordToStore % 2000000000;
-        error_log("密碼轉換為數字（ASCII總和）: " . $passwordToStore);
-    }
+    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
     
     // 檢查新舊密碼是否相同
-    if ($user['PW'] == $passwordToStore) {
+    if (password_verify($newPassword, $user['PW'])) {
         throw new Exception('新密碼不能與舊密碼相同');
     }
     
@@ -175,12 +143,8 @@ try {
     $updateStmt = $pdo->prepare($updateSql);
     
     // 根據你的資料庫欄位類型選擇
-    $updateStmt->bindValue(1, $passwordToStore, PDO::PARAM_INT);  // 如果PW是INTEGER
+    $updateStmt->bindValue(1, $hashedPassword, PDO::PARAM_STR);
     $updateStmt->bindValue(2, $user['MEMBER_ID'], PDO::PARAM_INT);
-
-
-
-    error_log("執行UPDATE語句 - MEMBER_ID: " . $user['MEMBER_ID'] . ", 新密碼: " . $passwordToStore);
 
     if ($updateStmt->execute()) {
         $affectedRows = $updateStmt->rowCount();
@@ -193,8 +157,6 @@ try {
             $verifyStmt->execute();
             $updatedUser = $verifyStmt->fetch(PDO::FETCH_ASSOC);
             
-            error_log("密碼更新驗證 - 舊密碼: " . $user['PW'] . ", 新密碼（資料庫）: " . $updatedUser['PW']);
-
             $respBody = [
                 'success' => true,
                 'message' => '密碼重設成功，請使用新密碼登入',
