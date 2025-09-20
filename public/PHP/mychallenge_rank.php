@@ -6,7 +6,7 @@
 
     //建立SQL語法
     $sql = "SELECT MB.MEMBER_ID,
-                   MB.NICKNAME                     AS name,
+                   COALESCE(NULLIF(MB.NICKNAME, ''), MB.NAME) AS name,
                    COALESCE(MB.IMAGE, '')          AS image,
                    COUNT(DISTINCT F.MOUNTAIN_ID)   AS climb_count,
                    SUM(F.HEIGHT)                   AS height,
