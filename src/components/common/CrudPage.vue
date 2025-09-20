@@ -75,7 +75,7 @@
                 :type="col.type === 'datetime' ? 'datetime' : col.type === 'date' ? 'date' : undefined"
                 :show-password="col.type === 'password'"
                 :placeholder="`請輸入${col.label}`"
-                :disabled="col.lockOnEdit && dialogMode === 'edit'"
+                :disabled="col.disabled || (col.lockOnEdit && dialogMode === 'edit')"
                 :options="col.options"
                 :value-format="col.valueFormat || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
                 :format="col.format || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
