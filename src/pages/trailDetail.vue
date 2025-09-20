@@ -77,8 +77,8 @@ watch(trail, (t) => {
     ? t.MOUNTAIN_NAME.trim()                              
     : ''                                    
   document.title = name                    
-    ? `山上見｜路線規劃｜${name}`      
-    : '山上見｜路線規劃'             
+    ? `${name}｜路線規劃｜山上見`      
+    : '路線規劃｜山上見'             
 }, { immediate: true })         
 
 </script>

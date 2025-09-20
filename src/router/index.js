@@ -66,39 +66,39 @@ const frontroutes = [
   {
     path: '/allnewspage',
     component: allNewsPage,
-    meta: { title: '山上見｜最新消息'}
+    meta: { title: '最新消息｜山上見'}
 
   },
   {
     path: '/peaks',
     component: PeakGuide,
-    meta: { title: '山上見｜百岳之書'}
+    meta: { title: '百岳之書｜山上見'}
 
   },
   {
     path: '/routes',
     component: routesPage,
-    meta: { title: '山上見｜路線規劃'}
+    meta: { title: '路線規劃｜山上見'}
   },
 //------- 詳細頁面 -----------
   {
     path:'/routes/:MOUNTAIN_ID',
     name:'trailDetail',
     component: trailDetail,
-    meta: { title: '山上見｜路線規劃'},
+    meta: { title: '路線規劃｜山上見'},
     props: true
   },
 //----------------------------
   {
     path: '/together',
     component: togetherPage,
-    meta: { title: '山上見｜揪上山'}
+    meta: { title: '揪上山｜山上見'}
 
   },
   {
     path: '/peace',
     component: peacePage,
-    meta: { title: '山上見｜揪安全'}
+    meta: { title: '揪安全｜山上見'}
 
   },
   {
@@ -109,7 +109,7 @@ const frontroutes = [
   {
     path: '/mychallenge',
     component: myChallenge,
-    meta: { title: '山上見｜百岳挑戰'}
+    meta: { title: '百岳挑戰｜山上見'}
 
   },
    {
@@ -121,7 +121,7 @@ const frontroutes = [
     path: '/shop',
     alias: '/Shop',      // 兩個都算進來
     component: ShopPage,
-    meta: { title: '山上見｜山腳雜貨店'},
+    meta: { title: '山腳雜貨店｜山上見'},
     // children:[
     //   {path:'product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true },props: true},
     //    （可選）把 params 直接變成元件的 props, // ← 子路由}
