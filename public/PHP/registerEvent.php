@@ -57,12 +57,11 @@ try {
     $pdo->beginTransaction();
     
     try {
-        // 先檢查會員是否已經報名過此活動
+        // 檢查是否已存在報名記錄（包括已取消的）
         $checkSql = "SELECT MEMBER_ID, STATUS 
                      FROM MEMBER_EVENT 
                      WHERE MEMBER_ID = :memberId 
-                     AND EVENT_ID = :eventId 
-                     AND STATUS != 'cancelled'";
+                     AND EVENT_ID = :eventId";
         
         $checkStmt = $pdo->prepare($checkSql);
         $checkStmt->bindParam(':memberId', $memberId, PDO::PARAM_INT);
@@ -72,10 +71,72 @@ try {
         $existingRegistration = $checkStmt->fetch(PDO::FETCH_ASSOC);
         
         if ($existingRegistration) {
-            throw new Exception('您已經報名過此活動，目前狀態為：' . $existingRegistration['STATUS']);
+            // 如果狀態是已取消，更新為重新報名
+            if ($existingRegistration['STATUS'] === 'cancelled') {
+                $updateSql = "UPDATE MEMBER_EVENT 
+                             SET STATUS = 'registered', 
+                                 JOIN_AT = NOW() 
+                             WHERE MEMBER_ID = :memberId 
+                             AND EVENT_ID = :eventId";
+                
+                $updateStmt = $pdo->prepare($updateSql);
+                $updateStmt->bindParam(':memberId', $memberId, PDO::PARAM_INT);
+                $updateStmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
+                
+                if (!$updateStmt->execute()) {
+                    throw new Exception('重新報名失敗，請稍後再試');
+                }
+                
+                // 更新活動報名人數（增加1）
+                $updateEventSql = "UPDATE EVENT 
+                                  SET JOIN_QTY = JOIN_QTY + 1 
+                                  WHERE EVENT_ID = :eventId";
+                
+                $updateEventStmt = $pdo->prepare($updateEventSql);
+                $updateEventStmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
+                
+                if (!$updateEventStmt->execute()) {
+                    throw new Exception('更新報名人數失敗');
+                }
+                
+                // 取得活動資訊
+                $eventSql = "SELECT EVENT_NAME, EVENT_DATE, EVENT_TIME, MEETING_PLACE, JOIN_QTY 
+                            FROM EVENT 
+                            WHERE EVENT_ID = :eventId";
+                
+                $eventStmt = $pdo->prepare($eventSql);
+                $eventStmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
+                $eventStmt->execute();
+                
+                $eventInfo = $eventStmt->fetch(PDO::FETCH_ASSOC);
+                
+                // 提交交易
+                $pdo->commit();
+                
+                // 成功回應（重新報名）
+                $response = [
+                    'success' => true,
+                    'message' => '重新報名成功！',
+                    'data' => [
+                        'eventName' => $eventInfo['EVENT_NAME'],
+                        'eventDate' => $eventInfo['EVENT_DATE'],
+                        'eventTime' => $eventInfo['EVENT_TIME'],
+                        'meetingPlace' => $eventInfo['MEETING_PLACE'],
+                        'currentParticipants' => $eventInfo['JOIN_QTY'],
+                        'registrationDate' => date('Y-m-d H:i:s')
+                    ]
+                ];
+                
+                echo json_encode($response, JSON_UNESCAPED_UNICODE);
+                exit();
+                
+            } else {
+                // 狀態不是 cancelled，表示已經報名且未取消
+                throw new Exception('您已經報名過此活動，目前狀態為：' . $existingRegistration['STATUS']);
+            }
         }
         
-        // 檢查活動資訊和報名狀況（從 EVENT 表獲取活動資訊）
+        // 如果沒有任何記錄，檢查活動資訊
         $eventSql = "SELECT EVENT_ID, EVENT_NAME, JOIN_QTY, END_DATETIME, STATUS, EVENT_DATE,
                             EVENT_TIME, START_DATE, START_TIME, MEETING_PLACE
                      FROM EVENT 
@@ -98,7 +159,7 @@ try {
             throw new Exception('報名已截止');
         }
         
-        // 計算目前的報名人數
+        // 計算目前的報名人數（只計算未取消的）
         $countSql = "SELECT COUNT(*) as current_count 
                      FROM MEMBER_EVENT 
                      WHERE EVENT_ID = :eventId 
@@ -110,11 +171,6 @@ try {
         
         $countResult = $countStmt->fetch(PDO::FETCH_ASSOC);
         $currentCount = $countResult['current_count'];
-        
-        // 檢查是否有名額限制（如果需要的話可以取消註解）
-        // if ($eventInfo['JOIN_QTY'] > 0 && $currentCount >= $eventInfo['JOIN_QTY']) {
-        //     throw new Exception('活動名額已滿');
-        // }
         
         // 新增報名記錄到 MEMBER_EVENT 表
         $insertSql = "INSERT INTO MEMBER_EVENT 
@@ -129,7 +185,7 @@ try {
             throw new Exception('報名失敗，請稍後再試');
         }
         
-        // 更新 EVENT 表的報名人數（JOIN_QTY）
+        // 更新 EVENT 表的報名人數
         $newJoinQty = $currentCount + 1;
         $updateSql = "UPDATE EVENT 
                       SET JOIN_QTY = :joinQty 
@@ -146,7 +202,7 @@ try {
         // 提交交易
         $pdo->commit();
         
-        // 成功回應
+        // 成功回應（首次報名）
         $response = [
             'success' => true,
             'message' => '報名成功！',
@@ -160,7 +216,6 @@ try {
             ]
         ];
         
-        // 回傳成功結果
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
         
     } catch (Exception $e) {

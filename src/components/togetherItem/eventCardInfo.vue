@@ -896,7 +896,7 @@ onMounted(async () => {
 }
 
 // 手機版響應式樣式
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1200px) {
     .wrapper {
         padding: 0 15px;
     }
