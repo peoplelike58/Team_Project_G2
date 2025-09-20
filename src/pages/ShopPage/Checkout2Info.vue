@@ -230,5 +230,71 @@ onMounted(() => {
     }
 }
 
+@include mq(980px) {
+    main{
+        padding: 2vh;
+    }
+}
+
+// === 新增的RWD修正 ===
+@include mq(768px) {
+    .el-row {
+        flex-direction: column !important;
+        gap: 16px;
+    }
+    
+    // 讓所有欄位在小螢幕時都佔滿寬度
+    .el-col {
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    
+    // 確保表單項目有足夠空間
+    :deep(.el-form-item) {
+        margin-bottom: 16px;
+    }
+    
+    // 輸入框在小螢幕時佔滿可用寬度
+    :deep(.el-input) {
+        width: 100%;
+    }
+    
+    // 付款方式選擇框也要適應
+    :deep(.el-select) {
+        width: 100% !important;
+    }
+}
+
+@include mq(430px) {
+    .page {
+        margin: 0 16px; // 給頁面一些邊距
+    }
+    
+    // 進一步優化小螢幕顯示
+    :deep(.el-form) {
+        .el-form-item__label {
+          text-align: left !important;
+          justify-content:flex-start !important;
+        }
+    }
+    
+    // 信用卡號碼和到期日/CVC在超小螢幕時垂直排列
+    .el-row {
+        .el-col {
+            margin-bottom: 12px;
+        }
+    }
+    
+    // 按鈕區域在小螢幕時調整
+    .actions {
+        flex-direction: column;
+        gap: 8px;
+        
+        .el-button {
+            width: 100%;
+        }
+    }
+}
+
 
 </style>

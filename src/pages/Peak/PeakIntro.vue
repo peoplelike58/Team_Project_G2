@@ -107,17 +107,20 @@
             font-weight: $bold;
             line-height: $lineHeight-title-120;
             @include m(){
+                font-size:72px;
+            }
+            @include s(){
                 font-size:$pcFont-H1-m;
-                
-
             }
         }
         p{
                 font-size: $pcFont-H1-m;
                 line-height: $lineHeight-p-200;
                 @include m(){
+                font-size:$pcFont-H2;
+            }
+            @include s(){
                 font-size:$pcFont-p-m;
-
             }
             }
     }
@@ -151,6 +154,10 @@
                     text-align: right;
                     @include m() {
                         text-align: center;
+                        font-size:  $pcFont-H3;
+                        line-height: $lineHeight-p-150;
+                }
+                @include s() {
                         font-size:  $pcFont-p-s;
                         line-height: $lineHeight-p-150;
                 }
@@ -178,6 +185,10 @@
             line-height: $lineHeight-p-200;
             text-align: left;
             @include m(){
+                font-size:$pcFont-H3;
+                line-height: $lineHeight-p-150;
+            }
+            @include s(){
                 font-size:$pcFont-p-s;
                 line-height: $lineHeight-p-150;
             }
@@ -239,6 +250,10 @@
             text-align: center;
             margin-bottom: 24px;
             @include m(){
+                font-size: $pcFont-p-m;
+                margin-bottom: 20px;
+            }
+            @include s(){
                 font-size: $pcFont-p-s;
                 margin-bottom: 20px;
             }

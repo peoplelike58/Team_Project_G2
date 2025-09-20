@@ -30,7 +30,7 @@ const BASE = import.meta.env.BASE_URL;
 
 const products = ref([])
 
-// 🟢 載入資料的函式
+//  載入資料的函式
 const loadProducts = async () => {
   try {
     // [修改] fetch 從 public/products.json 抓資料改成實際的API端點
@@ -500,14 +500,17 @@ const buyRightnow = async () => {
 @include mq(900px) {
   .modal_up,.modal_down{
     @include flexcenter(20px,column);
+    .product_detail{
+      flex:0 ;
+    }
   }
   .close{
     background-color: transparent;
-    
   }
   .modal_up{
     padding: 24px;
     box-sizing: border-box;
+
   }
 }
 
