@@ -1,84 +1,13 @@
 <?php
 include 'conn.php';
 
-// require_once __DIR__ . '/../../libs/PHPMailer/src/Exception.php';
-// require_once __DIR__ . '/../../libs/PHPMailer/src/PHPMailer.php';
-// require_once __DIR__ . '/../../libs/PHPMailer/src/SMTP.php';
+require_once __DIR__ . '/../../libs/PHPMailer/src/Exception.php';
+require_once __DIR__ . '/../../libs/PHPMailer/src/PHPMailer.php';
+require_once __DIR__ . '/../../libs/PHPMailer/src/SMTP.php';
 
-// use PHPMailer\PHPMailer\PHPMailer;
-// use PHPMailer\PHPMailer\SMTP;
-// use PHPMailer\PHPMailer\Exception;
-
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-// 如果是 GET 請求，顯示除錯資訊
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    echo "<h2>除錯模式 - 檔案檢查</h2>";
-    echo "當前目錄: " . __DIR__ . "<br>";
-    echo "PHP版本: " . phpversion() . "<br><br>";
-    
-    echo "<h3>當前目錄內容:</h3>";
-    
-    $files = scandir(__DIR__);
-    foreach ($files as $file) {
-        if ($file != '.' && $file != '..') {
-            echo "- $file<br>";
-        }
-    }
-    
-    echo "<h3>檢查重要檔案:</h3>";
-    $files_to_check = [
-        './conn.php',
-        '../conn.php', 
-        '../../conn.php',
-        __DIR__ . '/../../libs/PHPMailer/src/Exception.php',
-        __DIR__ . '/../libs/PHPMailer/src/Exception.php',
-        __DIR__ . '/libs/PHPMailer/src/Exception.php'
-    ];
-    
-    foreach ($files_to_check as $file) {
-        if (file_exists($file)) {
-            echo "✓ <span style='color:green'>$file 存在</span><br>";
-        } else {
-            echo "✗ <span style='color:red'>$file 不存在</span><br>";
-        }
-    }
-    
-    echo "<h3>測試資料庫連線:</h3>";
-    try {
-        include 'conn.php';
-        echo "✓ <span style='color:green'>資料庫連線成功</span><br>";
-    } catch (Exception $e) {
-        echo "✗ <span style='color:red'>資料庫連線失敗: " . $e->getMessage() . "</span><br>";
-    }
-
-    echo "<h3>檢查 mail() 函數:</h3>";
-    if (function_exists('mail')) {
-        echo "✓ <span style='color:green'>mail() 函數可用</span><br>";
-        
-        // 測試發送
-        $test_result = mail('test@example.com', 'Test', 'Test message', 'From: test@tibamef2e.com');
-        if ($test_result) {
-            echo "✓ <span style='color:green'>測試郵件發送成功</span><br>";
-        } else {
-            echo "✗ <span style='color:red'>測試郵件發送失敗</span><br>";
-        }
-    } else {
-        echo "✗ <span style='color:red'>mail() 函數不可用</span><br>";
-    }
-    
-    echo "<h3>PHP mail 設定:</h3>";
-    echo "sendmail_path: " . ini_get('sendmail_path') . "<br>";
-    echo "SMTP: " . ini_get('SMTP') . "<br>";
-    echo "smtp_port: " . ini_get('smtp_port') . "<br>";
-
-    exit; // 重要：這裡要結束，不執行後面的程式碼
-}
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 //---------------------------------------------------
 
@@ -187,61 +116,29 @@ function base64url_encode($data) {
 /**
  * 使用PHPMailer發送驗證碼郵件
  */
-// function sendVerificationCodeEmail($email, $name, $code) {
-//     try {
-//         $mail = new PHPMailer(true);
-        
-//         // 伺服器設定
-//         $mail->isSMTP();
-//         $mail->Host       = 'smtp.gmail.com';
-//         $mail->SMTPAuth   = true;
-//         $mail->Username   = 'your-email@gmail.com';        // 改成您的Gmail
-//         $mail->Password   = 'your-app-password';           // 改成您的Gmail應用程式密碼
-//         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-//         $mail->Port       = 587;
-//         $mail->CharSet    = 'UTF-8';
-        
-//         // 收件人設定
-//         $mail->setFrom('your-email@gmail.com', '您的網站名稱');
-//         $mail->addAddress($email, $name);
-        
-//         // 郵件內容
-//         $mail->isHTML(false);
-//         $mail->Subject = '密碼重設驗證碼';
-//         $mail->Body    = "
-// 親愛的 {$name}，
-
-// 您的密碼重設驗證碼是：{$code}
-
-// 此驗證碼將在10分鐘後失效。
-
-// 請在重設密碼頁面輸入此驗證碼以繼續操作。
-
-// 如果您沒有請求重設密碼，請忽略此郵件。
-//         ";
-        
-//         $mail->send();
-//         error_log("郵件發送成功到: " . $email);
-//         return true;
-        
-//     } catch (Exception $e) {
-//         error_log("郵件發送失敗: " . $mail->ErrorInfo);
-//         return false;
-//     }
-// }
-
-/**
- * 測試版本
- */
 function sendVerificationCodeEmail($email, $name, $code) {
-    // 測試模式：記錄到檔案
-    // file_put_contents('verification_codes.log', 
-    //     date('Y-m-d H:i:s') . " - {$email}: {$code}\n", FILE_APPEND);
-    // error_log("模擬發送驗證碼 {$code} 到 {$email}");
-    // return true; // 總是返回成功
-
-    $subject = '密碼重設驗證碼';
-    $message = "親愛的 {$name}，
+    try {
+        $mail = new PHPMailer(true);
+        
+        // 伺服器設定
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'shanshangjian28560@gmail.com';
+        $mail->Password   = 'vzpsmdhrrmqzsbnq';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        $mail->CharSet    = 'UTF-8';
+        
+        // 寄件人設定
+        $mail->setFrom('shanshangjian28560@gmail.com', '山上見');
+        $mail->addAddress($email, $name);
+        
+        // 郵件內容
+        $mail->isHTML(false);
+        $mail->Subject = '密碼重設驗證碼';
+        $mail->Body    = "
+親愛的 {$name}，
 
 您的密碼重設驗證碼是：{$code}
 
@@ -249,21 +146,52 @@ function sendVerificationCodeEmail($email, $name, $code) {
 
 請在重設密碼頁面輸入此驗證碼以繼續操作。
 
-如果您沒有請求重設密碼，請忽略此郵件。";
-    
-    $headers = [
-        'From: noreply@tibamef2e.com',
-        'Reply-To: noreply@tibamef2e.com',
-        'Content-Type: text/plain; charset=UTF-8'
-    ];
-    
-    if (mail($email, $subject, $message, implode("\r\n", $headers))) {
+如果您沒有請求重設密碼，請忽略此郵件。
+        ";
+        
+        $mail->send();
         error_log("郵件發送成功到: " . $email);
         return true;
-    } else {
-        error_log("郵件發送失敗到: " . $email);
+        
+    } catch (Exception $e) {
+        error_log("郵件發送失敗: " . $mail->ErrorInfo);
         return false;
     }
-
 }
+
+/**
+ * 測試版本
+ */
+// function sendVerificationCodeEmail($email, $name, $code) {
+//     // 測試模式：記錄到檔案
+//     file_put_contents('verification_codes.log', 
+//         date('Y-m-d H:i:s') . " - {$email}: {$code}\n", FILE_APPEND);
+//     error_log("模擬發送驗證碼 {$code} 到 {$email}");
+//     return true; // 總是返回成功
+
+//     $subject = '密碼重設驗證碼';
+//     $message = "親愛的 {$name}，
+
+// 您的密碼重設驗證碼是：{$code}
+
+// 此驗證碼將在10分鐘後失效。
+
+// 請在重設密碼頁面輸入此驗證碼以繼續操作。
+
+// 如果您沒有請求重設密碼，請忽略此郵件。";
+    
+//     $headers = [
+//         'From: noreply@tibamef2e.com',
+//         'Reply-To: noreply@tibamef2e.com',
+//         'Content-Type: text/plain; charset=UTF-8'
+//     ];
+    
+//     if (mail($email, $subject, $message, implode("\r\n", $headers))) {
+//         error_log("郵件發送成功到: " . $email);
+//         return true;
+//     } else {
+//         error_log("郵件發送失敗到: " . $email);
+//         return false;
+//     }
+
 ?>

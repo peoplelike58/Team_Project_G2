@@ -3,7 +3,7 @@ include 'conn.php';
 
 //---------------------------------------------------
 // 密鑰 - 與前面步驟使用的相同
-define('SECRET_KEY', 'your-super-secret-key-change-this-in-production');
+define('SECRET_KEY', '690313d321d0de67118799a8bff29f867eccb717e0978babbf0720e6ac985e23');
 
 /**
  * 驗證重設密碼token
@@ -131,7 +131,7 @@ try {
 
     error_log("找到用戶 - ID: " . $user['MEMBER_ID']);
 
-    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+    $hashedPassword = md5($newPassword);
     
     // 檢查新舊密碼是否相同
     if (password_verify($newPassword, $user['PW'])) {
