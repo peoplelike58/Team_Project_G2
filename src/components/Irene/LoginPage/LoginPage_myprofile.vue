@@ -187,8 +187,8 @@ const uploadAvatar = async (file) => {
 
     if (result.success) {
       // 上傳成功後，更新資料庫中的頭像檔名
-      // await updateAvatarInDatabase(result.data.filename)
-      // console.log(result.data.filename)
+      await updateAvatarInDatabase(result.data.filename)
+      console.log(result.data.filename)
       
       // 更新 Pinia store 中的頭像狀態
       user.updateAvatar(result.data.filename)
@@ -210,27 +210,27 @@ const uploadAvatar = async (file) => {
 }
 
 // 更新資料庫中的頭像檔名
-// const updateAvatarInDatabase = async (filename) => {
-//   try {
-//     const response = await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_updateAvatarDB.php', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       credentials: 'include',
-//       body: JSON.stringify({ 
-//         member_id: user.id,
-//         avatar_filename: filename 
-//       })
-//     })
+const updateAvatarInDatabase = async (filename) => {
+  try {
+    const response = await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_updateAvatarDB.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ 
+        member_id: user.id,
+        avatar_filename: filename 
+      })
+    })
 
-//     const result = await response.json()
-//     if (!result.success) {
-//       throw new Error(result.message || '更新資料庫失敗')
-//     }
-//   } catch (error) {
-//     console.error('更新資料庫頭像失敗:', error)
-//     throw error  // 重新拋出錯誤，讓上層處理
-//   }
-// }
+    const result = await response.json()
+    if (!result.success) {
+      throw new Error(result.message || '更新資料庫失敗')
+    }
+  } catch (error) {
+    console.error('更新資料庫頭像失敗:', error)
+    throw error  // 重新拋出錯誤，讓上層處理
+  }
+}
 
 // 儲存個人資料
 const saveProfile = async () => {
@@ -245,9 +245,9 @@ const saveProfile = async () => {
   
   try {
     // 先上傳頭像（如果有新的頭像檔案）
-    // if (profileData.tempAvatarFile) {
-    //   await uploadAvatar(profileData.tempAvatarFile)
-    // }
+    if (profileData.tempAvatarFile) {
+      await uploadAvatar(profileData.tempAvatarFile)
+    }
     // API 呼叫儲存資料
     const res = await fetch (import.meta.env.VITE_AJAX_URL + '/LoginPage_updateProfile.php',{
       method: 'POST',
