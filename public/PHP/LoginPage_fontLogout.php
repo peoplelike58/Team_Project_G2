@@ -1,11 +1,13 @@
-<?php   /* 登出php */
+<?php   /* LoginPage_fontLogout.php 登出php */
 
 include 'conn.php';
 
 session_start();
 
 // 清掉 session
-$_SESSION['member'] = [];
+// 完全銷毀會員資料，而不是只清空陣列
+unset($_SESSION['member']);  // 完全移除 member 這個 key
+// $_SESSION['member'] = []; 只是清空陣列，但 key 還存在
 
 // 檢查是否有使用 cookie 來儲存 session ID,刪除 session cookie
 if (ini_get("session.use_cookies")) {                               // ini_get("session.use_cookies") 檢查 PHP 設定中是否啟用了 session cookie,通常這個值是 "1"（啟用），如果是 "0" 就表示不使用 cookie
@@ -29,8 +31,10 @@ if (ini_get("session.use_cookies")) {                               // ini_get("
     );
 }
 
-session_unset();
-session_destroy();
+// 完全清理 session
+session_unset();    // 清除所有 session 變數
+session_destroy();  // 銷毀 session 檔案
+session_write_close(); // 強制寫入並關閉 session
 
 echo json_encode(['success' => true, 'msg' => '已登出'],JSON_UNESCAPED_UNICODE);
 

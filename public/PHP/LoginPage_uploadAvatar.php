@@ -96,6 +96,7 @@ try {
 
 
         if ($stmt->execute() && $stmt->rowCount() > 0) {
+        $_SESSION['member']['avatar'] = $new_filename;
         // 文件上傳成功，返回文件名
         http_response_code(200);
         // echo json_encode(array(

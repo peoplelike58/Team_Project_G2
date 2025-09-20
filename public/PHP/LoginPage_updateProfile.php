@@ -1,4 +1,4 @@
-<?php  /* 更新個人資料-會員中心 */
+<?php  /* LoginPage_updateProfile.php更新個人資料-會員中心 */
 
 include 'conn.php';
 

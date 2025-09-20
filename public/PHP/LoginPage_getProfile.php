@@ -1,4 +1,4 @@
-<?php  /* 抓取個人資料-會員中心 */
+<?php  /* LoginPage_getProfile.php 抓取個人資料-會員中心 */
 
 include 'conn.php';
 
