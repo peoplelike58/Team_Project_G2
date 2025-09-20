@@ -195,12 +195,19 @@ import 'leaflet/dist/leaflet.css';
 import NavMenu from '../An/navMenu.vue';
 import Footer from '@/components/An/footer.vue';
 
+const AJAX_URL = import.meta.env.VITE_AJAX_URL; 
+const BASE_URL = AJAX_URL.replace(/\/PHP$/, '/');
+
+
 // 修改 Leaflet 默認圖標
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconUrl:      `${BASE_URL}images/icon/markerIcon.png`,
+  iconRetinaUrl:`${BASE_URL}images/icon/markerIcon2x.png`,
+  shadowUrl: `${BASE_URL}images/icon/marker-shadow.png`, // 有陰影檔再開
+  iconSize: [48, 64],                                             // 圖示顯示大小：寬64×高64
+  iconAnchor: [24, 64],                                           // 錨點在底部中央：寬/2=32, 高=64
+  popupAnchor: [0, -64], 
 });
 
 const route = useRoute();
@@ -239,8 +246,6 @@ const mountainData = ref(null);
 let desktopMap = null;
 let mobileMap = null;
 
-const AJAX_URL = import.meta.env.VITE_AJAX_URL; 
-const BASE_URL = AJAX_URL.replace(/\/PHP$/, '/');
 
 // 動態按鈕文字
 const getButtonText = computed(() => {
@@ -891,7 +896,7 @@ onMounted(async () => {
 }
 
 // 手機版響應式樣式
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1200px) {
     .wrapper {
         padding: 0 15px;
     }

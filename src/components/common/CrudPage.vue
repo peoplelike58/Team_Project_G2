@@ -64,7 +64,7 @@
                   <el-button type="primary">上傳圖片</el-button>
                 </el-upload>
                 <!-- 預覽縮圖 -->
-                <img v-if="form[col.prop]" :src="getImageUrl() + '/images/Products/products/' + form[col.prop]"style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
+                <img v-if="form[col.prop]" :src="getImageUrl() + 'tjd102/g2/images/Products/products/' + form[col.prop]"style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
                 <!-- <img v-if="form[col.prop]" :src="getImageUrl()  + form[col.prop]" style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" /> -->
              </template>
 
@@ -173,7 +173,7 @@ const getImageUrl = () => {
     return 'http://localhost/TeamProject/public';
   } else {
     // console.log('正式環境，使用當前域名');
-    return `${window.location.protocol}//${window.location.host}/TeamProject`;
+    return `${window.location.protocol}//${window.location.host}/`;
   }
 }
 
