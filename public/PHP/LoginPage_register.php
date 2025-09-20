@@ -5,7 +5,44 @@ $member=json_decode(file_get_contents("php://input"), true);//接收前端來的
 
 include 'conn.php';
 
+//密碼驗證函數
+function validatePassword($password) {
+    // 檢查長度 8-16 位
+    if (strlen($password) < 8 || strlen($password) > 16) {
+        return [
+            'valid' => false, 
+            'message' => '密碼長度必須為8-16位'
+        ];
+    }
+    
+    // 檢查是否包含小寫字母 (使用正則表達式)
+    if (!preg_match('/[a-z]/', $password)) {
+        return [
+            'valid' => false, 
+            'message' => '密碼必須包含小寫英文字母'
+        ];
+    }
+    
+    // 檢查是否包含大寫字母
+    if (!preg_match('/[A-Z]/', $password)) {
+        return [
+            'valid' => false, 
+            'message' => '密碼必須包含大寫英文字母'
+        ];
+    }
+    
+    return ['valid' => true, 'message' => '密碼格式正確'];
+}
 
+// 密碼驗證檢查
+$passwordCheck = validatePassword($member["password"]);
+if (!$passwordCheck['valid']) {
+    echo json_encode([
+        "success" => false,
+        "message" => "註冊失敗: " . $passwordCheck['message']
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 //不是機器人驗證 (YUKI)
 // include 'verifyRecaptcha.php';
 // if (!verifyRecaptcha($member['recaptcha'])){
@@ -29,14 +66,15 @@ if($checkEmail){
     exit;
 }else{
     $sql = "
-    insert into MEMBER(EMAIL,NAME,PW,PHONE,CREATED_AT,STATUS)
-    values(:email,:username ,:password ,:phone,now(),'啟用')
+    insert into MEMBER(EMAIL,NAME,PW,NICKNAME,PHONE,CREATED_AT,STATUS)
+    values(:email,:username ,:password ,:nickname,:phone,now(),'啟用')
     ";
 
     $pstmt = $pdo->prepare($sql);
     $pstmt->bindValue(":email", $member["email"]);
     $pstmt->bindValue( ":username", $member["name"]);
     $pstmt->bindValue(":password", $member["password"]);
+    $pstmt->bindValue(":nickname", $member["name"]);
     $pstmt->bindValue(":phone", $member["phone"]);
     $register=$pstmt->execute();
 

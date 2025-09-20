@@ -56,7 +56,7 @@ const user = useUserStore()
 // ===== 上傳檔案對外 URL 基底：把 /PHP 拿掉 → 變成 /public =====
 const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'');
 const UPLOADS_BASE = `${API_ROOT}/uploads`;
-const baseURL = import.meta.env.BASE_URL;
+const baseUrl = import.meta.env.BASE_URL;
 
 const isOpen = ref(false)
 const panelRef = ref(null)
@@ -65,7 +65,7 @@ function routerTo(item){
     router.push(`/${item.path}`);
 }
 
-const default_avatar = `${baseURL}images/Products/default-avatar.jpg`
+const default_avatar = `${baseUrl}images/Products/default-avatar.jpg`
 const avatar = computed( () => {    
     if (!user.profile.avatar) return default_avatar
     else return `${UPLOADS_BASE}/avatars/${user.profile.avatar}`

@@ -66,38 +66,39 @@ const frontroutes = [
   {
     path: '/allnewspage',
     component: allNewsPage,
-    meta: { title: '山上見｜最新消息'}
+    meta: { title: '最新消息｜山上見'}
 
   },
   {
     path: '/peaks',
     component: PeakGuide,
-    meta: { title: '山上見｜百岳之書'}
+    meta: { title: '百岳之書｜山上見'}
 
   },
   {
     path: '/routes',
     component: routesPage,
-    meta: { title: '山上見｜路線規劃'}
+    meta: { title: '路線規劃｜山上見'}
   },
 //------- 詳細頁面 -----------
   {
     path:'/routes/:MOUNTAIN_ID',
     name:'trailDetail',
     component: trailDetail,
+    meta: { title: '路線規劃｜山上見'},
     props: true
   },
 //----------------------------
   {
     path: '/together',
     component: togetherPage,
-    meta: { title: '山上見｜揪上山'}
+    meta: { title: '揪上山｜山上見'}
 
   },
   {
     path: '/peace',
     component: peacePage,
-    meta: { title: '山上見｜揪安全'}
+    meta: { title: '揪安全｜山上見'}
 
   },
   {
@@ -108,7 +109,7 @@ const frontroutes = [
   {
     path: '/mychallenge',
     component: myChallenge,
-    meta: { title: '山上見｜百岳挑戰'}
+    meta: { title: '百岳挑戰｜山上見'}
 
   },
    {
@@ -120,14 +121,14 @@ const frontroutes = [
     path: '/shop',
     alias: '/Shop',      // 兩個都算進來
     component: ShopPage,
-    meta: { title: '山上見｜山腳雜貨店'},
-    children:[
-      {path:'product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true },props: true},
-      // （可選）把 params 直接變成元件的 props, // ← 子路由}
-      //: 開頭的東西叫「動態參數 (Dynamic Segment)」,meta標記這是一個彈窗路由
-    ]
+    meta: { title: '山腳雜貨店｜山上見'},
+    // children:[
+    //   {path:'product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true },props: true},
+    //    （可選）把 params 直接變成元件的 props, // ← 子路由}
+    //   : 開頭的東西叫「動態參數 (Dynamic Segment)」,meta標記這是一個彈窗路由
+    // ]
   },
-
+  {path:'/shop/product/:id',name:'ProductDetailRoute' ,component: ProductDetailRoute ,meta: { modal: true },props: true},
   //前台-結賬流程
   { path: '/Shop/cart',name:'Shop-cart', component: Chekout1Cart ,meta: { requiresAuth: true }},
   { path: '/Shop/info',name:'Shop-info', component: Checkout2Info ,meta: { requiresAuth: true }},
@@ -224,11 +225,16 @@ router.beforeEach(async(to, from, next) => {
 
   
   if (to.meta.requiresAuth && !isLoggedIn) {//登入判斷:若頁面標記 requiresAuth，但沒有 email，就導去 /login。
-    alert('請先登入！')
+    // alert('請先登入！')
     next('/loginregister')
     return
   }
   
+   if ((to.path === '/loginregister/fontregister' ) && isLoggedIn) {//防止已登入再去到註冊界面，會自動導回會員中心-我的優惠券。
+    next({ name: 'member-coupons' })
+    return
+  }
+
   if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {//防止已登入再進登入頁,→ 登入狀態下去 /member，會自動導回會員中心。
     next({ name: 'member-profile' })
     return

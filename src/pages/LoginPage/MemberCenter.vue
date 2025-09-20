@@ -22,14 +22,14 @@ import NavMenu from '@/components/An/navMenu.vue';
 import brandFooter from '@/components/An/footer.vue'
 
 
-import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const user = useUserStore()
 
 
-
+// import { onBeforeRouteLeave } from 'vue-router'
 // 組件內的守門員 - 離開前確認,這裡不一定要
 // onBeforeRouteLeave((to, from, next) => {
 //   const answer = window.confirm('確定要離開個人資料頁嗎？')
@@ -76,14 +76,15 @@ main{
   display: grid;
   grid-template-columns: 0.15fr 0.85fr;//第一欄：固定 200px 寬度（放左側導航欄),第二欄：1fr 表示佔滿剩餘空間（放主內容）
   min-height: 100vh;
+  position: relative;          //固定位子
   }
   .logout{
   max-width: 1000px;
   box-sizing: border-box;
-  padding: 40px 0;
-  position: fixed;
-  bottom:0;
-  right: 40px;
+  // padding: 40px 0;
+  position: absolute;          //固定位子，跟著移動改成fixed
+  bottom:-50px;
+  right: 0px;
   button{
     @include btn(8px);
     padding: 8px 16px;

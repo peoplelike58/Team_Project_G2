@@ -28,7 +28,7 @@
         <el-input
           v-model="password"
           type="password"
-          placeholder="請輸入8~16位入密碼包含大小寫英文"
+          placeholder="請輸入密碼"
           show-password
           
         /> 
@@ -132,7 +132,7 @@ onMounted(() => {
 
 //修改加入機器人驗證版本 (Yuki)
 const  handleLogin = async () => {
-  if(email.value && password.value && email.value.includes('@') && password.value.length >= 8 ){
+  if(email.value  && email.value.includes('@') && password.value && password.value.length >= 8  ){
     //先檢查reCAPTCHA
     const token = grecaptcha.getResponse();
     if(!token){
