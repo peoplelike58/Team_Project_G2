@@ -225,7 +225,7 @@ router.beforeEach(async(to, from, next) => {
 
   
   if (to.meta.requiresAuth && !isLoggedIn) {//登入判斷:若頁面標記 requiresAuth，但沒有 email，就導去 /login。
-    alert('請先登入！')
+    // alert('請先登入！')
     next('/loginregister')
     return
   }

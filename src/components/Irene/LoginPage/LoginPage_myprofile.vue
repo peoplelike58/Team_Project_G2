@@ -17,7 +17,9 @@
           <div class="avatar-upload">
             <div class="avatar-preview">
               <!-- <img :src="profileData.tempAvatarPreview || user.profile.avatarUrl || `${BASE}images/Products/default-avatar.jpg`" alt="頭像" /> -->
-              <img :src="profileData.tempAvatarPreview || (user.profile.avatarUrl? `${BASE}uploads/avatars/${user.profile.avatar}`:`${BASE}uploads/avatars/default-avatar.jpg`)" alt="頭像" />
+              <!-- <img :src="profileData.tempAvatarPreview || (user.profile.avatarUrl? `${BASE}uploads/avatars/${user.profile.avatar}`:`${BASE}uploads/avatars/default-avatar.jpg`)" alt="頭像" /> -->
+              <img :src="profileData.tempAvatarPreview || `${BASE}uploads/avatars/${profileData.avatar || 'default-avatar.jpg'}`" alt="頭像" 
+/>
             </div>
             <div v-if="user.loading.uploadingAvatar" class="upload-loading">
               上傳中...
@@ -185,11 +187,13 @@ const uploadAvatar = async (file) => {
 
     if (result.success) {
       // 上傳成功後，更新資料庫中的頭像檔名
-      await updateAvatarInDatabase(result.data.filename)
-      console.log(result.data.filename)
+      // await updateAvatarInDatabase(result.data.filename)
+      // console.log(result.data.filename)
       
       // 更新 Pinia store 中的頭像狀態
       user.updateAvatar(result.data.filename)
+      profileData.avatar = result.data.filename
+
       
       alert('頭像上傳成功！')
     } else {
@@ -206,27 +210,27 @@ const uploadAvatar = async (file) => {
 }
 
 // 更新資料庫中的頭像檔名
-const updateAvatarInDatabase = async (filename) => {
-  try {
-    const response = await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_updateAvatarDB.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ 
-        member_id: user.id,
-        avatar_filename: filename 
-      })
-    })
+// const updateAvatarInDatabase = async (filename) => {
+//   try {
+//     const response = await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_updateAvatarDB.php', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       credentials: 'include',
+//       body: JSON.stringify({ 
+//         member_id: user.id,
+//         avatar_filename: filename 
+//       })
+//     })
 
-    const result = await response.json()
-    if (!result.success) {
-      throw new Error(result.message || '更新資料庫失敗')
-    }
-  } catch (error) {
-    console.error('更新資料庫頭像失敗:', error)
-    throw error  // 重新拋出錯誤，讓上層處理
-  }
-}
+//     const result = await response.json()
+//     if (!result.success) {
+//       throw new Error(result.message || '更新資料庫失敗')
+//     }
+//   } catch (error) {
+//     console.error('更新資料庫頭像失敗:', error)
+//     throw error  // 重新拋出錯誤，讓上層處理
+//   }
+// }
 
 // 儲存個人資料
 const saveProfile = async () => {
@@ -241,9 +245,9 @@ const saveProfile = async () => {
   
   try {
     // 先上傳頭像（如果有新的頭像檔案）
-    if (profileData.tempAvatarFile) {
-      await uploadAvatar(profileData.tempAvatarFile)
-    }
+    // if (profileData.tempAvatarFile) {
+    //   await uploadAvatar(profileData.tempAvatarFile)
+    // }
     // API 呼叫儲存資料
     const res = await fetch (import.meta.env.VITE_AJAX_URL + '/LoginPage_updateProfile.php',{
       method: 'POST',
@@ -328,7 +332,7 @@ const getProfile = async () => {
 onMounted(() => {
   console.log('元件已載入，開始取得個人資料') // 調試用
   // 載入個人資料的API呼叫
-  user.profile.avata
+  user.profile.avatar
   getProfile()
 })
 </script>

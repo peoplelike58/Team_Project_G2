@@ -271,7 +271,7 @@ const handleViewCoupons = () => {
             :type="showPassword ? 'text' : 'password'" 
             id="password" 
             v-model="formData.password"
-            placeholder="請輸入8~16位入密碼包含大小寫英文"
+            placeholder="請輸入8~16位密碼含大小寫英文"
             required
           />
           <button type="button" class="eye-btn" @click="togglePassword">
@@ -483,7 +483,7 @@ const handleViewCoupons = () => {
   input {
     padding-right: 12px;
     border-bottom: 0px solid #ccc;
-    width: 88%;
+    width: 100%;
     font-size: 14px
   }
   
