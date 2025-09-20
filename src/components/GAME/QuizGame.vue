@@ -1,6 +1,5 @@
 <template>
   <div class="quiz-game">
-    <!-- 背景裝飾 -->
     <div class="background-decoration">
       <div class="floating-shape shape-1"></div>
       <div class="floating-shape shape-2"></div>

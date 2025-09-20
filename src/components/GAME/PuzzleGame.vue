@@ -433,7 +433,7 @@ watch(() => props.timeLimit, (newLimit) => {
 
 // 組件掛載
 onMounted(() => {
-  console.log(`PuzzleGame 組件掛載 - Size: ${props.size}x${props.size}, Level: ${props.level}`)
+  // console.log(`PuzzleGame 組件掛載 - Size: ${props.size}x${props.size}, Level: ${props.level}`)
   resetGame()
 })
 
