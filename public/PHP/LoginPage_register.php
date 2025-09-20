@@ -5,7 +5,44 @@ $member=json_decode(file_get_contents("php://input"), true);//接收前端來的
 
 include 'conn.php';
 
+//密碼驗證函數
+function validatePassword($password) {
+    // 檢查長度 8-16 位
+    if (strlen($password) < 8 || strlen($password) > 16) {
+        return [
+            'valid' => false, 
+            'message' => '密碼長度必須為8-16位'
+        ];
+    }
+    
+    // 檢查是否包含小寫字母 (使用正則表達式)
+    if (!preg_match('/[a-z]/', $password)) {
+        return [
+            'valid' => false, 
+            'message' => '密碼必須包含小寫英文字母'
+        ];
+    }
+    
+    // 檢查是否包含大寫字母
+    if (!preg_match('/[A-Z]/', $password)) {
+        return [
+            'valid' => false, 
+            'message' => '密碼必須包含大寫英文字母'
+        ];
+    }
+    
+    return ['valid' => true, 'message' => '密碼格式正確'];
+}
 
+// 密碼驗證檢查
+$passwordCheck = validatePassword($member["password"]);
+if (!$passwordCheck['valid']) {
+    echo json_encode([
+        "success" => false,
+        "message" => "註冊失敗: " . $passwordCheck['message']
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 //不是機器人驗證 (YUKI)
 // include 'verifyRecaptcha.php';
 // if (!verifyRecaptcha($member['recaptcha'])){
@@ -23,18 +60,21 @@ $statement->execute();
 $checkEmail = $statement->fetch();
 
 if($checkEmail){
-    $respBody['fail'] = false ;
-    $respBody['message'] = '此email已註冊過,註冊失敗!' ;
+    $respBody['success'] = false ;
+    $respBody['message'] = '註冊失敗: 此email已註冊過 !' ;
+    echo json_encode( $respBody ,JSON_UNESCAPED_UNICODE) ;
+    exit;
 }else{
     $sql = "
-    insert into MEMBER(EMAIL,NAME,PW,PHONE,CREATED_AT,STATUS)
-    values(:email,:username ,:password ,:phone,now(),'啟用')
+    insert into MEMBER(EMAIL,NAME,PW,NICKNAME,PHONE,CREATED_AT,STATUS)
+    values(:email,:username ,:password ,:nickname,:phone,now(),'啟用')
     ";
 
     $pstmt = $pdo->prepare($sql);
     $pstmt->bindValue(":email", $member["email"]);
     $pstmt->bindValue( ":username", $member["name"]);
     $pstmt->bindValue(":password", $member["password"]);
+    $pstmt->bindValue(":nickname", $member["name"]);
     $pstmt->bindValue(":phone", $member["phone"]);
     $register=$pstmt->execute();
 
@@ -65,7 +105,7 @@ if($checkEmail){
         // 6. 回傳成功結果（包含會員資料，讓前端可以直接更新 Pinia）
         echo json_encode([
             "success" => true,
-            "message" => "註冊成功並已自動登入",
+            "message" => "恭喜註冊成功!",
             "member" => $_SESSION['member'],
             "autoLogin" => true
         ], JSON_UNESCAPED_UNICODE);

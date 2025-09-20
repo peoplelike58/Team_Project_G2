@@ -61,7 +61,7 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
             this.profile.nickname = sessionData.member.nickname
             this.profile.phone = sessionData.member.phone
             this.profile.address = sessionData.member.address
-            // this.profile.avatar = sessionData.member.avatar
+            this.profile.avatar = sessionData.member.avatar
             console.log('從 session 恢復登入狀態:', sessionData.member)
           } else {
             // 伺服器沒有登入狀態，清除本地狀態

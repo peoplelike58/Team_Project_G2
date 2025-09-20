@@ -38,7 +38,7 @@ if ($profileData) {
     // 沒找到資料
     echo json_encode([
         'success' => false, 
-        'message' => '找不到會員資料，會員ID: ' . $memberId
+        'message' => '找不到會員資料，會員ID: ' . $memberId,
     ], JSON_UNESCAPED_UNICODE);
 }
 ?>

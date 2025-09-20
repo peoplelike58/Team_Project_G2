@@ -53,7 +53,7 @@ const loadProducts = async () => {
   }
 }
 
-// 🟢 元件掛載完成後自動執行
+// 元件掛載完成後自動執行
 onMounted(() => {
   loadProducts()
 })
@@ -62,7 +62,10 @@ onMounted(() => {
 
 
 //關閉回到商品頁
-const close = () => router.push('/Shop')
+const close = () => {
+  // router.push('/Shop')
+  router.go(-1) // 直接返回上一頁，不管是從哪裡來的
+}
 
 //複製鏈接(使用現代Clipboard 剪貼簿API，回傳promise)
 function copyURL(){

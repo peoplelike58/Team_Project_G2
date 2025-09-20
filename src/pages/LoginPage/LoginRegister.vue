@@ -1,4 +1,4 @@
-
+<!-- LoginRegister.vue 所有登入註冊相關的父容器 -->
 <script setup>
 import NavMenu from '@/components/An/navMenu.vue';
 import brandFooter from '@/components/An/footer.vue'
@@ -41,6 +41,7 @@ import brandFooter from '@/components/An/footer.vue'
     width: 90%;
     max-width: 450px;
     margin: auto ;
+    margin-top: 80px;
 }
 
 </style>

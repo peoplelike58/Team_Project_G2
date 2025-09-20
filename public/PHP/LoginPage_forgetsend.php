@@ -5,7 +5,7 @@ include 'conn.php';
 //---------------------------------------------------
 
 // 密鑰 - 與發送驗證碼時使用的相同
-    define('SECRET_KEY', 'your-super-secret-key-change-this-in-production');
+    define('SECRET_KEY', '690313d321d0de67118799a8bff29f867eccb717e0978babbf0720e6ac985e23');
 
     $data = json_decode(file_get_contents("php://input"), true);
 

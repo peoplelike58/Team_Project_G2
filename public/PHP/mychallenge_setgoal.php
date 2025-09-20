@@ -1,8 +1,9 @@
 <?php
-    session_start();
-
     // 導入資料庫連線的資料檔
     include 'conn.php'; 
+    
+    session_start();
+
     //---------------------------------------------------
     if (!isset($_SESSION['member']['id']) || empty($_SESSION['member']['id'])) {
         $response = [
@@ -26,8 +27,18 @@
         $stmt_select->execute([$MEMBER_ID]);
         $existing = $stmt_select->fetch(PDO::FETCH_ASSOC);
         
-        $BIG_TARGET = $input['BIG_TARGET'] ?? ($existing['BIG_TARGET'] ?? '');;
-        $SMALL_TARGET = $input['SMALL_TARGET'] ?? ($existing['SMALL_TARGET'] ?? '');
+        // 預設值
+        $defaultTarget = 10;
+
+        if (isset($input['BIG_TARGET'])) {
+            // 設定大百岳目標
+            $BIG_TARGET = (int)$input['BIG_TARGET'];
+            $SMALL_TARGET = $existing ? (int)$existing['SMALL_TARGET'] : $defaultTarget;
+        } else {
+            // 設定小百岳目標  
+            $BIG_TARGET = $existing ? (int)$existing['BIG_TARGET'] : $defaultTarget;
+            $SMALL_TARGET = (int)$input['SMALL_TARGET'];
+        }
 
         // 讀每個分類的目標與完成數
         $sql = "INSERT INTO GOAL(MEMBER_ID, BIG_TARGET, SMALL_TARGET)

@@ -10,15 +10,13 @@
                 <h3 class="left-title-m">INFORMATION</h3>
             </div>
             <ul class="news-list">
-                <li v-for="(item, index) in filtered" 
-                    :key="`news-${index}`" 
-                    class="news-row">
+                <li v-for="(item, index) in filtered" :key="item.NEWS_ID" class="news-row">
                     <div class="date-tag">
-                        <time class="news-date">{{ item.date }}</time>
-                        <div class="news-tag">{{ item.tag }}</div>
+                        <time class="news-date">{{ item.UPLOAD_AT }}</time>
+                        <div class="news-tag">{{ item.TYPE }}</div>
                     </div>
                     <a class="news-title" href="#" @click.prevent>
-                        {{ item.title }}
+                        {{ item.TITLE }}
                     </a>
                 </li>
             </ul>
@@ -48,10 +46,10 @@ const keyword = ref('')
 const activeTag = ref('全部')
 
 const filtered = computed(() => {
-    const kw = keyword.value.trim()
+    const kw = keyword.value.trim().toLowerCase()
     return news.value.filter(a => {
-        const byTag = activeTag.value === '全部' || a.tag === activeTag.value
-        const byKw = !kw || [a.title, a.summary, a.body].some(t => t?.includes(kw))
+        const byTag = activeTag.value === '全部' || a.TYPE === activeTag.value
+        const byKw = !kw || String(a?.TITLE ?? '').toLowerCase().includes(kw)
         return byTag && byKw
     })
 })
@@ -68,33 +66,40 @@ const loading = ref(false)
 const hasMore = ref(true)
 const error = ref('')
 
-/** ---- API 設定 ----
- * 之後要換後端，將 API_ENDPOINT 換成後端路由
- */
-const USE_FAKE = true
-const API_ENDPOINT = USE_FAKE ? import.meta.env.BASE_URL + 'json/homepage/news.json' : '/api/news'
+const USE_FAKE = false
+const API_URL = USE_FAKE
+    ? import.meta.env.BASE_URL + 'json/homepage/news.json'
+    : `${import.meta.env.VITE_AJAX_URL}/NewsPage.php`
 
 async function fetchNews({ page: p, pageSize: ps }) {
     loading.value = true
     error.value = ''
     try {
         if (USE_FAKE) {
-            // 資料一次載整包，自己切頁
-            const { data } = await axios.get(API_ENDPOINT)
+            const { data } = await axios.get(API_URL)
             const start = (p - 1) * ps
             const slice = data.slice(start, start + ps)
-            // 合併
             news.value.push(...slice)
-            // 判斷是否還有更多
             hasMore.value = start + ps < data.length
         } else {
-            // 真實 API（建議後端回傳 { items: [], total: 123 }）
-            const { data } = await axios.get(API_ENDPOINT, {
-                params: { page: p, pageSize: ps }
-            })
-            news.value.push(...(data.items ?? []))
-            const total = data.total ?? news.value.length
-            hasMore.value = news.value.length < total && (data.items ?? []).length === ps
+            const { data } = await axios.get(API_URL, { params: { page: p, pageSize: ps } })
+
+            if (!Array.isArray(data) && Array.isArray(data.items)) {
+                news.value.push(...data.items)
+                const total = Number(data.total ?? data.count ?? 0)
+                hasMore.value = total ? news.value.length < total : (data.items.length === ps)
+                return
+            }
+
+            const list = Array.isArray(data)
+                ? data
+                : (Array.isArray(data.data) ? data.data : [])
+
+            const start = (p - 1) * ps
+            const slice = list.slice(start, start + ps)
+
+            news.value.push(...slice)
+            hasMore.value = start + ps < list.length
         }
     } catch (e) {
         error.value = e?.message ?? '發生未知錯誤'
@@ -102,6 +107,7 @@ async function fetchNews({ page: p, pageSize: ps }) {
         loading.value = false
     }
 }
+
 
 function loadMore() {
     if (loading.value || !hasMore.value) return

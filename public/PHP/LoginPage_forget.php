@@ -1,21 +1,71 @@
 <?php
 include 'conn.php';
 
-require_once __DIR__ . '/../../libs/PHPMailer/src/Exception.php';
-require_once __DIR__ . '/../../libs/PHPMailer/src/PHPMailer.php';
-require_once __DIR__ . '/../../libs/PHPMailer/src/SMTP.php';
+// require_once __DIR__ . '/../../libs/PHPMailer/src/Exception.php';
+// require_once __DIR__ . '/../../libs/PHPMailer/src/PHPMailer.php';
+// require_once __DIR__ . '/../../libs/PHPMailer/src/SMTP.php';
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+// use PHPMailer\PHPMailer\PHPMailer;
+// use PHPMailer\PHPMailer\SMTP;
+// use PHPMailer\PHPMailer\Exception;
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// 如果是 GET 請求，顯示除錯資訊
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    echo "<h2>除錯模式 - 檔案檢查</h2>";
+    echo "當前目錄: " . __DIR__ . "<br>";
+    echo "PHP版本: " . phpversion() . "<br><br>";
+    
+    echo "<h3>當前目錄內容:</h3>";
+    $files = scandir(__DIR__);
+    foreach ($files as $file) {
+        if ($file != '.' && $file != '..') {
+            echo "- $file<br>";
+        }
+    }
+    
+    echo "<h3>檢查重要檔案:</h3>";
+    $files_to_check = [
+        './conn.php',
+        '../conn.php', 
+        '../../conn.php',
+        __DIR__ . '/../../libs/PHPMailer/src/Exception.php',
+        __DIR__ . '/../libs/PHPMailer/src/Exception.php',
+        __DIR__ . '/libs/PHPMailer/src/Exception.php'
+    ];
+    
+    foreach ($files_to_check as $file) {
+        if (file_exists($file)) {
+            echo "✓ <span style='color:green'>$file 存在</span><br>";
+        } else {
+            echo "✗ <span style='color:red'>$file 不存在</span><br>";
+        }
+    }
+    
+    echo "<h3>測試資料庫連線:</h3>";
+    try {
+        include 'conn.php';
+        echo "✓ <span style='color:green'>資料庫連線成功</span><br>";
+    } catch (Exception $e) {
+        echo "✗ <span style='color:red'>資料庫連線失敗: " . $e->getMessage() . "</span><br>";
+    }
+    
+    exit; // 重要：這裡要結束，不執行後面的程式碼
+}
 
 //---------------------------------------------------
 
 try{
 
 
-    // 密鑰 - 實際使用時請改成強密鑰，並存在環境變數中
-    define('SECRET_KEY', 'your-super-secret-key-change-this-in-production');
+    // 密鑰 - 出社會後的專案使用時請改成強密鑰，並存在環境變數中
+    define('SECRET_KEY', '690313d321d0de67118799a8bff29f867eccb717e0978babbf0720e6ac985e23');
     
     $data = json_decode(file_get_contents("php://input"), true);//接收前端來的東西，做json檔的解碼
     

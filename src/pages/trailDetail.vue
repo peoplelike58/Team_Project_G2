@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import axios from 'axios';
 import { useUserStore } from '@/stores/user'
@@ -68,9 +68,19 @@ const hasLatLng = computed(() => {
 // 找出對應的山資料
 // const trail = computed(() => trails.value.find(trail => trail.MOUNTAIN_ID === id.value))
 // console.log(trails.value);
-const trail = computed(() =>                                                          // 依 ID 找資料   // 繁中字註解
-  trails.value.find(trail => Number(trail.MOUNTAIN_ID) === id.value)                          // ✅ 轉數字比對  // 繁中字註解
+const trail = computed(() =>                                                          
+  trails.value.find(trail => Number(trail.MOUNTAIN_ID) === id.value)                         
 )   
+
+watch(trail, (t) => {                                                     
+  const name = (t && typeof t.MOUNTAIN_NAME === 'string')  
+    ? t.MOUNTAIN_NAME.trim()                              
+    : ''                                    
+  document.title = name                    
+    ? `山上見｜路線規劃｜${name}`      
+    : '山上見｜路線規劃'             
+}, { immediate: true })         
+
 </script>
 
 

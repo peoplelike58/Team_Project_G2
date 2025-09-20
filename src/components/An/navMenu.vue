@@ -30,7 +30,13 @@
             <nav class="right-col">
                 <ul class="menu-list">
                     <li v-for="(item, index) in menuItems" :key="index" class="menu-item">
-                        <div class="menu-link" type="button" @click="go(item);routerTo(item)">{{ item.label }}</div>
+                        <div class="menu-link" type="button" @click="go(item);routerTo(item)">
+                            
+                            <!-- 有登入 => 顯示頭貼 -->
+                             <img v-if="item.avatar" :src="item.avatar" alt="會員頭貼" class="navAvatar">
+
+                            {{ item.label }}
+                        </div>
                     </li>
                 </ul>
                 <div class="copyright">© 2025 MountainPeak.</div>
@@ -40,10 +46,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from "@/stores/user";
 import gsap from 'gsap'
 const router = useRouter() 
+const user = useUserStore()
+
+// ===== 上傳檔案對外 URL 基底：把 /PHP 拿掉 → 變成 /public =====
+const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'');
+const UPLOADS_BASE = `${API_ROOT}/uploads`;
+const baseUrl = import.meta.env.BASE_URL;
 
 const isOpen = ref(false)
 const panelRef = ref(null)
@@ -52,7 +65,19 @@ function routerTo(item){
     router.push(`/${item.path}`);
 }
 
-const menuItems = [
+const default_avatar = `${baseUrl}images/Products/default-avatar.jpg`
+const avatar = computed( () => {    
+    if (!user.profile.avatar) return default_avatar
+    else return `${UPLOADS_BASE}/avatars/${user.profile.avatar}`
+} )
+
+const name = computed( () => {
+    if(!user.profile.nickname) return user.name
+    else return user.profile.nickname
+} )
+
+
+const menuItems = computed( () => [
     { label: '首頁', path: 'homepage' },
     { label: '百岳之書', path: 'peaks' },
     { label: '最新消息', path: 'allnewspage' },
@@ -61,8 +86,12 @@ const menuItems = [
     { label: '路線規劃', path: 'routes' },
     { label: '百岳挑戰', path: 'myChallenge' },
     { label: '山腳雜貨店', path: 'shop' },
-    { label: '會員中心', path: 'Member' },
-]
+    // { label: '會員中心', path: 'Member' },
+
+    user.isLoggedIn
+        ? { label: name ?? `會員#${user.id}`, avatar: avatar.value, path: 'Member'  }
+        : { label: '會員登入', path: 'Member' }
+] )
 
 let gsapTimeline
 
@@ -256,9 +285,24 @@ function go(item) {
     font-weight: $bold;
     transition: opacity 0.3s ease;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    // outline: 1px solid red;
 }
 
 .menu-link:hover{ opacity: 0.7; }
+
+.navAvatar{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    object-fit: cover;
+    // margin-right: 4px;
+    display: block;
+}
+
 
 /* RWD */
 @media (max-width: 768px) {

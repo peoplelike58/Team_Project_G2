@@ -326,14 +326,9 @@ import axios from 'axios'
                 );
 
                 if (!isWithinArea) {
-                    const userConfirm = confirm(
-                        `系統偵測到此 GPX 軌跡可能不在「${props.mountain.name}」附近（2公里範圍內）\n` +
-                        `是否確定要上傳？`
-                    );
-                    if (!userConfirm) {
-                        fileName.value = "";
-                        return;
-                    }
+                    alert(`❌ 上傳失敗！\n\n此 GPX 軌跡沒有任何點在「${props.mountain.name}」2公里範圍內。\n請上傳正確山峰的軌跡記錄。`);
+                    fileName.value = "";
+                    return;
                 }
                             
                 // 安全地提取座標和計算數據
@@ -437,8 +432,34 @@ import axios from 'axios'
                 distance: kilo.value,
                 duration: time.value,
                 content: thought.value,
-                gpx_coords: gpxCoords.value,
+                is_climbed: checkIfClimbed(),
             };
+
+            function checkIfClimbed() {
+
+                function calculateDistance(lat1, lon1, lat2, lon2) {
+                    const R = 6371; // 地球半徑(公里)
+                    const dLat = (lat2 - lat1) * Math.PI / 180;
+                    const dLon = (lon2 - lon1) * Math.PI / 180;
+                    const a = 
+                        Math.sin(dLat/2) * Math.sin(dLat/2) +
+                        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                        Math.sin(dLon/2) * Math.sin(dLon/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    return R * c;
+                }
+
+                for (let coord of gpxCoords.value) {
+                    const distance = calculateDistance(
+                        props.mountain.latitude,
+                        props.mountain.longitude,
+                        coord[1],
+                        coord[0]
+                    );
+                    if (distance < 0.05) return true;
+                }
+                return false;
+            }
             
             // 發送 POST 請求到 PHP
             const response = await axios.post(
