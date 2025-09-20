@@ -36,15 +36,15 @@ $affectedRows = $pstmt->rowCount();     // rowCount() → 取得受影響的資�
 
 if($affectedRows > 0){
     echo json_encode([
-            'success' => true,
-            'message' => '商品已成功從購物車移除',
-            'affectedRows' => $affectedRows    ],
-            JSON_UNESCAPED_UNICODE);
+      'success' => true,
+      'message' => '商品已成功從購物車移除',
+      'affectedRows' => $affectedRows    ],
+      JSON_UNESCAPED_UNICODE);
 }else{
-        echo json_encode([
-        'success' => false,
-        'message' => '找不到該購物車項目或您沒有權限刪除']
-        ,JSON_UNESCAPED_UNICODE);
+    echo json_encode([
+    'success' => false,
+    'message' => '找不到該購物車項目或您沒有權限刪除']
+    ,JSON_UNESCAPED_UNICODE);
 }
 
 
