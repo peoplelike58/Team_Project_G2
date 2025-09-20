@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // 處理 OPTIONS 請求（預檢請求）
@@ -22,40 +22,36 @@ try {
         throw new Exception('缺少必要參數或參數無效');
     }
     
-    // 建立資料庫連接
-    $conn = new mysqli($db_host, $db_user, $db_pass, $db_select);
-    
-    // 檢查連接
-    if ($conn->connect_error) {
-        throw new Exception('資料庫連接失敗：' . $conn->connect_error);
+    // 檢查 PDO 連接是否存在
+    if (!isset($pdo)) {
+        throw new Exception('資料庫連接失敗');
     }
     
-    $conn->set_charset("utf8mb4");
-    
-    // 查詢使用者是否已報名此活動
-    $sql = "SELECT MEMBER_ID,EVENT_ID,STATUS,JOIN_AT
+    // 查詢使用者是否已報名此活動 (使用 PDO)
+    $sql = "SELECT MEMBER_ID, EVENT_ID, STATUS, JOIN_AT
             FROM MEMBER_EVENT 
-            WHERE MEMBER_ID = ? 
-            AND EVENT_ID = ? 
+            WHERE MEMBER_ID = :memberId 
+            AND EVENT_ID = :eventId 
             AND STATUS != 'cancelled'
             LIMIT 1";
     
-    $stmt = $conn->prepare($sql);
+    $stmt = $pdo->prepare($sql);
     
     if (!$stmt) {
-        throw new Exception('SQL 準備失敗：' . $conn->error);
+        throw new Exception('SQL 準備失敗');
     }
     
     // 綁定參數
-    $stmt->bind_param("ii", $memberId, $eventId);
+    $stmt->bindParam(':memberId', $memberId, PDO::PARAM_INT);
+    $stmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
     
     // 執行查詢
     if (!$stmt->execute()) {
-        throw new Exception('查詢執行失敗：' . $stmt->error);
+        throw new Exception('查詢執行失敗');
     }
     
     // 取得結果
-    $result = $stmt->get_result();
+    $registration = $stmt->fetch(PDO::FETCH_ASSOC);
     
     // 準備回應資料
     $response = [
@@ -65,8 +61,7 @@ try {
     ];
     
     // 檢查是否有報名記錄
-    if ($result->num_rows > 0) {
-        $registration = $result->fetch_assoc();
+    if ($registration) {
         $response['hasRegistered'] = true;
         $response['registrationInfo'] = [
             'memberId' => $registration['MEMBER_ID'],
@@ -76,15 +71,23 @@ try {
         ];
     }
     
-    // 關閉連接
-    $stmt->close();
-    $conn->close();
-    
     // 回傳 JSON 結果
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     
+} catch (PDOException $e) {
+    // PDO 錯誤處理
+    $errorResponse = [
+        'success' => false,
+        'hasRegistered' => false,
+        'message' => '資料庫查詢錯誤',
+        'error' => $e->getMessage()
+    ];
+    
+    http_response_code(500);
+    echo json_encode($errorResponse, JSON_UNESCAPED_UNICODE);
+    
 } catch (Exception $e) {
-    // 錯誤處理
+    // 一般錯誤處理
     $errorResponse = [
         'success' => false,
         'hasRegistered' => false,
