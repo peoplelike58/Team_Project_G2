@@ -1,5 +1,4 @@
 <?php
-
 header('Content-Type: application/json; charset=utf-8');
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
@@ -49,56 +48,49 @@ try {
         throw new Exception('電子郵件格式無效');
     }
     
-    // 建立資料庫連接
-    $conn = new mysqli($db_host, $db_user, $db_pass, $db_select);
-    
-    // 檢查連接
-    if ($conn->connect_error) {
+    // 檢查 PDO 連接是否存在
+    if (!isset($pdo)) {
         throw new Exception('資料庫連接失敗');
     }
     
-    // 設定字符集
-    $conn->set_charset("utf8mb4");
-    
-    $conn->begin_transaction();
+    // 開始資料庫交易
+    $pdo->beginTransaction();
     
     try {
         // 先檢查會員是否已經報名過此活動
         $checkSql = "SELECT MEMBER_ID, STATUS 
                      FROM MEMBER_EVENT 
-                     WHERE MEMBER_ID = ? 
-                     AND EVENT_ID = ? 
+                     WHERE MEMBER_ID = :memberId 
+                     AND EVENT_ID = :eventId 
                      AND STATUS != 'cancelled'";
         
-        $checkStmt = $conn->prepare($checkSql);
-        $checkStmt->bind_param("ii", $memberId, $eventId);
+        $checkStmt = $pdo->prepare($checkSql);
+        $checkStmt->bindParam(':memberId', $memberId, PDO::PARAM_INT);
+        $checkStmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
         $checkStmt->execute();
-        $checkResult = $checkStmt->get_result();
         
-        if ($checkResult->num_rows > 0) {
-            $existingRegistration = $checkResult->fetch_assoc();
+        $existingRegistration = $checkStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($existingRegistration) {
             throw new Exception('您已經報名過此活動，目前狀態為：' . $existingRegistration['STATUS']);
         }
-        $checkStmt->close();
         
         // 檢查活動資訊和報名狀況（從 EVENT 表獲取活動資訊）
-        $eventSql = "SELECT EVENT_ID,EVENT_NAME,JOIN_QTY,END_DATETIME,STATUS,EVENT_DATE,
-                            EVENT_TIME,START_DATE,START_TIME,MEETING_PLACE
+        $eventSql = "SELECT EVENT_ID, EVENT_NAME, JOIN_QTY, END_DATETIME, STATUS, EVENT_DATE,
+                            EVENT_TIME, START_DATE, START_TIME, MEETING_PLACE
                      FROM EVENT 
-                     WHERE EVENT_ID = ? 
+                     WHERE EVENT_ID = :eventId 
                      AND STATUS = '報名中'";
         
-        $eventStmt = $conn->prepare($eventSql);
-        $eventStmt->bind_param("i", $eventId);
+        $eventStmt = $pdo->prepare($eventSql);
+        $eventStmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
         $eventStmt->execute();
-        $eventResult = $eventStmt->get_result();
         
-        if ($eventResult->num_rows === 0) {
+        $eventInfo = $eventStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$eventInfo) {
             throw new Exception('活動不存在或已關閉報名');
         }
-        
-        $eventInfo = $eventResult->fetch_assoc();
-        $eventStmt->close();
         
         // 檢查報名截止時間
         if ($eventInfo['END_DATETIME'] && 
@@ -109,18 +101,17 @@ try {
         // 計算目前的報名人數
         $countSql = "SELECT COUNT(*) as current_count 
                      FROM MEMBER_EVENT 
-                     WHERE EVENT_ID = ? 
+                     WHERE EVENT_ID = :eventId 
                      AND STATUS != 'cancelled'";
         
-        $countStmt = $conn->prepare($countSql);
-        $countStmt->bind_param("i", $eventId);
+        $countStmt = $pdo->prepare($countSql);
+        $countStmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
         $countStmt->execute();
-        $countResult = $countStmt->get_result();
-        $countData = $countResult->fetch_assoc();
-        $currentCount = $countData['current_count'];
-        $countStmt->close();
         
-        // 檢查是否有名額限制（假設 JOIN_QTY 為 0 表示無限制）
+        $countResult = $countStmt->fetch(PDO::FETCH_ASSOC);
+        $currentCount = $countResult['current_count'];
+        
+        // 檢查是否有名額限制（如果需要的話可以取消註解）
         // if ($eventInfo['JOIN_QTY'] > 0 && $currentCount >= $eventInfo['JOIN_QTY']) {
         //     throw new Exception('活動名額已滿');
         // }
@@ -128,33 +119,32 @@ try {
         // 新增報名記錄到 MEMBER_EVENT 表
         $insertSql = "INSERT INTO MEMBER_EVENT 
                       (MEMBER_ID, EVENT_ID, STATUS, JOIN_AT) 
-                      VALUES (?, ?, 'registered', NOW())";
+                      VALUES (:memberId, :eventId, 'registered', NOW())";
         
-        $insertStmt = $conn->prepare($insertSql);
-        $insertStmt->bind_param("ii", $memberId, $eventId);
+        $insertStmt = $pdo->prepare($insertSql);
+        $insertStmt->bindParam(':memberId', $memberId, PDO::PARAM_INT);
+        $insertStmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
         
         if (!$insertStmt->execute()) {
             throw new Exception('報名失敗，請稍後再試');
         }
         
-        $insertStmt->close();
-        
         // 更新 EVENT 表的報名人數（JOIN_QTY）
         $newJoinQty = $currentCount + 1;
         $updateSql = "UPDATE EVENT 
-                      SET JOIN_QTY = ? 
-                      WHERE EVENT_ID = ?";
+                      SET JOIN_QTY = :joinQty 
+                      WHERE EVENT_ID = :eventId";
         
-        $updateStmt = $conn->prepare($updateSql);
-        $updateStmt->bind_param("ii", $newJoinQty, $eventId);
+        $updateStmt = $pdo->prepare($updateSql);
+        $updateStmt->bindParam(':joinQty', $newJoinQty, PDO::PARAM_INT);
+        $updateStmt->bindParam(':eventId', $eventId, PDO::PARAM_INT);
         
         if (!$updateStmt->execute()) {
             throw new Exception('更新報名人數失敗');
         }
-        $updateStmt->close();
         
         // 提交交易
-        $conn->commit();
+        $pdo->commit();
         
         // 成功回應
         $response = [
@@ -170,21 +160,28 @@ try {
             ]
         ];
         
-        // 關閉資料庫連接
-        $conn->close();
-        
         // 回傳成功結果
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
         
     } catch (Exception $e) {
         // 回滾交易
-        $conn->rollback();
-        $conn->close();
+        $pdo->rollback();
         throw $e;
     }
     
+} catch (PDOException $e) {
+    // PDO 錯誤處理
+    $errorResponse = [
+        'success' => false,
+        'message' => '資料庫操作錯誤',
+        'error' => $e->getMessage()
+    ];
+    
+    http_response_code(500);
+    echo json_encode($errorResponse, JSON_UNESCAPED_UNICODE);
+    
 } catch (Exception $e) {
-    // 錯誤處理
+    // 一般錯誤處理
     $errorResponse = [
         'success' => false,
         'message' => $e->getMessage()
