@@ -305,28 +305,109 @@ const updateQty = (itemId, newQty) => {
   }
 
   // 刪除已勾選的商品
-  const removeCheckedItems = async () => {
-    if (checkedIds.value.length === 0) {
-      ElMessage.info('請先勾選要刪除的商品')
-      return
-    }
+  // const removeCheckedItems = async () => {
+  //   if (checkedIds.value.length === 0) {
+  //     ElMessage.info('請先勾選要刪除的商品')
+  //     return
+  //   }
 
-    try {
-      isLoading.value = true
+  //   try {
+  //     isLoading.value = true
       
-      // 逐一刪除勾選的商品
-      for (const id of checkedIds.value) {
-        await removeFromCart(id)
-      }
+  //     // 逐一刪除勾選的商品
+  //     for (const id of checkedIds.value) {
+  //       await removeFromCart(id)
+  //     }
       
-      ElMessage.success('已刪除選中的商品')
-    } catch (error) {
-      console.error('批量刪除失敗:', error)
-      ElMessage.error('刪除失敗，請稍後再試')
-    } finally {
-      isLoading.value = false
-    }
+  //     ElMessage.success('已刪除選中的商品')
+  //   } catch (error) {
+  //     console.error('批量刪除失敗:', error)
+  //     ElMessage.error('刪除失敗，請稍後再試')
+  //   } finally {
+  //     isLoading.value = false
+  //   }
+  // }
+
+
+  /*🔍 除錯版本：加入詳細日誌來找出問題*/
+const removeCheckedItems = async () => {
+  console.log('=== 開始批量刪除 ===')
+  console.log('當前環境:', import.meta.env.MODE) // 顯示是本地還是生產環境
+  
+  if (checkedIds.value.length === 0) {
+    console.log('沒有勾選的商品')
+    ElMessage.info('請先勾選要刪除的商品')
+    return
   }
+
+  console.log('準備刪除的商品數量:', checkedIds.value.length)
+  console.log('準備刪除的 ID 列表:', checkedIds.value)
+
+  try {
+    isLoading.value = true
+    
+    // 先複製 ID 列表
+    const idsToDelete = [...checkedIds.value]
+    console.log('複製後的 ID 列表:', idsToDelete)
+    
+    // 🔍 方案1：逐一刪除（加入延遲，避免伺服器壓力）
+    console.log('開始逐一刪除...')
+    let successCount = 0
+    let failCount = 0
+    
+    for (let i = 0; i < idsToDelete.length; i++) {
+      const id = idsToDelete[i]
+      console.log(`正在刪除第 ${i + 1}/${idsToDelete.length} 個商品，ID: ${id}`)
+      
+      try {
+        // 🔧 加入延遲，避免伺服器請求過於頻繁
+        if (i > 0) {
+          console.log('等待 200ms...')
+          await new Promise(resolve => setTimeout(resolve, 200))
+        }
+        
+        const success = await deleteCartItem(id)
+        console.log(`商品 ${id} 刪除結果:`, success)
+        
+        if (success) {
+          successCount++
+          // 立即從前端移除這個商品
+          const itemIndex = cartItems.value.findIndex(item => item.id === id)
+          if (itemIndex !== -1) {
+            cartItems.value.splice(itemIndex, 1)
+            console.log(`已從前端移除商品 ${id}`)
+          }
+          // 移除勾選狀態
+          delete checkedMap[id]
+        } else {
+          failCount++
+        }
+        
+      } catch (error) {
+        console.error(`刪除商品 ${id} 時發生錯誤:`, error)
+        failCount++
+      }
+    }
+    
+    console.log(`刪除完成 - 成功: ${successCount}, 失敗: ${failCount}`)
+    
+    // 顯示結果
+    if (failCount === 0) {
+      ElMessage.success(`已成功刪除 ${successCount} 件商品`)
+    } else if (successCount === 0) {
+      ElMessage.error('刪除失敗，請稍後再試')
+    } else {
+      ElMessage.warning(`已刪除 ${successCount} 件商品，${failCount} 件刪除失敗`)
+    }
+    
+  } catch (error) {
+    console.error('批量刪除發生未預期錯誤:', error)
+    ElMessage.error('刪除失敗，請稍後再試')
+  } finally {
+    isLoading.value = false
+    console.log('=== 批量刪除結束 ===')
+  }
+}
 
   /* 清空購物車*/
   const clearCart = async () => {
@@ -359,32 +440,75 @@ const updateQty = (itemId, newQty) => {
    * @param {number} itemId - 要刪除的購物車商品 ID
    * @returns {boolean} 是否刪除成功
    */
- const deleteCartItem = async (itemId) => {
-  console.log('准备删除的 itemId:', itemId);  // 检查参数
-  try {
-    isLoading.value = true
-    const response = await fetch(import.meta.env.VITE_AJAX_URL + '/ShopPage_removeFromCart.php', {
-      method: 'POST',
-      credentials: 'include',  // 包含 session cookie
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({cartId: itemId})
-    })
-  const result = await response.json();  
-  if (result.success) {
-        console.log('後端刪除成功:', result.message)
-        loadCartFromBackend()
-        return true  // 回傳 true 表示刪除成功
-      } else {
-        console.error('後端刪除失敗:', result.message)
-        return false  // 回傳 false 表示刪除失敗
-      }
+//  const deleteCartItem = async (itemId) => {
+//   console.log('准备删除的 itemId:', itemId);  // 检查参数
+//   try {
+//     isLoading.value = true
+//     const response = await fetch(import.meta.env.VITE_AJAX_URL + '/ShopPage_removeFromCart.php', {
+//       method: 'POST',
+//       credentials: 'include',  // 包含 session cookie
+//       headers: {'Content-Type': 'application/json'},
+//       body: JSON.stringify({cartId: itemId})
+//     })
+//   const result = await response.json();  
+//   if (result.success) {
+//         console.log('後端刪除成功:', result.message)
+//         loadCartFromBackend()
+//         return true  // 回傳 true 表示刪除成功
+//       } else {
+//         console.error('後端刪除失敗:', result.message)
+//         return false  // 回傳 false 表示刪除失敗
+//       }
 
-    } catch (error) {
-      // 捕捉網路錯誤或其他異常
-      console.error('刪除商品時發生網路錯誤:', error)
-      return false  // 回傳 false 表示刪除失敗
+//     } catch (error) {
+//       // 捕捉網路錯誤或其他異常
+//       console.error('刪除商品時發生網路錯誤:', error)
+//       return false  // 回傳 false 表示刪除失敗
+//     }
+//   }
+
+/*🔍 也在 deleteCartItem 加入更多日誌*/
+const deleteCartItem = async (itemId) => {
+  console.log(`[deleteCartItem] 開始刪除 ID: ${itemId}`)
+  
+  try {
+    const url = import.meta.env.VITE_AJAX_URL + '/ShopPage_removeFromCart.php'
+    console.log(`[deleteCartItem] 請求 URL: ${url}`)
+    
+    const requestBody = {cartId: itemId}
+    console.log(`[deleteCartItem] 請求內容:`, requestBody)
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(requestBody)
+    })
+
+    console.log(`[deleteCartItem] HTTP 狀態: ${response.status} ${response.statusText}`)
+    
+    if (!response.ok) {
+      console.error(`[deleteCartItem] HTTP 錯誤: ${response.status}`)
+      return false
     }
+
+    const result = await response.json()
+    console.log(`[deleteCartItem] 後端回應:`, result)
+    
+    if (result.success) {
+      console.log(`[deleteCartItem] 成功刪除 ID: ${itemId}`)
+      return true
+    } else {
+      console.error(`[deleteCartItem] 後端刪除失敗:`, result.message)
+      return false
+    }
+
+  } catch (error) {
+    console.error(`[deleteCartItem] 網路錯誤:`, error)
+    return false
   }
+}
+
 
   /*從後端載入購物車資料*/
   const loadCartFromBackend = async () => {
