@@ -66,14 +66,15 @@ if($checkEmail){
     exit;
 }else{
     $sql = "
-    insert into MEMBER(EMAIL,NAME,PW,PHONE,CREATED_AT,STATUS)
-    values(:email,:username ,:password ,:phone,now(),'啟用')
+    insert into MEMBER(EMAIL,NAME,PW,NICKNAME,PHONE,CREATED_AT,STATUS)
+    values(:email,:username ,:password ,:nickname,:phone,now(),'啟用')
     ";
 
     $pstmt = $pdo->prepare($sql);
     $pstmt->bindValue(":email", $member["email"]);
     $pstmt->bindValue( ":username", $member["name"]);
     $pstmt->bindValue(":password", $member["password"]);
+    $pstmt->bindValue(":nickname", $member["name"]);
     $pstmt->bindValue(":phone", $member["phone"]);
     $register=$pstmt->execute();
 
