@@ -125,66 +125,68 @@ onMounted(() => {
   })
 });
 
-// Google 登入
-function initGoogleSignIn() {
-  const gid = window.google?.accounts?.id
-  if (!gid) return
+// // Google 登入
+// function initGoogleSignIn() {
+//   const gid = window.google?.accounts?.id
+//   if (!gid) return
 
-  // 防呆：沒設 Client ID 直接警告
-  if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
-    console.warn('VITE_GOOGLE_CLIENT_ID 未設定')
-  }
+//   // 防呆：沒設 Client ID 直接警告
+//   if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+//     console.warn('VITE_GOOGLE_CLIENT_ID 未設定')
+//   }
 
-  gid.initialize({
-    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-    callback: async (resp) => {
-      // 🟢 改用 auth store（內含重試與 cookie 設定）
-      const u = await auth.loginWithGoogleIdToken(resp.credential)
-      if (u) {
-        // 登入成功才導頁（想去哪裡在這裡改）
-        router.push({ name: 'member-profile' })
-      } else {
-        // 不急著 alert，避免「先 401 後成功」的誤報
-        console.warn('Google 登入流程尚未完成，請採用其他登入方式')
-      }
-    },
-    ux_mode: 'popup'
-  })
+//   gid.initialize({
+//     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+//     callback: async (resp) => {
+//       // 🟢 改用 auth store（內含重試與 cookie 設定）
+//       const u = await auth.loginWithGoogleIdToken(resp.credential)
+//       if (u) {
+//         // 登入成功才導頁（想去哪裡在這裡改）
+//         router.push({ name: 'member-profile' })
+//       } else {
+//         // 不急著 alert，避免「先 401 後成功」的誤報
+//         console.warn('Google 登入流程尚未完成，請採用其他登入方式')
+//       }
+//     },
+//     ux_mode: 'popup'
+//   })
 
-  const el = document.getElementById('google-btn')
-  if (el) {
-    gid.renderButton(el, {
-      type: 'standard',
-      size: 'large',
-      theme: 'outline',
-      shape: 'pill'
-    })
-  }
-}
+//   const el = document.getElementById('google-btn')
+//   if (el) {
+//     gid.renderButton(el, {
+//       type: 'standard',
+//       size: 'large',
+//       theme: 'outline',
+//       shape: 'pill'
+//     })
+//   }
+// }
 
-// 載入 GIS 腳本（只載一次），載入完成後初始化
-function loadGsiScriptThenInit() {
-  if (window.google?.accounts?.id) {
-    initGoogleSignIn()
-    return
-  }
-  const existing = document.getElementById('gsi-client')
-  if (existing) {
-    existing.onload = initGoogleSignIn
-    return
-  }
-  const script = document.createElement('script')
-  script.id = 'gsi-client'
-  script.src = 'https://accounts.google.com/gsi/client'
-  script.async = true
-  script.defer = true
-  script.onload = initGoogleSignIn
-  document.head.appendChild(script)
-}
+// // 載入 GIS 腳本（只載一次），載入完成後初始化
+// function loadGsiScriptThenInit() {
+//   if (window.google?.accounts?.id) {
+//     initGoogleSignIn()
+//     return
+//   }
+//   const existing = document.getElementById('gsi-client')
+//   if (existing) {
+//     existing.onload = initGoogleSignIn
+//     return
+//   }
+//   const script = document.createElement('script')
+//   script.id = 'gsi-client'
+//   script.src = 'https://accounts.google.com/gsi/client'
+//   script.async = true
+//   script.defer = true
+//   script.onload = initGoogleSignIn
+//   document.head.appendChild(script)
+// }
 
-onMounted(() => {
-  loadGsiScriptThenInit()
-})
+// onMounted(() => {
+//   loadGsiScriptThenInit()
+// })
+
+
 
 //修改加入機器人驗證版本 (Yuki)
 const  handleLogin = async () => {
@@ -196,22 +198,19 @@ const  handleLogin = async () => {
       return;
     }
 
-    // 加密密碼（待考慮）
-    // const encryptedPassword = encryptPassword(password.value)
-
     await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_fontlogin.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({
         email: email.value,
-        password: password.value,      // encryptedPassword（加密待考慮）
+        password: password.value,      
         recaptcha: token
       })
     })
       .then(res => res.json())
       .then(async(member) =>{
-        const { success } = member;
+        const { success,message } = member;
         if(success){
            // 如果登入成功，再去檢查 Session
            return fetch(import.meta.env.VITE_AJAX_URL + '/CheckLogin.php', {
@@ -236,8 +235,9 @@ const  handleLogin = async () => {
             }
           });
         }else {
-        alert('帳號或密碼錯誤,請重新輸入');
-        grecaptcha.reset(); // 重設 reCAPTCHA
+          alert(message);
+          grecaptcha.reset(); // 重設 reCAPTCHA
+          return Promise.reject('登入失敗'); // 中斷後續流程
       }
     });
   }else{

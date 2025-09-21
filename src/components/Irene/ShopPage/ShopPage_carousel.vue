@@ -39,27 +39,29 @@ const loadProducts = async () => {
 // 目前顯示的商品索引（從 0 開始）
 const currentIndex = ref(0)
 
-// 響應式的顯示參數
 const screenWidth = ref(window.innerWidth)
+
+// 響應式的顯示參數
 const responsiveSettings = computed(() => {
-  if (screenWidth.value >= 1200) {
-    return { showCount: 4, cardWidth: 240, gap: 40 }
-  } else if (screenWidth.value >= 900) {
-    return { showCount: 3, cardWidth: 220, gap: 30 }
+  if (screenWidth.value <= 430) {
+    return { showCount: 1, cardWidth: 240, gap: 20 }
   } else if (screenWidth.value <= 768) {
-    return { showCount: 3, cardWidth: 200, gap: 20 } // 768px 顯示2個
-  } else if (screenWidth.value > 430) {
-    return { showCount: 1, cardWidth: 280, gap: 0 }   // 430px以上顯示1個
+    return { showCount: 3, cardWidth: 200, gap: 20 }    
+  } else if (screenWidth.value < 900) {
+    return { showCount: 4, cardWidth: 220, gap: 20 }    
+  } else if (screenWidth.value < 1200) {
+    return { showCount: 4, cardWidth: 220, gap: 30 }    
   } else {
-    return { showCount: 1, cardWidth: 280, gap: 0 }   // 430px以下顯示1個，稍小一點
+    return { showCount: 4, cardWidth: 240, gap: 40 }    
   }
 })
 
 // 監聽螢幕寺度變化
 const handleResize = () => {
   screenWidth.value = window.innerWidth
-  // 螢幕大小改變時，重置到有效的索引位置
-  const maxIdx = Math.max(0, carouselproducts.value.length - responsiveSettings.value.showCount)
+  
+  // 重新計算最大索引並調整當前索引
+  const maxIdx = maxIndex.value
   if (currentIndex.value > maxIdx) {
     currentIndex.value = maxIdx
   }
@@ -70,18 +72,33 @@ const handleResize = () => {
 // const maxIndex = computed(() =>
 //   Math.max(0, carouselproducts.value.length - showCount)   //意思是最多可以從第5個商品開始顯示（索引0-5）,例如：9個商品，一次顯示3個，最大索引 = 9 - 4 = 5
 // )
-const maxIndex = computed(() =>{
-    const totalProducts = carouselproducts.value.length  // 9個商品
-    const showCount = responsiveSettings.value.showCount  // 當前能顯示幾個
+const maxIndex = computed(() => {
+  const totalProducts = carouselproducts.value.length
+  const showCount = responsiveSettings.value.showCount
   
-    // 計算最後一個有效索引，確保最後一個商品能完整顯示
+  if (showCount === 1) {
+    return Math.max(0, totalProducts - 1)
+  } else {
     return Math.max(0, totalProducts - showCount)
+  }
 })
 //計算輪播容器的位移距離,
 const translateX = computed(() => {
   const { cardWidth, gap } = responsiveSettings.value
-  return -(currentIndex.value * (cardWidth + gap))
+  
+  if (responsiveSettings.value.showCount === 1) {
+    // 430px：簡單的置中計算
+    const viewportWidth = 305
+    const centerOffset = (viewportWidth - cardWidth) / 2 // 只考慮卡片寬度
+    
+    // 從置中位置開始移動
+    return centerOffset - (currentIndex.value * (cardWidth + gap))
+  } else {
+    return -(currentIndex.value * (cardWidth + gap))
+  }
 })
+
+
 
 const goPre=()=>{
  // 如果不是第一個商品，就讓 currentIndex 減 1
@@ -123,28 +140,6 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
-
-
-// 【調試】輸出移動效果信息
-const debugMovement = computed(() => {
-  const { cardWidth, gap, showCount } = responsiveSettings.value
-  const totalProducts = carouselproducts.value.length
-  const moveDistance = showCount * (cardWidth + gap)
-  
-  return {
-    '螢幕寬度': screenWidth.value,
-    '每次顯示': showCount,
-    '每次移動距離': moveDistance,
-    '當前索引': currentIndex.value,
-    '總移動距離': translateX.value,
-    '最大索引': maxIndex.value,
-    '剩餘商品': totalProducts - (currentIndex.value + 1) * showCount
-  }
-})
-// 調試用 - 可以在生產環境中移除
-  watch(debugMovement, (info) => {
-    console.log('移動調試:', info)
-  }, { deep: true })
 
 </script>
 
@@ -234,8 +229,8 @@ h2{
         
         // 430px 以下置中顯示
         @media (max-width: 430px) {
-            display: flex;
-            justify-content: center;
+            // display: flex;
+            // justify-content: center;
         }
     }
     .carousel_content{
@@ -274,6 +269,11 @@ h2{
             text-align: center;
             }
         }
+
+      @media (max-width: 430px) {
+        // 430px 下，讓容器內容在父容器中置中
+        margin: 0;
+      }
     }
 }
 

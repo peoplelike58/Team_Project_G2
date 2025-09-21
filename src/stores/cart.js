@@ -386,133 +386,133 @@ const removeCheckedItems = async () => {
   try {
     isLoading.value = true
     
-    // 複製要刪除的 ID 和商品資料
-    const idsToDelete = [...checkedIds.value]
-    // console.log('複製後的 ID 列表:', idsToDelete)
+//     // 複製要刪除的 ID 和商品資料
+//     const idsToDelete = [...checkedIds.value]
+//     // console.log('複製後的 ID 列表:', idsToDelete)
     
-    // 安全做法：先從前端移除，如果後端失敗再恢復, 備份要刪除的商品資料
-    const itemsToDeleteData = idsToDelete.map(id => 
-      cartItems.value.find(item => item.id === id)
-    ).filter(Boolean)  
-    console.log('準備刪除:', idsToDelete)
+//     // 安全做法：先從前端移除，如果後端失敗再恢復, 備份要刪除的商品資料
+//     const itemsToDeleteData = idsToDelete.map(id => 
+//       cartItems.value.find(item => item.id === id)
+//     ).filter(Boolean)  
+//     console.log('準備刪除:', idsToDelete)
 
-    // 先從前端移除（立即更新畫面）
-    cartItems.value = cartItems.value.filter(item => !idsToDelete.includes(item.id))
-    // 一次性清除所有勾選狀態
-    idsToDelete.forEach(id => delete checkedMap[id]) 
+//     // 先從前端移除（立即更新畫面）
+//     cartItems.value = cartItems.value.filter(item => !idsToDelete.includes(item.id))
+//     // 一次性清除所有勾選狀態
+//     idsToDelete.forEach(id => delete checkedMap[id]) 
 
-    await nextTick()
+//     await nextTick()
     
-    // 嘗試後端刪除
-    let allSuccess = true
-    const failedIds = []
+//     // 嘗試後端刪除
+//     let allSuccess = true
+//     const failedIds = []
     
-    // 使用 Promise.all 並行處理，加快刪除速度
-    const deletePromises = idsToDelete.map(async (id) => {
-      try {
-        const success = await deleteCartItem(id)
-        if (!success) {
-          failedIds.push(id)
-          allSuccess = false
-        }
-        return { id, success }
-      } catch (error) {
-        console.error(`刪除 ${id} 失敗:`, error)
-        failedIds.push(id)
-        allSuccess = false
-        return { id, success: false }
-      }
-    })
-    
-    // 等待所有刪除請求完成
-    await Promise.all(deletePromises)
-    await nextTick()
-    // 如果有失敗的，恢復那些商品
-    if (failedIds.length > 0) {
-      const failedItems = itemsToDeleteData.filter(item => failedIds.includes(item.id))
-      cartItems.value.push(...failedItems)
-      
-      // 恢復勾選狀態
-      failedIds.forEach(id => {
-        checkedMap[id] = true  // 恢復為勾選狀態
-      })
-      
-      const successCount = idsToDelete.length - failedIds.length
-      if (successCount > 0) {
-        ElMessage.warning(`已刪除 ${successCount} 件商品，${failedIds.length} 件刪除失敗`)
-      } else {
-        ElMessage.error('刪除失敗，請稍後再試')
-      }
-    } else {
-      ElMessage.success(`已成功刪除 ${idsToDelete.length} 件商品`)
-    }
-    
-  } catch (error) {
-    console.error('批量刪除失敗:', error)
-    ElMessage.error('刪除失敗，請稍後再試')
-  } finally {
-    isLoading.value = false
-  }
-}
-
-//   🔍 逐一刪除（加入延遲，避免伺服器壓力）（測試除錯版）
-//     console.log('開始逐一刪除...')
-//     let successCount = 0
-//     let failCount = 0
-    
-//     for (let i = 0; i < idsToDelete.length; i++) {
-//       const id = idsToDelete[i]
-//       console.log(`正在刪除第 ${i + 1}/${idsToDelete.length} 個商品，ID: ${id}`)
-      
+//     // 使用 Promise.all 並行處理，加快刪除速度
+//     const deletePromises = idsToDelete.map(async (id) => {
 //       try {
-//         // 🔧 加入延遲，避免伺服器請求過於頻繁
-//         if (i > 0) {
-//           console.log('等待 200ms...')
-//           await new Promise(resolve => setTimeout(resolve, 200))
-//         }
-        
 //         const success = await deleteCartItem(id)
-//         console.log(`商品 ${id} 刪除結果:`, success)
-        
-//         if (success) {
-//           successCount++
-//           // 立即從前端移除這個商品
-//           const itemIndex = cartItems.value.findIndex(item => item.id === id)
-//           if (itemIndex !== -1) {
-//             cartItems.value.splice(itemIndex, 1)
-//             console.log(`已從前端移除商品 ${id}`)
-//           }
-//           // 移除勾選狀態
-//           delete checkedMap[id]
-//         } else {
-//           failCount++
+//         if (!success) {
+//           failedIds.push(id)
+//           allSuccess = false
 //         }
-        
+//         return { id, success }
 //       } catch (error) {
-//         console.error(`刪除商品 ${id} 時發生錯誤:`, error)
-//         failCount++
+//         console.error(`刪除 ${id} 失敗:`, error)
+//         failedIds.push(id)
+//         allSuccess = false
+//         return { id, success: false }
 //       }
-//     }
+//     })
     
-//     console.log(`刪除完成 - 成功: ${successCount}, 失敗: ${failCount}`)
-    
-//     // 顯示結果
-//     if (failCount === 0) {
-//       ElMessage.success(`已成功刪除 ${successCount} 件商品`)
-//     } else if (successCount === 0) {
-//       ElMessage.error('刪除失敗，請稍後再試')
+//     // 等待所有刪除請求完成
+//     await Promise.all(deletePromises)
+//     await nextTick()
+//     // 如果有失敗的，恢復那些商品
+//     if (failedIds.length > 0) {
+//       const failedItems = itemsToDeleteData.filter(item => failedIds.includes(item.id))
+//       cartItems.value.push(...failedItems)
+      
+//       // 恢復勾選狀態
+//       failedIds.forEach(id => {
+//         checkedMap[id] = true  // 恢復為勾選狀態
+//       })
+      
+//       const successCount = idsToDelete.length - failedIds.length
+//       if (successCount > 0) {
+//         ElMessage.warning(`已刪除 ${successCount} 件商品，${failedIds.length} 件刪除失敗`)
+//       } else {
+//         ElMessage.error('刪除失敗，請稍後再試')
+//       }
 //     } else {
-//       ElMessage.warning(`已刪除 ${successCount} 件商品，${failCount} 件刪除失敗`)
+//       ElMessage.success(`已成功刪除 ${idsToDelete.length} 件商品`)
 //     }
     
 //   } catch (error) {
-//     console.error('批量刪除發生未預期錯誤:', error)
+//     console.error('批量刪除失敗:', error)
 //     ElMessage.error('刪除失敗，請稍後再試')
 //   } finally {
 //     isLoading.value = false
-//     console.log('=== 批量刪除結束 ===')
 //   }
 // }
+
+  // 🔍 逐一刪除（加入延遲，避免伺服器壓力）（測試除錯版）
+    console.log('開始逐一刪除...')
+    let successCount = 0
+    let failCount = 0
+    
+    for (let i = 0; i < idsToDelete.length; i++) {
+      const id = idsToDelete[i]
+      console.log(`正在刪除第 ${i + 1}/${idsToDelete.length} 個商品，ID: ${id}`)
+      
+      try {
+        // 🔧 加入延遲，避免伺服器請求過於頻繁
+        if (i > 0) {
+          console.log('等待 200ms...')
+          await new Promise(resolve => setTimeout(resolve, 200))
+        }
+        
+        const success = await deleteCartItem(id)
+        console.log(`商品 ${id} 刪除結果:`, success)
+        
+        if (success) {
+          successCount++
+          // 立即從前端移除這個商品
+          const itemIndex = cartItems.value.findIndex(item => item.id === id)
+          if (itemIndex !== -1) {
+            cartItems.value.splice(itemIndex, 1)
+            console.log(`已從前端移除商品 ${id}`)
+          }
+          // 移除勾選狀態
+          delete checkedMap[id]
+        } else {
+          failCount++
+        }
+        
+      } catch (error) {
+        console.error(`刪除商品 ${id} 時發生錯誤:`, error)
+        failCount++
+      }
+    }
+    
+    console.log(`刪除完成 - 成功: ${successCount}, 失敗: ${failCount}`)
+    
+    // 顯示結果
+    if (failCount === 0) {
+      ElMessage.success(`已成功刪除 ${successCount} 件商品`)
+    } else if (successCount === 0) {
+      ElMessage.error('刪除失敗，請稍後再試')
+    } else {
+      ElMessage.warning(`已刪除 ${successCount} 件商品，${failCount} 件刪除失敗`)
+    }
+    
+  } catch (error) {
+    console.error('批量刪除發生未預期錯誤:', error)
+    ElMessage.error('刪除失敗，請稍後再試')
+  } finally {
+    isLoading.value = false
+    console.log('=== 批量刪除結束 ===')
+  }
+}
 
   /* 清空購物車*/
   const clearCart = async () => {

@@ -1,3 +1,4 @@
+<!-- ShopPage.vue 商城頁 -->
 <script setup>
 import NavMenu from '@/components/An/navMenu.vue';
 import ShopPage_carousel from '@/components/Irene/ShopPage/ShopPage_carousel.vue';
@@ -151,11 +152,12 @@ main{//頁面內容
     }
  }
 
-@include mq(750px) {
+@include mq(600px) {
     .products{
         @include flexcenter(0,column);
     }
 }
 
 //此頁的siderbar,全部商品要再加一個收起來和展開
+
 </style>
