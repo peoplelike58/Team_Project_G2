@@ -1,6 +1,9 @@
 <?php
 include 'conn.php';
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // 多環境路徑檢測
 $possiblePaths = [
     __DIR__ . '/../../libs/PHPMailer/src/',        // 本地端
@@ -19,12 +22,18 @@ foreach ($possiblePaths as $path) {
 }
 
 if ($phpmailerPath) {
+    error_log("PHPMailer 路徑找到: " . $phpmailerPath);
     require_once $phpmailerPath . 'Exception.php';
     require_once $phpmailerPath . 'PHPMailer.php';
     require_once $phpmailerPath . 'SMTP.php';
 } else {
+    error_log("PHPMailer 路徑未找到，檢查的路徑:");
+    foreach ($possiblePaths as $path) {
+        error_log("- " . $path);
+    }
     throw new Exception('找不到 PHPMailer 檔案');
 }
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -36,8 +45,10 @@ try{
 
 
     // 密鑰 - 出社會後的專案使用時請改成強密鑰，並存在環境變數中
-    define('SECRET_KEY', '690313d321d0de67118799a8bff29f867eccb717e0978babbf0720e6ac985e23');
-    
+    if (!defined('SECRET_KEY')) {
+        define('SECRET_KEY', '690313d321d0de67118799a8bff29f867eccb717e0978babbf0720e6ac985e23');
+    }
+
     $data = json_decode(file_get_contents("php://input"), true);//接收前端來的東西，做json檔的解碼
     
     // 驗證email是否存在
@@ -140,6 +151,10 @@ function base64url_encode($data) {
 function sendVerificationCodeEmail($email, $name, $code) {
     try {
         $mail = new PHPMailer(true);
+
+         // 啟用詳細除錯
+        $mail->SMTPDebug = 0; // 開發時使用，正式環境改為 0
+        $mail->Debugoutput = 'error_log';
         
         // 伺服器設定
         $mail->isSMTP();
@@ -150,6 +165,21 @@ function sendVerificationCodeEmail($email, $name, $code) {
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
+
+        // 增加連線逾時設定
+        $mail->Timeout = 60;
+        $mail->SMTPKeepAlive = true;
+
+        // 驗證 SSL 憑證（在某些伺服器上可能需要）
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
+        error_log("SMTP 設定完成，準備設定收件人");
         
         // 寄件人設定
         $mail->setFrom('shanshangjian28560@gmail.com', '山上見');
@@ -169,13 +199,22 @@ function sendVerificationCodeEmail($email, $name, $code) {
 
 如果您沒有請求重設密碼，請忽略此郵件。
         ";
+
+        error_log("郵件內容設定完成，開始發送");
         
         $mail->send();
         error_log("郵件發送成功到: " . $email);
         return true;
         
     } catch (Exception $e) {
-        error_log("郵件發送失敗: " . $mail->ErrorInfo);
+        error_log("郵件發送失敗詳細訊息: " . $e->getMessage());
+        error_log("PHPMailer ErrorInfo: " . $mail->ErrorInfo);
+        
+        // 如果是認證錯誤，給出更具體的提示
+        if (strpos($e->getMessage(), 'Authentication') !== false) {
+            error_log("認證失敗 - 請檢查 Gmail 應用程式密碼是否正確");
+        }
+        
         return false;
     }
 }
