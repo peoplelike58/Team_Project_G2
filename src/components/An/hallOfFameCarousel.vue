@@ -36,7 +36,7 @@
             }"
             role="list"
             >
-                <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="MEMBER_ID + '-' + dataIndex">
+                <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="dataItem.MEMBER_ID + '-' + dataIndex">
                     <article class="carousel-card" role="listitem">
                         <img class="card-image" :src="dataItem.image" :alt="dataItem.name + ' 的照片'" />
                         <div class="card-meta">
