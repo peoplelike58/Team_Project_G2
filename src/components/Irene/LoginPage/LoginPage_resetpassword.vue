@@ -120,10 +120,7 @@ const isFormValid = computed(() => {
 onMounted(() => {
   // 從sessionStorage取得重設token
   resetToken.value = sessionStorage.getItem('resetToken') || ''
-  
-  console.log('重設密碼頁面初始化')
-  console.log('ResetToken:', resetToken.value ? '已取得' : '未取得')
-  
+    
   if (!resetToken.value) {
     statusMessage.value = '頁面資料遺失，請重新申請忘記密碼'
     statusType.value = 'error'
@@ -145,6 +142,25 @@ const validatePassword = () => {
 
   if (newPassword.value && newPassword.value.length < 8) {
     passwordError.value = '密碼長度至少需要8個字元'
+    return
+  }
+  
+  // 檢查是否包含大寫字母
+  if (newPassword.value && !/[A-Z]/.test(newPassword.value)) {
+    passwordError.value = '密碼必須包含至少一個大寫字母'
+    return
+  }
+  
+  // 檢查是否包含小寫字母
+  if (newPassword.value && !/[a-z]/.test(newPassword.value)) {
+    passwordError.value = '密碼必須包含至少一個小寫字母'
+    return
+  }
+  
+  // 檢查是否包含數字
+  if (newPassword.value && !/[0-9]/.test(newPassword.value)) {
+    passwordError.value = '密碼必須包含至少一個數字'
+    return
   }
 
   // 如果確認密碼已輸入，重新驗證一致性
@@ -166,11 +182,6 @@ const API_URL = `${import.meta.env.VITE_AJAX_URL}/LoginPage_resetpassword.php`
 
 // 重設密碼處理
 const resetPassword = async () => {
-  console.log('=== 開始重設密碼 ===')
-  console.log('=== 開始重設密碼調試 ===')
-  console.log('API_URL:', API_URL)
-  console.log('newPassword長度:', newPassword.value.length)
-  console.log('resetToken存在:', !!resetToken.value)
   
   // 驗證表單
   if (!isFormValid.value) {
@@ -199,7 +210,6 @@ const resetPassword = async () => {
     })
 
     const result = response.data
-    console.log('重設密碼回應:', result)
 
     if (result.success) {
       statusMessage.value = result.message
@@ -220,7 +230,6 @@ const resetPassword = async () => {
     }
 
   } catch (error) {
-    console.error('重設密碼錯誤:', error)
     
     if (error.response?.data?.message) {
       statusMessage.value = error.response.data.message

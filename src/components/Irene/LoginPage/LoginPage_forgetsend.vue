@@ -112,10 +112,6 @@ onMounted(() => {
   email.value = sessionStorage.getItem('resetEmail') || ''
   verifyToken.value = sessionStorage.getItem('verifyToken') || ''
   
-  console.log('頁面初始化:')
-  console.log('Email:', email.value)
-  console.log('VerifyToken:', verifyToken.value)
-  
   if (!email.value || !verifyToken.value) {
     statusMessage.value = '頁面資料遺失，請重新申請'
     statusType.value = 'error'
@@ -130,9 +126,6 @@ onMounted(() => {
 
 // 驗證碼驗證處理
 const handleVerification = async () => {
-  console.log('=== 開始驗證驗證碼 ===')
-  console.log('輸入的驗證碼:', verificationCode.value)
-  console.log('使用的token:', verifyToken.value)
   
   clearStatus()
   
@@ -152,7 +145,6 @@ const handleVerification = async () => {
     })
 
     const result = response.data
-    console.log('驗證碼驗證回應:', result)
 
     if (result.success) {
       statusMessage.value = '驗證成功！'
@@ -176,7 +168,7 @@ const handleVerification = async () => {
     }
 
   } catch (error) {
-    console.error('驗證錯誤:', error)
+
     if (error.response?.data?.message) {
       codeError.value = error.response.data.message
     } else {
@@ -220,7 +212,6 @@ const resendCode = async () => {
     }
 
   } catch (error) {
-    console.error('重新發送錯誤:', error)
     statusMessage.value = '網路連接錯誤，請稍後再試'
     statusType.value = 'error'
   } finally {
