@@ -217,7 +217,11 @@ router.beforeEach(async(to, from, next) => {
 
   // hydrateFromSession() 需在 store 裡實作，呼叫 CheckLogin.php 後把 email/name 寫回 state
   // const isLoggedIn = localStorage.getItem('email') //判讀是否有email值,改成從使用pinia作為登入的條件
-  
+  // 如果是後台路徑，直接放行，不執行前台的登入檢查
+  if (to.path.startsWith('/admin') || to.path === '/backlogin') {
+    next()
+    return
+  }
   // 如果本地沒有登入狀態，且沒在檢查中，就先檢查伺服器
   if (!user.isLoggedIn && !user.loading.loginChecking) {
     console.log('檢查伺服器登入狀態...')
