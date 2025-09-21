@@ -64,7 +64,7 @@
     <div v-else class="empty-state">
       <div class="empty-icon">📅</div>
       <p class="empty-message">目前沒有報名任何活動</p>
-      <router-link to="/eventCard" class="explore-btn">
+      <router-link to="/together" class="explore-btn">
         探索更多活動
       </router-link>
     </div>
