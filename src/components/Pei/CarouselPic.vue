@@ -175,6 +175,30 @@ onBeforeUnmount(stopAutoPlay)
         position: relative;
         object-fit: cover;   
 
+        @media (max-width: 820px) {
+          height: 340px;
+        }
+
+        @media (max-width: 465px) {
+          height: 320px;
+        }
+
+        @media (max-width: 440px) {
+          height: 300px;
+        }
+
+        @include s(){
+        height: 300px;
+        }
+
+        @media (max-width: 410px) {
+          height: 280px;
+        }
+
+        @media (max-width: 390px) {
+          height: 262px;
+        }
+
       }
 
       .track {

@@ -753,6 +753,13 @@ button{ // 通用按鈕樣式
   margin-bottom: 48px;
   // border: 1px solid yellow;
   text-align: center;
+
+  button{
+    @media (max-width: 405px){
+      padding: 5px 10px;
+    }
+  }
+
 }
 /* 兩欄卡片的計算 OK，但再補一個保險，避免任何子元素撐破容器 */
 .result,
