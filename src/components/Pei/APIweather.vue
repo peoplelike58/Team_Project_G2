@@ -261,7 +261,7 @@ onMounted(async () => {
       // border: 1px solid blue;
       flex-basis: 0;
       flex-grow: 1;
-      padding: 0 30px;
+      padding: 0 25px;
 
 
       display: flex;
@@ -305,6 +305,7 @@ onMounted(async () => {
       .hotORrain{ /* 溫度降雨率 */
         line-height: $lineHeight-p-150;
         font-size: 14px;
+        // outline: 1px solid red;
         
 
       }
