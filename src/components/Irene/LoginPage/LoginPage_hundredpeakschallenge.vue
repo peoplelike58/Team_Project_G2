@@ -115,7 +115,6 @@ const loadChallengeHistory = async () => {
       }))
     }
   } catch (error) {
-    console.error('載入挑戰記錄失敗:', error)
     alert('載入失敗，請重新整理頁面')
   } finally {
     isLoading.value = false
@@ -167,7 +166,6 @@ const saveEdit = async (record) => {
       alert('更新失敗：' + response.data.message)
     }
   } catch (error) {
-    console.error('更新失敗:', error)
     alert('更新失敗，請稍後再試')
   }
 }

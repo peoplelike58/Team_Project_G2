@@ -1,9 +1,30 @@
 <?php
 include 'conn.php';
 
-require_once __DIR__ . '/../../libs/PHPMailer/src/Exception.php';
-require_once __DIR__ . '/../../libs/PHPMailer/src/PHPMailer.php';
-require_once __DIR__ . '/../../libs/PHPMailer/src/SMTP.php';
+// 多環境路徑檢測
+$possiblePaths = [
+    __DIR__ . '/../../libs/PHPMailer/src/',        // 本地端
+    __DIR__ . '/../libs/PHPMailer/src/',           // 其他可能路徑
+    __DIR__ . '/libs/PHPMailer/src/'               // 備用路徑
+];
+
+$phpmailerPath = null;
+foreach ($possiblePaths as $path) {
+    if (file_exists($path . 'Exception.php') && 
+        file_exists($path . 'PHPMailer.php') && 
+        file_exists($path . 'SMTP.php')) {
+        $phpmailerPath = $path;
+        break;
+    }
+}
+
+if ($phpmailerPath) {
+    require_once $phpmailerPath . 'Exception.php';
+    require_once $phpmailerPath . 'PHPMailer.php';
+    require_once $phpmailerPath . 'SMTP.php';
+} else {
+    throw new Exception('找不到 PHPMailer 檔案');
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;

@@ -1,4 +1,3 @@
-<!-- LoginPage_resetpassword 重置密碼php -->
 <?php
 include 'conn.php';
 
@@ -9,6 +8,32 @@ define('SECRET_KEY', '690313d321d0de67118799a8bff29f867eccb717e0978babbf0720e6ac
 /**
  * 驗證重設密碼token
  */
+function validatePasswordStrength($password) {
+    $errors = [];
+    
+    // 檢查長度
+    if (strlen($password) < 8) {
+        $errors[] = '密碼長度至少需要8個字元';
+    }
+    
+    // 檢查是否包含大寫字母
+    if (!preg_match('/[A-Z]/', $password)) {
+        $errors[] = '密碼必須包含至少一個大寫字母';
+    }
+    
+    // 檢查是否包含小寫字母
+    if (!preg_match('/[a-z]/', $password)) {
+        $errors[] = '密碼必須包含至少一個小寫字母';
+    }
+    
+    // 檢查是否包含數字
+    if (!preg_match('/[0-9]/', $password)) {
+        $errors[] = '密碼必須包含至少一個數字';
+    }
+    
+    return $errors;
+}
+
 function verifyResetToken($token) {
     $parts = explode('.', $token);
     
@@ -88,9 +113,10 @@ try {
     error_log("收到重設密碼請求 - Token: " . substr($resetToken, 0, 20) . "...");
     error_log("新密碼長度: " . strlen($newPassword));
 
-    // 驗證新密碼強度
-    if (strlen($newPassword) < 8) {
-        throw new Exception('密碼長度至少需要8個字元');
+    // 使用密碼強度驗證函數
+    $passwordErrors = validatePasswordStrength($newPassword);
+    if (!empty($passwordErrors)) {
+        throw new Exception(implode('、', $passwordErrors));
     }
 
     // 驗證重設token
@@ -100,6 +126,8 @@ try {
         error_log("重設Token驗證失敗");
         throw new Exception('重設連結無效或已過期，請重新申請');
     }
+
+    
 
     $email = $payload['email'];
     error_log("Token驗證成功 - Email: " . $email);
@@ -135,9 +163,11 @@ try {
     $hashedPassword = md5($newPassword);
     
     // 檢查新舊密碼是否相同
-    if (password_verify($newPassword, $user['PW'])) {
+    if (md5($newPassword) === $user['PW']) {
         throw new Exception('新密碼不能與舊密碼相同');
     }
+
+
     
     // 更新密碼 - 直接儲存，與登入時的比對方式一致
     $updateSql = "UPDATE MEMBER SET PW = ? WHERE MEMBER_ID = ?";

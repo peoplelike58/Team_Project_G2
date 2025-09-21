@@ -152,17 +152,11 @@ const API_URL = `${import.meta.env.VITE_AJAX_URL}/LoginPage_forget.php`
 
 // 處理表單提交
 const handleSubmit = async () => {
-  console.log('=== 忘記密碼表單提交開始 ===')
-  console.log('Email:', email.value)
-  console.log('IsVerified:', isVerified.value)
-
   // 先驗證表單
   if (!validateForm()) {
-    console.log('表單驗證失敗')
     return
   }
 
-  console.log('表單驗證通過，開始發送驗證碼')
   loading.value = true
   clearErrors()
 
@@ -173,7 +167,6 @@ const handleSubmit = async () => {
     })
 
     const result = response.data
-    console.log('API回應:', result)
 
     if (result.success) {
       statusMessage.value = '驗證碼已發送到您的信箱'
@@ -195,7 +188,6 @@ const handleSubmit = async () => {
     }
 
   } catch (error) {
-     console.error('發送重設連結錯誤:', error)
     
     // 處理axios錯誤
     if (error.response) {
