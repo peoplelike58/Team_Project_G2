@@ -241,63 +241,46 @@ const router = createRouter({
 
 
 router.beforeEach(async (to, from, next) => {
-    const userStore = useUserStore()
-    const auth = useAuthStore()
+  const userStore = useUserStore()
+  const auth = useAuthStore()
 
-    // 還原登入狀態（兩邊都試一次，誰成功算誰）
-    // - auth.fetchMe(): 給 Google 登入（/api/me 讀 Cookie）
-    // - userStore.hydrateFromSession(): 你原本的 PHP Session 檢查
-    try {
-        if (auth.user === null) {
-            await auth.fetchMe()
-        }
-    } catch (_) {}
-    try {
-        if (!userStore.isLoggedIn && !userStore.loading.loginChecking) {
-            await userStore.hydrateFromSession()
-        }
-    } catch (_) {}
+  // 還原登入狀態（Google / PHP 任一成功即視為登入）
+  try {
+    if (auth.user === null) await auth.fetchMe()
+  } catch (_) {}
 
-    // 最終登入布林（任一來源為真就算登入）
-    const isLoggedIn = !!auth.user || userStore.isLoggedIn
-
-    // 後台保護（把原本 localStorage('auth') 那段移除，統一用 isLoggedIn）
-    if (to.path.startsWith('/admin') && !isLoggedIn) {
-        return next('/backlogin')  // 你專案的後台登入頁
+  try {
+    if (!userStore.isLoggedIn && !userStore.loading.loginChecking) {
+      await userStore.hydrateFromSession()
     }
+  } catch (_) {}
 
-    // 一般需要登入的頁面（依你的 meta.requiresAuth）
-    if (to.meta?.requiresAuth && !isLoggedIn) {
-        alert('請先登入！')
-        return next({ name: 'loginregister-fontrelogin' })
-    }
+  const isLoggedIn = !!auth.user || userStore.isLoggedIn
 
-    // 訪客頁保護（已登入就不要再去登入/註冊）
-    if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {
-        return next({ name: 'member-profile' })
-    }
-
-    // 其他放行
-    next()
-
-})
-
-  if (to.meta.requiresAuth && !isLoggedIn) {//登入判斷:若頁面標記 requiresAuth，但沒有 email，就導去 /login。
-    // alert('請先登入！')
-    next('/loginregister')
-    return
-  }
-  
-   if ((to.path === '/loginregister/fontregister' ) && isLoggedIn) {//防止已登入再去到註冊界面，會自動導回會員中心-我的優惠券。
-    next({ name: 'member-coupons' })
-    return
+  // 後台保護
+  if (to.path.startsWith('/admin') && !isLoggedIn) {
+    return next('/backlogin')
   }
 
-  if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {//防止已登入再進登入頁,→ 登入狀態下去 /member，會自動導回會員中心。
-    next({ name: 'member-profile' })
-    return
+  // 一般需要登入的頁面
+  if (to.meta?.requiresAuth && !isLoggedIn) {
+    alert('請先登入！')
+    return next({ name: 'loginregister-fontrelogin' })
   }
+
+  // 已登入禁止進入訪客頁（登入/註冊）
+  if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {
+    return next({ name: 'member-profile' })
+  }
+
+  // 已登入禁止進入註冊頁，導至會員中心的「我的優惠券」
+  if (to.path === '/loginregister/fontregister' && isLoggedIn) {
+    return next({ name: 'member-coupons' })
+  }
+
+  // 放行
   next()
+})
 
 router.afterEach((to) => {                                         // 每次路由切換後執行 // 繁中註解
   document.title = to.meta?.title || '山上見'                      // 如果有meta.title就用，否則用預設 // 繁中註解
