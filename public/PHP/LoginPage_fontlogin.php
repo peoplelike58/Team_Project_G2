@@ -25,7 +25,7 @@ $hashedPassword = md5($member["password"]);
 // 接收前端傳來的加密密碼，並再次加密以比對資料庫-（待考慮）
 // $encryptedPassword = encryptPassword($member["password"]);
 
-$sql = "SELECT MEMBER_ID,EMAIL,NAME,NICKNAME,BIRTHDAY,PHONE,ADDRESS,IMAGE from MEMBER WHERE EMAIL = :email and PW = :passwords ";
+$sql = "SELECT MEMBER_ID,EMAIL,NAME,NICKNAME,BIRTHDAY,PHONE,ADDRESS,IMAGE,STATUS from MEMBER WHERE EMAIL = :email and PW = :passwords ";
 
 $pstmt = $pdo->prepare($sql);
 $pstmt->bindValue( ":email", $member["email"]);     //前端傳來的值放在陣列裡，把這個值給到：email去sql裡尋找，：是佔位符號，：email是命名參數
@@ -33,7 +33,7 @@ $pstmt->bindValue(":passwords", $hashedPassword);                //$encryptedPas
 $pstmt->execute();                                  //這步把這個準備好的 SQL，真的送去資料庫執行
 $member = $pstmt->fetchAll();
 
-$respBody['success'] = count($member) > 0 ;         //count($member) > 0 or !empty($member) or $member != null
+// $respBody['success'] = count($member) > 0 ;         //count($member) > 0 or !empty($member) or $member != null
 
 
 // 檢查 IMAGE 欄位是否有值，沒有的話給預設頭像檔名
@@ -45,7 +45,13 @@ $respBody['success'] = count($member) > 0 ;         //count($member) > 0 or !emp
 // }
 
 
-if ($respBody['success']) {
+if (count($member) == 0) {
+    echo json_encode( [ 'success' => false,'message' => '帳號或密碼錯誤或賬號不存在,請重新輸入'],JSON_UNESCAPED_UNICODE ) ;
+    exit;
+}elseif( $member[0]["STATUS"] == '停用' ){
+    echo json_encode(['success' => false, 'message' => '該帳號已被暫停使用，請恰客服！'], JSON_UNESCAPED_UNICODE);
+    exit;
+}else{
     session_start();
     // $_SESSION['member'] = $member;
     $_SESSION['member'] = [
@@ -57,8 +63,9 @@ if ($respBody['success']) {
         "address" => $member[0]["ADDRESS"],
         "avatar" =>  $member[0]["IMAGE"]                                 //$avatarImage
     ];
-
+    echo json_encode( [ 'success' => true,'message' => ''],JSON_UNESCAPED_UNICODE ) ;
 }
 
-echo json_encode( $respBody ) ;
+
+
 ?>

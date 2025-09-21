@@ -1,3 +1,4 @@
+<!-- 會員中心 MemberCenter.vue-->
 <template>
 <div class="wrapper">
   <NavMenu/>
@@ -20,8 +21,6 @@
 import LoginPage_nav from '@/components/Irene/LoginPage/LoginPage_nav.vue';
 import NavMenu from '@/components/An/navMenu.vue';
 import brandFooter from '@/components/An/footer.vue'
-
-
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 

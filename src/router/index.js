@@ -236,6 +236,10 @@ router.beforeEach(async(to, from, next) => {
     next('/loginregister')
     return
   }
+
+   if ((to.path === '/loginregister/fontregister' ) && isLoggedIn) {//防止已登入再去到註冊界面，會自動導回會員中心-我的優惠券。
+    next({ name: 'member-coupons' })
+    return}
   
   if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {//防止已登入再進登入頁,→ 登入狀態下去 /member，會自動導回會員中心。
     next({ name: 'member-profile' })
