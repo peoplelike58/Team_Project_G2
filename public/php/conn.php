@@ -52,13 +52,13 @@
       header('Content-Type: application/json; charset=utf-8');
       // ---- Session 設定（要在 session_start() 前）----
       // 正式站 HTTPS 再打開 secure；本機請先保留關閉或註解
-      session_set_cookie_params([
-            'path' => '/',
-            'httponly' => true,
-            'samesite' => 'Lax',
-            // 'secure' => true,
-      ]);
-      session_start();
+    //   session_set_cookie_params([
+    //         'path' => '/',
+    //         'httponly' => true,
+    //         'samesite' => 'Lax',
+    //         // 'secure' => true,
+    //   ]);
+    //   session_start();
       
       // 處理瀏覽器的預檢請求（某些情況下瀏覽器會先發 OPTIONS 請求確認權限）
       if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
