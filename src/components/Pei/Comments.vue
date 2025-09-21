@@ -71,6 +71,8 @@ const API_ROOT = import.meta.env.VITE_AJAX_URL.replace(/\/PHP\/?$/,'')
 const UPLOADS_BASE = `${API_ROOT}/uploads`
 // console.log(user.profile.avatar); // 印出會員avatar檔名
 
+
+
 // ===== 從後端一列資料 → 轉成前端需要的物件 =====
 function mapRowToMessage(row){
   // 後端圖片用別名：MESSAGE_IMAGE / MEMBER_IMAGE
@@ -98,7 +100,7 @@ function mapRowToMessage(row){
     mountainId:Number(row.MOUNTAIN_ID),
     name: name || `會員#${row.MEMBER_ID}`,
     mountain: row.MOUNTAIN_NAME || '',
-    avatar: avatar || 'images/Products/default-avatar.jpg',
+    avatar: avatar || default_avatar,
     time: row.CREATED_AT  || '',
     content: row.CONTENT || '',
     photo: msgImageKey ? `${UPLOADS_BASE}/${msgImageKey}` : '',
@@ -268,7 +270,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
       <li v-for="message in messages" :key="message.msgid" class="commentCard">
         <div class="member">
           <div class="avatar">
-            <img :src="toUrl(message.avatar)" alt="使用者頭像" />
+            <img :src="message.avatar" alt="使用者頭像" />
           </div>
           <p class="name">{{ message.name }}</p>
         </div>
