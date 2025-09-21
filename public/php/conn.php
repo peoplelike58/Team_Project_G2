@@ -2,17 +2,17 @@
 // 共用 連線資料庫
 
     //   MySQL相關資訊（本機端測試）
-      $db_host = "127.0.0.1";
-      $db_user = "root";
-      $db_pass = "password";
-      $db_select = "hou_shan";
+      // $db_host = "127.0.0.1";
+      // $db_user = "root";
+      // $db_pass = "password";
+      // $db_select = "hou_shan";
 
     //====================重要=================
     // 上傳上傳到TibaMe伺服器時改成如下
-    //   $db_host = "127.0.0.1";
-    //   $db_user = "tibamefe_since2021";
-    //   $db_pass = "vwRBSb.j&K#E";
-    //   $db_select = "tibamefe_tjd102g2";
+      $db_host = "127.0.0.1";
+      $db_user = "tibamefe_since2021";
+      $db_pass = "vwRBSb.j&K#E";
+      $db_select = "tibamefe_tjd102g2";
 
 
       //建立資料庫連線物件
