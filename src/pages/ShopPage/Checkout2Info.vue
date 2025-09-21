@@ -27,14 +27,103 @@ const pay = reactive({
     exp: CheckoutStore.cardInfo.exp ||'', 
     cvc: CheckoutStore.cardInfo.cvc ||'' })
 
-// 表單驗證規則
-const rules = {
-  name: [{ required: true, message: '必填', trigger: 'blur' }],
-  phone: [{ required: true, message: '必填', trigger: 'blur' }],
-  addr: [{ required: true, message: '必填', trigger: 'blur' }],
+// 信用卡到期日驗證函數
+const validateExp = (rule, value, callback) => {
+  if (pay.method === 'card' && value) {
+    // 檢查是否過期
+    const [month, year] = value.split('/')
+    if (month && year) {
+      const expDate = new Date(2000 + parseInt(year), parseInt(month) - 1)
+      const now = new Date()
+      const currentMonth = new Date(now.getFullYear(), now.getMonth())
+      
+      if (expDate < currentMonth) {
+        callback(new Error('信用卡已過期'))
+      } else {
+        callback()
+      }
+    } else {
+      callback()
+    }
+  } else {
+    callback()
+  }
 }
 
+// 表單驗證規則
+const rules = {
+  name: [
+    { required: true, message: '必填', trigger: 'blur' },
+    { min: 2, message: '姓名至少2個字', trigger: 'blur' }
+    ],
+  phone: [
+    { required: true, message: '必填', trigger: 'blur' },
+    { pattern: /^09\d{8}$/, message: '請輸入正確的手機號碼格式(09xxxxxxxx)', trigger: 'blur' }
+   ],
+  addr: [
+    { required: true, message: '必填', trigger: 'blur' },
+     { min: 5, message: '地址至少5個字', trigger: 'blur'}
+  ],
+}
 
+// 付款方式驗證規則
+const payRules = computed(() => {
+  if (pay.method === 'card') {
+    return {
+      cardNo: [
+        { required: true, message: '必填', trigger: 'blur' },
+        { 
+          validator: (rule, value, callback) => {
+            const cleanCard = value.replace(/\s/g, '')
+            if (!/^\d{16}$/.test(cleanCard)) {
+              callback(new Error('請輸入16位信用卡號碼'))
+            } else {
+              callback()
+            }
+          }, 
+          trigger: 'blur' 
+        }
+      ],
+      exp: [
+        { required: true, message: '必填', trigger: 'blur' },
+        { pattern: /^(0[1-9]|1[0-2])\/\d{2}$/, message: '請輸入正確格式 MM/YY', trigger: 'blur' },
+        { validator: validateExp, trigger: 'blur' }
+      ],
+      cvc: [
+        { required: true, message: '必填', trigger: 'blur' },
+        { pattern: /^\d{3}$/, message: '請輸入3位安全碼', trigger: 'blur' }
+      ]
+    }
+  }
+  return {}
+})
+
+// 信用卡號格式化（每4位加空格）
+const formatCardNo = (value) => {
+  const cleaned = value.replace(/\s/g, '').replace(/\D/g, '')
+  const limited = cleaned.slice(0, 16)
+  return limited.replace(/(\d{4})(?=\d)/g, '$1 ')
+}
+
+// 到期日格式化（自動加斜線）
+const formatExp = (value) => {
+  const cleaned = value.replace(/\D/g, '').slice(0, 4)
+  if (cleaned.length >= 2) {
+    return cleaned.slice(0, 2) + '/' + cleaned.slice(2)
+  }
+  return cleaned
+}
+
+// 輸入處理函數
+const handleCardNoInput = () => {
+  pay.cardNo = formatCardNo(pay.cardNo)
+  syncFormToStore()
+}
+
+const handleExpInput = () => {
+  pay.exp = formatExp(pay.exp)
+  syncFormToStore()
+}
 
 // 配送
 // const shipOpts = [
@@ -90,13 +179,28 @@ function goBack(){
 // 提交訂單並進入下一步
 const submitNext = async () => {
   // 驗證表單
-  const valid = await formRef.value?.validate?.()
-  if (!valid) {
-    ElMessage.error('請檢查表單資料')
-    return
-  }
+//   const valid = await formRef.value?.validate?.()
+//   if (!valid) {
+//     ElMessage.error('請檢查表單資料')
+//     return
+//   }
 
   try {
+    // 先驗證基本資料表單
+    const basicFormValid = await formRef.value?.validate?.()
+    if (!basicFormValid) {
+      ElMessage.error('請檢查收件人資料')
+      return
+    }
+
+    // 如果是信用卡付款，額外驗證付款資料
+    if (pay.method === 'card') {
+      const payFormValid = await payFormRef.value?.validate?.()
+      if (!payFormValid) {
+        ElMessage.error('請檢查信用卡資料')
+        return
+      }
+    }
     // 同步表單資料到 store
     syncFormToStore()
     
@@ -118,6 +222,8 @@ const submitNext = async () => {
     ElMessage.error('系統錯誤，請稍後再試')
   }
 }
+
+const payFormRef = ref()
 
 // 組件掛載時預填會員資訊
 onMounted(() => {
@@ -144,8 +250,8 @@ onMounted(() => {
                 <template #header>填寫資料</template>
                 <el-form :model="form" :rules="rules" ref="formRef" label-width="88px" @input="syncFormToStore" >
                     <el-row :gutter="16">
-                    <el-col :span="12"><el-form-item label="收件人" prop="name"><el-input v-model="form.name" placeholder="請輸入收件人姓名" @blur="syncFormToStore"/></el-form-item></el-col>
-                    <el-col :span="12"><el-form-item label="聯絡電話" prop="phone"><el-input v-model="form.phone" placeholder="請輸入聯絡電話" @blur="syncFormToStore" /></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="收件人" prop="name"><el-input v-model="form.name" placeholder="請輸入收件人姓名" maxlength="10"   @blur="syncFormToStore"/></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="聯絡電話" prop="phone"><el-input v-model="form.phone" placeholder="請輸入聯絡電話"  @blur="syncFormToStore" /></el-form-item></el-col>
                     <el-col :span="24"><el-form-item label="收貨地址" prop="addr"  ><el-input v-model="form.addr" placeholder="超商取貨請輸入門市地址" @blur="syncFormToStore" /></el-form-item></el-col>
                     </el-row>
                 </el-form>
@@ -153,7 +259,7 @@ onMounted(() => {
             <!-- 付款方式 -->
             <el-card shadow="never" class="panel">
                 <template #header>付款方式</template>
-                <el-form :model="pay" label-width="180px">
+                <el-form :model="pay" :rules="payRules" ref="payFormRef" label-width="180px">
                     <el-form-item label="選擇付款方式" >
                         <el-select v-model="pay.method" style="width:240px" @change="syncFormToStore">
                             <el-option label="信用卡" value="card" />
@@ -161,10 +267,10 @@ onMounted(() => {
                         </el-select>
                     </el-form-item>
                     <template v-if="pay.method==='card'">
-                    <el-form-item label="Credit Card Number"><el-input v-model="pay.cardNo" placeholder="xxxx xxxx xxxx xxxx" maxlength="19" @blur="syncFormToStore"/></el-form-item>
+                    <el-form-item label="Credit Card Number"><el-input v-model="pay.cardNo" placeholder="xxxx xxxx xxxx xxxx" maxlength="19"  @input="handleCardNoInput"/></el-form-item>
                     <el-row :gutter="16">
-                        <el-col :span="12"><el-form-item label="MM/YY"><el-input v-model="pay.exp" placeholder="MM/YY" style="min-width: 160px;" @blur="syncFormToStore"/></el-form-item></el-col>
-                        <el-col :span="12"><el-form-item label="CVC"><el-input v-model="pay.cvc" placeholder="3 digits" style="min-width: 160px;" @blur="syncFormToStore"/></el-form-item></el-col>
+                        <el-col :span="12"><el-form-item label="MM/YY"><el-input v-model="pay.exp" placeholder="MM/YY" style="min-width: 160px;" maxlength="5"  @input="handleExpInput"/></el-form-item></el-col>
+                        <el-col :span="12"><el-form-item label="CVC"><el-input v-model="pay.cvc" placeholder="3 digits" style="min-width: 160px;" maxlength="3" show-word-limit @blur="syncFormToStore"/></el-form-item></el-col>
                     </el-row>
                     </template>
                 </el-form>
