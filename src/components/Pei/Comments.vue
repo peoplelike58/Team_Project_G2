@@ -92,13 +92,22 @@ function mapRowToMessage(row){
     else return row.NICKNAME
   } )
 
+  const maxMemberName = computed(()=>{
+    const arr = Array.from(name.value)
+    if ( arr.length > 12 ) {
+        return arr.slice(0,12).join('')+'...'
+    }else{
+        return name.value
+    }
+  })
+
 
 
   return {
     msgId:Number(row.MESSAGE_ID),       
     memId:Number(row.MEMBER_ID),         
     mountainId:Number(row.MOUNTAIN_ID),
-    name: name || `會員#${row.MEMBER_ID}`,
+    name: maxMemberName || `會員#${row.MEMBER_ID}`,
     mountain: row.MOUNTAIN_NAME || '',
     avatar: avatar || default_avatar,
     time: row.CREATED_AT  || '',
@@ -118,6 +127,15 @@ const user_name = computed( () => {
     if(!user.profile.nickname) return user.name
     else return user.profile.nickname
 } )
+
+const maxUserName = computed(()=>{
+    const arr = Array.from(user_name.value)
+    if ( arr.length > 12 ) {
+        return arr.slice(0,12).join('')+'...'
+    }else{
+        return user_name.value
+    }
+})
 
 // ===== 讀留言：GET /CommentsGet.php?MOUNTAIN_ID=... =====
 async function fetchComments(){
@@ -334,7 +352,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
           <img :src="user_vatar" alt="使用者頭像" />
         </div>
         <!-- <p class="popupName">{{ user.profile.nickname ?? user.name ?? `會員#${user.id}` }}</p> -->
-        <p class="popupName">{{ user_name ?? `會員#${user.id}` }}</p>
+        <p class="popupName">{{ maxUserName ?? `會員#${user.id}` }}</p>
       </div>
 
       <textarea
