@@ -53,6 +53,7 @@ if (!$passwordCheck['valid']) {
 //     exit;
 // }
 
+$hashedPassword = md5($member["password"]);    // 將使用者輸入的密碼用 MD5 加密
 
 $statement = $pdo->prepare("select EMAIL from MEMBER where EMAIL = :email");
 $statement->bindValue(":email", $member["email"]);
@@ -73,7 +74,7 @@ if($checkEmail){
     $pstmt = $pdo->prepare($sql);
     $pstmt->bindValue(":email", $member["email"]);
     $pstmt->bindValue( ":username", $member["name"]);
-    $pstmt->bindValue(":password", $member["password"]);
+    $pstmt->bindValue(":password", $hashedPassword);    // 原本是 $member["password"]，改為 $hashedPassword
     $pstmt->bindValue(":nickname", $member["name"]);
     $pstmt->bindValue(":phone", $member["phone"]);
     $register=$pstmt->execute();

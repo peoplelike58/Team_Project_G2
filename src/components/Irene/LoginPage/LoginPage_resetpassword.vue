@@ -1,3 +1,4 @@
+<!-- LoginPage_resetpassword.vue 重置密碼元件 -->
 <template>   
   <div class="modal-content">
     <h1 class="title">重置密碼</h1>
