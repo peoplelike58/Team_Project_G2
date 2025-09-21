@@ -386,8 +386,8 @@ const removeCheckedItems = async () => {
   try {
     isLoading.value = true
     
-//     // 複製要刪除的 ID 和商品資料
-//     const idsToDelete = [...checkedIds.value]
+    // 複製要刪除的 ID 和商品資料
+    const idsToDelete = [...checkedIds.value]
 //     // console.log('複製後的 ID 列表:', idsToDelete)
     
 //     // 安全做法：先從前端移除，如果後端失敗再恢復, 備份要刪除的商品資料
@@ -404,8 +404,8 @@ const removeCheckedItems = async () => {
 //     await nextTick()
     
 //     // 嘗試後端刪除
-//     let allSuccess = true
-//     const failedIds = []
+    let allSuccess = true
+    const failedIds = []
     
 //     // 使用 Promise.all 並行處理，加快刪除速度
 //     const deletePromises = idsToDelete.map(async (id) => {
@@ -468,7 +468,7 @@ const removeCheckedItems = async () => {
         // 🔧 加入延遲，避免伺服器請求過於頻繁
         if (i > 0) {
           console.log('等待 200ms...')
-          await new Promise(resolve => setTimeout(resolve, 200))
+          await new Promise(resolve => setTimeout(resolve, 150))
         }
         
         const success = await deleteCartItem(id)
@@ -554,6 +554,10 @@ const removeCheckedItems = async () => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({cartId: itemId})
     })
+    if (!response.ok) {
+      console.error(`HTTP 錯誤: ${response.status} ${response.statusText}`)
+      return false
+    }    
   const result = await response.json();  
   if (result.success) {
         console.log('後端刪除成功:', result.message)
