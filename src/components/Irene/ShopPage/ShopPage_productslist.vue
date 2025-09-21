@@ -187,7 +187,7 @@ const pagedProducts = computed(() => {
     <div class="products_content">
       <div class="product_card" v-for="product in pagedProducts" :key="product.id" @click="Showdetail(product)">
           <div class="product_image">
-            <img :src="`${BASE}images/Products/products/${product.image}`" :alt="product.name">
+            <img :src="`${BASE}images/Products/products/${product.image}`" :alt="product.name" loading="lazy">
             <button class="favorite-btn" @click.stop="handletoggleFavorite(product.id)">
               <!-- {{ favorites.includes(product.id) ? '❤️' : '🤍' }} -->
               {{ FavoriteStore.isFavorite(product.id) ? '❤️' : '🤍' }}
