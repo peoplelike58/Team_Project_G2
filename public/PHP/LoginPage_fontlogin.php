@@ -1,9 +1,9 @@
 <?php  /* fontlogin.php 登入 */
 $member=json_decode(file_get_contents("php://input"), true);//接收前端來的東西，做json檔的解碼
 
-
-
 include 'conn.php';
+
+$hashedPassword = md5($member["password"]);
 
 //不是機器人驗證 (YUKI)
 // include 'verifyRecaptcha.php';
@@ -29,7 +29,7 @@ $sql = "SELECT MEMBER_ID,EMAIL,NAME,NICKNAME,BIRTHDAY,PHONE,ADDRESS,IMAGE from M
 
 $pstmt = $pdo->prepare($sql);
 $pstmt->bindValue( ":email", $member["email"]);   //前端傳來的值放在陣列裡，把這個值給到：email去sql裡尋找，：是佔位符號，：email是命名參數
-$pstmt->bindValue(":passwords", $member["password"]);                //$encryptedPassword 加密
+$pstmt->bindValue(":passwords", $hashedPassword);                //$encryptedPassword 加密
 $pstmt->execute();                               //這步把這個準備好的 SQL，真的送去資料庫執行
 $member = $pstmt->fetchAll();
 

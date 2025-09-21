@@ -26,6 +26,8 @@ watch(() => CartStore.isAllChecked, (newValue) => {
 onMounted(async () => {
   try {
     await CartStore.loadCartFromBackend()
+    await CartStore.getCoupons()
+
     console.log('購物車載入完成')
   } catch (error) {
     console.error('載入購物車失敗:', error)
@@ -163,7 +165,7 @@ function goNext(){
                 <!-- link 是內建屬性，讓按鈕外觀像文字連結，type="info" 使用內建配色。 -->
             </div>
             <!-- 已加入商品列表 -->
-            <el-table :data="CartStore.cartItems"  stripe class="cart-table"><!-- stripe 開啟斑馬紋列 -->
+            <el-table :data="CartStore.cartItems"  stripe class="cart-table" v-loading="CartStore.isLoading"><!-- stripe 開啟斑馬紋列 -->
                 <el-table-column label="" width="54" align="center">
                     <!-- 這裡的<template>是 Vue 提供的「語法糖 (虛擬容器)」，常用來做： 插槽 (slot) 的佔位，<slot> 是放在子元件裡的，在 el-table-column 裡面定義好了，不需要再寫，只要在template裡面放要放的東西就可以了-->
                     <template #default="{ row }">
@@ -173,7 +175,7 @@ function goNext(){
 
                 <el-table-column label="商品圖片" width="140">
                     <template #default="{ row }">
-                        <el-image :src="`${BASE}images/Products/products/${row.image}`" fit="cover" style="width:120px;height:120px;border-radius:6px;" />
+                        <el-image :src="`${BASE}images/Products/products/${row.image}`" fit="cover" style="width:120px;height:120px;border-radius:6px;" lazy  />
                     </template>
                 </el-table-column>
                 
@@ -208,7 +210,7 @@ function goNext(){
                         </el-button>
                         <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item v-for="c in CartStore.coupons" :key="c.id" :command="c">{{ c.title }}</el-dropdown-item>
+                            <el-dropdown-item v-for="coupon in CartStore.coupons" :key="coupon.id" :command="coupon">{{ coupon.title }}</el-dropdown-item>
                         </el-dropdown-menu>
                         </template>
                     </el-dropdown>

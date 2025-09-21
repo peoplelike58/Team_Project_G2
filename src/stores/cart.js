@@ -1,5 +1,5 @@
 // stores/cart.js-購物相關：增刪改查商品
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive,nextTick  } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 import { ElMessage } from 'element-plus'
@@ -11,15 +11,16 @@ export const useCartStore = defineStore('cart', () => {
   // 購物車商品列表，存放陣列
   const cartItems = ref([]) 
   const checkedMap =  reactive({})  //勾選狀態
-  const coupons=[
-    { id:'A', title:'不使用優惠券', amount:0 ,},
-    { id:'B', title:'新朋友 $200 折扣', amount:200 ,}]
+  const coupons=ref([
+    // { id:'A', title:'不使用優惠券', amount:0 ,},
+    // { id:'B', title:'新朋友 $200 折扣', amount:200 ,}
+  ])
   const chosenCoupon=ref(null)  // 目前選擇的優惠券
   const isLoading = ref(false)  // 載入狀態，避免重複點擊
 
   // 新增：配送方式相關資料
   const shipOptions = [
-    { id: 'none', label: '無', fee: 0, needStore: false },
+    // { id: 'none', label: '無', fee: 0, needStore: false },
     { id: '711', label: '7-11 取貨', fee: 60, needStore: true },
     { id: 'family', label: '全家 取貨', fee: 60, needStore: true },
     { id: 'home', label: '宅配到府', fee: 80, needStore: false },
@@ -49,7 +50,7 @@ export const useCartStore = defineStore('cart', () => {
     checkedItems.value.reduce((total, item) => total + (item.price * item.qty), 0)
   )
     //購物車優惠券 
-  const discount = computed(()=> chosenCoupon.value?.amount ?? 0)
+  const discount = computed(()=> chosenCoupon.value?.discount ?? 0)
 
   //  購物車-計算最終金額（商品金額 - 優惠券 ）
   const checkedFinalTotal = computed(() => 
@@ -180,6 +181,43 @@ export const useCartStore = defineStore('cart', () => {
   }
 
 
+  const errorMessage = ref("")
+
+
+  // 從API載入優惠券資料的函數
+  const getCoupons = async () => {
+  try{
+    isLoading.value = true // 開始載入
+    errorMessage.value = '' // 清空錯誤訊息
+    const response = await fetch(import.meta.env.VITE_AJAX_URL + '/LoginPage_getCoupon.php', {
+          method: 'POST',
+          headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({})
+      })
+
+      const result = await response.json()
+
+      // 檢查API回傳狀態
+      if (result.success) {
+        coupons.value =result.coupons 
+        console.log('設定後的coupons:', coupons.value)
+      } else {
+        errorMessage.value = response.data.message || '載入優惠券資料失敗'
+      }
+      
+    } catch (error) {
+      // 處理網路錯誤或其他異常
+      console.error('載入優惠券資料時發生錯誤:', error)
+      errorMessage.value = '網路連線錯誤，請稍後再試'
+    } finally {
+      isLoading.value = false // 結束載入
+    }
+  }
+
   /**
    * 加入商品到購物車
    * @param {Object} product - 商品物件，包含 id, name, price, image 等
@@ -282,6 +320,7 @@ const updateQty = (itemId, newQty) => {
       ElMessage.error('找不到該商品')
       return
     }
+    await nextTick()
     //先呼叫後端刪除 API
     const deleteSuccess = await  deleteCartItem(itemId)
     if (deleteSuccess) {
@@ -362,6 +401,8 @@ const removeCheckedItems = async () => {
     // 一次性清除所有勾選狀態
     idsToDelete.forEach(id => delete checkedMap[id]) 
 
+    await nextTick()
+    
     // 嘗試後端刪除
     let allSuccess = true
     const failedIds = []
@@ -385,7 +426,7 @@ const removeCheckedItems = async () => {
     
     // 等待所有刪除請求完成
     await Promise.all(deletePromises)
-    
+    await nextTick()
     // 如果有失敗的，恢復那些商品
     if (failedIds.length > 0) {
       const failedItems = itemsToDeleteData.filter(item => failedIds.includes(item.id))
@@ -640,6 +681,7 @@ const removeCheckedItems = async () => {
 
 
     // 方法
+    getCoupons,
     addToCart,
     updateQty,
     removeFromCart,
@@ -651,6 +693,3 @@ const removeCheckedItems = async () => {
   }
 })
 
-
-
-//「前端樂觀更新（Pinia）＋後端批次／差異同步」，在幾個關鍵時機再送請求：加入/移除、離開頁面、進入結帳、頁面載入時拉取伺服器版本。
