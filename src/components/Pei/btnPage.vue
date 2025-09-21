@@ -764,6 +764,10 @@ watch(goPage, (newPage) => {
     white-space: nowrap;      /* 內容不斷行（中文也不會在字與字之間折） */
 
     transition: gap 0.4s ease;
+
+    @media (max-width: 390px){          
+        margin-top: 20px;
+    }
 }
 .section-footer:hover {
     gap: 16px;
@@ -778,6 +782,11 @@ watch(goPage, (newPage) => {
     display: inline-block;    /* 保持在同一行 */
     white-space: nowrap;      /* 文字本身也不斷行 */
     cursor: pointer;
+
+        @media (max-width: 390px){
+            font-size: 22px;
+            margin-top: 5px;
+        }
 }
 
 .section-footer .diag-btn{
@@ -793,6 +802,10 @@ watch(goPage, (newPage) => {
     border: 0;
     border-radius: 4px;
     overflow: hidden;
+
+    @media (max-width: 390px){
+        --size: 36px
+    }
 }
   
 .section-footer .arrow{
@@ -802,6 +815,7 @@ watch(goPage, (newPage) => {
     left: 4px;
     bottom: 4px;
     will-change: transform, opacity;
+
 }
   
 .section-footer .shaft, .head{
