@@ -145,7 +145,7 @@ function initGoogleSignIn() {
         router.push({ name: 'member-profile' })
       } else {
         // 不急著 alert，避免「先 401 後成功」的誤報
-        console.warn('Google 登入流程尚未完成，稍後再試')
+        console.warn('Google 登入流程尚未完成，請採用其他登入方式')
       }
     },
     ux_mode: 'popup'
