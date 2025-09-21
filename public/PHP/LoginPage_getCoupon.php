@@ -1,4 +1,4 @@
-<?php  /* LoginPage_getProfile.php 抓取個人資料-會員中心 */
+<?php  /* LoginPage_getCoupon.php 抓取可以使用的優惠券-會員中心 */
 
 include 'conn.php';
 

@@ -52,17 +52,19 @@
                   :show-file-list="false"
                   :on-success="(res) => { 
                     if(res?.success){ 
-                      form[col.prop] = res.filename  //只存檔名res.filename 
+                      form[col.prop] = res.filename;  //只存檔名res.filename 
                       console.log('上傳成功，檔名：', res.filename);
                       // const imgUrl = getImageUrl();
                     } else {
-                       window.alert(res?.message || '上傳失敗') }}"
+                       console.log(res?.message || '上傳失敗');
+                        }
+                  }"
                   >
-           
+                  
                   <el-button type="primary">上傳圖片</el-button>
-                  <!-- 預覽縮圖 -->
                 </el-upload>
-                <img v-if="form[col.prop]" :src="getImageUrl() + '/images/Products/products/' + form[col.prop]"style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
+                <!-- 預覽縮圖 -->
+                <img v-if="form[col.prop]" :src="getImageUrl() + 'tjd102/g2/images/Products/products/' + form[col.prop]"style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" />
                 <!-- <img v-if="form[col.prop]" :src="getImageUrl()  + form[col.prop]" style="max-width:100px; margin-top:5px;" @error="(e) => console.log('載入錯誤詳情:', e.target.src, e)" /> -->
              </template>
 
@@ -73,7 +75,7 @@
                 :type="col.type === 'datetime' ? 'datetime' : col.type === 'date' ? 'date' : undefined"
                 :show-password="col.type === 'password'"
                 :placeholder="`請輸入${col.label}`"
-                :disabled="col.disabled"  
+                :disabled="col.disabled || (col.lockOnEdit && dialogMode === 'edit')"
                 :options="col.options"
                 :value-format="col.valueFormat || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
                 :format="col.format || (col.type === 'datetime' ? 'YYYY-MM-DD HH:mm' : col.type === 'date' ? 'YYYY-MM-DD' : undefined)"
@@ -162,7 +164,7 @@ const idKey = computed(() => props.columns[0]?.prop ||'id')
 
 //=========================
 
-const uploadUrl = import.meta.env.VITE_AJAX_URL + '/uploadimg.php'
+const uploadUrl = import.meta.env.VITE_AJAX_URL + '/test.upload.php'
 
 const getImageUrl = () => {
   console.log('當前端口:', window.location.port);
@@ -171,7 +173,7 @@ const getImageUrl = () => {
     return 'http://localhost/TeamProject/public';
   } else {
     // console.log('正式環境，使用當前域名');
-    return `${window.location.protocol}//${window.location.host}/TeamProject`;
+    return `${window.location.protocol}//${window.location.host}/`;
   }
 }
 

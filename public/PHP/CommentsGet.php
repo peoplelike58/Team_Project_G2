@@ -35,6 +35,7 @@ $sql = "SELECT
     msg.CREATED_AT,
     m.MEMBER_ID,
     m.NICKNAME,
+    m.NAME,
     m.IMAGE AS MEMBER_IMAGE
   FROM MESSAGE msg
   JOIN MEMBER m ON m.MEMBER_ID = msg.MEMBER_ID

@@ -91,7 +91,6 @@ function Showdetail(product){
     name:'ProductDetailRoute',
     params:{id:product.id}
   })
-
 }
 
 
@@ -112,7 +111,7 @@ const props = defineProps({
 //接收到篩選方式後篩選商品
 const sortOrder = ref('')//排序
 const filteredProducts = computed(()=>{
-  let result = products.value ;//原本的顯示結果是所有的商品,products要是個陣列
+  let result = [...products.value]  ;//原本的顯示結果是所有的商品,products要是個陣列，使用展開運算符創建新陣列，避免修改原始陣列
 
   //排序功能 (要在所有篩選之前，不然篩選後才能排序，- 無論有沒有分類都要執行排序)
   if (sortOrder.value === 'price-low') {
@@ -121,6 +120,9 @@ const filteredProducts = computed(()=>{
     result = result.sort((a, b) => b.price - a.price); // 價格高到低
   } else if (sortOrder.value === 'newest') {
     result = result.sort((a, b) => b.id - a.id); // 最新上架 (假設id越大越新)
+  }else {
+    //當 sortOrder 為空字串或其他值時，按照 id 由小到大排序（預設排序）
+    result = result.sort((a, b) => a.id - b.id); // 預設排序：按 id 順序
   }
 
   //關鍵字搜尋條件
@@ -139,6 +141,12 @@ const filteredProducts = computed(()=>{
 
   return result;
 })
+
+// 監聽器來重置排序（如果需要從其他地方觸發重置），監聽篩選條件變化，可以選擇是否重置排序，每次篩選時都回到預設排序
+watch(() => [props.filters.search, props.filters.category, props.filters.genders], () => {
+  // 當篩選條件改變時，重置為預設排序
+  sortOrder.value = ''
+}, { deep: true })
 
 // 對父層回報篩選後總數，讓父層給分頁用
 const emit = defineEmits(['total-change'])  

@@ -71,8 +71,6 @@ let clusterGroup = null
 let mapInstance = null
 
 function handleMarkerClick(mountainName) {
-	console.log('點擊山峰:', mountainName) // 測試用 log
-	console.log('登入狀態:', props.isLoggedIn) // 測試用 log
 
 	emit('openUploadModal', mountainName)
 }

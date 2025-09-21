@@ -103,7 +103,7 @@ import axios from 'axios'
                 if (isNaN(lat) || isNaN(lon) || 
                     lat < -90 || lat > 90 || 
                     lon < -180 || lon > 180) {
-                    console.warn(`跳過無效座標: ${lat}, ${lon}`);
+                    // console.warn(`跳過無效座標: ${lat}, ${lon}`);
                     continue;
                 }
                 
@@ -326,14 +326,9 @@ import axios from 'axios'
                 );
 
                 if (!isWithinArea) {
-                    const userConfirm = confirm(
-                        `系統偵測到此 GPX 軌跡可能不在「${props.mountain.name}」附近（2公里範圍內）\n` +
-                        `是否確定要上傳？`
-                    );
-                    if (!userConfirm) {
-                        fileName.value = "";
-                        return;
-                    }
+                    alert(`❌ 上傳失敗！\n\n此 GPX 軌跡沒有任何點在「${props.mountain.name}」2公里範圍內。\n請上傳正確山峰的軌跡記錄。`);
+                    fileName.value = "";
+                    return;
                 }
                             
                 // 安全地提取座標和計算數據
@@ -343,7 +338,7 @@ import axios from 'axios'
                 calculateTimeSafely(trkpts);
 
             } catch (err) {
-                console.error("XML parse error", err);
+                // console.error("XML parse error", err);
                 alert("檔案解析失敗，請確認檔案格式正確");
                 fileName.value = "";
             }
@@ -382,7 +377,6 @@ import axios from 'axios'
         const file = event.dataTransfer.files[0]
         if (file && validateFile(file)) {
             fileName.value = file.name
-            console.log("拖曳上傳：", file)
             readFile(file)
         }else{
             alert("只允許上傳 XML/GPX 檔案！")
@@ -394,7 +388,6 @@ import axios from 'axios'
     const file = e.target.files[0]
         if (file && validateFile(file)) {
             fileName.value = file.name
-            console.log("點擊選擇：", file)
             readFile(file)
 
         }else {
@@ -437,8 +430,34 @@ import axios from 'axios'
                 distance: kilo.value,
                 duration: time.value,
                 content: thought.value,
-                gpx_coords: gpxCoords.value,
+                is_climbed: checkIfClimbed(),
             };
+
+            function checkIfClimbed() {
+
+                function calculateDistance(lat1, lon1, lat2, lon2) {
+                    const R = 6371; // 地球半徑(公里)
+                    const dLat = (lat2 - lat1) * Math.PI / 180;
+                    const dLon = (lon2 - lon1) * Math.PI / 180;
+                    const a = 
+                        Math.sin(dLat/2) * Math.sin(dLat/2) +
+                        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                        Math.sin(dLon/2) * Math.sin(dLon/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    return R * c;
+                }
+
+                for (let coord of gpxCoords.value) {
+                    const distance = calculateDistance(
+                        props.mountain.latitude,
+                        props.mountain.longitude,
+                        coord[1],
+                        coord[0]
+                    );
+                    if (distance < 0.05) return true;
+                }
+                return false;
+            }
             
             // 發送 POST 請求到 PHP
             const response = await axios.post(
@@ -448,8 +467,6 @@ import axios from 'axios'
                     withCredentials: true  // 讓 session 可以運作
                 }
             );
-
-            console.log('儲存成功:', response.data);
 
             if (response.data.climbed) {
                 alert(`恭喜！${props.mountain.name} 登頂成功，紀錄已儲存到資料庫！`);
@@ -483,12 +500,12 @@ import axios from 'axios'
             emit("closeUploadModal", props.mountain.name);
 
         } catch (error) {
-            console.error('儲存失敗:', error);
+            // console.error('儲存失敗:', error);
             alert('儲存失敗，請稍後再試！');
         }
     }
 
-    // 查詢山峰 ID 的函數**
+    // 查詢山峰 ID 
     async function getMountainId(mountainName) {
         try {
         const response = await axios.get(`${ API_URL_2 }?name=${encodeURIComponent(mountainName)}`)
@@ -496,14 +513,11 @@ import axios from 'axios'
             if (response.data.success) {
                 return response.data.mountain_id
             } else {
-                console.error('查詢失敗:', response.data.error)
-                if (response.data.suggestions) {
-                    console.log('建議的山峰:', response.data.suggestions)
-                }
+                // console.error('查詢失敗:', response.data.error)
                 return null
             }
         } catch (error) {
-            console.error('查詢山峰 ID 失敗:', error)
+            // console.error('查詢山峰 ID 失敗:', error)
             return null
         }
     }

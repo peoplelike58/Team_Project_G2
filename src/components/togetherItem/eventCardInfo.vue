@@ -71,7 +71,8 @@
         </div>
 
         <div class="rightInfoCard">
-          <img :src="imgSrc" :alt="eventData.title" />
+          <!-- Leaflet 地圖 -->
+          <div ref="mapContainer" class="map-container"></div>
           <div class="rightInfo">
             <span class="rightInfoNA">報名人數</span>
             <span class="rightInfoNB">{{ eventData.joinQty }}</span>
@@ -129,7 +130,8 @@
           <!-- 第二頁：報名資訊 -->
           <div class="carousel-slide" :class="{ active: currentSlide === 1 }">
             <div class="rightInfoCard mobile-layout">
-              <img :src="imgSrc" :alt="eventData.title" />
+              <!-- Leaflet 地圖 -->
+              <div ref="mobileMapContainer" class="map-container mobile-map"></div>
               <div class="rightInfo">
                 <span class="rightInfoNA">報名人數</span>
                 <span class="rightInfoNB">{{ eventData.joinQty }}</span>
@@ -184,12 +186,29 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';  // Pinia
 import axios from 'axios';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import NavMenu from '../An/navMenu.vue';
 import Footer from '@/components/An/footer.vue';
+
+const AJAX_URL = import.meta.env.VITE_AJAX_URL; 
+const BASE_URL = AJAX_URL.replace(/\/PHP$/, '/');
+
+
+// 修改 Leaflet 默認圖標
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl:      `${BASE_URL}images/icon/markerIcon.png`,
+  iconRetinaUrl:`${BASE_URL}images/icon/markerIcon2x.png`,
+  shadowUrl: `${BASE_URL}images/icon/marker-shadow.png`, // 有陰影檔再開
+  iconSize: [48, 64],                                             // 圖示顯示大小：寬64×高64
+  iconAnchor: [24, 64],                                           // 錨點在底部中央：寬/2=32, 高=64
+  popupAnchor: [0, -64], 
+});
 
 const route = useRoute();
 const router = useRouter();
@@ -213,30 +232,31 @@ const eventData = ref({
   notes: '',
   registrationDeadlineDate: '',
   registrationDeadlineTime: '',
-  status: '揪團中'
+  status: '未開團中'
 });
+
 const imageMap = ref({});
 const isLoading = ref(true);
 const error = ref(null);
 const currentSlide = ref(0);
-const hasUserRegistered = ref(false);  // 追蹤使用者是否已報名
+const hasUserRegistered = ref(false);
+const mapContainer = ref(null);
+const mobileMapContainer = ref(null);
+const mountainData = ref(null);
+let desktopMap = null;
+let mobileMap = null;
 
-const AJAX_URL = import.meta.env.VITE_AJAX_URL; 
-const BASE_URL = AJAX_URL.replace(/\/PHP$/, '/');
 
 // 動態按鈕文字
 const getButtonText = computed(() => {
-  // 活動已截止的情況
   if (eventData.value.status === '已截止') {
     return '報名已截止';
   }
   
-  // 已登入且已報名
   if (userStore.isLoggedIn && hasUserRegistered.value) {
     return '已完成報名';
   }
   
-  // 未登入或未報名
   return '報名參加';
 });
 
@@ -247,28 +267,99 @@ const imgSrc = computed(() => {
   if (mid && name) {
     return `${BASE_URL}images/Mountain/${mid}/${name}`;
   }
-  // fallback 圖
   return `${BASE_URL}images/eventCard/cardimg1.jpg`;
 });
 
+// 獲取山岳資料
+const fetchMountainData = async (mountainId) => {
+  try {
+    const response = await axios.get(`${AJAX_URL}/getMountainData.php`, {
+      params: { mountainId: mountainId }
+    });
+    
+    if (response.data.success) {
+      mountainData.value = response.data.data;
+      return response.data.data;
+    } else {
+      throw new Error('無法獲取山岳位置資料');
+    }
+  } catch (err) {
+    console.error('獲取山岳資料失敗:', err);
+    return null;
+  }
+};
+
+// 初始化桌面版地圖
+const initDesktopMap = () => {
+  if (!mapContainer.value || !mountainData.value) return;
+  
+  try {
+    // 如果地圖已存在，先移除
+    if (desktopMap) {
+      desktopMap.remove();
+    }
+    
+    const { LATITUDE, LONGITUDE, MOUNTAIN_NAME } = mountainData.value;
+    
+    desktopMap = L.map(mapContainer.value).setView([LATITUDE, LONGITUDE], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(desktopMap);
+    
+    L.marker([LATITUDE, LONGITUDE])
+      .addTo(desktopMap)
+      .bindPopup(`<b>${MOUNTAIN_NAME}</b>`)
+      .openPopup();
+      
+  } catch (err) {
+    console.error('初始化桌面版地圖失敗:', err);
+  }
+};
+
+// 初始化手機版地圖
+const initMobileMap = () => {
+  if (!mobileMapContainer.value || !mountainData.value) return;
+  
+  try {
+    // 如果地圖已存在，先移除
+    if (mobileMap) {
+      mobileMap.remove();
+    }
+    
+    const { LATITUDE, LONGITUDE, MOUNTAIN_NAME } = mountainData.value;
+    
+    mobileMap = L.map(mobileMapContainer.value).setView([LATITUDE, LONGITUDE], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(mobileMap);
+    
+    L.marker([LATITUDE, LONGITUDE])
+      .addTo(mobileMap)
+      .bindPopup(`<b>${MOUNTAIN_NAME}</b>`)
+      .openPopup();
+      
+  } catch (err) {
+    console.error('初始化手機版地圖失敗:', err);
+  }
+};
+
 // 檢查使用者是否已報名此活動
 const checkUserRegistration = async () => {
-  // 如果使用者未登入，直接返回
   if (!userStore.isLoggedIn) {
     hasUserRegistered.value = false;
     return;
   }
 
   try {
-    // 呼叫後端 API 檢查報名狀態
     const response = await axios.get(`${AJAX_URL}/checkEventRegistration.php`, {
       params: {
-        userId: userStore.id,  // 使用者 ID
-        eventId: eventData.value.id  // 活動 ID
+        userId: userStore.id,
+        eventId: eventData.value.id
       }
     });
 
-    // 根據後端回應更新報名狀態
     if (response.data.success) {
       hasUserRegistered.value = response.data.hasRegistered || false;
     }
@@ -294,8 +385,12 @@ const fetchEventData = async () => {
     // 處理活動文字資料
     if (resInfo.data.success) {
       Object.assign(eventData.value, resInfo.data.data);
-      // 取得活動資料後，檢查使用者報名狀態
       await checkUserRegistration();
+      
+      // 獲取山岳資料
+      if (eventData.value.mountainId) {
+        await fetchMountainData(eventData.value.mountainId);
+      }
     } else {
       throw new Error(resInfo.data.message || '活動資料載入失敗');
     }
@@ -326,42 +421,33 @@ const fetchEventData = async () => {
 
 // 處理報名點擊事件
 const handleJoinEvent = async () => {
-  // 如果活動已截止或用戶已報名，不執行任何操作
   if (eventData.value.status === '已截止' || hasUserRegistered.value) {
     return;
   }
 
-  // 檢查登入狀態
   if (!userStore.isLoggedIn) {
-    // 未登入的話導向登入頁面
     alert('請先登入才能報名活動！');
-    // 儲存當前頁面路徑，登入後可以返回
     sessionStorage.setItem('redirectAfterLogin', route.fullPath);
     router.push('/loginregister');
     return;
   }
 
-  // 已登入：執行報名
   try {
-    // 顯示載入狀態
     const confirmJoin = confirm(`確定要報名「${eventData.value.title}」嗎？`);
     if (!confirmJoin) return;
 
-    // 進行報名
     const response = await axios.post(`${AJAX_URL}/registerEvent.php`, {
-      userId: userStore.id,  // 使用者 ID
-      eventId: eventData.value.id,  // 活動 ID
-      userName: userStore.name,  // 使用者姓名
-      userEmail: userStore.email  // 使用者 email
+      userId: userStore.id,
+      eventId: eventData.value.id,
+      userName: userStore.name,
+      userEmail: userStore.email
     });
 
     if (response.data.success) {
-      // 報名成功
       hasUserRegistered.value = true;
-      eventData.value.joinQty += 1;  // 更新報名人數
+      eventData.value.joinQty += 1;
       alert('報名成功！');
     } else {
-      // 報名失敗
       alert(response.data.message || '報名失敗，請稍後再試');
     }
   } catch (err) {
@@ -370,10 +456,10 @@ const handleJoinEvent = async () => {
   }
 };
 
-// 7. 返回上一頁
+// 返回上一頁
 const goBack = () => router.back();
 
-// 8. 輪播邏輯
+// 輪播邏輯
 let touchStartX = 0;
 const handleTouchStart = (e) => (touchStartX = e.touches[0].clientX);
 const handleTouchEnd = (e) => {
@@ -386,7 +472,7 @@ const handleTouchEnd = (e) => {
 };
 const goToSlide = (idx) => (currentSlide.value = idx);
 
-// 9. 格式化日期、時間、notes
+// 格式化日期、時間、notes
 const formatDate = (s) => {
   if (!s) return '';
   const d = new Date(s);
@@ -402,16 +488,28 @@ const formatTime = (t) => {
 };
 const parseNotes = (str) => str ? str.split(/[;\\n]/).filter(n => n.trim()) : [];
 
+// 監聽當前滑動頁面變化，初始化對應的地圖
+watch(currentSlide, async (newSlide) => {
+  if (newSlide === 1 && mountainData.value) {
+    await nextTick();
+    initMobileMap();
+  }
+});
+
 // 元件掛載後執行
 onMounted(async () => {
-  // 先取得活動資料
   await fetchEventData();
+  
+  // 初始化桌面版地圖
+  if (mountainData.value) {
+    await nextTick();
+    initDesktopMap();
+  }
   
   // 檢查是否有登入後重定向的需求
   const redirectPath = sessionStorage.getItem('redirectAfterLogin');
   if (redirectPath && route.fullPath === redirectPath) {
     sessionStorage.removeItem('redirectAfterLogin');
-    // 可以顯示提示訊息
     if (userStore.isLoggedIn) {
       console.log('歡迎回來！您現在可以報名活動了');
     }
@@ -421,6 +519,7 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 @import '../../assets/styles/main.scss';
+@import 'leaflet/dist/leaflet.css';
 
 .wrapper {
     display: flex;
@@ -681,13 +780,15 @@ onMounted(async () => {
 .rightInfoCard {
     margin-left: 179px;
     
-    img {
+    // 地圖容器樣式
+    .map-container {
         display: block;
         width: 400px;
         height: 260px;
         margin-top: 64px;
         border-radius: 10px;
-        object-fit: cover;
+        overflow: hidden;
+        border: 2px solid #ddd;
     }
 }
 
@@ -768,9 +869,8 @@ onMounted(async () => {
         transform: translateY(0);
     }
 
-    // 已報名狀態樣式
     &.btn-registered {
-        background-color: #4CAF50;  // 綠色表示已完成
+        background-color: #4CAF50;
         cursor: default;
         
         &:hover {
@@ -779,9 +879,8 @@ onMounted(async () => {
         }
     }
 
-    // 已截止狀態樣式
     &.btn-disabled {
-        background-color: #9E9E9E;  // 灰色表示無法操作
+        background-color: #9E9E9E;
         cursor: not-allowed;
         opacity: 0.7;
         
@@ -791,14 +890,13 @@ onMounted(async () => {
         }
     }
 
-    // 禁用狀態
     &:disabled {
         cursor: not-allowed;
     }
 }
 
-// 手機版響應式樣式保持不變
-@media screen and (max-width: 768px) {
+// 手機版響應式樣式
+@media screen and (max-width: 1200px) {
     .wrapper {
         padding: 0 15px;
     }
@@ -1007,11 +1105,14 @@ onMounted(async () => {
         align-items: center;
         padding: 20px;
 
-        img {
+        // 手機版地圖容器
+        .map-container.mobile-map {
             width: 100%;
             max-width: 280px;
+            height: 200px;
             margin-top: 0;
             margin-bottom: 50px;
+            border-radius: 8px;
         }
 
         .rightInfo {
@@ -1121,5 +1222,63 @@ onMounted(async () => {
         margin-bottom: 30px;
         padding: 0 15px;
     }
+}
+
+// 載入和錯誤狀態樣式
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #01685E;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+    
+    p {
+        font-size: 18px;
+        color: $black-14;
+    }
+}
+
+.error-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    text-align: center;
+    
+    p {
+        font-size: 18px;
+        color: #E13535;
+        margin-bottom: 20px;
+    }
+    
+    button {
+        background-color: #01685E;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        
+        &:hover {
+            background-color: darken(#01685E, 10%);
+        }
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 </style>

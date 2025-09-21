@@ -1,318 +1,234 @@
 <template>
-  <div id="app" class="game-app">
-    <!-- 載入中狀態 -->
-    <div v-if="isLoading" class="loading">
-      <div class="spinner"></div>
-      <p>載入中...</p>
-    </div>
-
-    <!-- 1) 地圖場景：未選關時顯示 -->
-    <MapScene 
-      v-if="!activeLevel && !isLoading" 
-      @startLevel="startLevel" 
-    />
-
-    <!-- 2) 拼圖關卡：level 1,2 -->
-    <PuzzleGame 
-      v-if="activeLevel && activeLevel <= 2" 
-      :key="`puzzle-${activeLevel}-${gameKey}`"
-      :level="activeLevel" 
-      :timeLimit="TIME_LIMIT" 
-      :showDebug="isDevelopment"
-      @fail="handleFail" 
-      @success="handleSuccess" 
-      ref="puzzleGameRef"
-    />
-
-    <!-- 3) 問答關卡：level 3,4 -->
-    <QuizGame 
-      v-if="activeLevel && activeLevel > 2" 
-      :key="`quiz-${activeLevel}-${gameKey}`"
-      :level="activeLevel" 
-      :timeLimit="TIME_LIMIT" 
-      @fail="handleFail" 
-      @success="handleSuccess" 
-      ref="quizGameRef"
-    />
-
-    <!-- 4) 失敗彈窗 -->
-    <ResultModal 
-      v-if="showModal" 
-      :level="failedLevel" 
-      @retry="retryLevel" 
-      @showSolution="viewSolution" 
-    />
-
-    <!-- 5) 解答面板 -->
-    <SolutionPanel 
-      v-if="showSolutionPanel" 
-      :level="failedLevel" 
-      @close="closeSolution" 
-    />
-
+  <div class="game-container">
     <!-- 返回地圖按鈕 -->
     <button 
-      v-if="activeLevel" 
+      v-if="gameMode !== 'map'" 
       class="back-to-map-btn"
-      @click="confirmBackToMap"
+      @click="backToMap"
     >
       ← 返回地圖
     </button>
+    
+    <!-- 地圖場景 -->
+    <MapScene 
+      v-if="gameMode === 'map'" 
+      @startLevel="startLevel" 
+    />
+    
+    <!-- 拼圖遊戲 (關卡1-2) -->
+    <PuzzleGame 
+      v-else-if="gameMode === 'puzzle'"
+      :level="currentLevel"
+      :size="puzzleSize"
+      :timeLimit="180"
+      :showDebug="false"
+      :showHintButton="true"
+      @success="handleSuccess"
+      @fail="handleFail"
+      ref="puzzleGameRef"
+    />
+    
+    <!-- 問答遊戲 (關卡3-4) -->
+    <QuizGame 
+      v-else-if="gameMode === 'quiz'"
+      :level="currentLevel"
+      :timeLimit="180"
+      @success="handleSuccess"
+      @fail="handleFail"
+      ref="quizGameRef"
+    />
+    
+    <!-- 成功彈窗 -->
+    <SuccessModal 
+      v-if="showSuccessModal"
+      :level="currentLevel"
+      @continue="continueToNext"
+      @backToMap="backToMap"
+    />
+    
+    <!-- 失敗彈窗 -->
+    <ResultModal 
+      v-if="showFailModal"
+      :level="currentLevel"
+      @retry="retryLevel"
+      @showSolution="showSolution"
+      @backToMap="backToMap"
+    />
+    
+    <!-- 解答面板 -->
+    <SolutionPanel 
+      v-if="showSolutionPanel"
+      :level="currentLevel"
+      @close="closeSolution"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import MapScene from '@/components/GAME/MapScene.vue'
 import PuzzleGame from '@/components/GAME/PuzzleGame.vue'
 import QuizGame from '@/components/GAME/QuizGame.vue'
+import SuccessModal from '@/components/GAME/SuccessModal.vue'
 import ResultModal from '@/components/GAME/ResultModal.vue'
 import SolutionPanel from '@/components/GAME/SolutionPanel.vue'
 
-// 常數設定
-const TIME_LIMIT = 3 * 60 // 3分鐘
+// Emit 定義
+const emit = defineEmits(['fail'])
 
-// 計算屬性
-const isDevelopment = computed(() => {
-  try {
-    return import.meta.env?.DEV || false
-  } catch {
-    return false
-  }
-})
-
-// 響應式狀態
-const activeLevel = ref(null)
-const failedLevel = ref(null)
-const showModal = ref(false)
+// 遊戲狀態
+const gameMode = ref('map') // 'map', 'puzzle', 'quiz'
+const currentLevel = ref(1)
+const showSuccessModal = ref(false)
+const showFailModal = ref(false)
 const showSolutionPanel = ref(false)
-const isLoading = ref(false)
-const gameKey = ref(Date.now())
 
 // 組件引用
 const puzzleGameRef = ref(null)
 const quizGameRef = ref(null)
 
-// 遊戲統計
-const gameStats = ref({
-  completedLevels: [],
-  attempts: {},
-  totalTime: 0
+const puzzleSize = computed(() => {
+  const sizeMap = {
+    1: 5, // 關卡1: 5x5
+    2: 5  // 關卡2: 5x5
+  }
+  return sizeMap[currentLevel.value] || 5
 })
 
-// 函數定義
-
-// 1. 開始關卡
-async function startLevel(level) {
-  try {
-    isLoading.value = true
-    console.log(`開始關卡 ${level}`)
-    
-    // 模擬載入時間
-    await new Promise(resolve => setTimeout(resolve, 300))
-    
-    activeLevel.value = level
-    gameKey.value = Date.now()
-    
-    // 記錄嘗試次數
-    if (!gameStats.value.attempts[level]) {
-      gameStats.value.attempts[level] = 0
-    }
-    gameStats.value.attempts[level]++
-    
-  } catch (error) {
-    console.error('開始關卡時發生錯誤:', error)
-  } finally {
-    isLoading.value = false
+// 開始關卡
+function startLevel(level) {
+  // console.log(`開始關卡 ${level}`)
+  currentLevel.value = level
+  
+  // 重置所有彈窗狀態
+  showSuccessModal.value = false
+  showFailModal.value = false
+  showSolutionPanel.value = false
+  
+  // 根據關卡決定遊戲模式
+  if (level <= 2) {
+    gameMode.value = 'puzzle'
+  } else {
+    gameMode.value = 'quiz'
   }
 }
 
-// 2. 遊戲成功
-function handleSuccess() {
-  console.log(`關卡 ${activeLevel.value} 完成！`)
-  
-  // 記錄完成的關卡
-  if (!gameStats.value.completedLevels.includes(activeLevel.value)) {
-    gameStats.value.completedLevels.push(activeLevel.value)
-  }
-  
-  // 延遲顯示成功提示
-  setTimeout(() => {
-    const currentLevel = activeLevel.value
-    const nextLevel = currentLevel + 1
-    
-    if (nextLevel <= 4) {
-      if (confirm(`🎉 關卡 ${currentLevel} 完成！\n\n是否繼續下一關？`)) {
-        startLevel(nextLevel)
-      } else {
-        backToMap()
-      }
-    } else {
-      alert('🎉 恭喜完成所有關卡！')
-      backToMap()
-    }
-  }, 1000)
+// 處理成功
+function handleSuccess(data) {
+  // console.log('關卡成功！', data)
+  showSuccessModal.value = true
+  showFailModal.value = false
 }
 
-// 3. 遊戲失敗
+// 處理失敗
 function handleFail(level) {
-  console.log(`關卡 ${level} 失敗`)
-  failedLevel.value = level
-  showModal.value = true
+  // console.log('關卡失敗！', level)
+  showFailModal.value = true
+  showSuccessModal.value = false
+  
+  // 發出失敗事件給父組件
+  emit('fail', level)
 }
 
-// 4. 重試關卡
+// 重試關卡
 async function retryLevel() {
-  console.log(`重試關卡 ${failedLevel.value}`)
+  // console.log('重試關卡', currentLevel.value)
+  showFailModal.value = false
+  showSolutionPanel.value = false
   
-  showModal.value = false
-  const level = failedLevel.value
+  // 根據當前遊戲模式重置對應的遊戲
+  await nextTick()
   
-  // 重置並重新開始
-  activeLevel.value = null
-  gameKey.value = Date.now()
-  
-  // 等待重新渲染
-  await new Promise(resolve => setTimeout(resolve, 100))
-  activeLevel.value = level
-  
-  // 更新嘗試次數
-  if (gameStats.value.attempts[level]) {
-    gameStats.value.attempts[level]++
+  if (gameMode.value === 'puzzle' && puzzleGameRef.value) {
+    // 重置拼圖遊戲
+    puzzleGameRef.value.resetGame()
+  } else if (gameMode.value === 'quiz') {
+    // 對於問答遊戲，重新載入整個組件
+    const tempLevel = currentLevel.value
+    gameMode.value = 'map'
+    await nextTick()
+    startLevel(tempLevel)
   }
 }
 
-// 5. 查看解答
-function viewSolution() {
-  console.log(`查看關卡 ${failedLevel.value} 解答`)
-  showModal.value = false
+// 顯示解答
+function showSolution() {
+  // console.log('顯示解答')
   showSolutionPanel.value = true
+  showFailModal.value = false
+  
+  // 如果是拼圖遊戲，調用顯示解答方法
+  if (gameMode.value === 'puzzle' && puzzleGameRef.value) {
+    puzzleGameRef.value.showSolution()
+  }
 }
 
-// 6. 關閉解答面板
+// 關閉解答面板
 function closeSolution() {
   showSolutionPanel.value = false
 }
 
-// 7. 返回地圖
-function backToMap() {
-  console.log('返回地圖')
-  activeLevel.value = null
-  failedLevel.value = null
-  showModal.value = false
-  showSolutionPanel.value = false
-  gameKey.value = Date.now()
-}
-
-// 8. 確認返回地圖
-function confirmBackToMap() {
-  if (confirm('確定要返回地圖嗎？當前進度將會遺失。')) {
+// 繼續下一關
+function continueToNext() {
+  // console.log('繼續下一關')
+  showSuccessModal.value = false
+  
+  if (currentLevel.value < 4) {
+    startLevel(currentLevel.value + 1)
+  } else {
+    // 已經完成所有關卡，返回地圖
     backToMap()
   }
 }
 
-// 9. 保存遊戲統計
-function saveGameStats() {
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem('gameStats', JSON.stringify(gameStats.value))
-    }
-  } catch (error) {
-    console.error('保存遊戲統計失敗:', error)
-  }
+// 返回地圖
+function backToMap() {
+  // console.log('返回地圖')
+  gameMode.value = 'map'
+  showSuccessModal.value = false
+  showFailModal.value = false
+  showSolutionPanel.value = false
+  currentLevel.value = 1
 }
 
-// 10. 載入遊戲統計
-function loadGameStats() {
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const savedStats = localStorage.getItem('gameStats')
-      if (savedStats) {
-        gameStats.value = JSON.parse(savedStats)
-      }
-    }
-  } catch (error) {
-    console.error('載入遊戲統計失敗:', error)
-  }
-}
-
-// 組件掛載
-onMounted(() => {
-  console.log('GamePage 組件已掛載')
-  loadGameStats()
+// 暴露給父組件的方法
+defineExpose({
+  startLevel,
+  backToMap
 })
-
-// 監聽統計變化並保存
-watch(gameStats, saveGameStats, { deep: true })
 </script>
 
 <style lang="scss" scoped>
-.game-app {
-  min-height: 100vh;
+.game-container {
+  width: 100%;
+  height: 100%;
   position: relative;
-  overflow-x: hidden;
-}
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  color: white;
-  
-  .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top: 4px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    margin: 0;
-  }
+  z-index: 1;
 }
 
 .back-to-map-btn {
-  position: fixed;
+  position: absolute;
   top: 20px;
   left: 20px;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
+  z-index: 100;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   border: none;
-  padding: 10px 15px;
-  margin-top: 40px;
   border-radius: 8px;
-  // cursor: pointer;
+  font-size: 1rem;
   font-weight: bold;
-  color: #333;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
   
   &:hover {
-    background: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
   }
-}
-
-// 響應式設計
-@media (max-width: 768px) {
-  .back-to-map-btn {
-    top: 10px;
-    left: 10px;
-    padding: 8px 12px;
-    font-size: 0.9rem;
+  
+  &:active {
+    transform: translateY(0);
   }
-}
-
-// 動畫
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 </style>

@@ -58,7 +58,7 @@ const columns = [
   { prop: 'CONTENT', label: '活動簡介' },
   { prop: 'MEETING_PLACE', label: '集合地點' },
   { prop: 'DISTANCE', label: '路程 ' },
-  { prop: 'MOUNTAIN_ID',   label: '山岳', type:'select', options: mountainOptions },
+  { prop: 'MOUNTAIN_ID',   label: '山岳', type:'select', options: mountainOptions, lockOnEdit: true },
 
 ]
 

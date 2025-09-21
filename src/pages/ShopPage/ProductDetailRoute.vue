@@ -30,7 +30,7 @@ const BASE = import.meta.env.BASE_URL;
 
 const products = ref([])
 
-// 🟢 載入資料的函式
+//  載入資料的函式
 const loadProducts = async () => {
   try {
     // [修改] fetch 從 public/products.json 抓資料改成實際的API端點
@@ -53,7 +53,7 @@ const loadProducts = async () => {
   }
 }
 
-// 🟢 元件掛載完成後自動執行
+// 元件掛載完成後自動執行
 onMounted(() => {
   loadProducts()
 })
@@ -62,7 +62,10 @@ onMounted(() => {
 
 
 //關閉回到商品頁
-const close = () => router.push('/Shop')
+const close = () => {
+  // router.push('/Shop')
+  router.go(-1) // 直接返回上一頁，不管是從哪裡來的
+}
 
 //複製鏈接(使用現代Clipboard 剪貼簿API，回傳promise)
 function copyURL(){
@@ -497,14 +500,17 @@ const buyRightnow = async () => {
 @include mq(900px) {
   .modal_up,.modal_down{
     @include flexcenter(20px,column);
+    .product_detail{
+      flex:0 ;
+    }
   }
   .close{
     background-color: transparent;
-    
   }
   .modal_up{
     padding: 24px;
     box-sizing: border-box;
+
   }
 }
 

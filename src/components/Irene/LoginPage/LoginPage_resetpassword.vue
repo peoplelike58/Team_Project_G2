@@ -2,7 +2,7 @@
   <div class="modal-content">
     <h1 class="title">重置密碼</h1>
     <!-- <p class="subtitle">請設定您的新密碼，密碼長度至少8個字元，建議包含英文字母、數字和特殊符號。</p> -->
-    <p class="subtitle">請設定您的新密碼，密碼長度至少8位數字。</p>
+    <p class="subtitle">請設定您的新密碼，密碼長度至少8個字元，建議包含英文字母、數字和特殊符號</p>
 
 
     <form class="form-container"  @submit.prevent="resetPassword">
@@ -15,8 +15,7 @@
             class="input-field"
             placeholder="請輸入新密碼"
             v-model="newPassword"
-            @input="handlePasswordInput($event, 'new')"
-            inputmode="numeric"
+            @input="validatePassword"
           />
           <button 
             type="button" 
@@ -43,8 +42,7 @@
             class="input-field"
             placeholder="請再次輸入新密碼"
             v-model="confirmPassword"
-            @input="handlePasswordInput($event, 'confirm')"
-            inputmode="numeric"
+            @input="validateConfirmPassword"
           />
           <button 
             type="button" 
@@ -133,29 +131,6 @@ onMounted(() => {
     }, 3000)
   }
 })
-
-// 處理密碼輸入（只允許數字）
-const handlePasswordInput = (event, field) => {
-  // 只允許數字輸入
-  let value = event.target.value.replace(/\D/g, '')
-  
-  // 限制長度（例如最多20位數字）
-  if (value.length > 20) {
-    value = value.substring(0, 20)
-  }
-  
-  // 更新對應的欄位
-  if (field === 'new') {
-    newPassword.value = value
-    validatePassword()
-  } else if (field === 'confirm') {
-    confirmPassword.value = value
-    validateConfirmPassword()
-  }
-  
-  // 強制更新input的值（確保顯示的是處理後的值）
-  event.target.value = value
-}
 
 // 清除狀態訊息
 const clearStatus = () => {
@@ -422,10 +397,36 @@ const backToLogin = () => {
 }
 
 @keyframes spin {
-  to {
+  100% {
     transform: rotate(360deg);
   }
 }
+
+.status-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  
+  &.success {
+    background: #f0f9ff;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+  }
+  
+  &.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+}
+
+.status-icon {
+  flex-shrink: 0;
+}
+
 
 // 響應式設計
 @media (max-width: 480px) {

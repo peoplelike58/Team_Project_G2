@@ -102,6 +102,30 @@ try {
         // SQL 執行失敗
         throw new Exception("資料庫更新失敗: " . $stmt->error);
     }
+    // if ($stmt->execute()) {
+    //     //  檢查是否真的有更新到資料
+    //     if ($stmt->rowCount() > 0) {
+    //          // 成功更新
+    //         http_response_code(200);
+    //         echo json_encode([
+    //             "success" => true,
+    //             "message" => "頭像檔名更新成功",
+    //             "data" => [
+    //                 "member_id" => $memberId,
+    //                 "avatar_filename" => $avatar_filename
+    //             ]
+    //         ], JSON_UNESCAPED_UNICODE);
+    //     } else {
+    //         http_response_code(404);
+    //         echo json_encode([
+    //             "success" => false,
+    //             "message" => "找不到指定的會員或資料未變更"
+    //         ], JSON_UNESCAPED_UNICODE);
+    //     }
+    // } else {
+    //     $errorInfo = $stmt->errorInfo();
+    //     throw new Exception("資料庫更新失敗: " . implode(" | ", $errorInfo));
+    // }
     
     
 } catch (Exception $e) {

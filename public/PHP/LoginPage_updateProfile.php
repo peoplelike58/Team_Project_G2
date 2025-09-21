@@ -1,4 +1,4 @@
-<?php  /* 更新個人資料-會員中心 */
+<?php  /* LoginPage_updateProfile.php更新個人資料-會員中心 */
 
 include 'conn.php';
 
@@ -23,6 +23,15 @@ $pstmt->bindValue( ":address", $update['address']);
 $pstmt->bindValue( ":memberId", $memberId);
 $pstmt->execute();
 $profileData = $pstmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 更新資料庫成功後，同時更新 session 中的頭像資料
+// 這樣其他頁面呼叫 hydrateFromSession() 時就會拿到最新的頭像檔名
+$_SESSION['member']['nickname'] = $update['nickname'];
+$_SESSION['member']['about'] = $update['about'];
+$_SESSION['member']['birthday'] = $update['birthday'];
+$_SESSION['member']['phone'] = $update['phone'];
+$_SESSION['member']['address'] = $update['address'];
+
 
 echo json_encode(['success' => true, 'message' => '個人資料已更新','profileData'=>$profileData],JSON_UNESCAPED_UNICODE);
 ?>

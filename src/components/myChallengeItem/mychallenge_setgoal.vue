@@ -61,8 +61,6 @@ import axios from 'axios'
             return
         }
         
-        console.log('提交的目標:', goalValue)
-
         try{
             const jsonData = {}
 
@@ -84,7 +82,6 @@ import axios from 'axios'
             )
 
             if (response.data.success) {
-                console.log('後端回應:', response.data) // 除錯
                 
                 emit('refreshData')
                 emit('close')
@@ -94,10 +91,10 @@ import axios from 'axios'
                 emit('close')
             }
         }catch (error) {
-            console.error('API 錯誤:', error)
-            console.error('錯誤詳情:', error.response?.data)
-            console.error('狀態碼:', error.response?.status)
-            console.error('完整錯誤:', error.message)
+            // console.error('API 錯誤:', error)
+            // console.error('錯誤詳情:', error.response?.data)
+            // console.error('狀態碼:', error.response?.status)
+            // console.error('完整錯誤:', error.message)
             alert('網路錯誤，請稍後再試')
         }
         

@@ -1,6 +1,5 @@
 <template>
   <div class="quiz-game">
-    <!-- 背景裝飾 -->
     <div class="background-decoration">
       <div class="floating-shape shape-1"></div>
       <div class="floating-shape shape-2"></div>
@@ -169,18 +168,22 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .quiz-game {
-  min-height: 100vh;
+  height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  padding-top: 280px;
   position: relative;
+  z-index: 10;
+  pointer-events: none;
   
   .background-decoration {
     position: absolute;
     inset: 0;
     overflow: hidden;
     z-index: 0;
+    pointer-events: none;
     
     .floating-shape {
       position: absolute;
@@ -228,6 +231,7 @@ onUnmounted(() => {
     0 20px 60px rgba(0, 0, 0, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   animation: slideUp 0.6s ease-out;
+  pointer-events: auto;
 }
 
 .header {
@@ -502,87 +506,5 @@ onUnmounted(() => {
     font-size: 1.1rem;
     margin: 0;
   }
-}
-
-// 響應式設計
-@media (max-width: 768px) {
-  .game-card {
-    padding: 25px;
-    margin: 10px;
-  }
-  
-  .header .title {
-    font-size: 1.6rem;
-  }
-  
-  .content .question-container .question {
-    font-size: 1.2rem;
-  }
-  
-  .choices .choice-item {
-    padding: 15px;
-    
-    .choice-text {
-      font-size: 1rem;
-    }
-  }
-}
-
-// 動畫效果
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-3px);
-  }
-  75% {
-    transform: translateX(3px);
-  }
-}
-
-@keyframes checkmarkAppear {
-  from {
-    opacity: 0;
-    transform: scale(0);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 </style>

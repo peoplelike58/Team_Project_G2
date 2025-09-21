@@ -166,23 +166,21 @@ onBeforeUnmount(stopAutoPlay)
 
 
       .carousel-window { // 輪播視窗框
+        // outline: 2px solid red;
 
         width: 100%;
         height: 350px;
-        border-radius: 8px;   // 四個角都圓角
-        overflow: hidden;     // 超出裁切掉，圖片才會被套圓角
+        border-radius: 8px;  
+        overflow: hidden;     
         position: relative;
-        object-fit: cover;   // 保持比例裁切填滿
+        object-fit: cover;   
 
-
-        @include m(){
-          height: 330px;
-        }
       }
 
       .track {
         display: flex;
-        transition: transform 0.5s ease; // 滑動動畫
+        transition: transform 0.5s ease; 
+        
       }
 
       .slide {
@@ -196,7 +194,7 @@ onBeforeUnmount(stopAutoPlay)
       .slide img {
         width: 100%;
         height: 100%;
-        object-fit: cover;   // 保持比例裁切填滿
+        object-fit: cover;   
         display: block;
         border-radius: 8px;  
       }

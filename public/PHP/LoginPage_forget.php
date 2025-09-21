@@ -14,8 +14,8 @@ use PHPMailer\PHPMailer\Exception;
 try{
 
 
-    // 密鑰 - 實際使用時請改成強密鑰，並存在環境變數中
-    define('SECRET_KEY', 'your-super-secret-key-change-this-in-production');
+    // 密鑰 - 出社會後的專案使用時請改成強密鑰，並存在環境變數中
+    define('SECRET_KEY', '690313d321d0de67118799a8bff29f867eccb717e0978babbf0720e6ac985e23');
     
     $data = json_decode(file_get_contents("php://input"), true);//接收前端來的東西，做json檔的解碼
     
@@ -116,29 +116,61 @@ function base64url_encode($data) {
 /**
  * 使用PHPMailer發送驗證碼郵件
  */
+function sendVerificationCodeEmail($email, $name, $code) {
+    try {
+        $mail = new PHPMailer(true);
+        
+        // 伺服器設定
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'shanshangjian28560@gmail.com';
+        $mail->Password   = 'vzpsmdhrrmqzsbnq';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        $mail->CharSet    = 'UTF-8';
+        
+        // 寄件人設定
+        $mail->setFrom('shanshangjian28560@gmail.com', '山上見');
+        $mail->addAddress($email, $name);
+        
+        // 郵件內容
+        $mail->isHTML(false);
+        $mail->Subject = '密碼重設驗證碼';
+        $mail->Body    = "
+親愛的 {$name}，
+
+您的密碼重設驗證碼是：{$code}
+
+此驗證碼將在10分鐘後失效。
+
+請在重設密碼頁面輸入此驗證碼以繼續操作。
+
+如果您沒有請求重設密碼，請忽略此郵件。
+        ";
+        
+        $mail->send();
+        error_log("郵件發送成功到: " . $email);
+        return true;
+        
+    } catch (Exception $e) {
+        error_log("郵件發送失敗: " . $mail->ErrorInfo);
+        return false;
+    }
+}
+
+/**
+ * 測試版本
+ */
 // function sendVerificationCodeEmail($email, $name, $code) {
-//     try {
-//         $mail = new PHPMailer(true);
-        
-//         // 伺服器設定
-//         $mail->isSMTP();
-//         $mail->Host       = 'smtp.gmail.com';
-//         $mail->SMTPAuth   = true;
-//         $mail->Username   = 'your-email@gmail.com';        // 改成您的Gmail
-//         $mail->Password   = 'your-app-password';           // 改成您的Gmail應用程式密碼
-//         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-//         $mail->Port       = 587;
-//         $mail->CharSet    = 'UTF-8';
-        
-//         // 收件人設定
-//         $mail->setFrom('your-email@gmail.com', '您的網站名稱');
-//         $mail->addAddress($email, $name);
-        
-//         // 郵件內容
-//         $mail->isHTML(false);
-//         $mail->Subject = '密碼重設驗證碼';
-//         $mail->Body    = "
-// 親愛的 {$name}，
+//     // 測試模式：記錄到檔案
+//     file_put_contents('verification_codes.log', 
+//         date('Y-m-d H:i:s') . " - {$email}: {$code}\n", FILE_APPEND);
+//     error_log("模擬發送驗證碼 {$code} 到 {$email}");
+//     return true; // 總是返回成功
+
+//     $subject = '密碼重設驗證碼';
+//     $message = "親愛的 {$name}，
 
 // 您的密碼重設驗證碼是：{$code}
 
@@ -146,27 +178,20 @@ function base64url_encode($data) {
 
 // 請在重設密碼頁面輸入此驗證碼以繼續操作。
 
-// 如果您沒有請求重設密碼，請忽略此郵件。
-//         ";
-        
-//         $mail->send();
+// 如果您沒有請求重設密碼，請忽略此郵件。";
+    
+//     $headers = [
+//         'From: noreply@tibamef2e.com',
+//         'Reply-To: noreply@tibamef2e.com',
+//         'Content-Type: text/plain; charset=UTF-8'
+//     ];
+    
+//     if (mail($email, $subject, $message, implode("\r\n", $headers))) {
 //         error_log("郵件發送成功到: " . $email);
 //         return true;
-        
-//     } catch (Exception $e) {
-//         error_log("郵件發送失敗: " . $mail->ErrorInfo);
+//     } else {
+//         error_log("郵件發送失敗到: " . $email);
 //         return false;
 //     }
-// }
 
-/**
- * 測試版本
- */
-function sendVerificationCodeEmail($email, $name, $code) {
-    // 測試模式：記錄到檔案
-    file_put_contents('verification_codes.log', 
-        date('Y-m-d H:i:s') . " - {$email}: {$code}\n", FILE_APPEND);
-    error_log("模擬發送驗證碼 {$code} 到 {$email}");
-    return true; // 總是返回成功
-}
 ?>

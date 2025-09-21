@@ -61,7 +61,7 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
             this.profile.nickname = sessionData.member.nickname
             this.profile.phone = sessionData.member.phone
             this.profile.address = sessionData.member.address
-            // this.profile.avatar = sessionData.member.avatar
+            this.profile.avatar = sessionData.member.avatar
             console.log('從 session 恢復登入狀態:', sessionData.member)
           } else {
             // 伺服器沒有登入狀態，清除本地狀態
@@ -91,15 +91,24 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
       // localStorage.setItem('userRole', role)                         
     },
       logout() {                               //   自訂登出行為
+        console.log('執行登出，清理所有狀態')
+        // 清理基本資訊
         this.email = null
         this.name = null
         this.id = null
         this.isLoggedIn = false
+        // 清理個人資料
         this.profile.nickname = null
+        this.profile.birthday = null
         this.profile.phone = null
         this.profile.address = null
+        this.profile.aboutme = null
         this.profile.avatar = null
+        // 重置載入狀態
+        this.loading.profile = false
+        this.loading.updating = false
         this.loading.loginChecking = false 
+        this.loading.uploadingAvatar = false
         // this.clearProfile()
         /* 同步清掉 localStorage */                           
         // localStorage.removeItem('email')                                
@@ -122,6 +131,7 @@ export const useUserStore = defineStore(      // 定義一個「使用者」stor
 
       // 更新頭像檔名
       updateAvatar(filename) {
+        console.log('更新頭像檔名:', filename)
         this.profile.avatar = filename
         // 根據環境判斷路徑格式：開發環境用 /uploads，生產環境用 uploads
         const basePath = import.meta.env.MODE === 'development' ? '/uploads' : 'uploads'

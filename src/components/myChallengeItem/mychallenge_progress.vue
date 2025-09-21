@@ -54,12 +54,10 @@ const progressData = async () => {
                 { kind: '大百岳', done: 0, goal: 10, openSetgoal: false },
                 { kind: '小百岳', done: 0, goal: 10, openSetgoal: false }
             ]
-            console.log('用戶未登入，設置預設進度數據')
             return
         }
 
     try {
-        // console.log('發送 API 請求到:', API_URL)  // 除錯
 
         const response = await axios.post(
                 API_URL,{},{
@@ -69,12 +67,8 @@ const progressData = async () => {
                 }}
             )
 
-            // console.log('API 完整回應:', response.data) // 除錯
-
         const data = response.data
         if (data.success) {
-
-            // console.log('API 成功，資料結構:', data.data) // 除錯
 
             goals.value = [
                 {
@@ -91,14 +85,14 @@ const progressData = async () => {
                 }
             ]
         } else {
-            console.error('API錯誤:', data.message)
+            // console.error('API錯誤:', data.message)
             goals.value = [
                 { kind: '大百岳', done: 0, goal: 10, openSetgoal: false },
                 { kind: '小百岳', done: 0, goal: 10, openSetgoal: false }
             ]
         }
     } catch (error) {
-        console.error('獲取資料失敗:', error)
+        // console.error('獲取資料失敗:', error)
         goals.value = [
             { kind: '大百岳', done: 0, goal: 10, openSetgoal: false },
             { kind: '小百岳', done: 0, goal: 10, openSetgoal: false }
@@ -107,7 +101,6 @@ const progressData = async () => {
 }
 
 watch(() => props.isLoggedIn, async (newValue, oldValue) => {
-    console.log('Progress 組件：登入狀態變化', oldValue, '->', newValue)
     
     if (newValue === false) {
         // 登出時重置為預設狀態
@@ -115,7 +108,7 @@ watch(() => props.isLoggedIn, async (newValue, oldValue) => {
             { kind: '大百岳', done: 0, goal: 10, openSetgoal: false },
             { kind: '小百岳', done: 0, goal: 10, openSetgoal: false }
         ]
-        console.log('已重置進度資料')
+
     } else if (newValue === true) {
         // 登入時重新載入
         await progressData()
@@ -144,21 +137,18 @@ const openSetgoal = (item) => {
 }
 
 const updateGoal = (item, newGoal) => {
-    console.log('updateGoal 接收到:', { item: item.kind, newGoal })
+
     if (newGoal === undefined || newGoal === null || newGoal === '') {
-        console.error('新目標值無效:', newGoal)
+        // console.error('新目標值無效:', newGoal)
         return
     }
-    console.log('目前的 goals:', goals.value)
     
     const targetItem = goals.value.find(goal => goal.kind === item.kind)
-    console.log('找到的 targetItem:', targetItem)
     
     if (targetItem) {
         targetItem.goal = parseInt(newGoal) || 0 // 確保是數字
-        console.log('更新後的 goals:', goals.value)
     } else {
-        console.error('找不到對應的目標項目:', item.kind)
+        // console.error('找不到對應的目標項目:', item.kind)
         // 如果找不到，直接更新整個陣列中對應的項目
         const index = goals.value.findIndex(goal => goal.kind === item.kind)
         if (index !== -1) {

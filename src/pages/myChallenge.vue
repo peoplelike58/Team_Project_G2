@@ -95,27 +95,19 @@
     const API_URL = `${import.meta.env.VITE_AJAX_URL}/mychallenge_mountains.php`
 
     watch(isLoggedIn, async (newValue, oldValue) => {
-        console.log('登入狀態變化:', oldValue, '->', newValue)
         
         // 如果從登入變為登出
         if (oldValue === true && newValue === false) {
-            console.log('偵測到使用者已登出，清除頁面資料')
             
             // 重置所有山峰圖示為預設狀態
             mountains.value.forEach(mountain => {
                 mountain.icon = 'mountain.png'
             })
             
-            // 可以選擇重新載入資料或只是清除登入相關的資料
-            // await loadMountainsData() // 完全重新載入
-            
-            // 或者只清除使用者相關資料（較輕量）
-            console.log('已清除使用者相關的山峰標記')
         }
         
         // 如果從登出變為登入
         if (oldValue === false && newValue === true) {
-            console.log('偵測到使用者已登入，重新載入資料')
             await loadMountainsData()
         }
     })
@@ -157,7 +149,6 @@
                     openWindows.value[mountain.name] = false
                 })
                 
-                console.log('山峰資料載入完成，登入狀態:', isLoggedIn.value)
             } else {
                 console.error('API 請求失敗:', res.data)
             }
@@ -190,36 +181,30 @@
     }
 
     const handleRefreshStats = async () => {
-        console.log('收到刷新請求，正在重新載入累積數據...')
 
             try {
                 // 1. 刷新 info 組件的數據
                 if (infoRef.value && typeof infoRef.value.refreshStats === 'function') {
                     await infoRef.value.refreshStats()
-                    console.log('累積數據已刷新')
                 }
 
                 // 2. 刷新 progress 組件的數據
                 if (progressRef.value && typeof progressRef.value.progressData === 'function') {
                     await progressRef.value.progressData()
-                    console.log('進度數據已刷新')
                 }
 
                 // 3. 刷新 history 組件的數據
                 if (historyRef.value && typeof historyRef.value.loadHistories === 'function') {  // ✅ 移除 showHistory 條件
                     await historyRef.value.loadHistories()  // ✅ 保留函數調用
-                    console.log('歷史數據已刷新')
                 }
 
                 // 4. 刷新 ranking 組件的數據
                 if (rankingRef.value && typeof rankingRef.value.refreshRanking === 'function') {
                     await rankingRef.value.refreshRanking()
-                    console.log('排行榜數據已刷新')
                 }
 
                 // 5. 重新載入山峰狀態
                 await loadMountainsData()
-                console.log('山峰狀態已更新')
 
             } catch (error) {
                 console.error('刷新數據時發生錯誤:', error)
@@ -230,7 +215,6 @@
     const goalStore = useGoalStore()
 
     function handleGpxSave({ mountain, coords }) {
-        console.log("上傳 GPX 給", mountain, coords)
 
         // 找到對應山
         const target = mountains.value.find(m => m.name === mountain)
@@ -243,7 +227,6 @@
         for (const [lon, lat] of coords) {
             const gpxPoint = turf.point([lon, lat])
             const distance = turf.distance(mountainPoint, gpxPoint, { units: "kilometers" })
-            console.log("距離:", mountain, "vs", [lon, lat], "=", distance, "km")
 
             if (distance < 0.01) {
                 climbed = true
@@ -280,10 +263,6 @@
                 }
             }
 
-            } else {
-                if (coords && coords.length > 0) {
-                    alert(`${mountain}：GPX 沒有登頂紀錄，沒有插旗子！`)
-                }
             }
         }
 
@@ -299,7 +278,6 @@
         recordStore.loadAllRecords()
         goalStore.loadFromStorage()
         
-        console.log('頁面載入完成，開始監聽登入狀態變化')
         })
 
 </script>
@@ -393,6 +371,10 @@
                 font-weight: $semiBold;
                 line-height: $lineHeight-p-150;
                 text-align: center;
+
+                @media screen and (max-width: 440px) {
+                    font-size: $pcFont-H3;
+                }
             }
 
             @media screen and (max-width: 1200px) {
@@ -405,10 +387,10 @@
             @media screen and (max-width: 768px) {
                 box-sizing: border-box;
                 width: 100%;
-                padding: 32px 16px;
+                padding: 32px;
             }
 
-            @media screen and (max-width: 430px) {
+            @media screen and (max-width: 585px) {
                 box-sizing: border-box;
                 width: 100%;
                 padding: 32px 16px;

@@ -1,8 +1,9 @@
 <?php
-    session_start();
-
     // 導入資料庫連線的資料檔
     include 'conn.php'; 
+
+    session_start();
+
     //---------------------------------------------------
     if (!isset($_SESSION['member']['id']) || empty($_SESSION['member']['id'])) {
         $response = [

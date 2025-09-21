@@ -1,3 +1,4 @@
+<!-- LoginPage_myorder.vue 我的訂單頁面 -->
 <script setup>
 import { ref, onMounted } from 'vue'
 
@@ -13,7 +14,6 @@ const fetchOrderData = async () => {
 try{
   isLoading.value = true // 開始載入
   errorMessage.value = '' // 清空錯誤訊息
-
   const response = await fetch(import.meta.env.VITE_AJAX_URL + '/ShopPage_getOrder.php', {
         method: 'POST',
         headers: {
@@ -24,9 +24,9 @@ try{
         body: JSON.stringify({})
     })
 
-    if (!response.ok) {
-        throw new Error(`HTTP錯誤: ${response.status}`)
-    }
+    // if (!response.ok) {
+    //     throw new Error(`HTTP錯誤: ${response.status}`)
+    // }
     const result = await response.json()
 
     // 檢查API回傳狀態
@@ -72,16 +72,16 @@ onMounted(async() => {
       <h1 class="page-title">我的訂單</h1>
     </div>
 
-    <!-- 【新增】載入中狀態 -->
+    <!-- 載入中狀態 -->
     <div v-if="isLoading" class="loading-state">
       <p>載入中...</p>
     </div>
 
-    <!-- 【新增】錯誤訊息顯示 -->
-    <div v-else-if="errorMessage" class="error-state">
+    <!-- 錯誤訊息顯示 -->
+    <!-- <div v-else-if="errorMessage" class="error-state">
       <p class="error-message">{{ errorMessage }}</p>
       <button @click="fetchOrderData" class="retry-btn">重新載入</button>
-    </div>
+    </div> -->
 
     <!-- 訂單列表表格 -->
     <div v-else class="orders-table">
@@ -172,7 +172,7 @@ onMounted(async() => {
     }
   }
   
-  /* 【新增】載入中狀態樣式 */
+  /* 載入中狀態樣式 */
   .loading-state {
     @include flexcenter(0, column);
     padding: 60px 20px;
@@ -184,7 +184,7 @@ onMounted(async() => {
     }
   }
   
-  /* 【新增】錯誤狀態樣式 */
+  /* 錯誤狀態樣式 */
   .error-state {
     @include flexcenter(16px, column);
     padding: 60px 20px;

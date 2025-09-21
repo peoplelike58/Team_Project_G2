@@ -6,7 +6,6 @@
         </div>
         <div class="title">
             <h2>[ 歷史足跡 ]</h2>
-                <p>💡 雙擊山名可顯示完整名稱</p>
         </div>
         <div class="myhistory">
             <div class="myhistoryTitle">
@@ -16,11 +15,7 @@
             <article class="myhistoryMountain" v-for="(history, index) in histories" >
                 <div class="mountainTitle">
                     <div class="mountainTitleLeft" @click="toggle(index)">
-                        <h4 class="mountain"
-                            :class="{ 'show-full': showFullName === index }"
-                            @dblclick="toggleFullName(index)"
-                            :title="history.name"                      
-                        >{{ history.name }}</h4>
+                        <h4 class="mountain" :title="history.name">{{ history.name }}</h4>
                         <h4>{{ history.date }}</h4>
                     </div>
                     <img 
@@ -64,7 +59,6 @@ import axios from 'axios'
 
     // --- 1.控制手風琴開關 ---
     const openItem = ref(null)     // 全關
-    const showFullName = ref(null)
 
     const toggle = (index) => {
         if(openItem.value == index){
@@ -74,24 +68,6 @@ import axios from 'axios'
             // 如果點擊的是其他項目 → 展開它（同時會關閉之前展開的）
             openItem.value = index
         }
-    }
-
-    const isMobile = computed(() => {
-        return window.innerWidth <= 768
-    })
-
-    const toggleFullName = (index) => {
-        if(showFullName.value === index){
-            showFullName.value = null
-        }else{
-            showFullName.value = index
-        }
-        
-        setTimeout(() => {
-            if(showFullName.value === index) {
-                showFullName.value = null
-            }
-        }, 3000)
     }
 
     // --- 2.emit 傳遞事件 ---
@@ -112,7 +88,6 @@ import axios from 'axios'
     const loadHistories = async () => {
          if (!props.isLoggedIn) {
             histories.value = []
-            console.log('用戶未登入，清空歷史資料')
             return
         }
 
@@ -128,32 +103,26 @@ import axios from 'axios'
                 if (props.isLoggedIn) {
                     // 已登入且有資料
                     histories.value = response.data.data || []
-                    console.log('歷史資料載入成功:', response.data)
                 } else {
                     // 未登入
                     histories.value = []
-                    console.log('用戶未登入')
-                    console.log('Session 內容:', response.data.session_data)
                 }
             } else {
                 histories.value = []
-                console.log('無歷史資料或未登入')
             }
             
         } catch (err) {
-            console.error("讀取失敗:", err)
+            // console.error("讀取失敗:", err)
             histories.value = []
         }
     }
 
     watch(() => props.isLoggedIn, async (newValue, oldValue) => {
-        console.log('History 組件：登入狀態變化', oldValue, '->', newValue)
         
         if (newValue === false) {
             // 登出時清空資料
             histories.value = []
             openItem.value = null  // 關閉所有展開項目
-            console.log('已清空歷史資料')
         } else if (newValue === true) {
             // 登入時重新載入
             await loadHistories()
@@ -213,15 +182,6 @@ import axios from 'axios'
                 font-size: $pcFont-H2;
                 font-weight: $semiBold;
             }
-            p{
-                font-size: $pcFont-H4;
-                align-self: flex-end;
-                
-                
-                @media (min-width: 769px) {
-                    display: none;
-                }
-            }
         }
 
         .myhistoryTitle{
@@ -277,18 +237,6 @@ import axios from 'axios'
                             overflow: hidden;
                             white-space: nowrap;
                             text-overflow: ellipsis;
-                            
-                            // hover 顯示完整內容
-                            &:hover {
-                                overflow: visible;
-                                white-space: normal;
-                                background-color: rgba(255, 255, 255, 0.9);
-                                padding: 2px 4px;
-                                border-radius: 4px;
-                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                                position: relative;
-                                z-index: 10;
-                            }
                             
                             &::after{
                                 content: '';

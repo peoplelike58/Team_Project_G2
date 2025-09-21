@@ -3,19 +3,59 @@ import { ref, onMounted } from 'vue'
 
 // 優惠券資料
 const coupons = ref([
-  {
-    id: 1,
-    name: '歡迎新朋友',
-    discount: 'NT 200',
-    expiryDate: '入會後一個月',
-    usageRule: '單筆消費滿1000立減200元',
-    isExpired: false
-  }
+  // {
+  //   id: 1,
+  //   name: '歡迎新朋友',
+  //   discount: 'NT 200',
+  //   expiryDate: '入會後一個月',
+  //   usageRule: '單筆消費滿1000立減200元',
+  //   isExpired: false
+  // }
 ])
+
+
+const isLoading = ref(false)        // 載入狀態
+
+// 從API載入訂單資料的函數
+const fetchOrderData = async () => {
+try{
+  isLoading.value = true // 開始載入
+  errorMessage.value = '' // 清空錯誤訊息
+  const response = await fetch(import.meta.env.VITE_AJAX_URL + '/ShopPage_getOrder.php', {
+        method: 'POST',
+        headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({})
+    })
+
+    // if (!response.ok) {
+    //     throw new Error(`HTTP錯誤: ${response.status}`)
+    // }
+    const result = await response.json()
+
+    // 檢查API回傳狀態
+    if (result.success) {
+      orders.value =result.orders // 將API回傳的資料指派給orders
+    } else {
+      errorMessage.value = response.data.message || '載入訂單資料失敗'
+    }
+    
+  } catch (error) {
+    // 處理網路錯誤或其他異常
+    console.error('載入訂單資料時發生錯誤:', error)
+    errorMessage.value = '網路連線錯誤，請稍後再試'
+  } finally {
+    isLoading.value = false // 結束載入
+  }
+}
 
 onMounted(() => {
   // 載入優惠券資料的API呼叫
-})
+
+  })
 </script>
 
 <template>
