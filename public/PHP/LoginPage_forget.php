@@ -150,10 +150,12 @@ function base64url_encode($data) {
  */
 function sendVerificationCodeEmail($email, $name, $code) {
     try {
+        error_log("開始發送郵件到: " . $email);
+
         $mail = new PHPMailer(true);
 
          // 啟用詳細除錯
-        $mail->SMTPDebug = 0; // 開發時使用，正式環境改為 0
+        $mail->SMTPDebug = 2; // 開發時使用，正式環境改為 0
         $mail->Debugoutput = 'error_log';
         
         // 伺服器設定
