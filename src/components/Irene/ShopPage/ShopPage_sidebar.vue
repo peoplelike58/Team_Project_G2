@@ -1,3 +1,4 @@
+<!-- ShopPage_sidebar.vue 商城側邊篩選欄 -->
 <script setup>
 import{ref,defineEmits} from 'vue';
 
@@ -304,6 +305,15 @@ aside{
       }
     }
   }
+  aside.filters{
+    width: 80%;
+  }
 }
 
+@media (max-width: 430px) {
+  aside.filters{
+    width: 90%;
+  }
+
+}
 </style>
