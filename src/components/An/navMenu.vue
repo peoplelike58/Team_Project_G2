@@ -204,7 +204,7 @@ function go(item) {
     display: flex; 
     justify-content: space-between; 
     align-items: flex-end; 
-    gap: auto; 
+    gap: 64px;
     
     width: 100%; 
     height: 100%;

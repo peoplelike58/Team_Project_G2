@@ -16,7 +16,7 @@ try{
 
   const response = await fetch(import.meta.env.VITE_AJAX_URL + '/ShopPage_getOrder.php', {
         method: 'POST',
-        headers: { 
+        headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
         },

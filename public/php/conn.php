@@ -36,7 +36,8 @@
       // ============== 新的 CORS 設定（支援本地+正式機）==============
       $allowed = [                          // 允許的來源域名白名單
           'http://localhost:5173',          // 本地開發
-          'https://tibamef2e.com/tjd102/g2/'           // 正式環境
+          'http://localhost',
+          'https://tibamef2e.com'           // 正式環境
           
       ];
       
@@ -49,6 +50,15 @@
           header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
       }
       header('Content-Type: application/json; charset=utf-8');
+      // ---- Session 設定（要在 session_start() 前）----
+      // 正式站 HTTPS 再打開 secure；本機請先保留關閉或註解
+      session_set_cookie_params([
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+            // 'secure' => true,
+      ]);
+      session_start();
       
       // 處理瀏覽器的預檢請求（某些情況下瀏覽器會先發 OPTIONS 請求確認權限）
       if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {

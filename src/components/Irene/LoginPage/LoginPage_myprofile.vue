@@ -16,6 +16,7 @@
           <label class="form-label">頭像</label>
           <div class="avatar-upload">
             <div class="avatar-preview">
+              <!-- <img v-if="user && user.avatarUrl" :src="user.avatarUrl" alt="Google 頭像"/> -->
               <img :src="user.profile.avatarUrl || `${BASE}images/Products/default-avatar.jpg`" alt="頭像" />
             </div>
             <div v-if="user.loading.uploadingAvatar" class="upload-loading">

@@ -20,6 +20,5 @@ export default defineConfig({
             '^': fileURLToPath(new URL('./public', import.meta.url))
         }
     },
-
 })
 

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useAuthStore } from '@/stores/auth.js'
 import Member from './member' //會員中心
 
 
@@ -59,6 +60,7 @@ const frontroutes = [
   },
   {
     path: '/homepage',
+    name: 'home',
     component: homePage,
   },
   {
@@ -181,47 +183,89 @@ const router = createRouter({
 })
 
 // 後台登入阻擋
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('auth') === 'true'
-  const isLoginPage = to.path === '/login'
+// router.beforeEach((to, from, next) => {
+//   const isAuthenticated = localStorage.getItem('auth') === 'true'
+//   const isLoginPage = to.path === '/login'
 
-  if (!isAuthenticated && to.path.startsWith('/admin') && !isLoginPage) {
-    next('/login')
-  } else {
-    next()
-  }
-})
+//   if (!isAuthenticated && to.path.startsWith('/admin') && !isLoginPage) {
+//     next('/login')
+//   } else {
+//     next()
+//   }
+// })
 
 // 前置守門員(這邊要修改isLoggedIn的條件和async 函數-因為 hydrateFromSession() 會去呼叫後端的 CheckLogin.php 裡面有非同步操作)
-router.beforeEach(async(to, from, next) => {
-  const user = useUserStore()
-  console.log(`從 ${from.path} 跳轉到 ${to.path}`)
+// router.beforeEach(async(to, from, next) => {
+//   const user = useUserStore()
+//   console.log(`從 ${from.path} 跳轉到 ${to.path}`)
 
-  // hydrateFromSession() 需在 store 裡實作，呼叫 CheckLogin.php 後把 email/name 寫回 state
-  // const isLoggedIn = localStorage.getItem('email') //判讀是否有email值,改成從使用pinia作為登入的條件
+//   // hydrateFromSession() 需在 store 裡實作，呼叫 CheckLogin.php 後把 email/name 寫回 state
+//   // const isLoggedIn = localStorage.getItem('email') //判讀是否有email值,改成從使用pinia作為登入的條件
   
-  // 如果本地沒有登入狀態，且沒在檢查中，就先檢查伺服器
-  if (!user.isLoggedIn && !user.loading.loginChecking) {
-    console.log('檢查伺服器登入狀態...')
-    await user.hydrateFromSession()  // 等待檢查完成
-  }
-  const isLoggedIn = user.isLoggedIn// 取得最新登入狀態（回傳 boolean）
+//   // 如果本地沒有登入狀態，且沒在檢查中，就先檢查伺服器
+//   if (!user.isLoggedIn && !user.loading.loginChecking) {
+//     console.log('檢查伺服器登入狀態...')
+//     await user.hydrateFromSession()  // 等待檢查完成
+//   }
+//   const isLoggedIn = user.isLoggedIn// 取得最新登入狀態（回傳 boolean）
   
 
   
-  if (to.meta.requiresAuth && !isLoggedIn) {//登入判斷:若頁面標記 requiresAuth，但沒有 email，就導去 /login。
-    alert('請先登入！')
-    next('/loginregister')
-    return
-  }
+//   if (to.meta.requiresAuth && !isLoggedIn) {//登入判斷:若頁面標記 requiresAuth，但沒有 email，就導去 /login。
+//     alert('請先登入！')
+//     next('/loginregister')
+//     return
+//   }
   
-  if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {//防止已登入再進登入頁,→ 登入狀態下去 /member，會自動導回會員中心。
-    next({ name: 'member-profile' })
-    return
-  }
-  next()
+//   if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {//防止已登入再進登入頁,→ 登入狀態下去 /member，會自動導回會員中心。
+//     next({ name: 'member-profile' })
+//     return
+//   }
+//   next()
+// })
+
+
+router.beforeEach(async (to, from, next) => {
+    const userStore = useUserStore()
+    const auth = useAuthStore()
+
+    // 還原登入狀態（兩邊都試一次，誰成功算誰）
+    // - auth.fetchMe(): 給 Google 登入（/api/me 讀 Cookie）
+    // - userStore.hydrateFromSession(): 你原本的 PHP Session 檢查
+    try {
+        if (auth.user === null) {
+            await auth.fetchMe()
+        }
+    } catch (_) {}
+    try {
+        if (!userStore.isLoggedIn && !userStore.loading.loginChecking) {
+            await userStore.hydrateFromSession()
+        }
+    } catch (_) {}
+
+    // 最終登入布林（任一來源為真就算登入）
+    const isLoggedIn = !!auth.user || userStore.isLoggedIn
+
+    // 後台保護（把原本 localStorage('auth') 那段移除，統一用 isLoggedIn）
+    if (to.path.startsWith('/admin') && !isLoggedIn) {
+        return next('/backlogin')  // 你專案的後台登入頁
+    }
+
+    // 一般需要登入的頁面（依你的 meta.requiresAuth）
+    if (to.meta?.requiresAuth && !isLoggedIn) {
+        alert('請先登入！')
+        return next({ name: 'loginregister-fontrelogin' })
+    }
+
+    // 訪客頁保護（已登入就不要再去登入/註冊）
+    if ((to.path === '/Member' || to.path.startsWith('/loginregister')) && isLoggedIn) {
+        return next({ name: 'member-profile' })
+    }
+
+    // 其他放行
+    next()
+
 })
-
 
 export default router
 
