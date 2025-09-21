@@ -21,9 +21,9 @@
         </div>
             
         <!-- CTA -->
-        <a v-if="item.ctaUrl" class="ac-cta" :href="'/together' + item.ctaUrl" @click.stop="handleCtaClick">
+        <RouterLink v-if="item.ctaUrl" class="ac-cta" :to="`/together${item.ctaUrl}`" @click.stop="handleCtaClick">
             查看詳情
-        </a>
+        </RouterLink>
     </article>
 </template>
 

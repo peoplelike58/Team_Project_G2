@@ -47,7 +47,7 @@
             <!-- 右欄：列表 -->
             <aside class="right">
                 <ul class="route-list">
-                    <li
+                    <RouterLink
                         v-for="route in routes"
                         :key="route.MOUNTAIN_ID"
                         class="route-item"
@@ -55,6 +55,7 @@
                         @mouseenter="onHoverEnter(route)"
                         @focus="onHoverEnter(route)"
                         :class="{ 'is-hovered': hoveredRoute && hoveredRoute.MOUNTAIN_ID === route.MOUNTAIN_ID }"
+                        :to="`/routes/${route.MOUNTAIN_ID}`"
                     >
                         <div class="left-part">
                             <img :src="`${baseUrl}images/Mountain/${route.MOUNTAIN_ID}/${route.IMAGE}`" alt="" class="avatar"/>
@@ -69,7 +70,7 @@
                                 <polyline points="8,5 19,5 19,16" class="head"/>
                             </svg>
                         </button>
-                    </li>
+                    </RouterLink>
                 </ul>
             </aside>
         </div>
@@ -263,6 +264,7 @@ onMounted(() => {
     justify-content: space-between;
     padding: 16px 12px;
     border-bottom: 1px dashed $black-14;
+    text-decoration: none;
 
     cursor: pointer;
 }
@@ -336,6 +338,7 @@ onMounted(() => {
     place-items: center;
     overflow: hidden;
     transition: transform 0.4s ease;
+    cursor: pointer;
 
     position: relative;
 }

@@ -16,7 +16,7 @@
             >
                 <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="dataItem.MEMBER_ID + '-' + dataIndex">
                     <article class="carousel-card" role="listitem">
-                        <img class="card-image" :src="dataItem.image" :alt="dataItem.name + ' 的照片'" />
+                        <img class="card-image" :src="avatarSrc(dataItem.image)" :alt="dataItem.name + ' 的照片'" />
                         <div class="card-meta">
                             <div class="card-name">{{ dataItem.name }}</div>
                             <div class="card-stats">
@@ -38,7 +38,7 @@
             >
                 <template v-for="(dataItem, dataIndex) in duplicatedDataList" :key="dataItem.MEMBER_ID + '-' + dataIndex">
                     <article class="carousel-card" role="listitem">
-                        <img class="card-image" :src="dataItem.image" :alt="dataItem.name + ' 的照片'" />
+                        <img class="card-image" :src="avatarSrc(dataItem.image)" :alt="dataItem.name + ' 的照片'" />
                         <div class="card-meta">
                             <div class="card-name">{{ dataItem.name }}</div>
                             <div class="card-stats">
@@ -62,11 +62,16 @@ const originalDataList = ref([])
 const isPaused = ref(false)
 
 const USE_FAKE = false
+const BASE = import.meta.env.BASE_URL
+
 const API_URL = USE_FAKE
-    ? import.meta.env.BASE_URL  + 'json/homepage/hallOfFame.json'
+    ? BASE + 'json/homepage/hallOfFame.json'
     : `${import.meta.env.VITE_AJAX_URL}/mychallenge_rank.php`
 
-  
+const avatarSrc = (image) => {
+    return `${BASE}uploads/avatars/${image || 'default-avatar.png'}`
+}
+
 onMounted(async () => {
     try {
         const { data } = await axios.get(API_URL)
