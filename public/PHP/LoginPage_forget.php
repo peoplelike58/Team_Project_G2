@@ -149,14 +149,18 @@ function base64url_encode($data) {
  * 使用PHPMailer發送驗證碼郵件
  */
 function sendVerificationCodeEmail($email, $name, $code) {
+    $debugFile = __DIR__ . '/email_debug.log';
+    
     try {
-        error_log("開始發送郵件到: " . $email);
-
+        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 開始發送郵件到: " . $email . "\n", FILE_APPEND);
+        
         $mail = new PHPMailer(true);
 
-         // 啟用詳細除錯
-        $mail->SMTPDebug = 2; // 開發時使用，正式環境改為 0
-        $mail->Debugoutput = 'error_log';
+        // 啟用詳細除錯
+        $mail->SMTPDebug = 2;
+        $mail->Debugoutput = function($str, $level) use ($debugFile) {
+            file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] SMTP: " . trim($str) . "\n", FILE_APPEND);
+        };
         
         // 伺服器設定
         $mail->isSMTP();
@@ -181,7 +185,7 @@ function sendVerificationCodeEmail($email, $name, $code) {
             )
         );
 
-        error_log("SMTP 設定完成，準備設定收件人");
+        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] SMTP 設定完成，準備設定收件人\n", FILE_APPEND);
         
         // 寄件人設定
         $mail->setFrom('shanshangjian28560@gmail.com', '山上見');
@@ -202,19 +206,19 @@ function sendVerificationCodeEmail($email, $name, $code) {
 如果您沒有請求重設密碼，請忽略此郵件。
         ";
 
-        error_log("郵件內容設定完成，開始發送");
+        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 郵件內容設定完成，開始發送\n", FILE_APPEND);
         
         $mail->send();
-        error_log("郵件發送成功到: " . $email);
+        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 郵件發送成功到: " . $email . "\n", FILE_APPEND);
         return true;
         
     } catch (Exception $e) {
-        error_log("郵件發送失敗詳細訊息: " . $e->getMessage());
-        error_log("PHPMailer ErrorInfo: " . $mail->ErrorInfo);
+        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 郵件發送失敗: " . $e->getMessage() . "\n", FILE_APPEND);
+        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] PHPMailer ErrorInfo: " . $mail->ErrorInfo . "\n", FILE_APPEND);
         
         // 如果是認證錯誤，給出更具體的提示
         if (strpos($e->getMessage(), 'Authentication') !== false) {
-            error_log("認證失敗 - 請檢查 Gmail 應用程式密碼是否正確");
+            file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 認證失敗 - 請檢查 Gmail 應用程式密碼是否正確\n", FILE_APPEND);
         }
         
         return false;
