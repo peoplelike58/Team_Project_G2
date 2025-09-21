@@ -198,16 +198,17 @@ const router = createRouter({
 })
 
 // 後台登入阻擋
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = localStorage.getItem('auth') === 'true'
-//   const isLoginPage = to.path === '/login'
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('auth') === 'true'
+  const isLoginPage = to.path === '/login'
 
-//   if (!isAuthenticated && to.path.startsWith('/admin') && !isLoginPage) {
-//     next('/login')
-//   } else {
-//     next()
-//   }
-// })
+  if (!isAuthenticated && to.path.startsWith('/admin') && !isLoginPage) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+
 
 // 前置守門員(這邊要修改isLoggedIn的條件和async 函數-因為 hydrateFromSession() 會去呼叫後端的 CheckLogin.php 裡面有非同步操作)
 router.beforeEach(async(to, from, next) => {
@@ -242,6 +243,12 @@ router.beforeEach(async(to, from, next) => {
 
 // router.beforeEach(async (to, from, next) => {
 //   const userStore = useUserStore()
+//   const auth = useAuthStore()
+
+//   // 還原登入狀態（Google / PHP 任一成功即視為登入）
+//   try {
+//     if (auth.user === null) await auth.fetchMe()
+//   } catch (_) {}
 
 //   try {
 //     if (!userStore.isLoggedIn && !userStore.loading.loginChecking) {
@@ -249,7 +256,7 @@ router.beforeEach(async(to, from, next) => {
 //     }
 //   } catch (_) {}
 
-//   const isLoggedIn = userStore.isLoggedIn
+//   const isLoggedIn = !!auth.user || userStore.isLoggedIn
 
 //   // 後台保護
 //   if (to.path.startsWith('/admin') && !isLoggedIn) {
@@ -276,9 +283,9 @@ router.beforeEach(async(to, from, next) => {
 //   next()
 // })
 
-router.afterEach((to) => {                                         // 每次路由切換後執行 // 繁中註解
-  document.title = to.meta?.title || '山上見'                      // 如果有meta.title就用，否則用預設 // 繁中註解
-})
+// router.afterEach((to) => {                                         // 每次路由切換後執行 // 繁中註解
+//   document.title = to.meta?.title || '山上見'                      // 如果有meta.title就用，否則用預設 // 繁中註解
+// })
 
 export default router
 
