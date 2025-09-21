@@ -298,7 +298,6 @@ router.beforeEach(async (to, from, next) => {
     return
   }
   next()
-})
 
 router.afterEach((to) => {                                         // 每次路由切換後執行 // 繁中註解
   document.title = to.meta?.title || '山上見'                      // 如果有meta.title就用，否則用預設 // 繁中註解
