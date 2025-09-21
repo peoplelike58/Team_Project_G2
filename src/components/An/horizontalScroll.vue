@@ -32,8 +32,9 @@
             </div>
         </article>
         <article class="card card3" ref="card3Ref">
-            <div class="card-inner">
-                
+            <div class="badge">PLANT YOUR FLAG</div>
+            <div class="card-inner-3">
+                <h3 class="content-title">「 插上你的旗幟，寫下你的專屬百岳篇章 」</h3>
             </div>
         </article>
     </div>
@@ -170,6 +171,20 @@
     box-sizing: border-box;
 }
 
+.card-inner-3{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.card-inner-3 .content-title{
+    position: absolute;
+    right: 20%;
+    bottom: 12%;
+
+    color: aliceblue;
+}
+
 .badge{
     position: absolute;
     top: 120px;
@@ -244,7 +259,10 @@
     z-index: 2;
 }
 .card3 {
-    background-color: $ivory-gray-100;
+    background-image: url(./img/FlagMan_1.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
     z-index: 3;
 }
 
@@ -264,7 +282,7 @@
         justify-content: center;
         gap: 32px;
 
-        padding: 0 24px;
+        padding: 0 40px;
     }
     .card1-left-col .title {
         font-size: $pcFont-bigTitle-m;
@@ -302,10 +320,20 @@
     .card-inner-2 .right-tilt {
         align-self: flex-end;
     }
+    .card-inner-3 .content-title {
+        font-size: $pcFont-H4;
+        line-height: $lineHeight-p-150;
+        padding: 0 24px;
+        bottom: 20%;
+    }
 }
 @media (max-width: 430px) {
     .stack-wrap .card {
         height: 86%;
+    }
+    .card-inner-3 .content-title {
+        right: 12%;
+        bottom: 12%;
     }
 }
 </style>

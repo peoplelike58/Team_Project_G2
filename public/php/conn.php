@@ -61,10 +61,10 @@
     //   session_start();
       
     // 處理瀏覽器的預檢請求（某些情況下瀏覽器會先發 OPTIONS 請求確認權限）
-    if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-          http_response_code(204);
-          exit;
-      }
+    // if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+    //       http_response_code(204);
+    //       exit;
+    //   }
 
 
 

@@ -76,6 +76,15 @@ const name = computed( () => {
     else return user.profile.nickname
 } )
 
+const maxName = computed(()=>{
+    const arr = Array.from(name.value)
+    if ( arr.length > 8 ) {
+        return arr.slice(0,8).join('')+'...'
+    }else{
+        return name.value
+    }
+})
+
 
 const menuItems = computed( () => [
     { label: '首頁', path: 'homepage' },
@@ -89,7 +98,7 @@ const menuItems = computed( () => [
     // { label: '會員中心', path: 'Member' },
 
     user.isLoggedIn
-        ? { label: name ?? `會員#${user.id}`, avatar: avatar.value, path: 'Member'  }
+        ? { label: maxName ?? `會員#${user.id}`, avatar: avatar.value, path: 'Member'  }
         : { label: '會員登入', path: 'Member' }
 ] )
 
