@@ -57,17 +57,20 @@ const props = defineProps({
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 952px;
+    max-width: 1000px;
+    width: 100%;
     margin: 0 auto;
-    padding: 16px 0;
+    padding: 16px 24px;
     gap: 16px;
 }
   
 .filter-tags {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
   
     button {
+        display: inline-block;
         background: none;
         border: none;
         cursor: pointer;
@@ -75,6 +78,10 @@ const props = defineProps({
         padding: 8px 12px;
         border-radius: 4px;
         transition: all 0.3s;
+
+        white-space: nowrap;
+        flex-shrink: 0;
+        width: auto;
   
         &.active {
             background: #4caf50;
@@ -98,10 +105,10 @@ const props = defineProps({
     }
   
     .search-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
     }
 }
 
@@ -111,17 +118,14 @@ const props = defineProps({
         margin-bottom: 40px;
     }
     .filter-bar {
-        padding: 16px 24px;
+        flex-direction: column;
+        align-items: start;
     }
 }
 
 @media (max-width: 430px) {
     .breadcrumb {
         margin-bottom: 24px;
-    }
-    .filter-bar {
-        flex-direction: column;
-        align-items: start;
     }
     .filter-tags{
         button {
