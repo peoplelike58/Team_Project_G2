@@ -16,7 +16,7 @@ import CrudPage from '@/components/common/CrudPage.vue'
 const columns = [
   { prop: 'NEWS_ID', label: '文章編號' , disabled: true },
   { prop: 'UPLOAD_AT', label: '上架日期' ,type:"date"},
-  { prop: 'TYPE', label: '分類' },
+  { prop: 'TYPE', label: '分類', type:'select', options:[{label:'新聞時事',value:'新聞時事'},{label:'登山知識',value:'登山知識'},{label:'路線旅遊',value:'路線旅遊'},{label:'話題',value:'話題'}] },
   { prop: 'TITLE', label: '標題' },
   { prop: 'STATUS', label: '上下架', type:'select', options:[{label:'上架',value:'上架'},{label:'下架',value:'下架'}] },
   { prop: 'UPDATED_AT', label: '最後更新日期' ,type:"date"}
