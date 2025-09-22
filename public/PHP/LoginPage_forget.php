@@ -149,34 +149,19 @@ function base64url_encode($data) {
  * 使用PHPMailer發送驗證碼郵件
  */
 function sendVerificationCodeEmail($email, $name, $code) {
-    $debugFile = __DIR__ . '/email_debug.log';
     
-    try {
-        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 開始發送郵件到: " . $email . "\n", FILE_APPEND);
-        
+    try {        
         $mail = new PHPMailer(true);
-
-        // 啟用詳細除錯
-        $mail->SMTPDebug = 2;
-        $mail->Debugoutput = function($str, $level) use ($debugFile) {
-            file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] SMTP: " . trim($str) . "\n", FILE_APPEND);
-        };
         
-        // Brevo SMTP 設定
+        // 伺服器設定
         $mail->isSMTP();
-        $mail->Host       = 'smtp-relay.brevo.com';
+        $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = '97858d001@smtp-brevo.com';
-        $mail->Password   = 'SO1TabgvAtGp95K2';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   // 改用 STARTTLS
-        $mail->Port       = 587;                          // 改用 587 port
+        $mail->Username   = 'shanshangjian28560@gmail.com';
+        $mail->Password   = 'vzpsmdhrrmqzsbnq';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
-
-        // 增加連線逾時設定
-        $mail->Timeout = 60;
-        $mail->SMTPKeepAlive = true;
-
-        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] Brevo SMTP 設定完成，準備設定收件人\n", FILE_APPEND);
 
         // 寄件人設定
         $mail->setFrom('shanshangjian28560@gmail.com', '山上見');
@@ -196,22 +181,12 @@ function sendVerificationCodeEmail($email, $name, $code) {
 
 如果您沒有請求重設密碼，請忽略此郵件。
         ";
-
-        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 郵件內容設定完成，開始發送\n", FILE_APPEND);
         
         $mail->send();
-        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 郵件發送成功到: " . $email . "\n", FILE_APPEND);
         return true;
         
     } catch (Exception $e) {
-        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 郵件發送失敗: " . $e->getMessage() . "\n", FILE_APPEND);
-        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] PHPMailer ErrorInfo: " . $mail->ErrorInfo . "\n", FILE_APPEND);
-        
-        // 如果是認證錯誤，給出更具體的提示
-        if (strpos($e->getMessage(), 'Authentication') !== false) {
-            file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] 認證失敗 - 請檢查 Gmail 應用程式密碼是否正確\n", FILE_APPEND);
-        }
-        
+        error_log("郵件發送失敗: " . $e->getMessage());
         return false;
     }
 }
