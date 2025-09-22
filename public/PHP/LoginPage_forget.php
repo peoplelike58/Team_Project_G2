@@ -162,30 +162,22 @@ function sendVerificationCodeEmail($email, $name, $code) {
             file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] SMTP: " . trim($str) . "\n", FILE_APPEND);
         };
         
-        // 伺服器設定 - 改用 465 port 和 SMTPS
+        // Brevo SMTP 設定
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
+        $mail->Host       = 'smtp-relay.brevo.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'shanshangjian28560@gmail.com';
-        $mail->Password   = 'vzpsmdhrrmqzsbnq';
+        $mail->Password   = 'SO1TabgvAtGp95K2';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   // 改用 STARTTLS
-        $mail->Port       = 2525;                          // 改用 2525 port
+        $mail->Port       = 587;                          // 改用 587 port
         $mail->CharSet    = 'UTF-8';
 
         // 增加連線逾時設定
         $mail->Timeout = 60;
         $mail->SMTPKeepAlive = true;
 
-        // 驗證 SSL 憑證（在某些伺服器上可能需要）
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            )
-        );
+        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] Brevo SMTP 設定完成，準備設定收件人\n", FILE_APPEND);
 
-        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] SMTP 設定完成 (Port 2525 STARTTLS)，準備設定收件人\n", FILE_APPEND);        
         // 寄件人設定
         $mail->setFrom('shanshangjian28560@gmail.com', '山上見');
         $mail->addAddress($email, $name);
