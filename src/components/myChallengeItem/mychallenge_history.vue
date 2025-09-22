@@ -12,9 +12,9 @@
                 <h3 class="mountainName">山名</h3>
                 <h3>上傳日期</h3>
             </div>
-            <article class="myhistoryMountain" v-for="(history, index) in histories" >
+            <article class="myhistoryMountain" v-for="(history, index) in histories" @click="toggle(index)">
                 <div class="mountainTitle">
-                    <div class="mountainTitleLeft" @click="toggle(index)">
+                    <div class="mountainTitleLeft">
                         <h4 class="mountain" :title="history.name">{{ history.name }}</h4>
                         <h4>{{ history.date }}</h4>
                     </div>

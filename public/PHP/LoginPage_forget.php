@@ -162,14 +162,14 @@ function sendVerificationCodeEmail($email, $name, $code) {
             file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] SMTP: " . trim($str) . "\n", FILE_APPEND);
         };
         
-        // 伺服器設定
+        // 伺服器設定 - 改用 465 port 和 SMTPS
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'shanshangjian28560@gmail.com';
         $mail->Password   = 'vzpsmdhrrmqzsbnq';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;   // 改用 SMTPS
+        $mail->Port       = 465;                          // 改用 465 port
         $mail->CharSet    = 'UTF-8';
 
         // 增加連線逾時設定
