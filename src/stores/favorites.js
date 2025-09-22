@@ -19,7 +19,7 @@ export const useFavoriteStore = defineStore('favorites',()=>{
       // return favorites.productIds.includes(Number(productId))
       const numericProductId = Number(productId)
       const result = favorites.productIds.includes(numericProductId)
-      console.log(`檢查收藏狀態: 商品${productId} -> ${result}`)
+      // console.log(`檢查收藏狀態: 商品${productId} -> ${result}`)
       return result
     }
 
@@ -69,19 +69,19 @@ export const useFavoriteStore = defineStore('favorites',()=>{
       
             if (result.success) {
                 //  直接修改陣列，reactive 會自動追蹤變化
-                console.log('載入的收藏資料：',result)
+                // console.log('載入的收藏資料：',result)
                 favorites.products = result.favorites || []
                 favorites.productIds = favorites.products.map(product => {
 
                   const id = product.id || product.product_id || product.PRODUCT_ID
                   const numericId = Number(id)
-                  console.log(`商品ID轉換: ${id} (${typeof id}) -> ${numericId} (${typeof numericId})`)
+                  // console.log(`商品ID轉換: ${id} (${typeof id}) -> ${numericId} (${typeof numericId})`)
                   return numericId
                 })
-                console.log(`載入收藏成功: ${favorites.products.length} 個商品`)
+                // console.log(`載入收藏成功: ${favorites.products.length} 個商品`)
                 return true
             } else {
-                console.error('載入收藏失敗:', result.message)
+                // console.error('載入收藏失敗:', result.message)
                 return false
             }
         } catch (error) {
