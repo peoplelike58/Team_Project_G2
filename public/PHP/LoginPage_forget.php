@@ -166,7 +166,7 @@ function sendVerificationCodeEmail($email, $name, $code) {
         $mail->isSMTP();
         $mail->Host       = 'smtp-relay.brevo.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'shanshangjian28560@gmail.com';
+        $mail->Username   = '97858d001@smtp-brevo.com';
         $mail->Password   = 'SO1TabgvAtGp95K2';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   // 改用 STARTTLS
         $mail->Port       = 587;                          // 改用 587 port
