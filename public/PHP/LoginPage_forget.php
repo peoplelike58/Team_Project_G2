@@ -168,8 +168,8 @@ function sendVerificationCodeEmail($email, $name, $code) {
         $mail->SMTPAuth   = true;
         $mail->Username   = 'shanshangjian28560@gmail.com';
         $mail->Password   = 'vzpsmdhrrmqzsbnq';
-        $mail->SMTPSecure = false;   // 改用 無加密
-        $mail->Port       = 25;                          // 改用 25 port
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   // 改用 STARTTLS
+        $mail->Port       = 2525;                          // 改用 2525 port
         $mail->CharSet    = 'UTF-8';
 
         // 增加連線逾時設定
@@ -185,7 +185,7 @@ function sendVerificationCodeEmail($email, $name, $code) {
             )
         );
 
-        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] SMTP 設定完成 (Port 25 無加密)，準備設定收件人\n", FILE_APPEND);        
+        file_put_contents($debugFile, "[" . date('Y-m-d H:i:s') . "] SMTP 設定完成 (Port 2525 STARTTLS)，準備設定收件人\n", FILE_APPEND);        
         // 寄件人設定
         $mail->setFrom('shanshangjian28560@gmail.com', '山上見');
         $mail->addAddress($email, $name);
