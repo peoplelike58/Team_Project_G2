@@ -438,14 +438,14 @@ const removeCheckedItems = async () => {
       //   如果全部失敗，恢復原始狀態
       cartItems.value = itemsBackup
       Object.assign(checkedMap, checkedBackup)
-      ElMessage.error('刪除失敗，請稍後再試')
+      // ElMessage.error('刪除失敗，請稍後再試')
     } else {
-      ElMessage.warning(`已刪除 ${successIds.length} 件商品，${failedIds.length} 件刪除失敗`)
+      // ElMessage.warning(`已刪除 ${successIds.length} 件商品，${failedIds.length} 件刪除失敗`)
     }
     
   } catch (error) {
     console.error('批量刪除發生錯誤:', error)
-    ElMessage.error('刪除失敗，請稍後再試')
+    // ElMessage.error('刪除失敗，請稍後再試')
   } finally {
     isLoading.value = false
   }

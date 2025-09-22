@@ -31,7 +31,7 @@ onMounted(async () => {
     console.log('購物車載入完成')
   } catch (error) {
     console.error('載入購物車失敗:', error)
-    ElMessage.error('載入購物車失敗，請重新整理頁面')
+    // ElMessage.error('載入購物車失敗，請重新整理頁面')
   }
 })
 
