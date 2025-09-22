@@ -463,17 +463,28 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
   }
 
   .noRude {
+    width: 240px;
+    text-align: center;
     display: flex;
     align-items: center;
     gap: 4px;
     font-size: 12px;
     margin-left: auto;
-    margin-right: 50px;
+    padding-left: 30px;
+    // margin-right: 50px;
+    // outline: 1px  solid red;
+    @include m(){
+      width: 220px;
+      padding-left: 20px;
+
+    }
 
     img {
       display: block;
       width: 16px;
       height: auto;
+      text-align: center;
+      
     }
   }
 
