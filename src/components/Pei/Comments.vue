@@ -277,7 +277,7 @@ watch(() => props.id, (n,o) => { if (n && n !== o) fetchComments() })
     <button class="writeBtn" @click="checkLogin">撰寫評論</button>
     <span class="noRude">
       <img src="../../../public/images/icon/alert.svg" alt="警示icon" />
-      禁止輸入不雅字眼
+      需會員登入，並保持友善言論
     </span>
 
     <ul class="commentList">
