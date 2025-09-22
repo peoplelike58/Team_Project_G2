@@ -17,8 +17,8 @@
           <div class="avatar-upload">
             <div class="avatar-preview">
               <!-- <img :src="profileData.tempAvatarPreview || user.profile.avatarUrl || `${BASE}images/Products/default-avatar.jpg`" alt="頭像" /> -->
-              <!-- <img :src="profileData.tempAvatarPreview || (user.profile.avatarUrl? `${BASE}uploads/avatars/${user.profile.avatar}`:`${BASE}uploads/avatars/default-avatar.jpg`)" alt="頭像" /> -->
-              <img :src="profileData.tempAvatarPreview || `${BASE}uploads/avatars/${profileData.avatar || 'default-avatar.jpg'}`" alt="頭像" 
+              <img :src="profileData.tempAvatarPreview || (user?.profile?.avatar? `${BASE}uploads/avatars/${user.profile.avatar}`:`${BASE}images/Products/default-avatar.jpg`)" alt="頭像" />
+              <!-- <img :src="profileData.tempAvatarPreview || `${BASE}uploads/avatars/${profileData.avatar || 'default-avatar.jpg'}`" alt="頭像"  -->
 />
             </div>
             <div v-if="user.loading.uploadingAvatar" class="upload-loading">
@@ -195,13 +195,13 @@ const uploadAvatar = async (file) => {
       profileData.avatar = result.data.filename
 
       
-      alert('頭像上傳成功！')
+      // alert('頭像上傳成功！')
     } else {
       throw new Error(result.message || '上傳失敗')
     }
   } catch (error) {
     console.error('頭像上傳失敗:', error)
-    alert('頭像上傳失敗：' + error.message)
+    // alert('頭像上傳失敗：' + error.message)
   } finally {
     // 結束上傳狀態
     user.loading.uploadingAvatar = false
