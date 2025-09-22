@@ -65,6 +65,7 @@
             type="date" 
             class="form-input"
             :disabled="!isEditing"
+            :max="new Date().toISOString().split('T')[0]"
           />
         </div>
 
